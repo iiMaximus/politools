@@ -1,0 +1,776 @@
+{
+  "title": "Fundamentals: Properties, Ideal Gas & Phase Change",
+  "summary": "The foundation lesson. You will learn the vocabulary of thermodynamics (system, surroundings, closed vs open, state, properties), the state postulate, the ideal-gas law $pV=mRT$ and the special property relations $u=u(T)$, $h=h(T)$, $du=c_v\\,dT$, $dh=c_p\\,dT$, $c_p-c_v=R$, $k=c_p/c_v$. Then you will master real substances: the $p$-$v$-$T$ surface, the vapor dome, saturation, quality $x$, and exactly how to read and interpolate the water / R134a property tables using $v=(1-x)v_f+x\\,v_g$.",
+  "minutes": 55,
+  "objectives": [
+    "Classify a system as closed, open, or isolated and identify its boundary, surroundings, and whether properties are extensive, intensive, or specific.",
+    "State the state postulate and use it: fix a simple compressible state with two independent intensive properties.",
+    "Apply the ideal-gas law $pV=mRT$ in all its forms and convert between $^{\\circ}\\mathrm{C}$ and K correctly.",
+    "Use the ideal-gas property relations $u=u(T)$, $h=h(T)$, $du=c_v\\,dT$, $dh=c_p\\,dT$, and the constants $c_p-c_v=R$, $k=c_p/c_v$.",
+    "Read the $p$-$v$-$T$ surface and the vapor dome: identify subcooled liquid, two-phase mixture, and superheated vapor regions and the meaning of saturation.",
+    "Compute quality $x$ and any mixture property via $v=(1-x)v_f+x\\,v_g$ (and the same for $u$, $h$, $s$).",
+    "Locate a state in the water / R134a tables and linearly interpolate between table rows."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. The language: systems, boundaries, surroundings"
+    },
+    {
+      "kind": "prose",
+      "text": "Thermodynamics is the science of **energy** — how it is stored, transferred, and converted. Before any equation, we must agree on *what we are studying*.\n\n- **System**: whatever we choose to study (a quantity of matter, or a region of space).\n- **Surroundings**: everything outside the system.\n- **Boundary**: the real or imaginary surface separating the two. It may be **fixed** (rigid tank) or **movable** (piston).\n- **Universe** = system + surroundings."
+    },
+    {
+      "kind": "definition",
+      "term": "Closed / Open / Isolated systems",
+      "text": "- **Closed system**: no *mass* crosses the boundary, so the mass $m$ is constant. Energy (heat, work) may still cross. Example: gas in a sealed piston–cylinder.\n- **Open system (control volume)**: a mass flow rate $\\dot m$ ($\\mathrm{kg/s}$) *can* cross the boundary. Example: a turbine, a nozzle.\n- **Isolated system**: a special closed system that exchanges *neither* mass nor energy with its surroundings."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Closed does NOT mean adiabatic",
+      "text": "A common exam slip: students assume a closed system cannot exchange heat. **Closed** only forbids *mass* transfer. Heat and work are still allowed. A process with no heat transfer is called **adiabatic** — a different concept entirely."
+    },
+    {
+      "kind": "heading",
+      "text": "2. Properties, state, and the state postulate"
+    },
+    {
+      "kind": "definition",
+      "term": "Property, state, extensive vs intensive vs specific",
+      "text": "A **property** is a macroscopic feature you can assign a number to at an instant, with no knowledge of past history (mass, volume, $T$, $p$, ...). The **state** is the condition of the system as described by its properties.\n\n- **Extensive** property: proportional to the amount of matter; additive (mass $m$, volume $V$, energy $U$).\n- **Intensive** property: independent of amount; not additive (pressure $p$, temperature $T$).\n- **Specific** property: an extensive property divided by mass, e.g. specific volume $v=V/m$ ($\\mathrm{m^3/kg}$). Specific properties are intensive."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Quick test: extensive or intensive?",
+      "text": "Cut the system in half. Properties that **halve** ($m$, $V$, $U$, KE, PE) are extensive. Properties that **stay the same** ($p$, $T$, $v$, $u$, $h$) are intensive. Lowercase letters ($v$, $u$, $h$, $s$) denote *specific* (per-kg) quantities throughout this course."
+    },
+    {
+      "kind": "formula",
+      "title": "State postulate",
+      "tex": "\\text{2 independent intensive properties} \\;\\Rightarrow\\; \\text{state fully fixed}",
+      "tag": "1.1",
+      "caption": "For a **simple compressible system** (electrical, magnetic, gravitational, motion, surface-tension effects negligible), exactly two independent intensive properties fix the state — every other property is then determined."
+    },
+    {
+      "kind": "prose",
+      "text": "\"Independent\" matters. Inside the vapor dome (two-phase mixture), $p$ and $T$ are **not** independent — they are linked by saturation. There you must pick, e.g., $(p, x)$ or $(T, v)$. The Gibbs phase rule $V=C-F+2$ confirms this: for water ($C=1$) with two phases ($F=2$), $V=1$, so a single intensive property is free."
+    },
+    {
+      "kind": "heading",
+      "text": "3. The ideal-gas law"
+    },
+    {
+      "kind": "prose",
+      "text": "At low pressure (molecules far apart, no intermolecular forces), every gas obeys the same simple equation of state. This is the **ideal-gas model**."
+    },
+    {
+      "kind": "formula",
+      "title": "Ideal-gas equation of state",
+      "tex": "pV = mRT \\qquad pv = RT \\qquad p\\bar v = \\bar R\\,T",
+      "tag": "1.2",
+      "caption": "$R$ is the specific gas constant, $R=\\bar R/MM$, with universal constant $\\bar R = 8314\\ \\mathrm{J/(kmol\\cdot K)}$. For air $R=287\\ \\mathrm{J/(kg\\cdot K)}$. $\\bar v$ is the molar specific volume. **$T$ must be in kelvin.**"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Kelvin, always kelvin",
+      "text": "$pV=mRT$ is only valid with **absolute temperature**: $T(\\mathrm{K})=t(^{\\circ}\\mathrm{C})+273.15$. Plugging in $^{\\circ}\\mathrm{C}$ is the single most common numerical mistake. (Temperature *differences*, e.g. in $c\\,\\Delta T$, are the same in K and $^{\\circ}\\mathrm{C}$, but the gas law needs absolute $T$.)"
+    },
+    {
+      "kind": "example",
+      "title": "Worked: rigid tank heating",
+      "text": "An ideal gas at $p_1=2.5$ bar and $t_1=20\\,^{\\circ}\\mathrm{C}$ is in a **rigid** tank and is heated until $p_2=5$ bar. Find $t_2$.\n\n**Rigid + closed** $\\Rightarrow$ $V$ and $m$ constant $\\Rightarrow$ $v$ constant. Writing the gas law at both states and dividing:\n$$\\frac{p_2 V}{p_1 V}=\\frac{mRT_2}{mRT_1}\\;\\Rightarrow\\;\\frac{T_2}{T_1}=\\frac{p_2}{p_1}.$$\n$T_1=20+273.15=293.15$ K, so $T_2=293.15\\times\\frac{5}{2.5}=586.3$ K $=313\\,^{\\circ}\\mathrm{C}$.\n\n**Answer: $t_2 \\approx 313\\,^{\\circ}\\mathrm{C}$** (586 K). Note that doubling the pressure doubles the *absolute* $T$, not the Celsius value."
+    },
+    {
+      "kind": "heading",
+      "text": "4. Internal energy & enthalpy of an ideal gas"
+    },
+    {
+      "kind": "prose",
+      "text": "In general $u=u(T,v)$ and $h=h(T,p)$. The beautiful result for an **ideal gas** (Joule's experiment) is that $u$ and $h$ depend on temperature *alone*:"
+    },
+    {
+      "kind": "formula",
+      "title": "Ideal-gas caloric relations",
+      "tex": "u=u(T),\\quad h=h(T)=u+pv=u(T)+RT\\\\[4pt] du=c_v\\,dT,\\qquad dh=c_p\\,dT",
+      "tag": "1.3",
+      "caption": "Enthalpy is defined as $h=u+pv$ (or $H=U+pV$). For an ideal gas $pv=RT$, so $h=u(T)+RT$ is also a function of $T$ only."
+    },
+    {
+      "kind": "formula",
+      "title": "Relating the specific heats",
+      "tex": "c_p-c_v=R,\\qquad k=\\frac{c_p}{c_v}>1,\\qquad c_p=\\frac{kR}{k-1},\\quad c_v=\\frac{R}{k-1}",
+      "tag": "1.4",
+      "caption": "Differentiate $h=u+RT$: $\\frac{dh}{dT}=\\frac{du}{dT}+R \\Rightarrow c_p=c_v+R$. For air: $c_p\\approx1004.5$, $c_v\\approx717.5\\ \\mathrm{J/(kg\\cdot K)}$, $k\\approx1.4$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "$du=c_v dT$ holds for ANY ideal-gas process",
+      "text": "Because $u=u(T)$ only, $\\Delta u=c_v\\Delta T$ is valid even in a constant-**pressure** process, and $\\Delta h=c_p\\Delta T$ is valid even in a constant-**volume** process. The subscript on $c$ records *how the heat was measured*, not which process you may use it in. (This is exactly quiz Q5.) Using $c_v$ for a $\\Delta h$ or $c_p$ for a $\\Delta u$ is a classic trap."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "For an ideal gas, the relation $h_2-h_1=c_p(T_2-T_1)$ is valid:",
+        "options": [
+          {
+            "id": "A",
+            "content": "only during a constant-pressure process"
+          },
+          {
+            "id": "B",
+            "content": "only during a constant-temperature process"
+          },
+          {
+            "id": "C",
+            "content": "for any process, because $h=h(T)$ for an ideal gas"
+          },
+          {
+            "id": "D",
+            "content": "only for a reversible adiabatic process"
+          }
+        ],
+        "correct": "C",
+        "explanation": "For an ideal gas enthalpy depends on temperature alone, $h=h(T)$, so $dh=c_p\\,dT$ integrates to $\\Delta h=c_p\\Delta T$ no matter what the path is. **A** confuses the subscript $p$ with a process restriction — $c_p$ is just the property; the relation works for any path. **B** is wrong: if $T$ is constant then $\\Delta h=0$, a special case, not a restriction. **D** invents a restriction that does not exist.",
+        "theory": "Ideal-gas caloric equations: $u=u(T)$, $h=h(T)$, so $\\Delta u=c_v\\Delta T$ and $\\Delta h=c_p\\Delta T$ hold for every ideal-gas process.",
+        "source": "Lecture Thermodynamics 1 (ideal-gas model); quiz Q5"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "5. Real substances: the p-v-T surface and the vapor dome"
+    },
+    {
+      "kind": "prose",
+      "text": "Water is **not** an ideal gas — it condenses and boils. Its equilibrium states lie on a 3-D **$p$-$v$-$T$ surface**: $p=p(T,v)$. Projecting it onto the $p$-$v$ (or $T$-$v$) plane gives the famous **vapor dome**.\n\nThree regions matter:\n- **Subcooled (compressed) liquid** — left of the dome, $T<T_{sat}$.\n- **Two-phase mixture (wet vapor)** — *inside* the dome, liquid + vapor coexist.\n- **Superheated vapor** — right of the dome, $T>T_{sat}$."
+    },
+    {
+      "kind": "definition",
+      "term": "Saturation, vapor dome, critical point",
+      "text": "- **Saturation state**: the state at which a phase change starts or ends (the dome's borders).\n- **Saturated-liquid line** (left border, subscript $f$) and **saturated-vapor line** (right border, subscript $g$).\n- **Saturation temperature/pressure**: $T_{sat}$ and $p_{sat}$ are linked one-to-one. At a given $p$, boiling happens at a fixed $T_{sat}$.\n- **Critical point** ($T_c=373.95\\,^{\\circ}\\mathrm{C}$, $p_c\\approx220$ bar for water): top of the dome, where $f$ and $g$ lines meet. Above it, no distinct liquid/vapor."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The key two-phase fact",
+      "text": "**Inside the dome, a constant-pressure process is also a constant-temperature process.** While liquid boils into vapor at $p$ = const, $T$ stays pinned at $T_{sat}(p)$ and only $v$ increases. That is why $p$ and $T$ are *not* independent there — you need quality $x$ to say *where* you are between $f$ and $g$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "pv-process",
+      "title": "p–v diagram explorer",
+      "caption": "Trace a constant-pressure heating line through the vapor dome: watch $T$ stay flat at $T_{sat}$ while $v$ marches from $v_f$ to $v_g$, then climb again in the superheated region. Use it to *see* why $(p,T)$ cannot fix a two-phase state."
+    },
+    {
+      "kind": "heading",
+      "text": "6. Quality x and mixture properties"
+    },
+    {
+      "kind": "definition",
+      "term": "Quality x",
+      "text": "For a two-phase mixture, **quality** is the vapor mass fraction:\n$$x=\\frac{m_{vap}}{m_{liq}+m_{vap}},\\qquad 0\\le x\\le1.$$\n$x=0$ $\\Rightarrow$ saturated liquid (all $f$); $x=1$ $\\Rightarrow$ saturated vapor (all $g$). $x=0.75$ means 75% of the *mass* is vapor."
+    },
+    {
+      "kind": "formula",
+      "title": "Any mixture property by mass-averaging",
+      "tex": "v=(1-x)v_f+x\\,v_g\\\\[3pt] u=(1-x)u_f+x\\,u_g,\\;\\; h=h_f+x\\,h_{fg},\\;\\; s=(1-x)s_f+x\\,s_g",
+      "tag": "1.5",
+      "caption": "Same recipe for $v,u,h,s$. Here $h_{fg}=h_g-h_f$ is the latent heat (enthalpy of vaporization). Read $f$ and $g$ values from the **saturation table** at the given $p$ or $T$."
+    },
+    {
+      "kind": "steps",
+      "title": "How to locate a state and read the tables",
+      "steps": [
+        {
+          "label": "Step 1",
+          "text": "Identify the substance and which two properties you are given (e.g. $p$ and $v$, or $T$ and $x$)."
+        },
+        {
+          "label": "Step 2",
+          "text": "Go to the **saturation table** at the given $p$ (or $T$) and read $v_f$ and $v_g$. **Watch units**: in the Polito tables specific volumes are tabulated $\\times10^3$, so $v_f$ for water near 1 bar is about $1.0\\times10^{-3}\\ \\mathrm{m^3/kg}$, $v_g\\approx1.69\\ \\mathrm{m^3/kg}$."
+        },
+        {
+          "label": "Step 3",
+          "text": "Compare your given $v$ to $v_f$ and $v_g$. If $v<v_f$: subcooled liquid. If $v_f\\le v\\le v_g$: two-phase — compute $x=\\dfrac{v-v_f}{v_g-v_f}$. If $v>v_g$: superheated — use the superheated-vapor table instead."
+        },
+        {
+          "label": "Step 4",
+          "text": "For two-phase, get every other property from Eq. 1.5. For single-phase off the table grid, **interpolate** linearly between the two bracketing rows."
+        }
+      ]
+    },
+    {
+      "kind": "formula",
+      "title": "Linear interpolation",
+      "tex": "y = y_1 + (y_2-y_1)\\,\\frac{x-x_1}{x_2-x_1}",
+      "tag": "1.6",
+      "caption": "To find property $y$ at value $x$ lying between table rows $(x_1,y_1)$ and $(x_2,y_2)$. Works for reading $h$ at an in-between $T$, or $T_{sat}$ at an in-between $p$, etc."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: heat to fully vaporize wet steam",
+      "text": "A tank holds 1 kg of saturated liquid–vapor water at $p=1$ bar, quality $x_A=0.75$. From the saturation table $h_f=417$ kJ/kg, $h_g=2675$ kJ/kg. How much heat at **constant pressure** turns it all into saturated vapor?\n\nAt constant pressure the heat equals the enthalpy change: $Q=m(h_g-h_A)$.\n$$h_A=h_f+x_A(h_g-h_f)=417+0.75(2258)=2110.5\\ \\mathrm{kJ/kg}.$$\n$$Q=m\\,(h_g-h_A)=1\\times(2675-2110.5)=564.5\\ \\mathrm{kJ}.$$\nShortcut: $Q=m(1-x_A)h_{fg}=1\\times0.25\\times2258=564.5$ kJ. **Answer: 564.5 kJ** (this is quiz Q8)."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Water at 10 bar has $v_f=1.13\\times10^{-3}\\ \\mathrm{m^3/kg}$ and $v_g=0.1944\\ \\mathrm{m^3/kg}$. A rigid vessel holds it at $v=0.0978\\ \\mathrm{m^3/kg}$, 10 bar. The quality is closest to:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$x \\approx 0.50$"
+          },
+          {
+            "id": "B",
+            "content": "$x \\approx 0.94$"
+          },
+          {
+            "id": "C",
+            "content": "$x \\approx 1.0$ (superheated)"
+          },
+          {
+            "id": "D",
+            "content": "$x \\approx 0.05$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "$x=\\dfrac{v-v_f}{v_g-v_f}=\\dfrac{0.0978-0.00113}{0.1944-0.00113}=\\dfrac{0.09667}{0.19327}\\approx0.50$. **B** comes from forgetting to subtract $v_f$ in the numerator and denominator scaling. **C** is wrong because $v<v_g$, so it is inside the dome, not superheated. **D** inverts the fraction (using $v_f$-ish over $v_g$). Since $v$ sits almost exactly halfway between $v_f$ and $v_g$, $x\\approx0.5$.",
+        "theory": "For a two-phase state, $v=(1-x)v_f+x v_g$ $\\Rightarrow$ $x=(v-v_f)/(v_g-v_f)$. Always check $v_f\\le v\\le v_g$ first to confirm you are inside the dome.",
+        "source": "Lecture Thermodynamics 1 (quality & saturation tables)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "7. Putting it together: which model do I use?"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Decision rule",
+      "text": "- **Gas far from its dome** (air, $\\mathrm{N_2}$, combustion products, high $T$ / low $p$): use the **ideal-gas** model, $pV=mRT$, $\\Delta u=c_v\\Delta T$, $\\Delta h=c_p\\Delta T$.\n- **Water or refrigerant near phase change** (steam cycles, fridges): use **TABLES**. Fix the state with two independent properties, find the region, interpolate or apply quality.\nNever apply $pV=mRT$ to wet steam, and never apply quality to a superheated gas."
+    },
+    {
+      "kind": "prose",
+      "text": "That is the whole foundation. From here, the First Law ($Q_{12}-W_{12}=U_2-U_1$) and entropy ride on top of these two ways of getting properties. If you can confidently (a) convert to kelvin and use $pV=mRT$, and (b) locate a state in the steam tables and find $x$, you are ready for everything that follows."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "A system is defined as **closed**. Which statement is necessarily true?",
+      "options": [
+        {
+          "id": "A",
+          "content": "No heat can cross its boundary (it is adiabatic)."
+        },
+        {
+          "id": "B",
+          "content": "Its mass is constant; energy may still cross the boundary."
+        },
+        {
+          "id": "C",
+          "content": "Neither mass nor energy can cross the boundary."
+        },
+        {
+          "id": "D",
+          "content": "It must be at steady state."
+        }
+      ],
+      "correct": "B",
+      "explanation": "A closed system forbids only **mass** transfer, so $m$ is constant, while heat and work (energy) may still cross. **A** describes adiabatic, a separate concept. **C** describes an isolated system. **D** is unrelated — a closed system can be transient (e.g. a heating tank).",
+      "theory": "Closed = no mass transfer. Isolated = no mass AND no energy. Adiabatic = no heat (but work allowed).",
+      "source": "Lecture Thermodynamics 1 (kinds of systems)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Which set contains only **intensive** properties?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Volume, internal energy, mass"
+        },
+        {
+          "id": "B",
+          "content": "Pressure, temperature, specific volume"
+        },
+        {
+          "id": "C",
+          "content": "Mass, pressure, kinetic energy"
+        },
+        {
+          "id": "D",
+          "content": "Enthalpy $H$, volume, temperature"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Pressure, temperature, and specific volume ($v=V/m$) are all independent of system size, hence intensive. **A** lists three extensive quantities. **C** mixes the extensive mass and KE with intensive pressure. **D** includes extensive $H$ and $V$. Test: split the system — intensive values are unchanged.",
+      "theory": "Extensive properties scale with mass ($m$, $V$, $U$, $H$, KE, PE); intensive do not ($p$, $T$). Specific (per-kg) properties are intensive.",
+      "source": "Lecture Thermodynamics 1 (properties)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The **state postulate** for a simple compressible substance says the state is fixed by two independent intensive properties. Inside the vapor dome, which pair fails to fix the state?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Pressure and quality $(p, x)$"
+        },
+        {
+          "id": "B",
+          "content": "Temperature and specific volume $(T, v)$"
+        },
+        {
+          "id": "C",
+          "content": "Pressure and temperature $(p, T)$"
+        },
+        {
+          "id": "D",
+          "content": "Pressure and specific volume $(p, v)$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Inside the dome $p$ and $T$ are linked by saturation ($T=T_{sat}(p)$), so they are **not independent** and cannot together locate the state. **A**, **B**, **D** each pair a saturation variable with an independent one ($x$ or $v$) that tells you *where* between $f$ and $g$ you are, so they work.",
+      "theory": "Two-phase region: $p$ and $T$ are dependent. Use $(p,x)$, $(T,x)$, $(p,v)$, or $(T,v)$ to fix the state. Gibbs rule $V=C-F+2=1$ for water with 2 phases.",
+      "source": "Lecture Thermodynamics 1 (state postulate, Gibbs rule)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A mass of ideal gas at 2.5 bar and 20 $^{\\circ}\\mathrm{C}$ is in a **rigid** tank and heated until $p=5$ bar. The final temperature is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "40 $^{\\circ}\\mathrm{C}$"
+        },
+        {
+          "id": "B",
+          "content": "586 $^{\\circ}\\mathrm{C}$"
+        },
+        {
+          "id": "C",
+          "content": "313 $^{\\circ}\\mathrm{C}$"
+        },
+        {
+          "id": "D",
+          "content": "146 $^{\\circ}\\mathrm{C}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Rigid closed $\\Rightarrow$ $v$ const $\\Rightarrow$ $T_2/T_1=p_2/p_1$. With $T_1=293.15$ K: $T_2=293.15\\times2=586.3$ K $=313\\,^{\\circ}\\mathrm{C}$. **A** wrongly doubles $^{\\circ}\\mathrm{C}$ directly (40 $^{\\circ}\\mathrm{C}$). **B** reports the kelvin value as if it were $^{\\circ}\\mathrm{C}$. **D** halves the result. The trap is forgetting to convert to kelvin.",
+      "theory": "At constant volume for an ideal gas, $p/T=$ const, so $T_2=T_1(p_2/p_1)$ with $T$ in kelvin.",
+      "source": "Quiz Q12"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "For an ideal gas, the equation $du=c_v\\,dT$ can be used:",
+      "options": [
+        {
+          "id": "A",
+          "content": "always for an ideal gas"
+        },
+        {
+          "id": "B",
+          "content": "only during a constant-volume process"
+        },
+        {
+          "id": "C",
+          "content": "only when kinetic-energy changes are negligible"
+        },
+        {
+          "id": "D",
+          "content": "only during a constant-pressure process if PE changes are negligible"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Since $u=u(T)$ for an ideal gas, $du=c_v\\,dT$ holds on **any** path — it is a property relation, like the equation of state. **B** confuses the subscript $v$ with a process restriction. **C** and **D** bolt on irrelevant KE/PE conditions; the relation concerns internal energy and temperature only.",
+      "theory": "Ideal gas: $u=u(T)$, $h=h(T)$ $\\Rightarrow$ $\\Delta u=c_v\\Delta T$ and $\\Delta h=c_p\\Delta T$ for every process.",
+      "source": "Quiz Q5"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For an ideal gas with $R=287\\ \\mathrm{J/(kg\\cdot K)}$ and $k=1.4$, the value of $c_v$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$1004\\ \\mathrm{J/(kg\\cdot K)}$"
+        },
+        {
+          "id": "B",
+          "content": "$205\\ \\mathrm{J/(kg\\cdot K)}$"
+        },
+        {
+          "id": "C",
+          "content": "$717\\ \\mathrm{J/(kg\\cdot K)}$"
+        },
+        {
+          "id": "D",
+          "content": "$402\\ \\mathrm{J/(kg\\cdot K)}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$c_v=R/(k-1)=287/0.4=717.5\\ \\mathrm{J/(kg\\cdot K)}$. **A** is $c_p=kR/(k-1)=1004.5$, the constant-pressure heat. **B** uses $R(k-1)=287\\times0.4$ by mistake. **D** halves $c_p$. Check: $c_p-c_v=1004.5-717.5=287=R$. $\\checkmark$",
+      "theory": "$c_p-c_v=R$, $k=c_p/c_v$ $\\Rightarrow$ $c_v=R/(k-1)$, $c_p=kR/(k-1)$.",
+      "source": "Lecture Thermodynamics 1 (cv, cp, R relations)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A tank holds 1 kg of water as a saturated liquid–vapor mixture at 1 bar ($h_f=417$, $h_g=2675$ kJ/kg), quality $x=0.75$. The heat needed at constant pressure to reach saturated vapor is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "1693.5 kJ"
+        },
+        {
+          "id": "B",
+          "content": "564.5 kJ"
+        },
+        {
+          "id": "C",
+          "content": "2110.5 kJ"
+        },
+        {
+          "id": "D",
+          "content": "2258 kJ"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$Q=m(h_g-h_A)=m(1-x)h_{fg}=1\\times0.25\\times(2675-417)=564.5$ kJ. **A** uses $x=0.75$ instead of $(1-x)=0.25$ ($0.75\\times2258=1693.5$). **C** is $h_A$ itself, not the change. **D** is the full latent heat $h_{fg}$ as if starting from $x=0$.",
+      "theory": "At constant pressure $Q=m\\,\\Delta h$. For wet steam $h_A=h_f+x\\,h_{fg}$, so to reach $g$: $Q=m(1-x)h_{fg}$.",
+      "source": "Quiz Q8"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Water at 10 bar: $v_f=0.00113$, $v_g=0.1944\\ \\mathrm{m^3/kg}$. A closed rigid vessel of $0.5\\ \\mathrm{m^3}$ contains 5 kg of this water at 10 bar. The quality is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.51"
+        },
+        {
+          "id": "B",
+          "content": "0.10"
+        },
+        {
+          "id": "C",
+          "content": "0.94"
+        },
+        {
+          "id": "D",
+          "content": "0.26"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$v=V/m=0.5/5=0.10\\ \\mathrm{m^3/kg}$, which lies between $v_f$ and $v_g$ (two-phase). $x=(v-v_f)/(v_g-v_f)=(0.10-0.00113)/(0.1944-0.00113)=0.09887/0.19327\\approx0.51$. **B** mistakes $v=0.10$ for $x$. **C** uses $v/v_g$. **D** uses $v_f$ in place of the difference. Always compute $v$ first, then locate it in the dome.",
+      "theory": "$v=V/m$; if $v_f\\le v\\le v_g$ then $x=(v-v_f)/(v_g-v_f)$.",
+      "source": "Lecture Thermodynamics 1 (quality, tables); Polito tutorial style"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Which list contains only **path functions** (not properties)?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Internal energy, enthalpy, entropy"
+        },
+        {
+          "id": "B",
+          "content": "Work, heat, entropy production"
+        },
+        {
+          "id": "C",
+          "content": "Work, internal energy, heat"
+        },
+        {
+          "id": "D",
+          "content": "Heat, temperature, work"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Work, heat, and entropy production $\\sigma$ all depend on the path taken, not just the endpoints — they are path functions with inexact differentials. **A** lists three state properties. **C** mixes in $U$, a property. **D** includes $T$, a property. State functions: $U,H,S,T,p,v$.",
+      "theory": "Path functions ($Q, W, \\sigma$) depend on the process; state/point functions ($U,H,S,p,T,v$) depend only on the state.",
+      "source": "Quiz Q14"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Inside the vapor dome, during boiling at constant pressure, what happens to the temperature?",
+      "options": [
+        {
+          "id": "A",
+          "content": "It increases steadily as heat is added."
+        },
+        {
+          "id": "B",
+          "content": "It stays constant at $T_{sat}(p)$."
+        },
+        {
+          "id": "C",
+          "content": "It decreases as vapor forms."
+        },
+        {
+          "id": "D",
+          "content": "It first rises then falls."
+        }
+      ],
+      "correct": "B",
+      "explanation": "In the two-phase region a constant-pressure process is also constant-temperature: $T$ is pinned at $T_{sat}(p)$ while added heat converts liquid to vapor (latent heat) and $v$ increases. **A** describes single-phase heating. **C** and **D** contradict the saturation behavior of a pure substance.",
+      "theory": "Two-phase: $p$ and $T$ are coupled; at fixed $p$ boiling occurs at fixed $T_{sat}$, only $v$ (and $x$) change.",
+      "source": "Lecture Thermodynamics 1 (phase change at constant pressure)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Air ($R=287\\ \\mathrm{J/(kg\\cdot K)}$) fills a $0.20\\ \\mathrm{m^3}$ rigid tank at 8 bar and 27 $^{\\circ}\\mathrm{C}$. The mass of air is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.65 kg"
+        },
+        {
+          "id": "B",
+          "content": "1.86 kg"
+        },
+        {
+          "id": "C",
+          "content": "20.6 kg"
+        },
+        {
+          "id": "D",
+          "content": "2.32 kg"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$m=\\dfrac{pV}{RT}=\\dfrac{800000\\times0.20}{287\\times300.15}=\\dfrac{160000}{86143}=1.86$ kg. **A** halves the result by a slip. **C** uses $T=27$ K (forgetting to convert to kelvin entirely), wildly inflating $m$. **D** uses a wrong $R$. The trap is again kelvin: $T=27+273.15=300.15$ K.",
+      "theory": "$pV=mRT$ $\\Rightarrow$ $m=pV/(RT)$. Use SI: Pa, $\\mathrm{m^3}$, $\\mathrm{J/(kg\\cdot K)}$, K.",
+      "source": "Lecture Thermodynamics 1 (ideal-gas law); tutorial style"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "At 5 bar, water tables give $T_{sat}=151.8$ $^{\\circ}\\mathrm{C}$. A state at 5 bar and 200 $^{\\circ}\\mathrm{C}$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "a subcooled (compressed) liquid"
+        },
+        {
+          "id": "B",
+          "content": "a saturated mixture with $x$ between 0 and 1"
+        },
+        {
+          "id": "C",
+          "content": "a superheated vapor"
+        },
+        {
+          "id": "D",
+          "content": "exactly the critical point"
+        }
+      ],
+      "correct": "C",
+      "explanation": "At a given pressure, $T>T_{sat}$ means the substance is past complete vaporization: superheated vapor. **A** would require $T<T_{sat}$. **B** requires $T=T_{sat}$ exactly (two-phase sits on the saturation line). **D** is wrong — the critical point of water is 374 $^{\\circ}\\mathrm{C}$, 220 bar. Use the superheated-vapor table for this state.",
+      "theory": "At fixed $p$: $T<T_{sat}$ $\\Rightarrow$ subcooled liquid; $T=T_{sat}$ $\\Rightarrow$ two-phase; $T>T_{sat}$ $\\Rightarrow$ superheated vapor.",
+      "source": "Lecture Thermodynamics 1 (regions, saturation)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Steam-table rows at 0.10 MPa give $h_g=2675.5$ kJ/kg and at 0.20 MPa give $h_g=2706.7$ kJ/kg. By linear interpolation, $h_g$ at 0.15 MPa is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "2675.5 kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "2706.7 kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "2691.1 kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "2722.3 kJ/kg"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Linear interpolation: $h_g=2675.5+(2706.7-2675.5)\\times\\dfrac{0.15-0.10}{0.20-0.10}=2675.5+31.2\\times0.5=2691.1$ kJ/kg. **A** and **B** just copy an endpoint. **D** extrapolates beyond the upper row. Halfway in $p$ gives halfway in $h_g$.",
+      "theory": "Linear interpolation: $y=y_1+(y_2-y_1)\\frac{x-x_1}{x_2-x_1}$ between bracketing table rows.",
+      "source": "Lecture Thermodynamics 1 (reading & interpolating tables)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The defining equation of enthalpy is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$h=u-pv$"
+        },
+        {
+          "id": "B",
+          "content": "$h=u+pv$"
+        },
+        {
+          "id": "C",
+          "content": "$h=u\\cdot pv$"
+        },
+        {
+          "id": "D",
+          "content": "$h=c_v\\,T$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "By definition $H=U+pV$, or per unit mass $h=u+pv$. **A** has the wrong sign. **C** is dimensionally and conceptually wrong. **D** is the internal energy of an ideal gas (referenced from 0), not the definition of enthalpy. For an ideal gas this further gives $h=u+RT$.",
+      "theory": "Enthalpy $h\\equiv u+pv$; for an ideal gas $pv=RT$ so $h=u(T)+RT=h(T)$.",
+      "source": "Lecture Thermodynamics 1 (enthalpy)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For an ideal gas $k=c_p/c_v$ is always:",
+      "options": [
+        {
+          "id": "A",
+          "content": "less than 1"
+        },
+        {
+          "id": "B",
+          "content": "equal to 1"
+        },
+        {
+          "id": "C",
+          "content": "greater than 1"
+        },
+        {
+          "id": "D",
+          "content": "equal to $R$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Since $c_p=c_v+R$ and $R>0$, $c_p>c_v$, so $k=c_p/c_v>1$ always (e.g. air $k=1.4$, monatomic gases $k\\approx1.67$). **A** and **B** contradict $c_p>c_v$. **D** confuses the dimensionless ratio with the gas constant $R$.",
+      "theory": "$c_p-c_v=R>0$ $\\Rightarrow$ $c_p>c_v$ $\\Rightarrow$ $k=c_p/c_v>1$.",
+      "source": "Lecture Thermodynamics 1 (specific-heat ratio)"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Locating a state and finding quality (water)",
+      "meta": "Tutorial 1 · properties & tables · numeric",
+      "difficulty": "medium",
+      "statement": "A rigid closed vessel of volume $V=0.20\\ \\mathrm{m^3}$ contains $m=2.0$ kg of water at $p=10$ bar. From the saturation table at 10 bar: $v_f=1.127\\times10^{-3}\\ \\mathrm{m^3/kg}$, $v_g=0.1944\\ \\mathrm{m^3/kg}$, $h_f=762.6$ kJ/kg, $h_g=2776.2$ kJ/kg, $T_{sat}=179.9$ $^{\\circ}\\mathrm{C}$. (a) Determine the region and quality $x$. (b) Find the specific enthalpy $h$ of the mixture. (c) State the temperature.",
+      "given": "$V=0.20\\ \\mathrm{m^3}$, $m=2.0$ kg, $p=10$ bar; $v_f=0.001127$, $v_g=0.1944\\ \\mathrm{m^3/kg}$; $h_f=762.6$, $h_g=2776.2$ kJ/kg; $T_{sat}=179.9$ $^{\\circ}\\mathrm{C}$.",
+      "steps": [
+        {
+          "title": "Compute specific volume",
+          "content": "$v=V/m=0.20/2.0=0.10\\ \\mathrm{m^3/kg}$."
+        },
+        {
+          "title": "Identify the region",
+          "content": "Compare with saturation: $v_f=0.001127\\le v=0.10\\le v_g=0.1944$, so the state lies **inside the dome** — a two-phase saturated mixture."
+        },
+        {
+          "title": "Quality",
+          "content": "$x=\\dfrac{v-v_f}{v_g-v_f}=\\dfrac{0.10-0.001127}{0.1944-0.001127}=\\dfrac{0.098873}{0.193273}=0.512.$"
+        },
+        {
+          "title": "Mixture enthalpy",
+          "content": "$h=h_f+x(h_g-h_f)=762.6+0.512(2776.2-762.6)=762.6+0.512\\times2013.6=762.6+1031.0=1793.6$ kJ/kg."
+        },
+        {
+          "title": "Temperature",
+          "content": "Inside the dome $T=T_{sat}(10\\,\\mathrm{bar})=179.9$ $^{\\circ}\\mathrm{C}$ — fixed by the pressure alone."
+        }
+      ],
+      "finalAnswer": "Two-phase mixture, $x\\approx0.51$, $h\\approx1794$ kJ/kg, $T=T_{sat}=179.9$ $^{\\circ}\\mathrm{C}$.",
+      "tips": "First thing every time: get $v=V/m$ and compare to $v_f, v_g$. Remember Polito tables list $v\\times10^3$. Inside the dome the temperature is fixed by pressure alone, so you do not interpolate for it."
+    },
+    {
+      "title": "Ideal-gas state and caloric properties",
+      "meta": "Tutorial 1 · ideal gas · numeric",
+      "difficulty": "medium",
+      "statement": "A closed rigid tank of $V=0.5\\ \\mathrm{m^3}$ contains air ($R=287\\ \\mathrm{J/(kg\\cdot K)}$, $c_v=717.5$, $c_p=1004.5\\ \\mathrm{J/(kg\\cdot K)}$) at $p_1=3$ bar, $t_1=27$ $^{\\circ}\\mathrm{C}$. It is heated until $p_2=6$ bar. Find (a) the mass of air, (b) the final temperature $T_2$, (c) the change in internal energy $\\Delta U$ and (d) the change in enthalpy $\\Delta H$.",
+      "given": "$V=0.5\\ \\mathrm{m^3}$, $p_1=3$ bar $=3\\times10^5$ Pa, $T_1=300.15$ K, $p_2=6$ bar, $R=287$, $c_v=717.5$, $c_p=1004.5\\ \\mathrm{J/(kg\\cdot K)}$.",
+      "steps": [
+        {
+          "title": "Mass from the gas law",
+          "content": "$m=\\dfrac{p_1 V}{R T_1}=\\dfrac{3\\times10^5\\times0.5}{287\\times300.15}=\\dfrac{150000}{86143}=1.741$ kg."
+        },
+        {
+          "title": "Final temperature (constant volume)",
+          "content": "Rigid $\\Rightarrow$ $v$ const $\\Rightarrow$ $T_2=T_1\\,p_2/p_1=300.15\\times(6/3)=600.3$ K $=327.1$ $^{\\circ}\\mathrm{C}$."
+        },
+        {
+          "title": "Internal-energy change",
+          "content": "$\\Delta U=m\\,c_v(T_2-T_1)=1.741\\times717.5\\times(600.3-300.15)=1.741\\times717.5\\times300.15\\approx374.9\\times10^3$ J $\\approx375$ kJ."
+        },
+        {
+          "title": "Enthalpy change",
+          "content": "$\\Delta H=m\\,c_p(T_2-T_1)=1.741\\times1004.5\\times300.15\\approx524.9\\times10^3$ J $\\approx525$ kJ. Check: $\\Delta H/\\Delta U=c_p/c_v=k=1.4$. $\\checkmark$"
+        }
+      ],
+      "finalAnswer": "$m\\approx1.74$ kg; $T_2\\approx600$ K (327 $^{\\circ}\\mathrm{C}$); $\\Delta U\\approx375$ kJ; $\\Delta H\\approx525$ kJ.",
+      "tips": "$\\Delta u=c_v\\Delta T$ and $\\Delta h=c_p\\Delta T$ are valid even though this is a constant-volume process — they depend only on $T$ for an ideal gas. Convert to kelvin before using the gas law; a $\\Delta T$ in K equals the $\\Delta T$ in $^{\\circ}\\mathrm{C}$."
+    },
+    {
+      "title": "Heat to vaporize and then superheat steam",
+      "meta": "Tutorial 1 · phase change · numeric",
+      "difficulty": "hard",
+      "statement": "In a closed piston–cylinder at constant pressure $p=2$ bar, 0.5 kg of water starts as a wet mixture with quality $x_1=0.40$ and is heated until it becomes saturated vapor ($x_2=1$). At 2 bar: $h_f=504.7$, $h_g=2706.7$ kJ/kg, $T_{sat}=120.2$ $^{\\circ}\\mathrm{C}$; superheated steam at 2 bar, 300 $^{\\circ}\\mathrm{C}$ has $h=3071.8$ kJ/kg. (a) Find $h_1$. (b) Find the heat added to reach saturated vapor. (c) How much extra heat to continue to 300 $^{\\circ}\\mathrm{C}$?",
+      "given": "$m=0.5$ kg, $p=2$ bar (const), $x_1=0.40$, $x_2=1$; $h_f=504.7$, $h_g=2706.7$ kJ/kg, $h_{fg}=2202.0$; $h_{300}=3071.8$ kJ/kg.",
+      "steps": [
+        {
+          "title": "Initial enthalpy",
+          "content": "$h_1=h_f+x_1 h_{fg}=504.7+0.40\\times2202.0=504.7+880.8=1385.5$ kJ/kg."
+        },
+        {
+          "title": "Final enthalpy (sat. vapor)",
+          "content": "$x_2=1$ $\\Rightarrow$ $h_2=h_g=2706.7$ kJ/kg."
+        },
+        {
+          "title": "Heat to saturated vapor (constant p ⟹ Q = ΔH)",
+          "content": "$Q=m(h_2-h_1)=0.5\\times(2706.7-1385.5)=0.5\\times1321.2=660.6$ kJ. Equivalently $Q=m(1-x_1)h_{fg}=0.5\\times0.60\\times2202=660.6$ kJ. $\\checkmark$"
+        },
+        {
+          "title": "Extra heat to superheat to 300 °C",
+          "content": "Beyond $x=1$ you leave the dome and read the superheated table: $Q_{extra}=m(h_{300}-h_g)=0.5(3071.8-2706.7)=0.5\\times365.1=182.6$ kJ."
+        },
+        {
+          "title": "Temperature path check",
+          "content": "From $x_1$ to $x_2$ the temperature stays at $T_{sat}=120.2$ $^{\\circ}\\mathrm{C}$ (latent heat). Only after $x=1$ does $T$ climb toward 300 $^{\\circ}\\mathrm{C}$ (sensible superheat)."
+        }
+      ],
+      "finalAnswer": "$h_1=1385.5$ kJ/kg; heat to saturated vapor $Q=660.6$ kJ; extra heat to 300 $^{\\circ}\\mathrm{C}$ $\\approx182.6$ kJ (total $\\approx843$ kJ from start), switching from the saturation table to the superheated-vapor table.",
+      "tips": "Constant-pressure heat equals the enthalpy change, $Q=m\\,\\Delta h$. While inside the dome $T$ is fixed; heat goes into latent vaporization. The instant $x$ reaches 1 you must switch tables — the most common error is trying to push quality past 1."
+    },
+    {
+      "title": "Describe the p-v-T surface and the vapor dome",
+      "meta": "Tutorial 1 · concepts · open-ended / draw",
+      "difficulty": "medium",
+      "statement": "On a $p$–$v$ diagram, sketch the vapor dome for water and a constant-pressure heating line that starts in the subcooled-liquid region and ends in superheated vapor. Label the saturated-liquid line, saturated-vapor line, critical point, and the three regions. Explain (i) why $p$ and $T$ are not independent inside the dome, (ii) the role of quality $x$, and (iii) which property model (ideal gas vs tables) you would use on each side of the dome.",
+      "given": "Qualitative; use definitions of saturation, quality, and the state postulate.",
+      "steps": [
+        {
+          "title": "Draw the dome",
+          "content": "A bell-shaped curve: left branch is the **saturated-liquid line** ($x=0$, subscript $f$), right branch is the **saturated-vapor line** ($x=1$, subscript $g$). They meet at the **critical point** (top, $T_c\\approx374$ $^{\\circ}\\mathrm{C}$, $p_c\\approx220$ bar for water). Left of the dome = subcooled liquid; under the dome = two-phase mixture; right = superheated vapor."
+        },
+        {
+          "title": "Draw the constant-p line",
+          "content": "A horizontal line in $p$–$v$ (since $p$=const). Moving right at fixed $p$: in the liquid region $v$ barely grows while $T$ rises to $T_{sat}$; crossing the $f$ line into the dome the line stays at the same $p$ and same $T=T_{sat}$ while $v$ grows from $v_f$ to $v_g$ (boiling); past the $g$ line, $v$ and $T$ rise again (superheating)."
+        },
+        {
+          "title": "(i) Why p and T are coupled inside the dome",
+          "content": "During a phase change at fixed pressure the temperature is locked at $T_{sat}(p)$. So specifying $p$ already fixes $T$ — they are not independent. By Gibbs' rule $V=C-F+2=1-2+2=1$: only one intensive property is free."
+        },
+        {
+          "title": "(ii) Role of quality",
+          "content": "Because $(p,T)$ cannot locate a two-phase state, we add **quality** $x=m_{vap}/m$. Then any property follows $\\varphi=(1-x)\\varphi_f+x\\,\\varphi_g$ for $\\varphi\\in\\{v,u,h,s\\}$. $x$ tells you how far across the dome (from $f$ to $g$) the state sits."
+        },
+        {
+          "title": "(iii) Which model where",
+          "content": "Far to the right and at low pressure / high temperature, the vapor behaves nearly ideally: $pv=RT$ with $\\Delta u=c_v\\Delta T$, $\\Delta h=c_p\\Delta T$ is acceptable. Near or inside the dome (and for the liquid) you must use **property tables** — the ideal-gas law is invalid there."
+        }
+      ],
+      "finalAnswer": "A correct sketch shows the dome with $f$/$g$ lines and critical point, plus a horizontal constant-$p$ line crossing all three regions with a flat $T$ segment inside the dome. Key statements: inside the dome $p$ and $T$ are dependent (Gibbs $V=1$); quality $x$ supplies the missing intensive coordinate via $\\varphi=(1-x)\\varphi_f+x\\varphi_g$; use tables near the dome but the ideal-gas model is acceptable for vapor far from it.",
+      "tips": "Examiners look for: correct dome shape, the FLAT temperature plateau during boiling, correct region labels, and the link between Gibbs' rule and the need for quality. Stating that a constant-$p$ line in the dome is also constant-$T$ earns easy marks."
+    }
+  ]
+}

@@ -1,0 +1,864 @@
+{
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why we need a second law"
+    },
+    {
+      "kind": "prose",
+      "text": "The **first law** says energy is conserved: $Q_{12}-W_{12}=U_2-U_1$. But it never tells you which **direction** a process goes. A gas at high pressure rushes out of a tank to ambient; it never spontaneously rushes back in. Heat flows from hot to cold, never the reverse on its own. Energy is conserved both ways — yet only one direction actually happens.\n\nThe **second law** fixes this. It tells us (1) the natural direction of spontaneous processes, (2) the best theoretical performance of engines and refrigerators, and (3) how much real irreversibilities cost us. Its bookkeeping quantity is **entropy**."
+    },
+    {
+      "kind": "heading",
+      "text": "The two classic statements"
+    },
+    {
+      "kind": "definition",
+      "term": "Kelvin-Planck statement",
+      "text": "It is impossible for a system operating in a **cycle** to take heat from a **single** reservoir and produce a net amount of work, with no other effect.\n\nIn short: you cannot build an engine that runs on one reservoir alone. Some heat must always be rejected to a cold reservoir, so $\\eta<1$ always."
+    },
+    {
+      "kind": "definition",
+      "term": "Clausius statement",
+      "text": "It is impossible for a system operating in a **cycle** to transfer heat from a colder body to a hotter body as the **sole** result.\n\nIn short: heat will not climb the temperature hill by itself. A fridge or heat pump can move heat from cold to hot, but only by **consuming work** — that work is the 'other effect'."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "The two statements are **equivalent**: violating one lets you violate the other. Kelvin-Planck is about engines (one reservoir $\\to$ impossible); Clausius is about refrigerators (free cold-to-hot $\\to$ impossible)."
+    },
+    {
+      "kind": "heading",
+      "text": "Reversible vs irreversible"
+    },
+    {
+      "kind": "prose",
+      "text": "A **reversible process** is an idealisation: both the system **and** the surroundings can be returned to their initial states, leaving no trace. It gives the maximum possible performance.\n\nAn **irreversible process** is the real world: once it happens, system and surroundings cannot both be restored. Every spontaneous process is irreversible.\n\nSources of irreversibility:\n- **Internal**: friction, mixing, unrestrained (free) expansion inside the system.\n- **External**: heat transfer across a **finite** temperature difference between system and surroundings.\n\nA process with no internal irreversibility is **internally reversible** (quasi-static, a chain of equilibrium states). A process with neither internal nor external irreversibility is **fully reversible**."
+    },
+    {
+      "kind": "definition",
+      "term": "Thermal reservoir",
+      "text": "A body so large its temperature stays constant no matter how much heat it exchanges (infinite heat capacity). Processes **inside** a reservoir are always reversible, so its entropy change is simply $\\Delta S_{res}=Q_{12}/T_{res}$, with $Q_{12}$ the heat **into** the reservoir and $T_{res}$ in kelvin."
+    },
+    {
+      "kind": "heading",
+      "text": "Entropy as a property"
+    },
+    {
+      "kind": "prose",
+      "text": "The **Clausius inequality** for any cycle is $\\oint \\frac{\\delta Q}{T}\\le 0$, with equality only for internally reversible cycles. Because $\\oint\\frac{\\delta Q_{rev}}{T}=0$, the integral $\\int_1^2\\frac{\\delta Q_{rev}}{T}$ is path-independent — it defines a **state property**, entropy $S$ (units J/K)."
+    },
+    {
+      "kind": "formula",
+      "tex": "dS=\\left(\\frac{\\delta Q}{T}\\right)_{int,rev}\\qquad \\Delta S_{12}=S_2-S_1=\\int_1^2\\frac{\\delta Q_{int,rev}}{T}",
+      "caption": "Entropy change depends only on end states; you may compute it along ANY internally reversible path between them, even if the real process was irreversible."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Favourite trap:** $S$ is a **state function**, so $S_2-S_1$ is the same for a reversible or irreversible path between the same two states. What differs is the **entropy transfer** $\\int\\delta Q/T$ and the **production** $\\sigma$. Compute $\\Delta S_{sys}$ along a convenient reversible path."
+    },
+    {
+      "kind": "heading",
+      "text": "Entropy production $\\sigma \\ge 0$ (closed systems)"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\sigma = S_2-S_1-\\int_1^2\\frac{\\delta Q}{T_b}\\;\\ge 0;\\qquad \\text{one reservoir: } \\sigma=S_2-S_1-\\frac{Q_{12}}{T_{res}}\\ge 0",
+      "caption": "$\\sigma$ = entropy created inside the system by irreversibility. $\\sigma=0$ reversible, $\\sigma>0$ irreversible, $\\sigma<0$ impossible. $T_b$ is the boundary temperature where heat crosses."
+    },
+    {
+      "kind": "prose",
+      "text": "There are **two equivalent viewpoints** to get $\\sigma$:\n- **System + transfer term:** $\\sigma=S_2-S_1-\\dfrac{Q_{12}}{T_{res}}$ (here $Q_{12}$ is heat **into the system**).\n- **Universe:** $\\sigma=\\Delta S_{universe}=\\Delta S_{sys}+\\Delta S_{surr}$, with $\\Delta S_{surr}=\\Delta S_{res}=Q_{res}/T_{res}$ and $Q_{res}=-Q_{12}$.\n\nThe universe is an isolated system; for an isolated system $\\sigma=\\Delta S\\ge 0$. **Entropy of the universe never decreases.**"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "More than one reservoir: $\\sigma=S_2-S_1-\\sum_i\\dfrac{Q_i}{T_i}\\ge 0$. For a **cycle** $\\Delta S_{cycle}=0$, so $\\sigma_{cycle}=-\\sum_i Q_i/T_i\\ge 0$."
+    },
+    {
+      "kind": "steps",
+      "title": "Recipe: entropy production of a closed-system process",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Fix states 1 and 2 (find missing T, p, V via $pV=mRT$ for ideal gas, or tables for water)."
+        },
+        {
+          "label": "2",
+          "text": "Compute $\\Delta S_{sys}=S_2-S_1$ with Gibbs: $c_v\\ln\\frac{T_2}{T_1}+R\\ln\\frac{v_2}{v_1}$ or $c_p\\ln\\frac{T_2}{T_1}-R\\ln\\frac{p_2}{p_1}$ (per kg, then $\\times m$). For solids/liquids use $c\\ln(T_2/T_1)$."
+        },
+        {
+          "label": "3",
+          "text": "Find $Q_{12}$ from the first law $Q_{12}=\\Delta U+W_{12}$."
+        },
+        {
+          "label": "4",
+          "text": "Entropy transfer to/from each reservoir: $Q_{12}/T_{res}$ (watch the sign: heat into the SYSTEM is +)."
+        },
+        {
+          "label": "5",
+          "text": "$\\sigma=\\Delta S_{sys}-\\sum Q_i/T_i$. Check $\\sigma\\ge 0$. If negative, the assumed direction is impossible."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked: isothermal compression, three levels of irreversibility",
+      "text": "**Given:** $m=1$ kg air, $R=287$ J/kgK, $T=400$ K constant, $p_1=1$ bar $\\to p_2=10$ bar.\n\n**Work & heat** (isothermal, $\\Delta U=0$): $W_{12}=mRT\\ln\\frac{p_1}{p_2}=287\\cdot400\\cdot\\ln(0.1)=-264.3$ kJ, so $Q_{12}=W_{12}=-264.3$ kJ (heat leaves).\n\n**System entropy** (state function, same in all cases): $\\Delta S_{sys}=mR\\ln\\frac{p_1}{p_2}=287\\ln(0.1)=-660.9$ J/K.\n\n**(a) Reservoir at 400 K (fully reversible):** $\\Delta S_{res}=-Q_{12}/T=+264300/400=+660.9$ J/K. $\\sigma=-660.9+660.9=0$. Reversible.\n\n**(b) Reservoir at 300 K (externally irreversible):** $\\Delta S_{res}=+264300/300=+881.1$ J/K. $\\sigma=-660.9+881.1=+220.3$ J/K $>0$.\n\n**(c) Add 20% friction work, reservoir 300 K:** $W''=-317.2$ kJ$=Q''$. $\\Delta S_{res}=+317200/300=+1057.4$. $\\sigma=-660.9+1057.4=+396.5$ J/K — most irreversible. Notice $\\Delta S_{sys}$ never changed."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Two reservoirs at $T_A=673$ K and $T_B=393$ K exchange $|Q|=100$ kJ ($A\\to B$, no engine). The entropy production is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$0$ J/K — reservoirs are reversible internally"
+          },
+          {
+            "id": "B",
+            "content": "$+105.8$ J/K"
+          },
+          {
+            "id": "C",
+            "content": "$-105.8$ J/K"
+          },
+          {
+            "id": "D",
+            "content": "$+254.4$ J/K"
+          }
+        ],
+        "correct": "B",
+        "explanation": "$\\sigma=\\Delta S_{res,A}+\\Delta S_{res,B}=-\\frac{100000}{673}+\\frac{100000}{393}=-148.6+254.4=+105.8$ J/K. **A** confuses 'internally reversible reservoir' with the external irreversibility of heat crossing a finite $\\Delta T$. **C** flips the signs (heat leaves A $\\to$ negative, enters B $\\to$ positive). **D** counts only the cold reservoir and forgets A's negative term.",
+        "theory": "Heat across a finite temperature difference is externally irreversible: $\\sigma=\\sum Q_i/T_i$, heat leaving a reservoir is negative for it.",
+        "source": "Tutorial 2, Ex 2.2"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Open systems (control volumes)"
+    },
+    {
+      "kind": "prose",
+      "text": "Entropy is carried by mass streams. The general **entropy rate balance** for a control volume is below. At **steady state** ($dS_{CV}/dt=0$) with one inlet (1) and one outlet (2) it simplifies nicely."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\dot\\sigma=\\frac{dS_{CV}}{dt}-\\sum_j\\frac{\\dot Q_j}{T_j}-\\sum_i\\dot m_i s_i+\\sum_e\\dot m_e s_e\\;\\ge 0\\;\\;\\xrightarrow{\\text{SS, 1 in/1 out}}\\;\\;\\dot\\sigma=\\dot m(s_2-s_1)-\\sum_j\\frac{\\dot Q_j}{T_j}\\ge 0",
+      "caption": "Adiabatic device ($\\dot Q=0$): $\\dot\\sigma = \\dot m(s_2-s_1) \\ge 0$, so the outlet entropy can never fall below the inlet."
+    },
+    {
+      "kind": "heading",
+      "text": "Gibbs equations & entropy data"
+    },
+    {
+      "kind": "formula",
+      "tex": "T\\,ds = du + p\\,dv\\qquad\\text{(1st)}\\qquad\\qquad T\\,ds = dh - v\\,dp\\qquad\\text{(2nd)}",
+      "caption": "Both hold for ANY process (reversible or not) and for closed or open systems, because they link only properties."
+    },
+    {
+      "kind": "prose",
+      "text": "For an **ideal gas** these integrate to:\n$$s_2-s_1=c_v\\ln\\frac{T_2}{T_1}+R\\ln\\frac{v_2}{v_1}=c_p\\ln\\frac{T_2}{T_1}-R\\ln\\frac{p_2}{p_1}$$\nFor an **incompressible** substance ($dv=0$, or $dp=0$): $s_2-s_1=c\\ln\\frac{T_2}{T_1}$.\nFor **water**: read $s_f,s_g$ from tables; in the wet region $s=(1-x)s_f+x\\,s_g$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Sign trap in the pressure term:** the second Gibbs form has **minus** $R\\ln(p_2/p_1)$. Raising the pressure (compression) lowers entropy through that term. Also: use **$c_p$ with the pressure form, $c_v$ with the volume form** — mixing them is a classic mistake."
+    },
+    {
+      "kind": "heading",
+      "text": "Isentropic processes & the T-s diagram"
+    },
+    {
+      "kind": "prose",
+      "text": "If a process is **adiabatic ($Q=0$) and internally reversible**, then $dS=\\delta Q_{rev}/T=0$: it is **isentropic** ($s=$ const). For an ideal gas this gives $pv^k=$ const and\n$$\\frac{T_2}{T_1}=\\left(\\frac{p_2}{p_1}\\right)^{(k-1)/k}=\\left(\\frac{V_1}{V_2}\\right)^{k-1}.$$\nWarning: adiabatic + reversible $\\Rightarrow$ isentropic, but isentropic does **not** always mean adiabatic.\n\nOn a **T-s diagram**, the area under an internally reversible path equals the heat: $Q_{rev}=\\int_1^2 T\\,dS$. The area **enclosed** by a reversible cycle is the net work."
+    },
+    {
+      "kind": "sim",
+      "simKey": "carnot",
+      "title": "Carnot cycle explorer",
+      "caption": "Drag $T_H$ and $T_C$ to see the P-v and T-s diagrams and how $\\eta = 1 - T_C/T_H$ responds. Note the rectangular T-s shape: two isotherms (horizontal) and two isentropes (vertical)."
+    },
+    {
+      "kind": "heading",
+      "text": "Carnot cycle & efficiency"
+    },
+    {
+      "kind": "prose",
+      "text": "The **Carnot cycle** (ideal gas, fully reversible) has two isothermals and two adiabatics:\n- 1$\\to$2 isothermal expansion at $T_H$ (heat in $Q_{in}$)\n- 2$\\to$3 adiabatic expansion ($T_H\\to T_C$)\n- 3$\\to$4 isothermal compression at $T_C$ (heat out $Q_{out}$)\n- 4$\\to$1 adiabatic compression ($T_C\\to T_H$)\n\nWorking through the volume ratios gives an efficiency that depends **only on the two reservoir temperatures**."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta_{Carnot}=1-\\frac{Q_{out}}{Q_{in}}=1-\\frac{T_C}{T_H}<1\\quad(T\\text{ in K})",
+      "caption": "Highest possible efficiency between $T_H$ and $T_C$. Approaches 1 only as $T_C\\to0$ K."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Carnot corollaries:** (1) all reversible cycles between the same two reservoirs have the **same** $\\eta$; (2) any **irreversible** cycle between them has $\\eta_{irr}<\\eta_{rev}$. Temperatures **must be in kelvin**."
+    },
+    {
+      "kind": "heading",
+      "text": "Reversible refrigerator & heat pump (COP)"
+    },
+    {
+      "kind": "prose",
+      "text": "Run the Carnot cycle backwards and it becomes a refrigerator/heat pump. The performance metric is the **coefficient of performance (COP)** — useful effect over work input:"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\text{Refrigerator: }\\beta=\\frac{Q_{in}}{|W|}=\\frac{T_C}{T_H-T_C}\\qquad\\text{Heat pump: }\\gamma=\\frac{|Q_{out}|}{|W|}=\\frac{T_H}{T_H-T_C}",
+      "caption": "Both for a reversible (Carnot) machine. Note $\\gamma = \\beta + 1$, so the heat pump COP is always larger."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "COP can exceed 1 (unlike $\\eta$). For the **same** two reservoirs, a reversible fridge always has a **lower** COP than a reversible heat pump, because $\\gamma=\\beta+1$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A reversible power cycle runs between $T_1=660$ K and $T_2=300$ K and delivers $\\dot W=10$ MW. The heat input $\\dot Q_1$ is closest to:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$10$ MW"
+          },
+          {
+            "id": "B",
+            "content": "$22$ MW"
+          },
+          {
+            "id": "C",
+            "content": "$18.3$ MW"
+          },
+          {
+            "id": "D",
+            "content": "$8.3$ MW"
+          }
+        ],
+        "correct": "C",
+        "explanation": "$\\eta=1-T_2/T_1=1-300/660=0.545$. Then $\\dot Q_1=\\dot W/\\eta=10/0.545=18.3$ MW (and $\\dot Q_2=-8.3$ MW). **A** assumes $\\eta=1$ (all work). **D** is the rejected heat $|\\dot Q_2|$, not the input. **B** uses $1-T_2/T_1$ upside-down or rounds badly.",
+        "theory": "For a reversible cycle, $\\dot Q_1=\\dot W/\\eta$ with $\\eta=1-T_C/T_H$; first law gives $\\dot Q_2=\\dot W-\\dot Q_1$.",
+        "source": "Tutorial 2, Ex 2.5"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Isentropic efficiency of turbines & compressors"
+    },
+    {
+      "kind": "prose",
+      "text": "Real expanders/compressors are adiabatic but **irreversible**, so entropy increases ($s_2>s_1$). We compare the actual device to an ideal **isentropic** one operating between the **same inlet state and same outlet pressure** (state 2s has $s_{2s}=s_1$).\n\nA **turbine** produces work, so the ideal case gives the **maximum**: real output is smaller. A **compressor** consumes work, so the ideal case gives the **minimum**: real input is larger. Hence the efficiency definitions flip:"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta_{is,t}=\\frac{h_1-h_2}{h_1-h_{2s}}=\\frac{T_1-T_2}{T_1-T_{2s}}\\qquad\\quad \\eta_{is,c}=\\frac{h_{2s}-h_1}{h_2-h_1}=\\frac{T_{2s}-T_1}{T_2-T_1}",
+      "caption": "Turbine: actual$\\div$ideal work (ideal is the bigger). Compressor: ideal$\\div$actual work (ideal is the smaller). Both $<1$. Ideal-gas forms on the right.",
+      "tag": "η_is"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Don't invert the ratio.** For the turbine the actual (smaller) work is on **top**; for the compressor the ideal (smaller) work is on **top**. Get $T_{2s}$ from $T_{2s}=T_1(p_2/p_1)^{(k-1)/k}$ — using the *actual* $T_2$ in the isentropic relation is wrong."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: compressor isentropic efficiency",
+      "text": "**Given:** air, $k=1.4$, $c_p=1004.5$ J/kgK; $p_1=100$ kPa, $T_1=15$ °C$=288$ K; $p_2=400$ kPa; actual $T_2=350$ °C$=623$ K.\n\n**Ideal outlet temperature** (isentropic): $T_{2s}=T_1\\left(\\frac{p_2}{p_1}\\right)^{(k-1)/k}=288\\cdot 4^{0.2857}=288\\cdot1.486=428$ K.\n\n**Efficiency:** $\\eta_{is,c}=\\dfrac{T_{2s}-T_1}{T_2-T_1}=\\dfrac{428-288}{623-288}=\\dfrac{140}{335}=0.42.$\n\nSo the real compressor needs about $1/0.42\\approx2.4\\times$ the ideal work."
+    },
+    {
+      "kind": "heading",
+      "text": "Reversible shaft work (open system)"
+    },
+    {
+      "kind": "prose",
+      "text": "For a steady, internally reversible open system with negligible kinetic/potential energy, combining the first law with the Gibbs equation gives the shaft work as the area to the left of the path on a p-v diagram:\n$$\\left(\\frac{\\dot W_{CV}}{\\dot m}\\right)_{rev}=-\\int_1^2 v\\,dp.$$\nContrast with the closed-system reversible work $W/m=\\int_1^2 p\\,dv$. This is why pumping a liquid (small $v$) costs far less work than compressing a gas between the same pressures."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "An adiabatic steam turbine: $h_1=3200$ kJ/kg, actual $h_2=2400$ kJ/kg, ideal $h_{2s}=2250$ kJ/kg. The isentropic efficiency is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$0.84$"
+          },
+          {
+            "id": "B",
+            "content": "$1.19$"
+          },
+          {
+            "id": "C",
+            "content": "$0.70$"
+          },
+          {
+            "id": "D",
+            "content": "$0.94$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "$\\eta_{is,t}=\\frac{h_1-h_2}{h_1-h_{2s}}=\\frac{3200-2400}{3200-2250}=\\frac{800}{950}=0.84$. **B** inverts the ratio (the compressor form). **C** uses $\\frac{h_2-h_{2s}}{h_1-h_{2s}}$, the wrong numerator. **D** divides actual drop by an inlet value, nonsense. The actual enthalpy drop is always smaller than the isentropic one for a turbine.",
+        "theory": "Turbine isentropic efficiency = actual work $\\div$ ideal (isentropic) work, both between the same inlet and same outlet pressure; ideal is larger so $\\eta<1$.",
+        "source": "Lecture 2, isentropic efficiency"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "The **Kelvin-Planck** statement says it is impossible for a system in a cycle to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "transfer heat from a cold to a hot reservoir with no work input"
+        },
+        {
+          "id": "B",
+          "content": "produce net work while exchanging heat with a single reservoir only"
+        },
+        {
+          "id": "C",
+          "content": "have an efficiency higher than a Carnot cycle"
+        },
+        {
+          "id": "D",
+          "content": "undergo a process with $\\sigma<0$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Kelvin-Planck forbids a single-reservoir engine: some heat must be rejected to a cold reservoir, so $\\eta<1$. **A** is the **Clausius** statement (about refrigerators). **C** is a Carnot corollary, a consequence not the statement itself. **D** is the entropy-production form of the 2nd law, again a consequence. Only **B** is the Kelvin-Planck statement.",
+      "theory": "Kelvin-Planck = no work from one reservoir; Clausius = no free heat cold$\\to$hot. They are equivalent statements of the 2nd law.",
+      "source": "Lecture 2"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Two thermal reservoirs at $T_1=400$ °C and $T_2=100$ °C directly exchange $200$ kJ of heat (no engine). The entropy production is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0$ J/K"
+        },
+        {
+          "id": "B",
+          "content": "$239$ J/K"
+        },
+        {
+          "id": "C",
+          "content": "$-239$ J/K"
+        },
+        {
+          "id": "D",
+          "content": "$536$ J/K"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Convert to kelvin: $T_1=673$ K, $T_2=373$ K. $\\sigma=-\\frac{200000}{673}+\\frac{200000}{373}=-297.2+536.2=239$ J/K. **A** ignores the finite $\\Delta T$ irreversibility. **C** flips signs (heat leaves the hot reservoir $\\to$ negative). **D** keeps only the cold-reservoir term. **Trap:** using °C instead of K gives a wildly wrong number.",
+      "theory": "Heat across a finite $\\Delta T$ is externally irreversible: $\\sigma=\\sum Q_i/T_i$, with heat into a reservoir positive, out negative; temperatures in kelvin.",
+      "source": "Quiz Q10 / Tutorial 2 Ex 2.2"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In a closed system during a **reversible** process, the relation between entropy production $\\sigma$ and entropy change $\\Delta S$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\sigma=\\Delta S$"
+        },
+        {
+          "id": "B",
+          "content": "$\\sigma>0$ always"
+        },
+        {
+          "id": "C",
+          "content": "$\\sigma=0$"
+        },
+        {
+          "id": "D",
+          "content": "$\\Delta S=0$ always"
+        }
+      ],
+      "correct": "C",
+      "explanation": "By definition $\\sigma=0$ for any reversible process; $\\sigma>0$ only for irreversible ones. **B** describes an irreversible process. **D** is false: $\\Delta S$ can be +, − or 0 in a reversible process (it depends on heat exchanged). **A** would only hold for an isolated/adiabatic system where the transfer term vanishes. The sign of $\\Delta S$ is not fixed by reversibility.",
+      "theory": "$\\sigma=\\Delta S-\\sum Q_i/T_i\\ge0$; $\\sigma=0$ reversible, $>0$ irreversible. $\\Delta S$ itself is a state change and can have any sign.",
+      "source": "Quiz Q3"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Air ($k=1.4$, $c_p=1004.5$) enters a compressor at $100$ kPa, $15$ °C and leaves at $400$ kPa, $350$ °C. Its isentropic efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.42$"
+        },
+        {
+          "id": "B",
+          "content": "$0.69$"
+        },
+        {
+          "id": "C",
+          "content": "$2.39$"
+        },
+        {
+          "id": "D",
+          "content": "$0.58$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$T_{2s}=288\\cdot4^{0.2857}=428$ K. $\\eta_{is,c}=\\frac{T_{2s}-T_1}{T_2-T_1}=\\frac{428-288}{623-288}=\\frac{140}{335}=0.42$. **C** inverts the ratio (turbine-style), giving $>1$, impossible. **B**/**D** come from wrong $T_{2s}$ (e.g. forgetting the $(k-1)/k$ exponent or using $c_v$). Always compute $T_{2s}$ from the isentropic relation, not the actual $T_2$.",
+      "theory": "Compressor: $\\eta_{is,c}=(h_{2s}-h_1)/(h_2-h_1)=(T_{2s}-T_1)/(T_2-T_1)$ with $T_{2s}=T_1(p_2/p_1)^{(k-1)/k}$.",
+      "source": "Quiz Q4"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A rigid tank holds air at $2.5$ bar, $20$ °C. It is heated until the pressure reaches $5$ bar. The final temperature is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$40$ °C"
+        },
+        {
+          "id": "B",
+          "content": "$586$ °C"
+        },
+        {
+          "id": "C",
+          "content": "$313$ °C"
+        },
+        {
+          "id": "D",
+          "content": "$146$ °C"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Rigid tank $\\Rightarrow$ $V$ const, so $p/T$ const: $T_2=T_1\\,p_2/p_1=293\\cdot(5/2.5)=586$ K $=313$ °C. **A** doubles 20 °C (wrong, must use kelvin). **B** reports the kelvin value as if it were °C. **D** halves incorrectly. **Trap:** the proportionality $p\\propto T$ holds only in **kelvin**.",
+      "theory": "Closed rigid system: $V=$ const $\\Rightarrow$ $p_1/T_1=p_2/T_2$ (kelvin). Convert °C$\\to$K before ratioing.",
+      "source": "Quiz Q12"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Which set lists only **path** functions?",
+      "options": [
+        {
+          "id": "A",
+          "content": "entropy, internal energy, enthalpy"
+        },
+        {
+          "id": "B",
+          "content": "temperature, pressure, volume"
+        },
+        {
+          "id": "C",
+          "content": "work, heat, entropy production"
+        },
+        {
+          "id": "D",
+          "content": "work, heat, entropy"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Work, heat and entropy production all depend on the path taken, not just end states. **A** and **B** are state functions. **D** is a trap: **entropy $S$ is a state function**, but entropy **production $\\sigma$** is a path function — they are different things.",
+      "theory": "State functions depend only on the state ($p,T,v,u,h,s$). Path functions depend on the process ($W$, $Q$, $\\sigma$).",
+      "source": "Quiz Q14"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a reversible refrigerator and a reversible heat pump operating between the **same** two reservoirs, the COPs satisfy:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\gamma=\\beta$"
+        },
+        {
+          "id": "B",
+          "content": "$\\beta=\\gamma+1$"
+        },
+        {
+          "id": "C",
+          "content": "$\\gamma=\\beta+1$"
+        },
+        {
+          "id": "D",
+          "content": "$\\beta\\gamma=1$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$\\beta=\\frac{T_C}{T_H-T_C}$ and $\\gamma=\\frac{T_H}{T_H-T_C}$, so $\\gamma-\\beta=\\frac{T_H-T_C}{T_H-T_C}=1$, i.e. $\\gamma=\\beta+1$. The fridge COP is always **lower**. **A** ignores that the useful heat differs (cold-side vs hot-side). **B** reverses the inequality. **D** has no physical basis.",
+      "theory": "Same machine, two useful effects: $|Q_{out}|=Q_{in}+|W|$, so dividing by $|W|$ gives $\\gamma=\\beta+1$.",
+      "source": "Quiz Q13 / Lecture 2 slide 26"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "$1$ kg air ($R=287$ J/kgK) is compressed isothermally at $400$ K from $1$ to $10$ bar. The **system** entropy change is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$+660.9$ J/K"
+        },
+        {
+          "id": "B",
+          "content": "$-660.9$ J/K"
+        },
+        {
+          "id": "C",
+          "content": "$-661$ kJ/K"
+        },
+        {
+          "id": "D",
+          "content": "$0$ J/K"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Isothermal $\\Rightarrow$ $\\Delta S=mR\\ln(p_1/p_2)=1\\cdot287\\cdot\\ln(0.1)=-660.9$ J/K. Compression lowers entropy. **A** flips the sign (used $p_2/p_1$). **C** is a units error (J vs kJ off by 1000). **D** wrongly assumes isothermal means constant entropy — only adiabatic-reversible is isentropic.",
+      "theory": "Isothermal ideal gas: $\\Delta S=mR\\ln(v_2/v_1)=mR\\ln(p_1/p_2)$. State function — independent of how reversibly it's done.",
+      "source": "Tutorial 2 Ex 2.1"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An adiabatic, internally reversible process for an ideal gas is always:",
+      "options": [
+        {
+          "id": "A",
+          "content": "isothermal"
+        },
+        {
+          "id": "B",
+          "content": "isobaric"
+        },
+        {
+          "id": "C",
+          "content": "isochoric"
+        },
+        {
+          "id": "D",
+          "content": "isentropic"
+        }
+      ],
+      "correct": "D",
+      "explanation": "Adiabatic ($\\delta Q=0$) + internally reversible $\\Rightarrow$ $dS=\\delta Q_{rev}/T=0$, so $s=$ const: isentropic. **A/B/C** describe other constraints with no reason to hold here; an isentropic ideal-gas expansion changes $T$, $p$ and $v$ simultaneously via $pv^k=$const.",
+      "theory": "Isentropic = adiabatic + internally reversible. For an ideal gas this gives $pv^k=$const and $T_2/T_1=(p_2/p_1)^{(k-1)/k}$.",
+      "source": "Lecture 2 slide 59"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A reversible power cycle exchanges heat with **three** reservoirs: $Q_1=1200$ kJ at $400$ K, $Q_2$ at $300$ K, $Q_3$ at $200$ K, with net work $120$ kJ. Then $Q_3$ equals:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$-1440$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$+1080$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$+360$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$-360$ kJ"
+        }
+      ],
+      "correct": "C",
+      "explanation": "First law: $Q_1+Q_2+Q_3=W=120$. Reversible: $\\frac{Q_1}{400}+\\frac{Q_2}{300}+\\frac{Q_3}{200}=0$. Solving: $Q_2=-1440$ kJ, $Q_3=+360$ kJ. **A** is $Q_2$, not $Q_3$. **D** flips the sign. **B** ignores the entropy equation. Use both the 1st-law and zero-$\\sigma$ equations together.",
+      "theory": "Reversible cycle: $\\Delta S_{cycle}=0\\Rightarrow\\sum Q_i/T_i=0$, combined with $\\sum Q_i=W_{net}$.",
+      "source": "Tutorial 2 Ex 2.14"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "On a $T$-$s$ diagram, the area **under** an internally reversible process path represents:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the work done"
+        },
+        {
+          "id": "B",
+          "content": "the heat transferred"
+        },
+        {
+          "id": "C",
+          "content": "the change in enthalpy"
+        },
+        {
+          "id": "D",
+          "content": "the entropy production"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$Q_{rev}=\\int_1^2 T\\,dS$ — the area under the curve. **A** is the area under the $p$-$v$ curve (closed system) or enclosed area (cycle work). **C/D** are not areas on a $T$-$s$ plot. The **enclosed** area of a reversible cycle equals the net work.",
+      "theory": "$\\delta Q_{rev}=T\\,dS$; on $T$-$s$ axes heat = area under the path, cycle work = enclosed area.",
+      "source": "Lecture 2 slide 61 / Ex 2.16"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The work-per-unit-mass formula $\\int_1^2 p\\,dv$ for a closed system is valid:",
+      "options": [
+        {
+          "id": "A",
+          "content": "for any process"
+        },
+        {
+          "id": "B",
+          "content": "only for a reversible (quasi-static) process"
+        },
+        {
+          "id": "C",
+          "content": "only for an adiabatic process"
+        },
+        {
+          "id": "D",
+          "content": "only for an ideal gas"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Only in a reversible (quasi-equilibrium) process is the pressure well-defined throughout, so $p=p(v)$ exists and the integral is meaningful. **A** fails for irreversible processes (e.g. free expansion does no work even though $\\int p\\,dv\\ne0$). **C/D** are unrelated restrictions; the rule applies to any substance, reversibly.",
+      "theory": "$W=\\int p\\,dv$ requires a defined path $p(v)$, i.e. a quasi-static/reversible process.",
+      "source": "Quiz Q2"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "$1$ kmol of air ($k=1.4$) at $340$ K undergoes an adiabatic free (Joule) expansion to double its volume, $W=0$. The gas entropy change is closest to ($\\bar R=8.314$ kJ/kmolK):",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0$ kJ/K"
+        },
+        {
+          "id": "B",
+          "content": "$+5.76$ kJ/K"
+        },
+        {
+          "id": "C",
+          "content": "$-5.76$ kJ/K"
+        },
+        {
+          "id": "D",
+          "content": "$+2.43$ kJ/K"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Free expansion: $Q=W=0$ $\\Rightarrow$ $\\Delta U=0$ $\\Rightarrow$ $T_2=T_1$. Then $\\Delta S=n\\bar R\\ln(V_2/V_1)=1\\cdot8.314\\cdot\\ln2=+5.76$ kJ/K. **A** wrongly treats it as isentropic — but a free expansion is irreversible, so $\\sigma=\\Delta S>0$. **C** flips the sign. **D** mistakenly uses $c_v\\ln(T_2/T_1)$ which is zero, plus an arithmetic slip.",
+      "theory": "Free expansion of an ideal gas: $T$ unchanged, $\\Delta S=nR\\ln(V_2/V_1)>0=\\sigma$ (isolated, irreversible).",
+      "source": "Tutorial 2 Ex 2.10b"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a turbine, the **maximum** specific work between a fixed inlet state and a fixed exit pressure is obtained when the exit state has:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the same entropy as the inlet ($s_2=s_1$)"
+        },
+        {
+          "id": "B",
+          "content": "the same enthalpy as the inlet"
+        },
+        {
+          "id": "C",
+          "content": "the highest possible entropy"
+        },
+        {
+          "id": "D",
+          "content": "the same temperature as the inlet"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Adiabatic turbine: $\\dot\\sigma/\\dot m=s_2-s_1\\ge0$, so the smallest allowed $s_2$ is $s_1$ (isentropic, $\\sigma=0$). At fixed exit pressure, minimum $s$ gives minimum $h_2$, hence maximum $w=h_1-h_2$. **C** gives the *least* work. **B/D** would force no useful expansion. The real (irreversible) turbine has $s_2>s_1$ and produces less.",
+      "theory": "Adiabatic device: $s_{out}\\ge s_{in}$; the reversible (isentropic) limit gives max turbine work / min compressor work.",
+      "source": "Lecture 2 slide 66"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The efficiency of a Carnot engine between $T_H=600$ K and $T_C=300$ K is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.25$"
+        },
+        {
+          "id": "B",
+          "content": "$2.0$"
+        },
+        {
+          "id": "C",
+          "content": "$0.50$"
+        },
+        {
+          "id": "D",
+          "content": "$1.0$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$\\eta=1-T_C/T_H=1-300/600=0.50$. **D** would require $T_C=0$ K. **B** is the ratio $T_H/T_C$, not an efficiency. **A** comes from $1-T_H/T_C$ done backwards or other slip. Carnot efficiency depends only on the two kelvin temperatures and is always $<1$.",
+      "theory": "$\\eta_{Carnot}=1-T_C/T_H$ (kelvin); maximum for any cycle between those reservoirs.",
+      "source": "Lecture 2"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Isothermal compression: three irreversibility levels",
+      "meta": "Tutorial 2 · closed system entropy production · written-test style",
+      "difficulty": "hard",
+      "statement": "1 kg of air ($R=287$ J/kgK) is compressed isothermally from $p_1=1$ bar to $p_2=10$ bar at $T=127$ °C $=400$ K. Find $\\Delta S_{gas}$, $\\Delta S_{res}$ and $\\sigma$ for: (a) a fully reversible process with a reservoir at 400 K; (b) the same gas process but with the reservoir at 27 °C $=300$ K; (c) the case in (b) with 20% extra friction work.",
+      "given": "$m=1$ kg, $R=287$ J/kgK, $T=400$ K const, $p_1=1$ bar, $p_2=10$ bar.",
+      "steps": [
+        {
+          "title": "Work and heat (system)",
+          "content": "Isothermal ideal gas, $\\Delta U=0$: $W_{12}=mRT\\ln\\frac{p_1}{p_2}=287\\cdot400\\cdot\\ln(0.1)=-264.34$ kJ. First law $\\Rightarrow$ $Q_{12}=W_{12}=-264.34$ kJ (heat leaves the gas)."
+        },
+        {
+          "title": "System entropy (same for all cases)",
+          "content": "$\\Delta S_{gas}=mR\\ln\\frac{p_1}{p_2}=287\\cdot\\ln(0.1)=-660.85$ J/K. It is a state function, so this value never changes."
+        },
+        {
+          "title": "(a) Reservoir 400 K",
+          "content": "$\\Delta S_{res}=-Q_{12}/T=+264340/400=+660.85$ J/K. $\\sigma=\\Delta S_{gas}+\\Delta S_{res}=-660.85+660.85=0$. Fully reversible."
+        },
+        {
+          "title": "(b) Reservoir 300 K",
+          "content": "$\\Delta S_{res}=+264340/300=+881.13$ J/K. $\\sigma=-660.85+881.13=+220.3$ J/K. Externally irreversible (heat crosses a finite $\\Delta T$)."
+        },
+        {
+          "title": "(c) +20% friction, reservoir 300 K",
+          "content": "$W''=1.2\\cdot W_{12}=-317.21$ kJ $=Q''$. $\\Delta S_{res}=+317210/300=+1057.37$ J/K. $\\sigma=-660.85+1057.37=+396.5$ J/K — largest, internal + external irreversibility."
+        },
+        {
+          "title": "Interpretation",
+          "content": "$\\sigma$ grows as we add irreversibility while $\\Delta S_{gas}$ is fixed: irreversibility shows up entirely in the surroundings/reservoir term."
+        }
+      ],
+      "finalAnswer": "(a) $\\Delta S_{gas}=-660.85$ J/K, $\\Delta S_{res}=+660.85$ J/K, $\\sigma=0$. (b) $\\sigma=+220.3$ J/K. (c) $\\sigma=+396.5$ J/K.",
+      "tips": "Compute $\\Delta S_{gas}$ once — it's a state function. Heat into the SYSTEM is negative here, so heat into the reservoir is positive. Always kelvin."
+    },
+    {
+      "title": "Adiabatic process: direction and work from σ≥0",
+      "meta": "Tutorial 2 · 2nd law fixes process direction · numeric",
+      "difficulty": "medium",
+      "statement": "A closed system of ideal gas ($R=2071$ J/kgK, $c_v=3150$ J/kgK) undergoes an adiabatic ($Q=0$) process between state A ($p_A=7$ bar, $V_A=0.085$ m³) and state B ($p_B=1$ bar, $V_B=0.28$ m³). Determine the spontaneous direction and the work exchanged.",
+      "given": "$R=2071$, $c_v=3150$ J/kgK, A: 7 bar/0.085 m³, B: 1 bar/0.28 m³, $Q=0$.",
+      "steps": [
+        {
+          "title": "mT at each state",
+          "content": "From $pV=mRT$: $mT_A=p_AV_A/R=700000\\cdot0.085/2071=28.73$ kgK; $mT_B=p_BV_B/R=100000\\cdot0.28/2071=13.52$ kgK."
+        },
+        {
+          "title": "Work (assume A→B)",
+          "content": "Adiabatic: $W_{AB}=U_A-U_B=mc_v(T_A-T_B)=c_v(mT_A-mT_B)=3150\\cdot(28.73-13.52)=47.91$ kJ."
+        },
+        {
+          "title": "Check direction with the 2nd law",
+          "content": "Adiabatic $\\Rightarrow$ $\\sigma=m(s_B-s_A)$. Per unit mass: $s_B-s_A=c_v\\ln\\frac{T_B}{T_A}+R\\ln\\frac{V_B}{V_A}=c_v\\ln\\frac{mT_B}{mT_A}+R\\ln\\frac{V_B}{V_A}=3150\\ln(13.52/28.73)+2071\\ln(0.28/0.085)=+94.5$ J/kgK $>0$."
+        },
+        {
+          "title": "Conclude",
+          "content": "$\\sigma>0$ for A$\\to$B, so this is the real (irreversible) direction. The reverse B$\\to$A would give $\\sigma<0$ (impossible)."
+        }
+      ],
+      "finalAnswer": "Process goes A$\\to$B with $W=+47.91$ kJ (gas does work); $\\sigma>0$ confirms it. B$\\to$A is impossible.",
+      "tips": "For an adiabatic closed system $\\sigma=\\Delta S_{sys}$ directly. Use $mT$ products to dodge needing $m$ and $T$ separately. A negative $\\sigma$ means you assumed the wrong direction."
+    },
+    {
+      "title": "Counterflow-style heat exchanger: entropy production",
+      "meta": "Tutorial 2 · open system, two streams · numeric",
+      "difficulty": "medium",
+      "statement": "In an adiabatic heat exchanger, hot stream 1 ($\\dot m_1=1$ kg/s, $c_{p1}=1500$ J/kgK) cools from 130 °C to 60 °C, heating cold stream 2 ($\\dot m_2=0.7$ kg/s, $c_{p2}=4186$ J/kgK) from 30 °C. Find $T_{2e}$, the internal heat duty, the two stream entropy rates, and $\\dot\\sigma_{CV}$.",
+      "given": "$\\dot Q_{CV}=0$, $\\dot W_{CV}=0$; stream 1: 403$\\to$333 K; stream 2: 303 K in.",
+      "steps": [
+        {
+          "title": "Outlet temperature of cold stream",
+          "content": "Energy balance: $\\dot m_1c_{p1}(T_{1i}-T_{1e})=\\dot m_2c_{p2}(T_{2e}-T_{2i})$. $T_{2e}=303+\\frac{1\\cdot1500\\cdot(403-333)}{0.7\\cdot4186}=303+35.8=338.8$ K $(=65.8$ °C)."
+        },
+        {
+          "title": "Heat duty",
+          "content": "$\\dot Q_{h\\to c}=\\dot m_1c_{p1}(T_{1i}-T_{1e})=1\\cdot1500\\cdot70=105$ kW."
+        },
+        {
+          "title": "Stream entropy rates",
+          "content": "$\\Delta\\dot S_1=\\dot m_1c_{p1}\\ln\\frac{T_{1e}}{T_{1i}}=1500\\ln(333/403)=-286$ W/K. $\\Delta\\dot S_2=\\dot m_2c_{p2}\\ln\\frac{T_{2e}}{T_{2i}}=0.7\\cdot4186\\ln(338.8/303)=+328$ W/K."
+        },
+        {
+          "title": "Entropy production",
+          "content": "Adiabatic CV: $\\dot\\sigma_{CV}=\\Delta\\dot S_1+\\Delta\\dot S_2-\\dot Q_{CV}/T=-286+328-0=+42$ W/K $>0$."
+        }
+      ],
+      "finalAnswer": "$T_{2e}=338.8$ K (65.8 °C), $\\dot Q=105$ kW, $\\Delta\\dot S_1=-286$ W/K, $\\Delta\\dot S_2=+328$ W/K, $\\dot\\sigma=+42$ W/K.",
+      "tips": "Adiabatic exchanger: $\\dot Q_{CV}=0$ for the whole device (heat is internal). Use $c_p\\ln(T_{out}/T_{in})$ per stream since $p\\approx$const; sum gives $\\dot\\sigma\\ge0$."
+    },
+    {
+      "title": "Reversible cycle on a T-s diagram",
+      "meta": "Tutorial 2 · graphical reversible cycle · conceptual + numeric",
+      "difficulty": "medium",
+      "statement": "A reversible power cycle is drawn as a triangle on the $T$-$s$ plane with corners at $(s=500$ J/K, $T=300$ K), $(s=1000$ J/K, $T=300$ K) and $(s=500$ J/K, $T=400$ K). Sketch the cycle, explain why areas give heat and work, and compute the thermal efficiency.",
+      "given": "Reversible cycle, $T_{max}=400$ K, $T_{min}=300$ K, $s$ from 500 to 1000 J/K.",
+      "steps": [
+        {
+          "title": "Why areas matter",
+          "content": "For a reversible path $\\delta Q=T\\,dS$, so heat added = area under the upper boundary, and net work = area enclosed by the cycle (since $W_{cycle}=Q_{cycle}$ over a loop)."
+        },
+        {
+          "title": "Heat input",
+          "content": "Heat is supplied along the rising-temperature/entropy edges. $Q_{in}=$ area under the heat-addition path $=\\frac{(400+300)}{2}\\cdot(1000-500)=175000$ J $=175$ kJ."
+        },
+        {
+          "title": "Net work",
+          "content": "Enclosed (triangular) area: $W_{cycle}=\\frac{(400-300)\\cdot(1000-500)}{2}=25000$ J $=25$ kJ."
+        },
+        {
+          "title": "Efficiency",
+          "content": "$\\eta=W_{cycle}/Q_{in}=25/175=0.143=14.3\\%$. (Less than the Carnot value $1-300/400=0.25$, because this is not a rectangle.)"
+        }
+      ],
+      "finalAnswer": "$Q_{in}=175$ kJ, $W_{cycle}=25$ kJ, $\\eta=14.3\\%$.",
+      "tips": "On $T$-$s$ axes: area under path = heat, enclosed area = net work. Only a rectangle (two isotherms + two isentropes = Carnot) reaches $1-T_C/T_H$."
+    },
+    {
+      "title": "Compare and derive the Carnot machines (open-ended)",
+      "meta": "Tutorial 2 · concept · describe / derive / draw",
+      "difficulty": "hard",
+      "statement": "Describe the Carnot cycle and draw it on both $p$-$v$ and $T$-$s$ diagrams. Derive $\\eta=1-T_C/T_H$ from $\\sigma_{cycle}=0$. Then state and justify the COP expressions for the reversed (refrigerator and heat-pump) cycle, and explain why $\\gamma=\\beta+1$.",
+      "given": "Fully reversible cycle between reservoirs $T_H$ and $T_C$ (kelvin).",
+      "steps": [
+        {
+          "title": "The four processes",
+          "content": "1$\\to$2 isothermal expansion at $T_H$ (absorbs $Q_{in}$); 2$\\to$3 adiabatic expansion $T_H\\to T_C$; 3$\\to$4 isothermal compression at $T_C$ (rejects $Q_{out}$); 4$\\to$1 adiabatic compression $T_C\\to T_H$."
+        },
+        {
+          "title": "Diagrams",
+          "content": "On $p$-$v$: two hyperbola-like isotherms joined by two steeper adiabats, enclosing the work area. On $T$-$s$: a **rectangle** — horizontal isotherms at $T_H$ and $T_C$, vertical isentropes; enclosed area $=(T_H-T_C)\\Delta s=W_{net}$."
+        },
+        {
+          "title": "Derive efficiency",
+          "content": "Reversible cycle: $\\sigma=\\Delta S_{cycle}-\\frac{Q_{in}}{T_H}-\\frac{Q_{out}}{T_C}=0$ with $\\Delta S_{cycle}=0$ $\\Rightarrow$ $\\frac{Q_{out}}{Q_{in}}=-\\frac{T_C}{T_H}$. Then $\\eta=1+\\frac{Q_{out}}{Q_{in}}=1-\\frac{T_C}{T_H}$."
+        },
+        {
+          "title": "Reversed cycle COPs",
+          "content": "Refrigerator (useful = $Q_{in}$ from cold): $\\beta=\\frac{Q_{in}}{|W|}=\\frac{T_C}{T_H-T_C}$. Heat pump (useful = $|Q_{out}|$ to hot): $\\gamma=\\frac{|Q_{out}|}{|W|}=\\frac{T_H}{T_H-T_C}$, using the same $Q/T$ reversibility relation."
+        },
+        {
+          "title": "Why γ = β + 1",
+          "content": "Energy balance $|Q_{out}|=Q_{in}+|W|$. Divide by $|W|$: $\\gamma=\\beta+1$. The heat pump delivers the cold-side heat **plus** the work, so its COP always exceeds the fridge's by exactly one."
+        }
+      ],
+      "finalAnswer": "$\\eta=1-T_C/T_H$; $\\beta=T_C/(T_H-T_C)$; $\\gamma=T_H/(T_H-T_C)=\\beta+1$; Carnot is a rectangle on $T$-$s$.",
+      "tips": "Anchor every result in $\\sigma=0$ and the $Q/T$ balance. Remember T-s rectangle $\\Rightarrow$ Carnot; keep all temperatures in kelvin; useful effect defines which COP you write."
+    }
+  ],
+  "title": "Second Law & Entropy",
+  "summary": "From the Kelvin-Planck and Clausius statements to entropy production $\\sigma\\ge0$: this lesson builds the second law from scratch. You'll learn entropy as a state property, the closed- and open-system entropy balances, reservoir entropy, the Carnot cycle and its efficiency, COP of reversible fridges/heat pumps, isentropic processes, the Gibbs equations, T-s diagrams, and the isentropic efficiency of turbines and compressors — with every formula tied to a worked number.",
+  "minutes": 55,
+  "objectives": [
+    "State the Kelvin-Planck and Clausius statements and explain why they are equivalent",
+    "Distinguish reversible, internally reversible and irreversible processes and identify sources of irreversibility",
+    "Compute entropy production $\\sigma$ for closed and open systems and use $\\sigma\\ge0$ to test feasibility and find process direction",
+    "Apply the Gibbs equations to find entropy changes of ideal gases, incompressible substances and water",
+    "Derive and use Carnot efficiency $\\eta=1-T_C/T_H$ and the reversible COPs $\\beta$ and $\\gamma$",
+    "Read T-s diagrams (heat = area under path, work = enclosed area) and identify isentropic processes",
+    "Compute isentropic efficiency of turbines and compressors without inverting the ratio"
+  ]
+}

@@ -1,0 +1,391 @@
+{
+  "title": "Module H: Cryptography as national defence",
+  "summary": "How cryptography becomes a strategic capability for states — defensive, offensive, and sovereign — told through historical cases (Mary Stuart, Zimmermann, Enigma/Ultra, Crypto AG) and the modern story of public-key crypto, open standards, and the Crypto Wars.",
+  "minutes": 22,
+  "objectives": [
+    "Explain why cryptography is a national defence capability with defensive, offensive/intelligence, and sovereign dimensions",
+    "Describe the four factors that shift the balance between secrecy and exposure: mathematics, machines, organizations, and war",
+    "Use historical cases to show how states exploit weak crypto and hide cryptanalytic breakthroughs",
+    "Explain Diffie-Hellman key exchange and the RSA trapdoor at an intuitive level",
+    "Contrast secret/opaque standardization (DES) with open competition (AES) and explain transparency as a source of trust",
+    "Explain the Crypto Wars, key escrow, and why cryptographic sovereignty matters (including sovereign standards like China's SM)"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Cryptography is more than a security tool — it is state power"
+    },
+    {
+      "kind": "prose",
+      "text": "Most security courses ask: *is this system secure?* This module asks a sharper question:\n\n- **If a system is secure publicly, is it secure against a state?**\n\nThe answer the slides give is: not necessarily. **Public security is not the same as security against state-level capabilities.** A state can bring resources — mathematicians, computers, intelligence agencies, decades of classified research — that ordinary attackers cannot."
+    },
+    {
+      "kind": "definition",
+      "term": "Cryptography as a national capability",
+      "text": "For a state, cryptography splits into **three aspects**:\n\n- **Defensive capability** — protect the state's own military, diplomatic, and industrial secrets.\n- **Offensive / intelligence capability** — read, alter, or exploit *other* people's secrets (this is cryptanalysis).\n- **Sovereign capability** — do not *blindly depend* on algorithms, products, standards, hardware, firmware, or suppliers you cannot control."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Cybersecurity protects systems; national defence protects state power.** Cybersecurity focuses on systems, data, users, networks, services. National defence focuses on sovereignty, command, intelligence, military operations, and critical functions. Same math, much higher stakes."
+    },
+    {
+      "kind": "heading",
+      "text": "2. An arms race, and what shifts the balance"
+    },
+    {
+      "kind": "prose",
+      "text": "The history of cryptography is **not linear progress** — it is a continuous competition:\n\n- **Code-makers** design systems to protect secrets.\n- **Code-breakers** search for weaknesses and exploit them.\n\nWhen a system is broken, it must evolve or become useless. This is an evolutionary arms race."
+    },
+    {
+      "kind": "definition",
+      "term": "The four balance-shifting factors",
+      "text": "The balance between secrecy and exposure changes when new capabilities appear in four areas:\n\n- **1. Mathematics** — frequency analysis, probability, number theory, computational theory.\n- **2. Machines** — telegraph, radio, rotor machines, computers, quantum computers.\n- **3. Organizations** — cryptanalysis as a *state function*: cipher bureaus, black chambers, intelligence agencies.\n- **4. War and political pressure** — war accelerates innovation and rewards secrecy."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "**The paradox of cryptanalysis:** if you reveal that you can break a system, the adversary changes the system. So the capability must stay hidden. This creates a structural tension — **public science rewards disclosure; intelligence rewards silence.** Remember this; almost every case below is an example of it."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Which of the following is NOT one of the four factors the lecture says shifts the balance between code-makers and code-breakers?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Mathematics"
+          },
+          {
+            "id": "B",
+            "content": "Machines"
+          },
+          {
+            "id": "C",
+            "content": "Market competition between vendors"
+          },
+          {
+            "id": "D",
+            "content": "War and political pressure"
+          }
+        ],
+        "correct": "C",
+        "explanation": "The four factors are **mathematics, machines, organizations, and war/political pressure**. 'Market competition between vendors' is not on the list — it is a distractor. A, B, and D are all genuine factors; the missing one in the options is 'organizations'."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "3. Case 0 — Mary Stuart and the Babington Plot (1586)"
+    },
+    {
+      "kind": "prose",
+      "text": "England, late 16th century. Mary Stuart, the Catholic Queen of Scots, is imprisoned and seen as a rival to the Protestant Queen Elizabeth I. The **Babington Plot** aimed to assassinate Elizabeth, free Mary, and put Mary on the throne. The conspirators used **encrypted letters** to coordinate with Mary."
+    },
+    {
+      "kind": "prose",
+      "text": "Two things doomed them:\n\n- **The channel was already compromised.** Walsingham's intelligence network controlled the courier route: letters were intercepted, secretly copied, resealed, and delivered — Mary never knew. *Encryption does not secure a compromised communication system.*\n- **The cipher only looked strong.** Mary used a **nomenclator** — symbols for letters plus symbols for common words, with 'null' symbols to confuse analysis. It looked sophisticated but still leaked linguistic structure. Walsingham's cryptanalyst Thomas Phelippes reconstructed the plaintext."
+    },
+    {
+      "kind": "definition",
+      "term": "Nomenclator",
+      "text": "A hybrid cipher where symbols substitute for individual letters, plus extra symbols stand for whole common words or phrases, often padded with meaningless 'null' symbols. It can look complex while still preserving repetitions and contextual patterns that a skilled cryptanalyst can exploit."
+    },
+    {
+      "kind": "example",
+      "text": "**From decryption to deception.** Walsingham did not stop the plot once he could read it. He *waited* to gather names, and even had **forged postscripts** added to letters to draw out more conspirators. The decrypted letters became legal evidence: Babington and the others were executed, and Mary was tried for treason and executed in 1587. Cryptanalysis became an active instrument of state power — combined with human intelligence, interception, deception, and legal exploitation."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Common misconception:** 'No encryption is the worst case.' Not here. **Weak encryption *believed* to be strong is worse than no encryption.** With no encryption, users self-censor. With weak-but-trusted encryption, users speak openly while the adversary reads silently — exactly what trapped Mary. A strong algorithm also cannot save you if the *channel, endpoints, people, and procedures* are compromised."
+    },
+    {
+      "kind": "heading",
+      "text": "4. Case 1 — The Zimmermann Telegram (1917)"
+    },
+    {
+      "kind": "prose",
+      "text": "Early 1917, World War I stalemate. Germany planned **unrestricted submarine warfare** to cut British supply lines and wanted to win before the still-neutral United States could intervene. In a coded diplomatic message to Mexico, Germany proposed that if the U.S. entered the war, Mexico should join Germany — and could recover Texas, New Mexico, and Arizona. The goal was strategic distraction: tie the U.S. down on its southern border."
+    },
+    {
+      "kind": "prose",
+      "text": "**Why it was vulnerable:** Germany's own Atlantic cables had been cut, so the message traveled over infrastructure Germany did not control, including British-relayed cable routes. **British intelligence intercepted and decrypted it.** Its disclosure helped shift U.S. public opinion toward entering the war.\n\nLesson: *if your communication path crosses adversary-controlled or third-party infrastructure, secrecy depends on more than encryption.*"
+    },
+    {
+      "kind": "steps",
+      "text": "A ciphertext is **not yet intelligence**. To become usable intelligence it must pass through:",
+      "steps": [
+        {
+          "label": "1",
+          "text": "**Intercept** the ciphertext."
+        },
+        {
+          "label": "2",
+          "text": "**Cryptanalysis** to decrypt it."
+        },
+        {
+          "label": "3",
+          "text": "**Partial reconstruction / interpretation** of meaning."
+        },
+        {
+          "label": "4",
+          "text": "**Confidence assessment** — how sure are we?"
+        },
+        {
+          "label": "5",
+          "text": "**Decision-maker trust / political use** — someone acts on it."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "**The use-it-or-protect-the-source dilemma.** Revealing the telegram could shape U.S. policy — but might expose that Britain could break German codes ('burning the source'). Cryptanalytic intelligence always forces this choice between *acting on it* and *preserving access*."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Case 2 — Crypto AG (Operation Rubicon)"
+    },
+    {
+      "kind": "prose",
+      "text": "Crypto AG was a Swiss maker of encryption machines trusted by governments worldwide for diplomatic, military, and intelligence traffic.\n\n- **1970:** the CIA and West German BND **secretly took control** of the company.\n- **1970s–1990s:** manipulated machines were sold to foreign governments, allegedly designed so U.S. and German intelligence could read the traffic.\n- **2020:** investigative reporting (Washington Post, ZDF, SRF) exposed the operation.\n\nReported targets spanned dozens of states across the Middle East, South Asia, Europe (including Italy and the Vatican), and Latin America."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Why Crypto AG is the textbook sovereignty lesson:** a *supplier-level* compromise scales. One vendor serves dozens of governments; one hidden weakness exposes many networks; a compromised product can run silently for **decades**. Cryptographic procurement is therefore a *strategic* decision about **whom the state is willing to trust** — not just a technical one."
+    },
+    {
+      "kind": "definition",
+      "term": "Cryptographic sovereignty",
+      "text": "The ability to protect state secrets **without blind dependence on actors outside national control.** A sovereign state must be able to trust and govern: which algorithms/standards are used; who implements and verifies them; how keys are generated, stored, rotated, and destroyed; which hardware/firmware runs the crypto; who owns and maintains the products; and how operators actually use the system."
+    },
+    {
+      "kind": "heading",
+      "text": "6. Case 3 — Enigma, Bletchley Park, and Ultra (WWII)"
+    },
+    {
+      "kind": "prose",
+      "text": "Germany relied on the **Enigma** machine to protect huge volumes of military traffic — army, navy, air force, logistics, weather, U-boats. It looked secure because:\n\n- **Dynamic encryption:** rotors stepped after each keypress, so the same plaintext letter produced different ciphertext letters.\n- **Combinatorial explosion:** security depended on rotor order, rotor starting positions, ring settings, and plugboard connections — an enormous search space.\n- **Operational keying:** a **daily key** shared across the network, plus a per-message **message key**.\n\nGerman assumption: complex machine + huge key space + daily procedures ⟹ brute force is infeasible."
+    },
+    {
+      "kind": "prose",
+      "text": "**The Polish breakthrough came first.** Facing a direct German threat, Polish cryptanalysts — Marian Rejewski with Różycki and Zygalski — treated Enigma as a **mathematical machine, not a language puzzle.** They combined: intelligence material (via French intelligence and Hans-Thilo Schmidt); a **procedural weakness** (operators encrypted the message key *twice*, e.g. `PGH` sent as `PGHPGH`, so positions 1&4, 2&5, 3&6 shared structure); mathematical modelling of that repetition; and early mechanized search (the Polish *bomba*). In **July 1939** Poland shared its work with Britain and France."
+    },
+    {
+      "kind": "definition",
+      "term": "Crib",
+      "text": "A guessed fragment of plaintext expected to appear in a message — for example a weather report's standard words, or a fixed report format. Turing's insight at Bletchley was: *don't search blindly.* Use cribs plus known machine properties and logical plaintext–ciphertext relations to automatically eliminate impossible settings."
+    },
+    {
+      "kind": "prose",
+      "text": "Britain scaled this into industrial intelligence production at **Bletchley Park (GC&CS)**. The **Bombe** machine did not 'magically decrypt' — it tested logical constraints derived from cribs to find candidate daily settings *fast enough* for the intelligence to still be useful. The decrypted product, classified **Ultra**, mattered in the Battle of the Atlantic, North Africa, and D-Day."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Exam trap: 'Enigma was broken because the machine was weak.'** No — the *machine* was strong (huge key space, dynamic encryption). It failed as a **system**: repeated message-key procedures, predictable operator choices ('cillies'), stereotyped messages like weather reports, and captured key sheets. **A strong algorithm cannot compensate for weak operational discipline.**"
+    },
+    {
+      "kind": "prose",
+      "text": "**Acting too perfectly burns the source.** If every Allied action were too accurate, Germany would infer Enigma was broken. So Ultra was used indirectly — sending reconnaissance aircraft to 'explain' a sighting, attacking only some targets, sometimes delaying action. **The source can be worth more than any single target.** After 1945 the secret held: captured Enigmas were even distributed to Commonwealth countries who believed them secure, and Britain quietly kept reading their traffic. Alan Turing died before public recognition was possible."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "During WWII, why did the Allies sometimes deliberately *avoid* acting on Enigma-derived (Ultra) intelligence, or stage cover stories like reconnaissance flights?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The Bombe was too slow to decrypt messages in time to act"
+          },
+          {
+            "id": "B",
+            "content": "Acting too perfectly on every message would let Germany infer Enigma was broken and change it"
+          },
+          {
+            "id": "C",
+            "content": "International law forbade using decrypted communications in combat"
+          },
+          {
+            "id": "D",
+            "content": "Ultra intelligence was usually wrong and untrustworthy"
+          }
+        ],
+        "correct": "B",
+        "explanation": "This is the **protect-the-source dilemma**. If the Allies acted with impossible accuracy every time, Germany would conclude Enigma was compromised and switch systems, destroying the long-term advantage. So Ultra was used selectively and with cover stories. A is false (speed mattered but isn't the reason for restraint); C is invented; D is wrong — Ultra was valuable, just not omniscient."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "7. From secret machines to public infrastructure: DES"
+    },
+    {
+      "kind": "prose",
+      "text": "After WWII, cryptography moved from secret machines to **networked computers**. Businesses stored financial records and contracts; early networks like ARPANET connected remote machines. Civilian cryptography needed **interoperability** — if every organization used a different cipher, encrypted data couldn't be exchanged and products wouldn't interoperate. The U.S. National Bureau of Standards sought a common standard; IBM's **Lucifer** (Horst Feistel) became the basis for the **Data Encryption Standard (DES)**, published as FIPS PUB 46 in 1977."
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "text": "**DES created a trust problem.** The **NSA** was involved in evaluating and modifying it, the key was limited to **56 bits** (researchers feared brute force was feasible for state-level actors), and several design choices were never explained publicly. A public standard can still depend on **classified, opaque choices** — and opacity breeds suspicion."
+    },
+    {
+      "kind": "prose",
+      "text": "DES was also **symmetric**: Alice and Bob still needed the *same* secret key. It standardized the algorithm but did **not** solve **key distribution** — how to get the shared key to both parties securely. In a networked world this becomes a bottleneck: with $n$ users needing pairwise keys you get $\\frac{n(n-1)}{2}$ key relationships. 5 users → 10 relationships; 1000 users → a key-management explosion. Couriers don't scale."
+    },
+    {
+      "kind": "heading",
+      "text": "8. Case 4 — Public-key cryptography (and its classified prehistory)"
+    },
+    {
+      "kind": "prose",
+      "text": "The revolutionary question: **Can two parties establish secrecy over a public channel, without first sharing a secret?**\n\n- **Diffie, Hellman, and Merkle (1976)** showed yes: Alice and Bob exchange *public* information, each keeps a *private* value, and both derive the **same shared key**. Eve sees the public exchange but cannot derive the key efficiently. Key distribution becomes a **protocol, not a logistics operation** — the public channel itself becomes part of the security mechanism."
+    },
+    {
+      "kind": "definition",
+      "term": "Public-key (asymmetric) encryption",
+      "text": "Each user has two keys. The **public key** can be given to everyone and is used to *encrypt* a message to that user; only the matching **private key** can *decrypt* it. This splits the symmetric requirement that one secret key both encrypts and decrypts — removing the need to pre-share a secret."
+    },
+    {
+      "kind": "definition",
+      "term": "RSA and the trapdoor",
+      "text": "RSA (**Rivest, Shamir, Adleman**, 1978) made public-key encryption practical using a **mathematical trapdoor** — a function easy one way, hard to reverse:\n\n- **Multiplying** two large primes is easy.\n- **Factoring** the product back into those primes is hard.\n- The product (and public key) can be public; the original primes stay private.\n\nAnyone can encrypt with public information; only the holder of the private information can decrypt."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**The public-key revolution happened twice — once in secret, once in public.** Inside Britain's **GCHQ**: James Ellis proposed 'non-secret encryption'; **Clifford Cocks** built an RSA-like method in **1973**; **Malcolm Williamson** found a Diffie-Hellman-like exchange in **1974**. It stayed classified until 1997. *The classified domain may be ahead of the public domain — sometimes by years.*"
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "What mathematical property makes RSA a usable public-key system?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Adding two large numbers is fast but subtracting them is slow"
+          },
+          {
+            "id": "B",
+            "content": "Multiplying two large primes is easy, but factoring the product back into those primes is hard"
+          },
+          {
+            "id": "C",
+            "content": "Both the public and private keys can decrypt any message"
+          },
+          {
+            "id": "D",
+            "content": "The same key encrypts and decrypts, so no key needs to travel"
+          }
+        ],
+        "correct": "B",
+        "explanation": "RSA relies on a **trapdoor**: easy to multiply two large primes, hard to factor the product. The product is published; the primes stay secret. A is nonsense; C is false (only the private key decrypts); D describes *symmetric* cryptography, which is exactly the model public-key crypto was invented to escape."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "9. Case 5 — PGP and the Crypto Wars"
+    },
+    {
+      "kind": "prose",
+      "text": "Before the digital age, strong cryptography was mainly a state/military/diplomatic capability. Personal computers and the Internet changed that: strong crypto could run on ordinary machines and software could be copied globally. In **1991** Phil Zimmermann released **PGP (Pretty Good Privacy)**, making strong encryption usable for ordinary e-mail users — no special hardware, no state infrastructure, no institutional permission. The **Crypto Wars** began when cryptographic power became *decentralized*."
+    },
+    {
+      "kind": "steps",
+      "text": "**How PGP works (hybrid encryption).** RSA is powerful but slow for long messages, so PGP combines symmetric speed with public-key key distribution:",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Generate a **random session key** for this message."
+        },
+        {
+          "label": "2",
+          "text": "Encrypt the message with a **fast symmetric cipher** using that session key."
+        },
+        {
+          "label": "3",
+          "text": "Encrypt the **session key** with the recipient's **public RSA key**."
+        },
+        {
+          "label": "4",
+          "text": "Send both the encrypted message and the encrypted session key."
+        }
+      ]
+    },
+    {
+      "kind": "prose",
+      "text": "PGP also provided **digital signatures** (Alice signs with her private key; Bob verifies with her public key), giving **confidentiality + integrity + authenticity**. The U.S. government treated strong crypto as an **export-controlled** strategic technology and investigated Zimmermann (1993) for alleged illegal export when PGP spread abroad. The case ended without indictment in 1996 — and trying to suppress PGP only *increased* its symbolic power. **Once strong cryptography is globally distributed, suppression can accelerate diffusion.**"
+    },
+    {
+      "kind": "prose",
+      "text": "Export control reshaped products, not just law: **export-grade browsers** gave foreign users weaker encryption than U.S. domestic users (creating security classes and weak legacy modes), and hardware like **TPM 1.2** limited which cryptographic functions were exposed. When the border-control model failed, the battle shifted from **export control** ('stop strong crypto spreading') to **access control** ('if it spreads, can we still reach the plaintext?')."
+    },
+    {
+      "kind": "definition",
+      "term": "Key escrow",
+      "text": "A proposed compromise: users get strong encryption, but a recovery key (often split between escrow authorities) lets law enforcement obtain plaintext under legal authorization. The U.S. tried to standardize it in 1994 with the **Clipper** chip (phones) and **Capstone** (computers) under the Escrowed Encryption Standard (FIPS 185)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Why escrow failed — and the trap to avoid.** It was *not* mainly a math failure. The **trust model collapsed**: any built-in recovery mechanism *is* an attack surface (insider abuse, systemic vulnerability), businesses feared customers and foreign markets would reject U.S.-designed access, and other states asked why they should trust U.S.-controlled infrastructure. **A security standard cannot succeed if its trust model is politically unacceptable.** FIPS 185 was withdrawn in 2015 — but the demand returned as device-unlock orders, lawful-access to cloud, and client-side scanning."
+    },
+    {
+      "kind": "heading",
+      "text": "10. Rebuilding trust: open standards and sovereignty"
+    },
+    {
+      "kind": "prose",
+      "text": "DES taught a lesson the next standard had to answer: the *process* itself must be trustworthy. **AES** was chosen by an **open international competition** — 15 candidate algorithms, public analysis by the worldwide cryptographic community, with **Rijndael** (the Belgians Joan Daemen and Vincent Rijmen) selected in 2000 and standardized as **FIPS 197** in 2001. Its open process and foreign origin *helped* its credibility."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Transparency is part of trust.** DES (opaque, NSA-influenced, classified design choices) bred suspicion; AES (open competition, public analysis) earned confidence. For cryptographic standards, *how* a standard is chosen is part of *whether* it can be trusted."
+    },
+    {
+      "kind": "prose",
+      "text": "Not every state wants to rely on the same trust stack. China developed its own commercial cryptographic standards — the **SM / ShangMi** family:\n\n- **SM2** — elliptic-curve public-key cryptography\n- **SM3** — hash function\n- **SM4** — symmetric block cipher\n- **ZUC** — stream cipher (mobile contexts)\n- **SM9** — identity-based cryptography\n\nThe motivation is sovereignty: reduce dependence on foreign algorithms, support domestic certification, protect national infrastructure, and avoid blind trust in foreign standardization. China still participates in international standards, but promotes domestic ones for sovereignty-sensitive contexts."
+    },
+    {
+      "kind": "definition",
+      "term": "Cryptographic sovereignty (final form)",
+      "text": "The ability to **choose, verify, implement, certify, and replace** the standards and products that protect national infrastructure. States exercise this power through export controls, product capabilities, exceptional-access proposals, hardware and APIs, certificate authorities, key-recovery systems, and standards/certification. Cryptography is a **national-defence layer**, not just an algorithm."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "According to the lecture, what most clearly distinguishes the AES standardization from DES and explains why AES earned more public trust?",
+        "options": [
+          {
+            "id": "A",
+            "content": "AES uses a longer key, which mathematically proves it cannot be broken"
+          },
+          {
+            "id": "B",
+            "content": "AES was designed entirely in secret by the NSA to guarantee its strength"
+          },
+          {
+            "id": "C",
+            "content": "AES was selected through an open international competition with public analysis, whereas DES had opaque, classified design choices"
+          },
+          {
+            "id": "D",
+            "content": "AES is asymmetric, so it solves key distribution that DES could not"
+          }
+        ],
+        "correct": "C",
+        "explanation": "The key contrast is **process transparency**: AES came from an open competition (15 candidates, public scrutiny, Rijndael chosen and published as FIPS 197), while DES suffered from opaque NSA involvement and unexplained design choices. A overstates the math (a longer key alone proves nothing and isn't the lecture's point); B is the opposite of what built trust; D confuses categories — both DES and AES are symmetric block ciphers, so AES does not solve key distribution."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "**One thread ties the whole module together:** secrecy is a strategic asset, but trust is what makes cryptography usable. States want the advantage of breaking secrets *and* the confidence of standards they can rely on. Every case — Mary Stuart, Zimmermann, Crypto AG, Enigma, DES vs AES, the Crypto Wars — is a different answer to the same question: *who controls the tools that protect (and reveal) secrets?*"
+    }
+  ]
+}

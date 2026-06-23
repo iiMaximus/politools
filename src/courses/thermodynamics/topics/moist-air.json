@@ -1,0 +1,789 @@
+{
+  "title": "Moist Air & Air Conditioning (Psychrometrics)",
+  "summary": "Treat air as dry air + water vapor. Master $\\omega$, $\\varphi$, dew point, wet-bulb and the enthalpy $h=c_{p,a}t+\\omega(r_0+c_{p,v}t)$; read the psychrometric chart; and solve the five AC processes (heating, cooling, dehumidification, humidification, mixing) with mass/energy balances on the conserved dry air.",
+  "minutes": 75,
+  "objectives": [
+    "Compute $p_v$, $p_a$, $\\omega$, $\\varphi$, dew point and enthalpy of a moist-air state from $p$, $t$, and one humidity measure",
+    "Explain and use wet-bulb / dry-bulb temperatures and the constant-enthalpy adiabatic-saturation idea",
+    "Locate and move states on the psychrometric (Mollier/Carrier) chart for each process",
+    "Write dry-air, water and energy balances for steady-flow AC devices",
+    "Solve sensible heating/cooling, cooling-with-dehumidification, steam and adiabatic humidification, and adiabatic mixing numerically",
+    "Split a cooling+dehumidification duty into sensible and latent parts",
+    "Describe the summer and winter air-conditioning process trains"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What moist air is"
+    },
+    {
+      "kind": "prose",
+      "text": "**Moist air** is just a mixture of two ideal gases: **dry air** and **water vapor**. The water vapor is a tiny fraction by mass, but it controls comfort (how 'sticky' or 'dry' the air feels) and it is the whole point of air-conditioning.\n\nBy **Dalton's law** the total pressure is the sum of partial pressures:\n$$p = p_a + p_v$$\nwhere $p_a$ is the dry-air partial pressure and $p_v$ is the water-vapor partial pressure. In all chart work we take $p = 1\\text{ bar} = 101325\\text{ Pa}$ (atmospheric)."
+    },
+    {
+      "kind": "prose",
+      "text": "Two gas constants you will reuse constantly:\n- Dry air: $R_a = 287\\ \\text{J/kg·K}$ (molar mass $\\approx 28.97$)\n- Water vapor: $R_v = 461.5\\ \\text{J/kg·K}$ (molar mass $18$)\n\nTheir ratio gives the famous $0.622 = R_a/R_v = 18/28.97$ that appears in the humidity ratio."
+    },
+    {
+      "kind": "definition",
+      "term": "Humidity ratio (specific humidity) ω",
+      "text": "Mass of water vapor per **kg of dry air** — NOT per kg of mixture. This is the key trick of psychrometrics: we always normalize per unit of dry air, because the dry air is conserved while the vapor changes.\n$$\\omega = \\frac{m_v}{m_a}\\quad[\\text{kg}_v/\\text{kg}_a]$$"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\omega = 0.622\\,\\frac{p_v}{p-p_v}",
+      "tag": "5.1",
+      "caption": "Humidity ratio from partial pressures. Since $p_v\\ll p$, $\\omega$ is usually a few grams per kg."
+    },
+    {
+      "kind": "definition",
+      "term": "Relative humidity φ",
+      "text": "Ratio of the actual vapor partial pressure to the saturation pressure at the same temperature:\n$$\\varphi = \\frac{p_v}{p_s(T)}$$\n$p_s(T)$ is read from the **water saturation tables** (e.g. $p_s(20^\\circ C)=0.02339$ bar). $\\varphi=100\\%$ means the air is saturated and cannot hold more vapor."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\omega = 0.622\\,\\frac{\\varphi\\, p_s}{p-\\varphi\\, p_s}",
+      "tag": "5.2",
+      "caption": "Combine $p_v=\\varphi p_s$ with the definition of $\\omega$. This is the everyday working formula."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "φ is NOT ω",
+      "text": "Two parcels at the same $\\varphi=50\\%$ but different temperatures have **different** $\\omega$, because $p_s$ rises steeply with $T$. Warm 50% air holds far more water than cold 50% air. Heating air at constant $\\omega$ **lowers** $\\varphi$; cooling it **raises** $\\varphi$."
+    },
+    {
+      "kind": "heading",
+      "text": "Specific enthalpy of moist air"
+    },
+    {
+      "kind": "prose",
+      "text": "We measure enthalpy **per kg of dry air** (the '$1+\\omega$' basis: one kg of dry air carrying $\\omega$ kg of vapor). Reference states: dry air $h=0$ at $0^\\circ C$; water vapor $h=0$ for saturated liquid at $0^\\circ C$, so the vapor carries the latent heat $r_0$."
+    },
+    {
+      "kind": "formula",
+      "tex": "h = c_{p,a}\\,t + \\omega\\,(r_0 + c_{p,v}\\,t)",
+      "tag": "5.3",
+      "caption": "with $c_{p,a}=1.006$, $c_{p,v}=1.875$ kJ/kg·K, $r_0=2500$ kJ/kg. The term $c_{p,a}t$ is **sensible** (temperature); $\\omega r_0$ is **latent** (the water content)."
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "t must be in °C here",
+      "text": "In $h=c_{p,a}t+\\omega(r_0+c_{p,v}t)$ the temperature is **Celsius**, because the reference is $0^\\circ C$. This is the one place you do NOT convert to Kelvin. (You DO use Kelvin in $v_a=R_aT/p_a$.)"
+    },
+    {
+      "kind": "example",
+      "title": "Worked: state from p, t, φ (Ex 5.1)",
+      "text": "**Given** $p=1$ bar, $t=28^\\circ C$, $\\varphi=80\\%$. Tables: $p_s(28^\\circ C)=0.03782$ bar.\n\n- $p_v=\\varphi p_s = 0.8\\times0.03782 = 0.0302$ bar, so $p_a=p-p_v=0.9698$ bar.\n- $\\omega = 0.622\\dfrac{0.0302}{1-0.0302}=0.0194\\ \\text{kg}_v/\\text{kg}_a$.\n- $h = 1.006(28)+0.0194\\,(2500+1.875\\cdot28)=28.17+0.0194\\cdot2552.5 = 76.7\\ \\text{kJ/kg}_a$.\n\n**Answer:** $p_a=0.970$ bar, $p_v=0.0302$ bar, $\\omega=0.019$, $h\\approx76.7$ kJ/kg."
+    },
+    {
+      "kind": "heading",
+      "text": "Dew point, wet bulb, dry bulb"
+    },
+    {
+      "kind": "definition",
+      "term": "Dew point temperature T_D",
+      "text": "Cool the air at **constant $\\omega$** (constant $p_v$). The dew point is the temperature at which $\\varphi$ reaches 100% and the first droplet condenses. So $T_D$ is the **saturation temperature corresponding to the actual $p_v$**: $p_s(T_D)=p_v$. Read it backward from the steam tables."
+    },
+    {
+      "kind": "prose",
+      "text": "**Dry-bulb** temperature is the ordinary thermometer reading. **Wet-bulb** temperature comes from a thermometer with a wet wick: evaporation cools it. The drier the air, the more evaporation, the lower the wet-bulb, so the gap $t_{db}-t_{wb}$ measures humidity.\n\nKey idealization: the wet-bulb (adiabatic-saturation) process is at nearly **constant enthalpy**, $h_{db}\\approx h_{wb}$. At the wet-bulb state the air is saturated ($\\varphi=100\\%$)."
+    },
+    {
+      "kind": "steps",
+      "title": "Find φ from wet & dry bulb (Ex 5.4)",
+      "steps": [
+        {
+          "label": "Wet-bulb state",
+          "text": "$\\varphi_{wb}=100\\%$, so $\\omega_{wb}=0.622\\,p_{s}(t_{wb})/(p-p_{s}(t_{wb}))$ and $h_{wb}=c_{p,a}t_{wb}+\\omega_{wb}(r_0+c_{p,v}t_{wb})$."
+        },
+        {
+          "label": "Constant enthalpy",
+          "text": "Set $h_{db}=h_{wb}$. Solve for $\\omega_{db}=\\dfrac{h_{wb}-c_{p,a}t_{db}}{r_0+c_{p,v}t_{db}}$."
+        },
+        {
+          "label": "Back out φ",
+          "text": "Invert $\\omega=0.622\\varphi p_s/(p-\\varphi p_s)$ at $t_{db}$ to get $\\varphi_{db}=\\dfrac{\\omega_{db}\\,p}{p_s(0.622+\\omega_{db})}$. For $t_{db}=30,\\,t_{wb}=27^\\circ C$ this gives $\\varphi\\approx80\\%$."
+        }
+      ]
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Quick check on dew point.",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Air at $20^\\circ C$, $\\varphi=50\\%$. Its dew point is the temperature where:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$p_s(T_D)=p$, the total pressure"
+          },
+          {
+            "id": "B",
+            "content": "$p_s(T_D)=p_v$ of the original air"
+          },
+          {
+            "id": "C",
+            "content": "$\\varphi$ drops to 50% again"
+          },
+          {
+            "id": "D",
+            "content": "$\\omega$ doubles its value"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Cooling at constant $p_v$ reaches saturation when $p_s$ falls to equal the actual $p_v$; that temperature is the dew point. A confuses total with partial pressure. C: $\\varphi$ rises to 100% on cooling, not back to 50%. D: $\\omega$ stays constant during the cooling-to-dew-point, it does not change until condensation starts.",
+        "theory": "Dew point: $p_s(T_D)=p_v=\\varphi p_s(T)$. Cooling at constant $\\omega$ raises $\\varphi$ toward 100%."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Reading the psychrometric chart"
+    },
+    {
+      "kind": "prose",
+      "text": "The **Mollier/Carrier chart** plots all of this for $p=1$ bar. Axes/lines:\n- **horizontal-ish: dry-bulb temperature $t$**; **vertical: humidity ratio $\\omega$** (right side).\n- curved lines of constant **$\\varphi$**; the top curve is $\\varphi=100\\%$ (saturation).\n- straight slanted lines of constant **$h$** (≈ constant wet-bulb).\n- a point is fixed by any **two** independent properties (Gibbs rule gives 3 variables, one is fixed by $p$)."
+    },
+    {
+      "kind": "prose",
+      "text": "On the chart the four basic processes are simple moves:\n- **Sensible heating** → move right (↑t) at constant $\\omega$.\n- **Sensible cooling** → move left at constant $\\omega$ (until you hit $\\varphi=100\\%$).\n- **Cooling + dehumidification** → down the saturation curve (vapor condenses).\n- **Humidification** → move up (↑ω); adiabatic water-spray is along constant $h$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "psychrometric",
+      "title": "Psychrometric chart explorer",
+      "caption": "Drag a state point and watch $\\varphi$, $\\omega$, dew point, wet-bulb and $h$ update. Trace heating (horizontal), cooling-to-saturation, and constant-$h$ humidification to see how each process moves on the chart."
+    },
+    {
+      "kind": "heading",
+      "text": "Mass & energy balances on the dry air"
+    },
+    {
+      "kind": "prose",
+      "text": "Every device is steady-state. The **dry-air mass flow is constant** through it: $\\dot m_{a1}=\\dot m_{a2}=\\dot m_a$. Water vapor can be added/removed:\n$$\\dot m_w = \\dot m_a(\\omega_2-\\omega_1)$$\n($\\dot m_w>0$ added by humidification, $<0$ removed by condensation)."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\dot Q_{cv} = \\dot m_a(h_2-h_1) \\pm \\dot m_w h_w",
+      "tag": "5.4",
+      "caption": "Energy balance (no shaft work, $\\Delta ke=\\Delta pe=0$). The liquid term $\\dot m_w h_w$ is small and often dropped for cooling coils."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Get ṁ_a from volume flow",
+      "text": "Problems give a volumetric flow $\\dot V$ at the inlet. Use the dry-air specific volume $v_a=R_aT/p_a$ (T in **K**!) and $\\dot m_a\\approx \\dot V/v_a$, since moist-air density $\\approx$ dry-air density. E.g. $25^\\circ C$, $p_a=0.978$ bar → $v_a=0.875\\ \\text{m}^3/\\text{kg}$."
+    },
+    {
+      "kind": "heading",
+      "text": "The five air-conditioning processes"
+    },
+    {
+      "kind": "definition",
+      "term": "Sensible heating / cooling",
+      "text": "Pass air over a hot/cold coil **above the dew point** → only temperature changes, $\\omega_1=\\omega_2$:\n$$\\dot Q = \\dot m_a(h_2-h_1)=\\dot m_a(c_{p,a}+\\omega c_{p,v})(t_2-t_1)$$\nHeating $\\dot Q>0$, cooling $\\dot Q<0$."
+    },
+    {
+      "kind": "definition",
+      "term": "Cooling with dehumidification",
+      "text": "Cool **below the dew point**: vapor condenses on the coil, $\\omega$ drops. The exit (ideal) sits on $\\varphi=100\\%$. Condensate: $\\dot m_w=\\dot m_a(\\omega_1-\\omega_2)$. The duty splits into a **sensible** part (Δt) and a **latent** part (Δω) — that split is the favourite exam sub-question."
+    },
+    {
+      "kind": "definition",
+      "term": "Humidification",
+      "text": "Add water to raise $\\omega$. **With steam**: $\\omega$ and $t$ both rise. **With liquid water (adiabatic air washer / evaporative cooling)**: the process is ≈ constant $h$, so the air **cools** as it humidifies (the spray evaporates using the air's own sensible heat). $\\dot m_w=\\dot m_a(\\omega_2-\\omega_1)$."
+    },
+    {
+      "kind": "definition",
+      "term": "Adiabatic mixing of two streams",
+      "text": "Two moist-air streams merge with no heat loss. Dry-air, vapor and energy balances give the lever rule:\n$$\\frac{\\dot m_{a1}}{\\dot m_{a2}}=\\frac{\\omega_3-\\omega_2}{\\omega_1-\\omega_3}=\\frac{h_3-h_2}{h_1-h_3}$$\nThe mix state 3 lies on the straight line joining 1 and 2, divided by the mass ratio."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Evaporative cooling intuition",
+      "text": "Adiabatic water spray = **free cooling in dry climates**. Air gives up sensible heat ($t\\downarrow$) to evaporate water ($\\omega\\uparrow$) at $h\\approx$ const. It only works when the air is dry (large $t_{db}-t_{wb}$); in humid air there is little wet-bulb depression and almost no cooling."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: cooling + dehumidification (Ex 5.9)",
+      "text": "**Given** $\\dot V=7500\\ \\text{m}^3/h$, $t_1=25^\\circ C$, $\\varphi_1=70\\%$; cool to saturation, then post-heat to $t_3=20^\\circ C$, $\\varphi_3=40\\%$.\n\n- State 1: $p_{s1}=0.03169$ bar → $p_{v1}=0.02218$, $p_{a1}=0.978$ bar. $v_a=R_aT_1/p_{a1}=0.875\\ \\text{m}^3/\\text{kg}$, so $\\dot m_a=\\dot V/(3600\\,v_a)\\approx2.38\\ \\text{kg/s}$. $\\omega_1=0.0141$, $h_1=61.1$ kJ/kg.\n- State 3: $\\omega_3=0.00588$, $h_3=35.0$ kJ/kg. Post-heat is at constant $\\omega$, so $\\omega_2=\\omega_3=0.00588$.\n- State 2 (saturated): $\\varphi_2=100\\%$ with that $\\omega_2$ → $t_2\\approx6^\\circ C$, $h_2=20.8$ kJ/kg.\n- Condensate $\\dot m_w=\\dot m_a(\\omega_1-\\omega_2)=2.38(0.0141-0.00588)=0.0196\\ \\text{kg/s}$.\n- $\\dot Q_{cool}=\\dot m_a(h_2-h_1)+\\dot m_w h_{l}\\approx 2.38(20.8-61.1)+0.0196\\cdot25.2=-95.3\\ \\text{kW}$.\n- $\\dot Q_{heat}=\\dot m_a(h_3-h_2)=2.38(35.0-20.8)=33.9\\ \\text{kW}$.\n\n**Answer:** $\\dot Q_{cool}=-95.3$ kW, $\\dot m_w=0.0196$ kg/s, $\\dot Q_{heat}=33.9$ kW."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Sensible/latent split via point K",
+      "text": "To split a cooling+dehumidification duty, define auxiliary point **K** at the start temperature and the end humidity. The **latent** part is the constant-temperature leg (change in $\\omega$) and the **sensible** part is the constant-$\\omega$ leg (change in $t$). Draw the right-angle on the chart so you don't swap them: e.g. in Ex 5.12, $\\dot Q_L=\\dot m_a(h_K-h_A)$ and $\\dot Q_S=\\dot m_a(h_B-h_K)$."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Process identification.",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Liquid water is sprayed into a warm dry air stream with no heat added (adiabatic air washer). What happens?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$t$ rises, $\\omega$ rises, $h$ rises"
+          },
+          {
+            "id": "B",
+            "content": "$t$ falls, $\\omega$ rises, $h\\approx$ const"
+          },
+          {
+            "id": "C",
+            "content": "$t$ falls, $\\omega$ falls, $\\varphi$ falls"
+          },
+          {
+            "id": "D",
+            "content": "$t$ const, $\\omega$ rises, $h$ rises"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Evaporating liquid uses the air's own sensible heat, so $t$ drops while $\\omega$ rises at nearly constant enthalpy (evaporative cooling). A describes steam injection (adds energy, $h$↑). C is wrong: spraying water adds vapor, $\\omega$ rises, and $\\varphi$ rises toward saturation. D ignores the temperature drop — only true if you also added exactly the evaporation heat.",
+        "theory": "Adiabatic humidification with liquid water: $h\\approx$ const, $\\omega\\uparrow$, $t\\downarrow$. Steam humidification adds energy so $h\\uparrow$."
+      }
+    },
+    {
+      "kind": "steps",
+      "title": "General recipe for any moist-air problem",
+      "steps": [
+        {
+          "label": "1. Tables",
+          "text": "For each state read $p_s(t)$ from the steam saturation tables."
+        },
+        {
+          "label": "2. ω and h",
+          "text": "$\\omega=0.622\\varphi p_s/(p-\\varphi p_s)$ then $h=c_{p,a}t+\\omega(r_0+c_{p,v}t)$ (t in °C)."
+        },
+        {
+          "label": "3. Dry-air flow",
+          "text": "$v_a=R_aT/p_a$ (T in K), $\\dot m_a=\\dot V/v_a$. Dry air is conserved through the device."
+        },
+        {
+          "label": "4. Balances",
+          "text": "Water: $\\dot m_w=\\dot m_a(\\omega_2-\\omega_1)$. Energy: $\\dot Q=\\dot m_a(h_2-h_1)\\pm\\dot m_w h_w$."
+        },
+        {
+          "label": "5. Identify the leg",
+          "text": "Heating/cooling above dew pt: $\\omega$ const. Dehumidify: end on $\\varphi=100\\%$. Adiabatic spray/mixing: $h$ (≈) const. Steam: line of slope $h_v$."
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "The humidity ratio $\\omega$ is defined as the mass of water vapor per:",
+      "options": [
+        {
+          "id": "A",
+          "content": "kg of total moist-air mixture"
+        },
+        {
+          "id": "B",
+          "content": "kg of dry air"
+        },
+        {
+          "id": "C",
+          "content": "kg of saturated vapor at that $T$"
+        },
+        {
+          "id": "D",
+          "content": "mole of dry air"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\omega=m_v/m_a$, per kg of **dry air**, because dry air is the conserved quantity. A would be mass fraction, not $\\omega$. C is the basis for $\\varphi$, not $\\omega$. D mixes mass and mole bases.",
+      "theory": "$\\omega=m_v/m_a=0.622\\,p_v/(p-p_v)$.",
+      "source": "Lecture Part 5, humidity ratio"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Air at $1$ bar, $20^\\circ C$, $\\varphi=50\\%$. With $p_s(20^\\circ C)=0.02339$ bar, the humidity ratio is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.0147\\ \\text{kg}_v/\\text{kg}_a$"
+        },
+        {
+          "id": "B",
+          "content": "$0.0029\\ \\text{kg}_v/\\text{kg}_a$"
+        },
+        {
+          "id": "C",
+          "content": "$0.0074\\ \\text{kg}_v/\\text{kg}_a$"
+        },
+        {
+          "id": "D",
+          "content": "$0.0233\\ \\text{kg}_v/\\text{kg}_a$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$p_v=0.5\\times0.02339=0.0117$ bar; $\\omega=0.622\\cdot0.0117/(1-0.0117)=0.00736$. A used $\\varphi=100\\%$. B used $0.622\\cdot p_v/p$ without the factor and a wrong $\\varphi$. D dropped the $0.622$ factor entirely.",
+      "theory": "$\\omega=0.622\\,\\varphi p_s/(p-\\varphi p_s)$.",
+      "source": "Tutorial 5, Ex 5.2"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Why are the two axes of the Mollier chart drawn non-orthogonal (the $\\omega$ axis is inclined)?",
+      "options": [
+        {
+          "id": "A",
+          "content": "To make constant-$\\varphi$ lines straight"
+        },
+        {
+          "id": "B",
+          "content": "To spread out the constant-$t$ lines, which would otherwise be nearly parallel and crowded"
+        },
+        {
+          "id": "C",
+          "content": "Because $p_v$ is negative for cold air"
+        },
+        {
+          "id": "D",
+          "content": "To make enthalpy numerically equal temperature"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\partial h/\\partial\\omega|_t=r_0+c_{p,v}t\\approx2500$ is huge, so isotherms are almost parallel and squeezed; inclining the $\\omega$ axis fans them out so the chart is readable. A is false — constant-$\\varphi$ lines are curved. C is nonsense; $p_v>0$. D confuses two different quantities.",
+      "theory": "Isotherm slope $=r_0+c_{p,v}t$; the skewed axes amplify the region of interest.",
+      "source": "Lecture Part 5, drawing the Mollier diagram"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A sensible heating coil warms $\\dot m_a=2\\ \\text{kg}_a/s$ of air with $\\omega=0.008$ from $10$ to $30^\\circ C$. Using $\\dot Q=\\dot m_a(c_{p,a}+\\omega c_{p,v})\\Delta t$, the heat rate is about:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$40.9$ kW"
+        },
+        {
+          "id": "B",
+          "content": "$20.1$ kW"
+        },
+        {
+          "id": "C",
+          "content": "$80.3$ kW"
+        },
+        {
+          "id": "D",
+          "content": "$28.9$ kW"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$(c_{p,a}+\\omega c_{p,v})=1.006+0.008\\cdot1.875=1.021$; $\\dot Q=2\\cdot1.021\\cdot20=40.8\\ \\text{kW}$. B used $\\dot m_a=1$ instead of 2. C doubled $\\Delta t$ wrongly. D used a $c_v$-type value ~0.72 instead of $c_{p,a}$.",
+      "theory": "Sensible-only heating at constant $\\omega$: $\\dot Q=\\dot m_a(c_{p,a}+\\omega c_{p,v})(t_2-t_1)$.",
+      "source": "Lecture Part 5, heating process"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Moist air is cooled from $25^\\circ C$, $\\varphi=70\\%$ (dew point $\\approx19^\\circ C$) down to $5^\\circ C$. What happens to $\\omega$?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\omega$ is unchanged because cooling is sensible"
+        },
+        {
+          "id": "B",
+          "content": "$\\omega$ increases (vapor is drawn in)"
+        },
+        {
+          "id": "C",
+          "content": "$\\omega$ decreases because vapor condenses below the dew point"
+        },
+        {
+          "id": "D",
+          "content": "$\\omega$ first increases then stays constant"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Below the dew point ($19^\\circ C$) the air is saturated and further cooling condenses vapor, so $\\omega$ falls (here from 0.0141 to 0.0055). A is true only above the dew point. B is backwards — cooling never adds vapor. D is invented.",
+      "theory": "Cooling at constant $\\omega$ until dew point; below it, ride the $\\varphi=100\\%$ curve as $\\omega$ drops.",
+      "source": "Tutorial 5, Ex 5.3"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In the moist-air enthalpy formula $h=c_{p,a}t+\\omega(r_0+c_{p,v}t)$, the temperature $t$ must be in:",
+      "options": [
+        {
+          "id": "A",
+          "content": "Kelvin"
+        },
+        {
+          "id": "B",
+          "content": "Celsius"
+        },
+        {
+          "id": "C",
+          "content": "either, the result is the same"
+        },
+        {
+          "id": "D",
+          "content": "Rankine"
+        }
+      ],
+      "correct": "B",
+      "explanation": "The reference states are at $0^\\circ C$, so $t$ is in Celsius. A/D would add ~273 to every term and ruin the value. C is false because the formula is linear with a non-zero reference, so units matter.",
+      "theory": "Enthalpy reference: dry air $h=0$ at $0^\\circ C$, vapor $h=0$ for sat. liquid at $0^\\circ C$ → t in °C.",
+      "source": "Lecture Part 5, specific enthalpy"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Two streams mix adiabatically: stream 1 ($\\dot m_{a1}=19.8\\ \\text{kg}_a/s$, $h_1=61.1$) and stream 2 ($\\dot m_{a2}=34.9\\ \\text{kg}_a/s$, $h_2=23.2$ kJ/kg). The mixed enthalpy $h_3$ is about:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$42.2$ kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "$36.9$ kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "$84.3$ kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "$30.6$ kJ/kg"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$h_3=(\\dot m_{a1}h_1+\\dot m_{a2}h_2)/(\\dot m_{a1}+\\dot m_{a2})=(19.8\\cdot61.1+34.9\\cdot23.2)/54.7=36.9$. A is the unweighted average $(h_1+h_2)/2$. C added the enthalpies. D weighted by the wrong (swapped) masses.",
+      "theory": "Adiabatic mixing: $h_3=\\sum\\dot m_{ai}h_i/\\sum\\dot m_{ai}$; state 3 on the 1–2 line by the lever rule.",
+      "source": "Tutorial 5, Ex 5.5"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "To get the dry-air mass flow from a volumetric flow, you use $v_a=R_aT/p_a$. Here $T$ and $p_a$ must be:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$T$ in K, $p_a=p-p_v$"
+        },
+        {
+          "id": "B",
+          "content": "$T$ in °C, $p_a=p$ (total)"
+        },
+        {
+          "id": "C",
+          "content": "$T$ in K, $p_a=p_v$"
+        },
+        {
+          "id": "D",
+          "content": "$T$ in °C, $p_a=p-p_v$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Ideal-gas law needs absolute temperature (K), and the dry-air partial pressure is $p_a=p-p_v$. B uses total pressure and °C (both wrong). C uses the vapor pressure instead of dry-air pressure. D uses °C in the gas law, which is wrong.",
+      "theory": "$v_a=R_aT/p_a$ with $T[K]$, $p_a=p-p_v$; $\\dot m_a\\approx\\dot V/v_a$.",
+      "source": "Tutorial 5, Ex 5.9/5.10"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Adiabatic spray humidification of $1\\ \\text{kg}_a/s$ air: $40^\\circ C$, $\\varphi=20\\%$ ($\\omega_1=0.0093$, $h_1=64.24$) cooled to $30^\\circ C$ at constant $h$. The water added $\\dot m_w$ is about:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.0226\\ \\text{kg}/s$"
+        },
+        {
+          "id": "B",
+          "content": "$0.0040\\ \\text{kg}/s$"
+        },
+        {
+          "id": "C",
+          "content": "$0.0133\\ \\text{kg}/s$"
+        },
+        {
+          "id": "D",
+          "content": "$0.0093\\ \\text{kg}/s$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "At constant $h$: $\\omega_2=(h_1-c_{p,a}t_2)/(r_0+c_{p,v}t_2)=(64.24-30.18)/2556.3=0.0133$; $\\dot m_w=\\omega_2-\\omega_1=0.0133-0.0093=0.0040$. A is $\\omega_1+\\omega_2$. C is $\\omega_2$ itself (forgot to subtract $\\omega_1$). D is $\\omega_1$.",
+      "theory": "Adiabatic liquid humidification: $h_2\\approx h_1$, $\\dot m_w=\\dot m_a(\\omega_2-\\omega_1)$.",
+      "source": "Tutorial 5, Ex 5.6"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a cooling+dehumidification process, the **latent** rate of heat transfer is associated with:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the change in temperature at constant $\\omega$"
+        },
+        {
+          "id": "B",
+          "content": "the change in $\\omega$ at constant temperature"
+        },
+        {
+          "id": "C",
+          "content": "the pressure drop across the coil"
+        },
+        {
+          "id": "D",
+          "content": "the kinetic energy change"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Latent load = change in moisture (Δω) at constant t; sensible load = change in t at constant ω. A is the definition of sensible, not latent. C and D are negligible/irrelevant in these balances.",
+      "theory": "$\\dot Q_{lat}\\propto\\Delta\\omega$ (constant t leg), $\\dot Q_{sens}\\propto\\Delta t$ (constant ω leg); split via point K.",
+      "source": "Lecture Part 5, sensible and latent loads"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "On the psychrometric chart, pure sensible heating moves the state point:",
+      "options": [
+        {
+          "id": "A",
+          "content": "up the saturation curve"
+        },
+        {
+          "id": "B",
+          "content": "horizontally to the right (higher t, same ω)"
+        },
+        {
+          "id": "C",
+          "content": "along a constant-enthalpy line downward"
+        },
+        {
+          "id": "D",
+          "content": "vertically upward (higher ω, same t)"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Heating adds no water, so $\\omega$ is constant and only $t$ rises → move right. A is dehumidification. C is adiabatic humidification (evaporative cooling). D is humidification at constant temperature (steam-ish).",
+      "theory": "Heating/cooling above dew point: $\\omega$ const, horizontal move; $\\varphi$ falls on heating.",
+      "source": "Lecture Part 5, moist-air processes"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Heating a 20 kg/s dry-air stream ($t_1=20^\\circ C$, $h_1=34.9$) with $\\dot Q=29.24$ kW AND injecting $\\dot m_v=0.0305$ kg/s of saturated steam ($h_g=2675$ kJ/kg). The exit enthalpy $h_2$ is about:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$40.5$ kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "$36.4$ kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "$35.9$ kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "$48.1$ kJ/kg"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$h_2=h_1+(\\dot Q+\\dot m_v h_g)/\\dot m_a=34.9+(29.24+0.0305\\cdot2675)/20=34.9+(29.24+81.6)/20=34.9+5.54=40.5$. B dropped the steam-enthalpy term. C included only $\\dot Q$. D double-counted by adding $h_g/1000$ wrongly.",
+      "theory": "Energy balance with steam: $\\dot m_a h_1+\\dot Q+\\dot m_v h_g=\\dot m_a h_2$.",
+      "source": "Tutorial 5, Ex 5.8"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The wet-bulb temperature is always:",
+      "options": [
+        {
+          "id": "A",
+          "content": "higher than the dry-bulb (except at saturation)"
+        },
+        {
+          "id": "B",
+          "content": "equal to the dew point"
+        },
+        {
+          "id": "C",
+          "content": "lower than (or equal to) the dry-bulb, the gap growing as air gets drier"
+        },
+        {
+          "id": "D",
+          "content": "independent of humidity"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Evaporation cools the wet wick, so $t_{wb}\\le t_{db}$, with the depression $t_{db}-t_{wb}$ larger for drier air. A reverses the inequality. B is false: in unsaturated air $t_{dew}<t_{wb}<t_{db}$. D is false — the whole point is that $t_{wb}$ measures humidity.",
+      "theory": "Adiabatic saturation: $h_{db}\\approx h_{wb}$; $t_{dew}\\le t_{wb}\\le t_{db}$, equal only at $\\varphi=100\\%$.",
+      "source": "Lecture Part 5, wet/dry bulb"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "In a winter system, return air (E) and outdoor air (R) mix at M, then are heated to injection state I, with $h_M=[(\\dot m_{aI}-\\dot m_{aR})h_E+\\dot m_{aR}h_R]/\\dot m_{aI}$. If all air is recirculated ($\\dot m_{aR}=0$), then $h_M$ equals:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$h_R$"
+        },
+        {
+          "id": "B",
+          "content": "$h_E$"
+        },
+        {
+          "id": "C",
+          "content": "$(h_E+h_R)/2$"
+        },
+        {
+          "id": "D",
+          "content": "zero"
+        }
+      ],
+      "correct": "B",
+      "explanation": "With $\\dot m_{aR}=0$ the formula collapses to $h_M=h_E$: no fresh air, so the mix is just the return air. A would need all fresh air. C is the equal-mass average, not this case. D is meaningless.",
+      "theory": "Mixing point: $h_M=[(\\dot m_{aI}-\\dot m_{aR})h_E+\\dot m_{aR}h_R]/\\dot m_{aI}$; recirc fraction sets where M sits.",
+      "source": "Lecture Part 5, air conditioning winter"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Relative humidity $\\varphi$ during a pure heating process (constant $\\omega$):",
+      "options": [
+        {
+          "id": "A",
+          "content": "increases, because warm air holds more water"
+        },
+        {
+          "id": "B",
+          "content": "decreases, because $p_s$ rises while $p_v$ stays fixed"
+        },
+        {
+          "id": "C",
+          "content": "stays constant"
+        },
+        {
+          "id": "D",
+          "content": "jumps to 100%"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\varphi=p_v/p_s(T)$. Heating keeps $p_v$ (hence $\\omega$) fixed but raises $p_s$, so $\\varphi$ falls. That is why winter heating makes indoor air feel dry. A confuses capacity with $\\varphi$. C is wrong — only $\\omega$ is constant. D happens on cooling to saturation, the opposite.",
+      "theory": "$\\varphi=p_v/p_s$; heating ↑$p_s$ ⇒ ↓$\\varphi$ at constant $\\omega$.",
+      "source": "Lecture Part 5, heating process"
+    }
+  ],
+  "exam": [
+    {
+      "title": "State properties of moist air",
+      "meta": "Tutorial 5 · Ex 5.1/5.2 style · written-test",
+      "difficulty": "easy",
+      "statement": "Moist air at $p=1$ bar, $t=28^\\circ C$ has relative humidity $\\varphi=80\\%$. Determine (1) the dry-air partial pressure, (2) the vapor partial pressure, (3) the humidity ratio, (4) the specific enthalpy. Table: $p_s(28^\\circ C)=0.03782$ bar.",
+      "given": "$p=1$ bar, $t=28^\\circ C$, $\\varphi=0.80$, $p_s=0.03782$ bar, $c_{p,a}=1.006$, $c_{p,v}=1.875$, $r_0=2500$.",
+      "steps": [
+        {
+          "title": "Vapor pressure",
+          "content": "$p_v=\\varphi p_s=0.80\\times0.03782=0.0302$ bar."
+        },
+        {
+          "title": "Dry-air pressure",
+          "content": "$p_a=p-p_v=1-0.0302=0.9698$ bar."
+        },
+        {
+          "title": "Humidity ratio",
+          "content": "$\\omega=0.622\\dfrac{p_v}{p-p_v}=0.622\\dfrac{0.0302}{0.9698}=0.0194\\ \\text{kg}_v/\\text{kg}_a$."
+        },
+        {
+          "title": "Enthalpy",
+          "content": "$h=c_{p,a}t+\\omega(r_0+c_{p,v}t)=1.006(28)+0.0194(2500+1.875\\cdot28)=28.17+0.0194\\cdot2552.5=76.7\\ \\text{kJ/kg}_a$."
+        }
+      ],
+      "finalAnswer": "$p_a=0.970$ bar, $p_v=0.0302$ bar, $\\omega=0.019\\ \\text{kg}_v/\\text{kg}_a$, $h\\approx76.7$ kJ/kg$_a$.",
+      "tips": "Keep $t$ in °C for $h$. The latent term $\\omega r_0\\approx48.5$ kJ/kg dominates the sensible term — a sanity check on size."
+    },
+    {
+      "title": "Adiabatic mixing of two streams",
+      "meta": "Tutorial 5 · Ex 5.5 · written-test",
+      "difficulty": "medium",
+      "statement": "Two moist-air streams at 1 bar mix adiabatically. Stream 1: $\\dot m_1=20$ kg/s, $30^\\circ C$, $\\varphi_1=45\\%$. Stream 2: $\\dot m_2=35$ kg/s, $15^\\circ C$, $\\varphi_2=30\\%$. Find the mixture enthalpy $h_3$ and temperature $t_3$. Tables: $p_s(30)=0.04246$, $p_s(15)=0.01706$ bar.",
+      "given": "$\\dot m_1,\\dot m_2$ are total moist-air flows; need dry-air flows. $c_{p,a}=1.006$, $c_{p,v}=1.875$, $r_0=2500$.",
+      "steps": [
+        {
+          "title": "State 1",
+          "content": "$\\omega_1=0.622\\dfrac{0.45\\cdot0.04246}{1-0.45\\cdot0.04246}=0.0121$; $h_1=1.006(30)+0.0121(2500+1.875\\cdot30)=61.1$ kJ/kg."
+        },
+        {
+          "title": "State 2",
+          "content": "$\\omega_2=0.622\\dfrac{0.30\\cdot0.01706}{1-0.30\\cdot0.01706}=0.0032$; $h_2=1.006(15)+0.0032(2500+1.875\\cdot15)=23.2$ kJ/kg."
+        },
+        {
+          "title": "Dry-air flows",
+          "content": "$\\dot m_{a1}=20/(1+0.0121)=19.76$, $\\dot m_{a2}=35/(1+0.0032)=34.89\\ \\text{kg}_a/s$."
+        },
+        {
+          "title": "Energy balance → h3",
+          "content": "$h_3=\\dfrac{19.76\\cdot61.1+34.89\\cdot23.2}{19.76+34.89}=36.9$ kJ/kg."
+        },
+        {
+          "title": "Mass balance → ω3, then t3",
+          "content": "$\\omega_3=\\dfrac{19.76\\cdot0.0121+34.89\\cdot0.0032}{54.65}=0.0064$. From $h_3=c_{p,a}t_3+\\omega_3(r_0+c_{p,v}t_3)$: $t_3=\\dfrac{h_3/\\omega_3-r_0}{c_{p,a}/\\omega_3+c_{p,v}}\\approx20.5^\\circ C$."
+        }
+      ],
+      "finalAnswer": "$h_3=36.9$ kJ/kg$_a$, $\\omega_3=0.0064$, $t_3\\approx20.5^\\circ C$.",
+      "tips": "Convert the given total flows to dry-air flows before averaging. State 3 lies on the chart line 1–2, closer to stream 2 (larger mass)."
+    },
+    {
+      "title": "Cooling + dehumidification + post-heating",
+      "meta": "Tutorial 5 · Ex 5.9 · summer plant",
+      "difficulty": "hard",
+      "statement": "$\\dot V=7500\\ \\text{m}^3/h$ of moist air at 1 bar, $25^\\circ C$, $\\varphi_1=70\\%$ is cooled to saturation, then post-heated to $20^\\circ C$, $\\varphi_3=40\\%$. Find (1) cooling duty, (2) condensate rate, (3) post-heating duty. Tables: $p_s(25)=0.03169$, $p_s(20)=0.02339$ bar; $h_l(6^\\circ C)\\approx25.2$ kJ/kg.",
+      "given": "Process: 1→2 cool+dehumidify ($\\varphi_2=100\\%$), 2→3 heat at constant $\\omega$. $R_a=287$ J/kgK.",
+      "steps": [
+        {
+          "title": "State 1 & dry-air flow",
+          "content": "$p_{v1}=0.7\\cdot0.03169=0.02218$, $p_{a1}=0.978$ bar. $v_a=R_aT_1/p_{a1}=287\\cdot298.15/97780=0.875\\ \\text{m}^3/\\text{kg}$. $\\dot m_a=\\dot V/(3600 v_a)=7500/(3600\\cdot0.875)=2.38\\ \\text{kg}_a/s$. $\\omega_1=0.0141$, $h_1=61.1$ kJ/kg."
+        },
+        {
+          "title": "State 3 and ω2",
+          "content": "$\\omega_3=0.622\\dfrac{0.4\\cdot0.02339}{1-0.4\\cdot0.02339}=0.00588$, $h_3=35.0$ kJ/kg. Heating is constant-$\\omega$, so $\\omega_2=\\omega_3=0.00588$."
+        },
+        {
+          "title": "State 2 (saturated)",
+          "content": "With $\\varphi_2=100\\%$ and $\\omega_2=0.00588$: $p_{s2}=0.00936$ bar → $t_2\\approx6^\\circ C$, $h_2=20.8$ kJ/kg."
+        },
+        {
+          "title": "Condensate",
+          "content": "$\\dot m_w=\\dot m_a(\\omega_1-\\omega_2)=2.38(0.0141-0.00588)=0.0196\\ \\text{kg/s}$."
+        },
+        {
+          "title": "Duties",
+          "content": "$\\dot Q_{cool}=\\dot m_a(h_2-h_1)+\\dot m_w h_l=2.38(20.8-61.1)+0.0196\\cdot25.2=-95.3$ kW. $\\dot Q_{heat}=\\dot m_a(h_3-h_2)=2.38(35.0-20.8)=33.9$ kW."
+        }
+      ],
+      "finalAnswer": "$\\dot Q_{cool}\\approx-95.3$ kW, $\\dot m_w\\approx0.0196$ kg/s, $\\dot Q_{heat}\\approx33.9$ kW.",
+      "tips": "The post-heating leg fixes $\\omega_2=\\omega_3$, which then pins the saturated point 2. Cooling duty is negative (heat removed); heating positive."
+    },
+    {
+      "title": "Conceptual: draw and explain the winter cycle",
+      "meta": "Lecture Part 5 · open-ended",
+      "difficulty": "medium",
+      "statement": "Describe the winter air-conditioning process on a psychrometric chart: starting from cold, humid outdoor air, reach the warm comfortable injection state I. Name each leg, state which property is constant, and write the total power requested.",
+      "given": "Comfort target winter: $t_I\\approx21^\\circ C$, $\\varphi\\approx50\\%$. Mixing of return air E with fresh air R at point M.",
+      "steps": [
+        {
+          "title": "Mixing",
+          "content": "Return air (E) mixes with fresh outdoor air (R) → point M on segment R–E: $h_M=[(\\dot m_{aI}-\\dot m_{aR})h_E+\\dot m_{aR}h_R]/\\dot m_{aI}$."
+        },
+        {
+          "title": "Pre-heating (M→1)",
+          "content": "Sensible heating at **constant $\\omega$**: move right. Raises temperature so the air can then be humidified effectively."
+        },
+        {
+          "title": "Humidification (1→2)",
+          "content": "Adiabatic water spray (air washer) at **constant $h$**: $\\omega$ rises, $t$ falls slightly, until the desired moisture is reached."
+        },
+        {
+          "title": "Post-heating (2→I)",
+          "content": "Sensible heating at constant $\\omega$ up to the injection temperature $t_I$. Final state I has $\\omega_I<\\omega_E$ since the room is humidified by occupants ($\\omega_E>\\omega_I$)."
+        },
+        {
+          "title": "Power",
+          "content": "$\\dot Q=\\dot Q_t+\\dot m_{aR}(h_E-h_R)$, where $\\dot Q_t=\\dot m_{aI}(h_I-h_E)$ compensates the room load and the second term brings fresh air to extraction conditions."
+        }
+      ],
+      "finalAnswer": "Legs: mix (R+E→M) → pre-heat (const ω) → humidify (const h) → post-heat (const ω) → inject at I. Total $\\dot Q=\\dot Q_t+\\dot m_{aR}(h_E-h_R)$.",
+      "tips": "Pre-heat before humidifying so the spray can carry more water. Summer is the mirror image: cool+dehumidify (down the saturation curve) then post-heat."
+    }
+  ]
+}

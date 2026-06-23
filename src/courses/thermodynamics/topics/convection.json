@@ -1,0 +1,789 @@
+{
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What convection is"
+    },
+    {
+      "kind": "prose",
+      "text": "**Convection** is heat transfer between a solid wall and a fluid (gas or liquid) that moves relative to it, when there is a temperature difference between them.\n\nThink of a hot plate cooled by a breeze. The air right next to the plate is heated by **conduction**; then the moving air carries that energy away and brings in fresh cool air. Conduction sets the energy into the fluid, motion sweeps it away. The combination is convection.\n\nThe whole game in this topic is: **find the convection coefficient $h$, then compute the heat $q$.**"
+    },
+    {
+      "kind": "definition",
+      "term": "Newton's law of cooling",
+      "text": "The rate of convective heat transfer is proportional to the surface area and the wall-to-fluid temperature difference:\n$$q = h\\,A\\,(T_w - T_\\infty)$$\n- $q$ = heat rate [W]\n- $h$ = convection (heat transfer) coefficient [$\\mathrm{W/m^2K}$]\n- $A$ = wetted surface area [$\\mathrm{m^2}$]\n- $T_w$ = wall (surface) temperature, $T_\\infty$ = bulk/free-stream fluid temperature"
+    },
+    {
+      "kind": "formula",
+      "tag": "1",
+      "tex": "q = h\\,A\\,(T_w - T_\\infty)",
+      "caption": "Newton's law of cooling. The difference $T_w-T_\\infty$ is the same in K or °C, so no conversion is needed for the $\\Delta T$ itself."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "All the difficulty hides in h",
+      "text": "Unlike conduction (where $k$ is a fixed material property) or radiation, $h$ is **not** a property of the fluid. It depends on fluid properties, flow speed, geometry, surface roughness, and whether the flow is laminar or turbulent. The entire chapter is machinery for estimating $h$."
+    },
+    {
+      "kind": "heading",
+      "text": "Boundary layers: where the action happens"
+    },
+    {
+      "kind": "prose",
+      "text": "When fluid flows past a wall, the layer touching the wall is stuck to it ($v=0$ at the wall — the **no-slip condition**). Speed climbs from 0 at the wall up to the free-stream value $v_\\infty$ over a thin region called the **velocity boundary layer**, thickness $\\delta_v$.\n\nSimilarly, near a wall at a different temperature, the fluid temperature changes from $T_w$ at the wall to $T_\\infty$ far away over the **thermal boundary layer**, thickness $\\delta_t$. Both layers grow thicker downstream.\n\nThe key fact: at the wall the fluid is motionless, so heat crosses that first film **purely by conduction**. Therefore"
+    },
+    {
+      "kind": "formula",
+      "tag": "2",
+      "tex": "q''_s = -k_f\\left.\\frac{\\partial T}{\\partial y}\\right|_{y=0} = h\\,(T_w - T_\\infty)\\;\\Rightarrow\\; h = \\frac{-k_f\\,\\partial T/\\partial y|_{y=0}}{T_w - T_\\infty}",
+      "caption": "h is set by the temperature gradient at the wall. A thin thermal boundary layer (steep gradient) means large h. $k_f$ is the fluid conductivity."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Local vs average h",
+      "text": "$h$ varies along the surface (the boundary layer thickens, so the gradient shrinks downstream). For a whole surface we use the **average** coefficient $\\bar h = \\frac{1}{A}\\int_A h\\,dA$, and $q = \\bar h\\,A\\,(T_w-T_\\infty)$. In correlations, a Nusselt number with the full length $L$ or diameter $D$ gives $\\bar h$."
+    },
+    {
+      "kind": "heading",
+      "text": "Forced vs natural convection"
+    },
+    {
+      "kind": "definition",
+      "term": "Forced vs natural (free) convection",
+      "text": "- **Forced convection**: the fluid is pushed by an external cause unrelated to heating — a fan, pump, wind. Motion is set externally. Governed by **Re** and **Pr**.\n- **Natural (free) convection**: no external mover. Heating changes the fluid density; gravity makes warm light fluid rise and cool dense fluid sink (**buoyancy**). Governed by **Gr** (or **Ra**) and **Pr**.\n\nForced convection usually gives much larger $h$ than natural convection."
+    },
+    {
+      "kind": "heading",
+      "text": "The dimensionless groups — and what they mean"
+    },
+    {
+      "kind": "prose",
+      "text": "Dimensional analysis (Buckingham $\\pi$ theorem) reduces the 7 relevant variables to a handful of dimensionless groups. You do not solve the flow; you read $h$ off an experimental correlation written in these groups."
+    },
+    {
+      "kind": "definition",
+      "term": "Reynolds number, Re",
+      "text": "$$Re = \\frac{v\\,D}{\\nu} = \\frac{\\rho\\,v\\,D}{\\mu}$$\nRatio of **inertia forces to viscous forces**. Large Re = inertia wins = disturbances grow = **turbulent**; small Re = viscosity damps disturbances = **laminar**. $\\nu=\\mu/\\rho$ is the kinematic viscosity. Critical values: flat plate $Re_{cr}\\approx 5\\times10^5$, duct $Re_{cr}\\approx 2500$."
+    },
+    {
+      "kind": "definition",
+      "term": "Prandtl number, Pr",
+      "text": "$$Pr = \\frac{\\mu\\,c_p}{k} = \\frac{\\nu}{\\alpha}$$\nRatio of **momentum diffusivity to thermal diffusivity** — i.e. how thick the velocity boundary layer is compared with the thermal one. A pure fluid property. Gases $Pr\\approx 0.7$; water $\\approx 1$–7; oils/glycols $\\gg 1$. ($\\delta_v/\\delta_t\\approx Pr^{1/3}$.)"
+    },
+    {
+      "kind": "definition",
+      "term": "Nusselt number, Nu",
+      "text": "$$Nu = \\frac{h\\,D}{k}$$\nDimensionless convection coefficient: the ratio of **convective to (pure-fluid) conductive** heat transfer across the layer. $Nu=1$ would mean no help from motion (pure conduction). $Nu\\gg 1$ means convection strongly enhances the transfer. **This is what correlations give you, and you invert it to get $h$.**"
+    },
+    {
+      "kind": "definition",
+      "term": "Grashof & Rayleigh numbers (natural convection)",
+      "text": "$$Gr = \\frac{g\\,\\beta\\,(T_w-T_\\infty)\\,D^3}{\\nu^2}, \\qquad Ra = Gr\\cdot Pr$$\n$Gr$ = ratio of **buoyancy to viscous forces** (the natural-convection analogue of Re). $\\beta$ = volumetric thermal expansion coefficient; for an **ideal gas** $\\beta = 1/T$ (T in **K**). $Ra=Gr\\,Pr$ is the single group natural-convection correlations use; transition to turbulence around $Gr\\approx 10^9$ (so $Ra\\sim10^9$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "k in Nu vs k in Pr — both are the FLUID's k",
+      "text": "In $Nu=hD/k$ and $Pr=\\mu c_p/k$, the conductivity $k$ is the **fluid's** thermal conductivity, evaluated at the film temperature — never the wall material's. A favourite slip is to grab the metal's $k$. Use air/water/glycol properties."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "β = 1/T needs Kelvin",
+      "text": "For a gas, $\\beta=1/T_m$ with $T_m$ in **Kelvin** (e.g. $T_m=35°C=308\\,\\mathrm{K}\\Rightarrow\\beta=3.25\\times10^{-3}\\,\\mathrm{K^{-1}}$). Plugging 35 instead of 308 wrecks $Gr$. The temperature *difference* in $Gr$ may stay in °C, but the $\\beta$ uses absolute T."
+    },
+    {
+      "kind": "heading",
+      "text": "The master recipe: from a correlation to q"
+    },
+    {
+      "kind": "steps",
+      "title": "How to get h and then q",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Find the film (mean) temperature $T_m=(T_w+T_\\infty)/2$ and read fluid properties ($\\nu,\\mu,k,c_p,\\rho,Pr$) at $T_m$."
+        },
+        {
+          "label": "2",
+          "text": "Pick the characteristic length: $D$ for a duct/cylinder, plate length $L$ for a flat plate, $L$ (height) for a vertical surface."
+        },
+        {
+          "label": "3",
+          "text": "Compute the driving group: $Re=vD/\\nu$ for forced flow, or $Ra=Gr\\,Pr$ with $Gr=g\\beta\\Delta T\\,L^3/\\nu^2$ for natural flow."
+        },
+        {
+          "label": "4",
+          "text": "Decide laminar vs turbulent by comparing to the critical value, then select the matching correlation."
+        },
+        {
+          "label": "5",
+          "text": "Compute $Nu$ from the correlation, then invert: $h=\\dfrac{Nu\\,k}{(\\text{char. length})}$."
+        },
+        {
+          "label": "6",
+          "text": "Apply Newton: $q=h\\,A\\,(T_w-T_\\infty)$. For energy over time, $Q=q\\,t$; for a heated stream, close with $q=\\dot m c_p(T_o-T_i)$."
+        }
+      ]
+    },
+    {
+      "kind": "heading",
+      "text": "The correlations you need"
+    },
+    {
+      "kind": "formula",
+      "tag": "3",
+      "tex": "\\textbf{Flat plate (forced, external):}\\quad \\overline{Nu}_L=0.664\\,Re_L^{1/2}Pr^{1/3}\\ (Re_L<5\\times10^5)\\\\[4pt] \\overline{Nu}_L=\\big(0.037\\,Re_L^{4/5}-871\\big)Pr^{1/3}\\ (5\\times10^5<Re_L<10^8)",
+      "caption": "Laminar (top) and turbulent/mixed (bottom) average Nusselt for a flat plate. Valid $0.6<Pr<60$. Characteristic length = plate length L."
+    },
+    {
+      "kind": "formula",
+      "tag": "4",
+      "tex": "\\textbf{Circular duct (forced, internal):}\\quad Nu_D=3.66\\ (\\text{laminar, }Re_D<2500,\\,T_w=const)\\\\[4pt] \\overline{Nu}_D=0.023\\,Re_D^{4/5}Pr^{n}\\ (\\text{Dittus--Boelter, turbulent}),\\ n=0.4\\ \\text{heating},\\ n=0.3\\ \\text{cooling}\\\\[4pt] \\overline{Nu}_D=0.027\\,Re_D^{4/5}Pr^{1/3}(\\mu/\\mu_w)^{0.14}\\ (\\text{Sieder--Tate})",
+      "caption": "Internal flow. Laminar fully-developed Nu is a constant (4.36 for uniform flux, 3.66 for uniform Tw). Dittus-Boelter valid Re>10^4, 0.7<Pr<160, L/D>10. Use D as char. length."
+    },
+    {
+      "kind": "formula",
+      "tag": "5",
+      "tex": "\\textbf{Natural convection (Nu = f(Ra)):}\\\\[4pt] \\text{Horizontal cylinder: } \\overline{Nu}_D=0.53\\,Ra_D^{1/4}\\ (10^4\\!\\le\\! Ra\\!\\le\\!10^9)\\\\[4pt] \\text{Vertical plate/cylinder: } \\overline{Nu}_L=0.59\\,Ra_L^{1/4}\\,(10^4\\!-\\!10^9),\\ =0.10\\,Ra_L^{1/3}\\,(10^9\\!-\\!10^{12})\\\\[4pt] \\text{Horizontal plate, hot face up: } \\overline{Nu}_L=0.54\\,Ra_L^{1/4}\\,(10^4\\!-\\!10^7)",
+      "caption": "Natural convection: Nu depends only on Ra (and Pr inside Ra). Note the 1/4 power in laminar, 1/3 in turbulent — a 1/3 power makes h independent of L."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Why the exponents matter",
+      "text": "For a natural-convection turbulent correlation $Nu\\propto Ra^{1/3}\\propto (L^3)^{1/3}=L$, so $h=Nu\\,k/L$ becomes **independent of L**. With the laminar $Ra^{1/4}$, $h\\propto L^{-1/4}$ — bigger surface, slightly smaller h. Handy sanity check."
+    },
+    {
+      "kind": "sim",
+      "simKey": "convection",
+      "title": "Boundary-layer & h explorer",
+      "caption": "Vary free-stream speed, fluid, and geometry. Watch the boundary layer thin out as Re rises, see Re/Pr/Nu update, and read off h and q from Newton's law."
+    },
+    {
+      "kind": "heading",
+      "text": "Worked example: flat plate (forced)"
+    },
+    {
+      "kind": "example",
+      "title": "Air over a heated plate (Tutorial 7.1)",
+      "text": "**Air** at $T_\\infty=20°C$, $1$ atm, flows at $v=35\\ \\mathrm{m/s}$ over a flat plate $L=0.75\\ \\mathrm{m}$ long, depth $1\\ \\mathrm{m}$, held at $T_w=60°C$. Find the heat exchanged in $1$ h.\n\n**Step 1 — film temp & properties.** $T_m=(20+60)/2=40°C$: $\\nu=1.696\\times10^{-5}\\ \\mathrm{m^2/s}$, $k=0.0276\\ \\mathrm{W/mK}$, $Pr=0.697$.\n\n**Step 2 — char. length** $=L=0.75\\ \\mathrm{m}$.\n\n**Step 3 — Reynolds.** $Re_L=\\dfrac{vL}{\\nu}=\\dfrac{35\\cdot0.75}{1.696\\times10^{-5}}=1.55\\times10^{6}$.\n\n**Step 4 — regime.** $Re_L>5\\times10^5$ $\\to$ turbulent (mixed) correlation.\n\n**Step 5 — Nu, then h.** $\\overline{Nu}_L=(0.037\\,Re_L^{4/5}-871)Pr^{1/3}=2163$. $h=\\dfrac{Nu\\,k}{L}=\\dfrac{2163\\cdot0.0276}{0.75}=79.6\\ \\mathrm{W/m^2K}$.\n\n**Step 6 — Newton.** $A=0.75\\times1=0.75\\ \\mathrm{m^2}$. $q=hA(T_w-T_\\infty)=79.6\\cdot0.75\\cdot40=2388\\ \\mathrm{W}$. Over 1 h: $Q=q\\,t=2388\\cdot3600\\approx\\mathbf{8.6\\ MJ}$."
+    },
+    {
+      "kind": "checkpoint",
+      "title": "Pick the correlation",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Water is **pumped** through a long pipe at $Re_D=4\\times10^4$ and is being **heated** by the wall. Which correlation gives $\\bar h$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$Nu_D=3.66$ (laminar fully developed)"
+          },
+          {
+            "id": "B",
+            "content": "$\\overline{Nu}_D=0.023\\,Re_D^{4/5}Pr^{0.4}$ (Dittus-Boelter, heating)"
+          },
+          {
+            "id": "C",
+            "content": "$\\overline{Nu}_D=0.023\\,Re_D^{4/5}Pr^{0.3}$ (Dittus-Boelter, cooling)"
+          },
+          {
+            "id": "D",
+            "content": "$\\overline{Nu}_L=0.59\\,Ra_L^{1/4}$ (vertical plate, natural)"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The flow is **forced** (pumped) and **internal** (pipe) with $Re_D=4\\times10^4>10^4$, so it is turbulent $\\to$ Dittus-Boelter. The fluid is being heated, so the exponent on Pr is $0.4$. **A** is wrong: laminar applies only for $Re_D<2500$. **C** uses $n=0.3$, which is for **cooling** (wall colder than fluid). **D** is a natural-convection correlation and uses Ra, but here the cause of motion is the pump, not buoyancy.",
+        "theory": "Internal forced flow: choose by Re (laminar Nu=3.66/4.36 below 2500; Dittus-Boelter above 10^4). Pr exponent: 0.4 if fluid heated, 0.3 if cooled.",
+        "source": "Lecture HT Part 2; Tutorial 7"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Worked example: natural convection"
+    },
+    {
+      "kind": "example",
+      "title": "Hot horizontal cylinder in still air (Tutorial 7.3a)",
+      "text": "A cylinder $D=0.1\\ \\mathrm{m}$, $L=1\\ \\mathrm{m}$, wall at $T_w=50°C$, sits in still air at $T_a=20°C$, 1 atm. Find the dissipated power (horizontal).\n\n**Step 1 — film temp.** $T_m=35°C=308\\ \\mathrm{K}$. Air: $\\nu=1.645\\times10^{-5}\\ \\mathrm{m^2/s}$, $k=0.0272\\ \\mathrm{W/mK}$, $Pr=0.698$.\n\n**Step 2 — $\\beta$ (ideal gas).** $\\beta=1/T_m=1/308=3.25\\times10^{-3}\\ \\mathrm{K^{-1}}$.\n\n**Step 3 — Grashof & Rayleigh** (char. length = $D$). $Gr_D=\\dfrac{g\\beta(T_w-T_a)D^3}{\\nu^2}=\\dfrac{9.81\\cdot3.25\\times10^{-3}\\cdot30\\cdot0.1^3}{(1.645\\times10^{-5})^2}=3.51\\times10^{6}$. $Ra_D=Gr_D\\,Pr=2.45\\times10^{6}$.\n\n**Step 4 — correlation** ($10^4\\le Ra\\le10^9$): $\\overline{Nu}_D=0.53\\,Ra_D^{1/4}=21.0$.\n\n**Step 5 — h.** $h=\\dfrac{Nu\\,k}{D}=\\dfrac{21.0\\cdot0.0272}{0.1}=5.7\\ \\mathrm{W/m^2K}$.\n\n**Step 6 — Newton.** $A=2\\cdot\\pi D^2/4+\\pi D L=0.0157+0.314=0.330\\ \\mathrm{m^2}$. $q=hA(T_w-T_a)=5.7\\cdot0.330\\cdot30\\approx\\mathbf{56\\ W}$.\n\nFor the **vertical** orientation, char. length $=L=1\\ \\mathrm{m}$ gives $Ra_L=2.45\\times10^9>10^9$ $\\to$ $\\overline{Nu}_L=0.10\\,Ra_L^{1/3}=135$, $h=3.67\\ \\mathrm{W/m^2K}$, $q\\approx36\\ \\mathrm{W}$. Horizontal dissipates more here."
+    },
+    {
+      "kind": "checkpoint",
+      "title": "What does a big Nu mean?",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A high Nusselt number means that:",
+        "options": [
+          {
+            "id": "A",
+            "content": "conduction in the fluid prevails over convection"
+          },
+          {
+            "id": "B",
+            "content": "convection prevails over radiation"
+          },
+          {
+            "id": "C",
+            "content": "convection (motion-enhanced transfer) prevails over pure conduction in the fluid"
+          },
+          {
+            "id": "D",
+            "content": "the wall material conducts better than the fluid"
+          }
+        ],
+        "correct": "C",
+        "explanation": "$Nu=hD/k$ compares convective transfer ($h$) to conduction across a stagnant fluid layer of the same scale ($k/D$). Large $Nu$ $\\to$ motion greatly enhances transfer beyond pure conduction. **A** reverses it. **B** brings in radiation, which Nu has nothing to do with. **D** confuses fluid and solid conductivity; Nu uses only the fluid's k.",
+        "theory": "Nu is the dimensionless h: ratio of convective to conductive transport within the fluid. Nu→1 means no benefit from motion.",
+        "source": "Heat transfer quizzes Q5"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "medium",
+      "prompt": "A high Nusselt number means that:",
+      "options": [
+        {
+          "id": "A",
+          "content": "heat transfer by conduction prevails over convection"
+        },
+        {
+          "id": "B",
+          "content": "heat transfer by convection prevails over conduction"
+        },
+        {
+          "id": "C",
+          "content": "heat transfer by convection prevails over radiation"
+        },
+        {
+          "id": "D",
+          "content": "heat transfer by conduction prevails over radiation"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$Nu=hD/k$ is the ratio of convective transfer to conduction across a fluid layer; large Nu means motion strongly boosts transfer over pure conduction. **A** is the reverse. **C** and **D** involve radiation, which Nu does not describe.",
+      "theory": "Nu = convective/conductive transport in the fluid.",
+      "source": "Heat transfer quizzes Q5"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In Newton's law of cooling $q=hA(T_w-T_\\infty)$, the coefficient $h$:",
+      "options": [
+        {
+          "id": "A",
+          "content": "is a property of the fluid alone, like its conductivity"
+        },
+        {
+          "id": "B",
+          "content": "depends on fluid properties, flow speed, geometry and flow regime"
+        },
+        {
+          "id": "C",
+          "content": "is always larger in natural convection than in forced convection"
+        },
+        {
+          "id": "D",
+          "content": "has units of $\\mathrm{W/mK}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$h$ is not a material property: it lumps together fluid properties, velocity, geometry, roughness, and laminar/turbulent regime. **A** describes $k$, not $h$. **C** is backwards — forced convection usually gives larger $h$. **D** gives the units of conductivity; $h$ is $\\mathrm{W/m^2K}$.",
+      "theory": "h is determined by the flow, not tabulated like a property; that is why we need correlations.",
+      "source": "Lecture HT Part 2"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The Reynolds number is physically the ratio of:",
+      "options": [
+        {
+          "id": "A",
+          "content": "buoyancy forces to viscous forces"
+        },
+        {
+          "id": "B",
+          "content": "momentum diffusivity to thermal diffusivity"
+        },
+        {
+          "id": "C",
+          "content": "inertia forces to viscous forces"
+        },
+        {
+          "id": "D",
+          "content": "convective to conductive heat transfer"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$Re=\\rho vD/\\mu$ compares inertia to viscous forces; high Re $\\to$ turbulence. **A** is the Grashof number. **B** is the Prandtl number. **D** is the Nusselt number.",
+      "theory": "Re = inertia/viscous → decides laminar vs turbulent.",
+      "source": "Lecture HT Part 2 (Reynolds experiment)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For flow inside a circular duct, the transition from laminar to turbulent occurs roughly at:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$Re_D\\approx 2500$"
+        },
+        {
+          "id": "B",
+          "content": "$Re_L\\approx 5\\times10^5$"
+        },
+        {
+          "id": "C",
+          "content": "$Ra\\approx 10^9$"
+        },
+        {
+          "id": "D",
+          "content": "$Re_D\\approx 10^4$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Internal duct flow goes turbulent near $Re_D\\approx2500$. **B** is the flat-plate (external) critical Reynolds. **C** is the natural-convection transition (in Ra/Gr). **D** ($10^4$) is the lower validity limit of Dittus-Boelter, not the transition point.",
+      "theory": "Critical Re depends on geometry: plate ~5×10^5, duct ~2500. Natural convection transitions at Gr/Ra ~10^9.",
+      "source": "Lecture HT Part 2"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Air ($Pr\\approx0.7$) flows over a flat plate at $Re_L=2\\times10^4$, plate at uniform temperature. The correct average Nusselt correlation is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\overline{Nu}_L=(0.037\\,Re_L^{4/5}-871)Pr^{1/3}$"
+        },
+        {
+          "id": "B",
+          "content": "$Nu_D=3.66$"
+        },
+        {
+          "id": "C",
+          "content": "$\\overline{Nu}_L=0.664\\,Re_L^{1/2}Pr^{1/3}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\overline{Nu}_L=0.53\\,Ra_L^{1/4}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$Re_L=2\\times10^4<5\\times10^5$, so the boundary layer is laminar $\\to$ use the laminar flat-plate correlation $0.664\\,Re_L^{1/2}Pr^{1/3}$. **A** is the turbulent/mixed plate correlation (only above $5\\times10^5$). **B** is internal laminar duct flow. **D** is natural convection (uses Ra), not forced flat-plate flow.",
+      "theory": "External laminar plate: Nu=0.664 Re^{1/2} Pr^{1/3}; turbulent: (0.037 Re^{4/5}-871)Pr^{1/3}.",
+      "source": "Lecture HT Part 2; Tutorial 7"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For an ideal gas at mean temperature $T_m=27°C$, the volumetric thermal expansion coefficient $\\beta$ used in the Grashof number is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\beta=1/27\\approx 0.037\\ \\mathrm{K^{-1}}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\beta=1/300\\approx 3.3\\times10^{-3}\\ \\mathrm{K^{-1}}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\beta=27\\ \\mathrm{K^{-1}}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\beta=300\\ \\mathrm{K^{-1}}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "For an ideal gas $\\beta=1/T$ with $T$ in **Kelvin**: $T_m=27°C=300\\ \\mathrm{K}$ $\\to$ $\\beta=1/300=3.3\\times10^{-3}\\ \\mathrm{K^{-1}}$. **A** wrongly uses 27 (°C) in the denominator. **C** and **D** invert the relation entirely.",
+      "theory": "Ideal gas: β=1/T (T in K). Plug Kelvin, not Celsius.",
+      "source": "Tutorial 7.3"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Air flows over a $L=0.5\\ \\mathrm{m}$ plate at $v=20\\ \\mathrm{m/s}$; $\\nu=1.7\\times10^{-5}\\ \\mathrm{m^2/s}$, $k=0.027\\ \\mathrm{W/mK}$, $Pr=0.70$. Estimate $\\bar h$. ($Re_L\\approx5.9\\times10^5$.)",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\approx 47\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\approx 78\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\approx 12\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\approx 250\\ \\mathrm{W/m^2K}$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$Re_L=20\\cdot0.5/1.7\\times10^{-5}=5.9\\times10^5>5\\times10^5$ $\\to$ mixed/turbulent: $\\overline{Nu}=(0.037\\,Re^{0.8}-871)Pr^{1/3}=(0.037\\cdot43500-871)\\cdot0.888\\approx872$; $h=Nu\\,k/L=872\\cdot0.027/0.5\\approx47\\ \\mathrm{W/m^2K}$. **B** comes from omitting the $-871$ term. **C** comes from wrongly using the laminar correlation. **D** is off by an order of magnitude (e.g. forgetting to divide by L).",
+      "theory": "Turbulent plate: include the -871 mixed-flow correction; then h=Nu k/L.",
+      "source": "Lecture HT Part 2; Tutorial 7.1 style"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Ethylene glycol ($Pr\\approx205$) flows in a pipe at $Re_D=2.6\\times10^4$, being heated. Which correlation is most appropriate?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Dittus-Boelter $0.023\\,Re^{4/5}Pr^{0.4}$ (valid only $Pr<160$)"
+        },
+        {
+          "id": "B",
+          "content": "$Nu_D=3.66$ (laminar)"
+        },
+        {
+          "id": "C",
+          "content": "Sieder-Tate $0.027\\,Re^{4/5}Pr^{1/3}(\\mu/\\mu_w)^{0.14}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\overline{Nu}_L=0.54\\,Ra_L^{1/4}$ (horizontal plate, natural)"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$Pr=205$ exceeds the Dittus-Boelter validity limit (0.7–160), but is within Sieder-Tate's range (0.7–16700); turbulent forced internal flow $\\to$ Sieder-Tate. **A** is out of validity range for this high Pr. **B** requires $Re<2500$. **D** is natural convection, but the glycol is being pumped.",
+      "theory": "High-Pr viscous liquids in turbulent ducts → Sieder-Tate (with viscosity-ratio correction).",
+      "source": "Tutorial 7.2"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A vertical heated plate in still air gives $Ra_L=2\\times10^9$. Using $\\overline{Nu}_L=0.10\\,Ra_L^{1/3}$, doubling the plate height $L$ (other things fixed) changes $\\bar h$ by roughly:",
+      "options": [
+        {
+          "id": "A",
+          "content": "halves it"
+        },
+        {
+          "id": "B",
+          "content": "doubles it"
+        },
+        {
+          "id": "C",
+          "content": "leaves it essentially unchanged"
+        },
+        {
+          "id": "D",
+          "content": "increases it by $2^{1/4}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "With $Nu\\propto Ra^{1/3}\\propto (L^3)^{1/3}=L$, then $h=Nu\\,k/L\\propto L/L=$ constant. So $\\bar h$ is independent of L in the turbulent ($Ra^{1/3}$) regime. **A** and **B** ignore the cancellation. **D** is the laminar $Ra^{1/4}$ scaling ($h\\propto L^{-1/4}$), not applicable here.",
+      "theory": "Turbulent natural convection: Nu∝Ra^{1/3} makes h independent of characteristic length; laminar Ra^{1/4} gives h∝L^{-1/4}.",
+      "source": "Tutorial 7.3; correlation tables"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "At the wall ($y=0$) the fluid is motionless, so heat crosses the first film by:",
+      "options": [
+        {
+          "id": "A",
+          "content": "radiation only"
+        },
+        {
+          "id": "B",
+          "content": "pure conduction, and $h=-k_f(\\partial T/\\partial y)_0/(T_w-T_\\infty)$"
+        },
+        {
+          "id": "C",
+          "content": "turbulent mixing only"
+        },
+        {
+          "id": "D",
+          "content": "convection with $h$ independent of the temperature gradient"
+        }
+      ],
+      "correct": "B",
+      "explanation": "No-slip means $v=0$ at the wall, so the only mechanism there is conduction in the fluid; equating Fourier and Newton gives $h$ from the wall temperature gradient. **A** ignores conduction. **C** is wrong — at the wall there is no motion. **D** contradicts the definition; $h$ is set precisely by that gradient.",
+      "theory": "h is fixed by the wall-normal temperature gradient: steep gradient (thin thermal layer) → large h.",
+      "source": "Lecture HT Part 2 (thermal boundary layer)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Which statement about natural (free) convection is correct?",
+      "options": [
+        {
+          "id": "A",
+          "content": "It is driven by an external fan or pump"
+        },
+        {
+          "id": "B",
+          "content": "Its correlations have the form $Nu=f(Re,Pr)$"
+        },
+        {
+          "id": "C",
+          "content": "It is driven by buoyancy from density differences, with $Nu=f(Ra)$"
+        },
+        {
+          "id": "D",
+          "content": "It cannot occur in gases"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Natural convection arises when heating changes density and gravity drives the flow; its correlations use the Rayleigh number $Ra=Gr\\,Pr$. **A** describes forced convection. **B** is the forced-convection form. **D** is false — buoyant air motion is a classic example.",
+      "theory": "Forced: Nu=f(Re,Pr). Natural: Nu=f(Ra), Ra=Gr·Pr; Gr replaces Re.",
+      "source": "Lecture HT Part 2 (natural convection)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Steam flows in a $d=0.02\\ \\mathrm{m}$ pipe; computed $h=187\\ \\mathrm{W/m^2K}$ over $L=1.1\\ \\mathrm{m}$ with a constant $\\Delta T=15°C$ between wall and steam. The convective heat rate is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\approx 193\\ \\mathrm{W}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\approx 61\\ \\mathrm{W}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\approx 970\\ \\mathrm{W}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\approx 12\\ \\mathrm{W}$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$A=\\pi d L=\\pi\\cdot0.02\\cdot1.1=0.0691\\ \\mathrm{m^2}$; $q=hA\\Delta T=187\\cdot0.0691\\cdot15\\approx193\\ \\mathrm{W}$. **B** wrongly uses the cross-section area $\\pi d^2/4$ instead of the lateral area. **C** overcounts by ~5 (e.g. wrong area). **D** drops the $\\Delta T$ or a factor.",
+      "theory": "For a pipe, the heat-exchange area is the lateral surface $\\pi d L$, not the cross-section.",
+      "source": "Tutorial 7.4"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Prandtl number $Pr=\\mu c_p/k$ physically represents:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the ratio of buoyancy to viscous forces"
+        },
+        {
+          "id": "B",
+          "content": "the relative thickness of the velocity vs thermal boundary layers"
+        },
+        {
+          "id": "C",
+          "content": "the ratio of convective to conductive transfer at the wall"
+        },
+        {
+          "id": "D",
+          "content": "the ratio of inertia to viscous forces"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$Pr=\\nu/\\alpha$ compares momentum to thermal diffusivity; it sets how thick the velocity boundary layer is relative to the thermal one ($\\delta_v/\\delta_t\\approx Pr^{1/3}$). **A** is Grashof. **C** is Nusselt. **D** is Reynolds.",
+      "theory": "Pr (a fluid property) compares momentum and thermal diffusion; gases ~0.7, oils ≫1.",
+      "source": "Lecture HT Part 2 (dimensional analysis)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "To convert a Nusselt number from a correlation into the convection coefficient $h$, you use:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$h=Nu\\,k/L^*$ with $k$ the fluid conductivity and $L^*$ the characteristic length"
+        },
+        {
+          "id": "B",
+          "content": "$h=Nu\\,L^*/k$"
+        },
+        {
+          "id": "C",
+          "content": "$h=Nu\\,k_{wall}/L^*$ with the wall material's conductivity"
+        },
+        {
+          "id": "D",
+          "content": "$h=Nu/(k\\,L^*)$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "From $Nu=hL^*/k$, invert to $h=Nu\\,k/L^*$ using the **fluid's** k. **B** inverts the ratio. **C** uses the wrong (solid) conductivity. **D** is dimensionally wrong.",
+      "theory": "Nu=hL*/k ⇒ h=Nu k/L*; always the fluid's k at film temperature.",
+      "source": "Tutorial 7"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A horizontal cylinder and the same cylinder vertical are both in still air with the same $\\Delta T$. The Rayleigh number used for each is built with characteristic length equal to, respectively:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the length $L$ for horizontal, the diameter $D$ for vertical"
+        },
+        {
+          "id": "B",
+          "content": "the diameter $D$ for horizontal, the height $L$ for vertical"
+        },
+        {
+          "id": "C",
+          "content": "the diameter $D$ for both"
+        },
+        {
+          "id": "D",
+          "content": "the length $L$ for both"
+        }
+      ],
+      "correct": "B",
+      "explanation": "For a horizontal cylinder the relevant scale across which the buoyant layer develops is the diameter $D$; for a vertical cylinder it is the height $L$ along which the layer grows. **A** swaps them. **C** and **D** use a single scale for both, ignoring orientation.",
+      "theory": "Natural-convection characteristic length follows the direction the boundary layer develops: D for horizontal cylinders, height L for vertical surfaces.",
+      "source": "Tutorial 7.3"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Air over a heated flat plate — energy in one hour",
+      "meta": "Tutorial 7.1 · forced external convection · numeric",
+      "difficulty": "medium",
+      "statement": "Air at $T_\\infty=20°C$ and 1 atm flows at $v=35\\ \\mathrm{m/s}$ over a flat plate $L=0.75\\ \\mathrm{m}$ long (depth 1 m) maintained at $T_w=60°C$. Compute the heat exchanged between the plate and the air in 1 hour.",
+      "given": "$T_\\infty=20°C$, $T_w=60°C$, $v=35\\ \\mathrm{m/s}$, $L=0.75\\ \\mathrm{m}$, depth $=1\\ \\mathrm{m}$, $t=3600\\ \\mathrm{s}$. Air at $T_m=40°C$: $\\nu=1.696\\times10^{-5}\\ \\mathrm{m^2/s}$, $k=0.0276\\ \\mathrm{W/mK}$, $Pr=0.697$.",
+      "steps": [
+        {
+          "title": "Film temperature & properties",
+          "content": "$T_m=(20+60)/2=40°C$. Read air properties at 40°C (given)."
+        },
+        {
+          "title": "Reynolds number",
+          "content": "$Re_L=\\dfrac{vL}{\\nu}=\\dfrac{35\\cdot0.75}{1.696\\times10^{-5}}=1.55\\times10^{6}$. Since $>5\\times10^5$ $\\to$ mixed/turbulent."
+        },
+        {
+          "title": "Nusselt and h",
+          "content": "$\\overline{Nu}_L=(0.037\\,Re_L^{4/5}-871)Pr^{1/3}=2163$. $h=\\dfrac{Nu\\,k}{L}=\\dfrac{2163\\cdot0.0276}{0.75}=79.6\\ \\mathrm{W/m^2K}$."
+        },
+        {
+          "title": "Newton's law & energy",
+          "content": "$A=0.75\\times1=0.75\\ \\mathrm{m^2}$. $q=hA(T_w-T_\\infty)=79.6\\cdot0.75\\cdot40=2388\\ \\mathrm{W}$. $Q=q\\,t=2388\\cdot3600=8.6\\times10^6\\ \\mathrm{J}$."
+        }
+      ],
+      "finalAnswer": "$h\\approx79.6\\ \\mathrm{W/m^2K}$, $q\\approx2.39\\ \\mathrm{kW}$, $Q\\approx8.6\\ \\mathrm{MJ}$.",
+      "tips": "Check Re first to pick laminar vs turbulent. Do not forget the $-871$ mixed-flow term. The $\\Delta T$ (40 K) is identical in K and °C."
+    },
+    {
+      "title": "Ethylene glycol in a copper pipe — high-Pr internal flow",
+      "meta": "Tutorial 7.2 · forced internal convection · numeric",
+      "difficulty": "medium",
+      "statement": "Ethylene glycol flows at mean speed $\\bar v=5\\ \\mathrm{m/s}$ inside a copper pipe of internal diameter $D=0.1\\ \\mathrm{m}$. The mean fluid temperature is $20°C$ and the wall is at $100°C$. Over a 5 m fully-developed length, find the thermal power the fluid receives.",
+      "given": "$\\bar v=5\\ \\mathrm{m/s}$, $D=0.1\\ \\mathrm{m}$, $\\bar T=20°C$, $T_w=100°C$, $L=5\\ \\mathrm{m}$. Glycol at 20°C: $\\rho=1116.7$, $k=0.249\\ \\mathrm{W/mK}$, $c_p=2382\\ \\mathrm{J/kgK}$, $\\nu=1.918\\times10^{-5}\\ \\mathrm{m^2/s}$; $\\mu_w=215\\times10^{-5}\\ \\mathrm{Pa\\cdot s}$ at 100°C.",
+      "steps": [
+        {
+          "title": "Reynolds & Prandtl",
+          "content": "$Re_D=\\dfrac{\\bar v D}{\\nu}=\\dfrac{5\\cdot0.1}{1.918\\times10^{-5}}=2.61\\times10^{4}$ (turbulent). $\\mu=\\rho\\nu=0.0214\\ \\mathrm{Pa\\cdot s}$, $Pr=\\dfrac{\\mu c_p}{k}=205$."
+        },
+        {
+          "title": "Choose correlation",
+          "content": "$Pr=205$ exceeds Dittus-Boelter's limit (160) but is within Sieder-Tate's range $\\to$ use Sieder-Tate."
+        },
+        {
+          "title": "Nusselt and h",
+          "content": "$\\overline{Nu}_D=0.027\\,Re_D^{4/5}Pr^{1/3}(\\mu/\\mu_w)^{0.14}=748$. $h=\\dfrac{Nu\\,k}{D}=\\dfrac{748\\cdot0.249}{0.1}=1862\\ \\mathrm{W/m^2K}$."
+        },
+        {
+          "title": "Newton's law",
+          "content": "$A=\\pi D L=\\pi\\cdot0.1\\cdot5=1.571\\ \\mathrm{m^2}$. $q=hA(T_w-\\bar T)=1862\\cdot1.571\\cdot80\\approx234\\ \\mathrm{kW}$."
+        }
+      ],
+      "finalAnswer": "$Re\\approx2.6\\times10^4$, $Pr\\approx205$, $\\overline{Nu}\\approx748$, $h\\approx1862\\ \\mathrm{W/m^2K}$, $q\\approx234\\ \\mathrm{kW}$.",
+      "tips": "For very viscous, high-Pr liquids use Sieder-Tate. Pipe area is the lateral $\\pi D L$. Evaluate $\\mu_w$ at the wall temperature for the viscosity-ratio factor."
+    },
+    {
+      "title": "Hot cylinder in still air — horizontal vs vertical (natural convection)",
+      "meta": "Tutorial 7.3 · free convection · numeric, two cases",
+      "difficulty": "hard",
+      "statement": "A cylinder $D=0.1\\ \\mathrm{m}$, $L=1\\ \\mathrm{m}$, with outer wall at $T_w=50°C$ is immersed in still air at $T_a=20°C$, 1 atm. Find the power dissipated when the cylinder is (a) horizontal and (b) vertical.",
+      "given": "$D=0.1\\ \\mathrm{m}$, $L=1\\ \\mathrm{m}$, $T_w=50°C$, $T_a=20°C$. Air at $T_m=35°C=308\\ \\mathrm{K}$: $\\nu=1.645\\times10^{-5}\\ \\mathrm{m^2/s}$, $k=0.0272\\ \\mathrm{W/mK}$, $Pr=0.698$; $\\beta=1/T_m$.",
+      "steps": [
+        {
+          "title": "β and common setup",
+          "content": "$T_m=35°C=308\\ \\mathrm{K}$ $\\to$ $\\beta=1/308=3.25\\times10^{-3}\\ \\mathrm{K^{-1}}$. Surface area $A=2\\cdot\\pi D^2/4+\\pi D L=0.330\\ \\mathrm{m^2}$."
+        },
+        {
+          "title": "(a) Horizontal: char. length D",
+          "content": "$Gr_D=\\dfrac{g\\beta\\Delta T\\,D^3}{\\nu^2}=\\dfrac{9.81\\cdot3.25\\times10^{-3}\\cdot30\\cdot0.1^3}{(1.645\\times10^{-5})^2}=3.51\\times10^{6}$; $Ra_D=Gr_D Pr=2.45\\times10^6$. With $\\overline{Nu}_D=0.53\\,Ra_D^{1/4}=21.0$, $h=Nu\\,k/D=5.7\\ \\mathrm{W/m^2K}$."
+        },
+        {
+          "title": "(a) Heat rate",
+          "content": "$q=hA\\Delta T=5.7\\cdot0.330\\cdot30\\approx56\\ \\mathrm{W}$."
+        },
+        {
+          "title": "(b) Vertical: char. length L",
+          "content": "$Gr_L=\\dfrac{g\\beta\\Delta T\\,L^3}{\\nu^2}=3.51\\times10^{9}$; $Ra_L=2.45\\times10^9>10^9$ $\\to$ $\\overline{Nu}_L=0.10\\,Ra_L^{1/3}=135$; $h=Nu\\,k/L=3.67\\ \\mathrm{W/m^2K}$. $q=hA\\Delta T=3.67\\cdot0.330\\cdot30\\approx36\\ \\mathrm{W}$."
+        }
+      ],
+      "finalAnswer": "(a) Horizontal: $h\\approx5.7\\ \\mathrm{W/m^2K}$, $q\\approx56\\ \\mathrm{W}$. (b) Vertical: $h\\approx3.67\\ \\mathrm{W/m^2K}$, $q\\approx36\\ \\mathrm{W}$. The horizontal cylinder dissipates more.",
+      "tips": "Use β=1/T in Kelvin. Characteristic length: D (horizontal) vs height L (vertical). Pick the Ra-range-matching correlation; note the 1/4 vs 1/3 exponents."
+    },
+    {
+      "title": "Superheated steam heated in a pipe — outlet temperature",
+      "meta": "Tutorial 7.4 · internal forced convection + 1st law · numeric",
+      "difficulty": "hard",
+      "statement": "Superheated steam, $\\dot V=20\\ \\mathrm{L/s}$ at atmospheric pressure, flows in a horizontal pipe of internal diameter $d=0.02\\ \\mathrm{m}$, length $L=1.1\\ \\mathrm{m}$. Inlet $T_i=120°C$; a constant $\\Delta T=15°C$ is held between wall and steam. With Dittus-Boelter, find the heat rate and the outlet steam temperature.",
+      "given": "$\\dot V=0.02\\ \\mathrm{m^3/s}$, $T_i=120°C$, $d=0.02\\ \\mathrm{m}$, $L=1.1\\ \\mathrm{m}$, $\\Delta T=15°C$. Steam: $\\mu=13.03\\times10^{-6}\\ \\mathrm{kg/ms}$, $\\rho=0.5577\\ \\mathrm{kg/m^3}$, $k=26.49\\times10^{-3}\\ \\mathrm{W/mK}$, $c_p=2006\\ \\mathrm{J/kgK}$.",
+      "steps": [
+        {
+          "title": "Velocity, Re, Pr",
+          "content": "$A_c=\\pi d^2/4=3.14\\times10^{-4}\\ \\mathrm{m^2}$; $v=\\dot V/A_c=63.7\\ \\mathrm{m/s}$. $Re_D=\\rho v d/\\mu=5.45\\times10^4$ (turbulent). $Pr=\\mu c_p/k=0.987$."
+        },
+        {
+          "title": "Nusselt and h",
+          "content": "Steam is heated $\\to$ $n=0.4$: $\\overline{Nu}_D=0.023\\,Re_D^{4/5}Pr^{0.4}=141$. $h=Nu\\,k/d=141\\cdot0.02649/0.02=187\\ \\mathrm{W/m^2K}$."
+        },
+        {
+          "title": "Heat rate (Newton)",
+          "content": "Lateral area $A=\\pi d L=\\pi\\cdot0.02\\cdot1.1=0.0691\\ \\mathrm{m^2}$. $q=hA\\Delta T=187\\cdot0.0691\\cdot15\\approx193\\ \\mathrm{W}$."
+        },
+        {
+          "title": "Outlet temperature (1st law)",
+          "content": "$\\dot m=\\rho\\dot V=0.5577\\cdot0.02=0.01115\\ \\mathrm{kg/s}$. $q=\\dot m c_p(T_o-T_i)$ $\\to$ $T_o=T_i+\\dfrac{q}{\\dot m c_p}=120+\\dfrac{193}{0.01115\\cdot2006}=128.6°C$."
+        }
+      ],
+      "finalAnswer": "$h\\approx187\\ \\mathrm{W/m^2K}$, $q\\approx193\\ \\mathrm{W}$, $T_o\\approx128.6°C$.",
+      "tips": "Use cross-section area for velocity but lateral area $\\pi d L$ for heat. Close with the SSSF energy balance $q=\\dot m c_p\\Delta T$ to get the outlet temperature; use $c_p$ (not $c_v$)."
+    },
+    {
+      "title": "Explain the convection coefficient and the dimensionless route to it",
+      "meta": "Conceptual · written-test style · open-ended",
+      "difficulty": "medium",
+      "statement": "Explain why the convection coefficient $h$ cannot be tabulated as a fluid property, and describe step by step how the dimensionless numbers (Re, Pr, Nu, Gr, Ra) are used to obtain $h$ and then the heat rate $q$. Contrast forced and natural convection.",
+      "given": "Newton: $q=hA(T_w-T_\\infty)$; $Re=vD/\\nu$, $Pr=\\mu c_p/k$, $Nu=hD/k$, $Gr=g\\beta\\Delta T D^3/\\nu^2$, $Ra=Gr\\,Pr$.",
+      "steps": [
+        {
+          "title": "Why h is not a property",
+          "content": "At the wall the fluid is motionless (no-slip), so $q''=-k_f\\,\\partial T/\\partial y|_0=h\\Delta T$. Thus $h$ depends on the wall temperature gradient, which is set by the boundary-layer thickness — i.e. by speed, geometry, fluid properties and regime. It is a flow outcome, not a tabulated constant."
+        },
+        {
+          "title": "Reduce variables (dimensional analysis)",
+          "content": "Buckingham $\\pi$ reduces the 7 governing variables ($h,c_p,k,\\rho,D,v,\\nu$) to 3 groups: $Nu=f(Re,Pr)$. Re measures inertia/viscous (laminar vs turbulent); Pr measures momentum vs thermal diffusivity (boundary-layer ratio); Nu is the dimensionless h."
+        },
+        {
+          "title": "Forced convection route",
+          "content": "Compute Re and Pr at the film temperature, check the critical Re for the geometry, pick the matching $Nu=A\\,Re^m Pr^n$ correlation (e.g. flat plate $0.664\\,Re^{1/2}Pr^{1/3}$; duct Dittus-Boelter)."
+        },
+        {
+          "title": "Natural convection route",
+          "content": "With no external mover, motion comes from buoyancy: replace Re by $Gr$ and use $Ra=Gr\\,Pr$. Correlations are $Nu=f(Ra)$ (e.g. $0.53\\,Ra^{1/4}$). $\\beta=1/T$ for a gas."
+        },
+        {
+          "title": "Invert and apply Newton",
+          "content": "From the correlation get Nu, then $h=Nu\\,k/L^*$ with the fluid's k, and finally $q=hA(T_w-T_\\infty)$."
+        }
+      ],
+      "finalAnswer": "h follows from the wall temperature gradient (a flow result, not a property); dimensional analysis gives Nu=f(Re,Pr) for forced and Nu=f(Ra) for natural convection; invert Nu→h→q. Forced flow uses Re (external mover); natural flow uses Gr/Ra (buoyancy), and forced convection generally yields larger h.",
+      "tips": "State the no-slip→conduction-at-wall argument first; it is the crux of why h is not a property. Always name the characteristic length and where properties are evaluated (film temperature)."
+    }
+  ],
+  "title": "Convection Heat Transfer",
+  "summary": "Master Newton's law of cooling and the convection coefficient h: what boundary layers are, the difference between forced and natural convection, the physical meaning of Re, Pr, Nu, Gr and Ra, and how to pick a Nu correlation, invert it to get h, and compute q. Includes four fully worked tutorial problems.",
+  "minutes": 55,
+  "objectives": [
+    "Apply Newton's law of cooling $q=hA(T_w-T_\\infty)$ and explain why h is a flow result, not a fluid property",
+    "Describe velocity and thermal boundary layers and link h to the wall temperature gradient",
+    "Distinguish forced from natural (free) convection and choose the right dimensionless framework",
+    "State the physical meaning of Re, Pr, Nu, Gr and Ra and compute each",
+    "Select the correct Nu correlation for flat plate, duct, and natural-convection geometries (laminar vs turbulent)",
+    "Invert Nu to get h ($h=Nu\\cdot k/L^*$) and then compute q, closing energy balances for heated streams",
+    "Avoid the classic traps: Kelvin for $\\beta$, fluid k (not wall k), correct characteristic length and heat-exchange area"
+  ]
+}

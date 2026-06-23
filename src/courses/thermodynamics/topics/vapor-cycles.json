@@ -1,0 +1,816 @@
+{
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "The big picture: closed-loop power and refrigeration"
+    },
+    {
+      "kind": "prose",
+      "text": "A **vapor power plant** boils water, runs the high-pressure steam through a **turbine** to make work, condenses it back to liquid, and **pumps** it back up to boiler pressure. The water continuously cycles between liquid and vapor. Reverse the idea — spend work to move heat from cold to hot — and you have a **refrigerator** or **heat pump**.\n\nThe whole topic reduces to one habit: **build a state table** ($p$, $T$, $h$, $s$, $x$ for every numbered point) from the tables, then plug enthalpy differences into the 1st law for each device."
+    },
+    {
+      "kind": "prose",
+      "text": "Each device is an **open system at steady state** (SSSF). With negligible kinetic and potential energy changes, the 1st law for one device per unit mass is just $\\dot Q_{cv}-\\dot W_{cv}=\\dot m\\,(h_e-h_i)$. Turbine and pump are adiabatic ($\\dot Q=0$); boiler and condenser do no work ($\\dot W=0$). That single equation generates every formula below."
+    },
+    {
+      "kind": "definition",
+      "term": "Rankine cycle",
+      "text": "The standard vapor power cycle: **boiler** (heat in at constant $p$), **turbine** (adiabatic expansion producing work), **condenser** (heat out at constant $p$), **pump** (adiabatic compression of liquid). The *ideal* Rankine cycle assumes no friction/pressure drop in boiler and condenser, and isentropic turbine and pump."
+    },
+    {
+      "kind": "heading",
+      "text": "The four devices and their 1st-law equations"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\frac{\\dot W_t}{\\dot m}=h_1-h_2>0,\\qquad \\frac{\\dot Q_{out}}{\\dot m}=h_3-h_2<0",
+      "tag": "3.1",
+      "caption": "Turbine (1→2) and condenser (2→3). State 1 = turbine inlet, 2 = turbine exit, 3 = condenser exit (saturated liquid)."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\frac{\\dot W_p}{\\dot m}=h_3-h_4=-\\!\\int_3^4 v\\,dp\\approx -v_3\\,(p_4-p_3)<0,\\qquad \\frac{\\dot Q_{in}}{\\dot m}=h_1-h_4>0",
+      "tag": "3.2",
+      "caption": "Pump (3→4) and boiler (4→1). Pump consumes work (negative). $v_3$ is the saturated-liquid specific volume at the condenser."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Pump work shortcut",
+      "text": "For a liquid, $v$ is almost constant, so the reversible shaft work $-\\int v\\,dp$ collapses to $\\dfrac{\\dot W_p}{\\dot m}=-v_3\\,(p_4-p_3)$. Watch the **units**: $v$ in $\\mathrm{m^3/kg}$ times $\\Delta p$ in $\\mathrm{kPa}$ gives $\\mathrm{kJ/kg}$. With $v_3\\approx1.008\\times10^{-3}$ and $\\Delta p=800-8=792\\ \\mathrm{kPa}$ you get about $0.8\\ \\mathrm{kJ/kg}$ — tiny next to the turbine's hundreds of kJ/kg."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta=\\frac{\\dot W_t/\\dot m+\\dot W_p/\\dot m}{\\dot Q_{in}/\\dot m}=\\frac{(h_1-h_2)-(h_4-h_3)}{h_1-h_4}=1-\\frac{h_2-h_3}{h_1-h_4}",
+      "tag": "3.3",
+      "caption": "Thermal efficiency. The pump term is added with its own sign ($W_p$ is negative), or subtract its magnitude ($h_4-h_3$)."
+    },
+    {
+      "kind": "formula",
+      "tex": "bwr=\\frac{\\text{pump work in}}{\\text{turbine work out}}=\\frac{h_4-h_3}{h_1-h_2}",
+      "tag": "3.4",
+      "caption": "Back-work ratio. In a steam cycle it is tiny (~0.1-1%) because pumping a liquid is cheap; in a gas (Brayton) cycle it is large."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Professor's favourite mistakes",
+      "text": "- **Sign of pump work.** $\\dot W_p/\\dot m=h_3-h_4$ is **negative**. In $\\eta$ the *net* work is $W_t+W_p$ (add the negative number) — do not add the magnitude.\n- **K vs °C** only matters in Carnot formulas; table look-ups use the actual temperature, but $T_C/(T_H-T_C)$ needs **kelvin**.\n- **Quality before enthalpy.** Find $x$ from entropy first, then get $h$ with the same $x$. Don't mix an $s$-based $x$ into an $h$ table for a superheated point."
+    },
+    {
+      "kind": "heading",
+      "text": "Wet states and quality"
+    },
+    {
+      "kind": "definition",
+      "term": "Quality x",
+      "text": "Inside the vapor dome a point is a liquid+vapor mixture. $x=\\dfrac{m_{vap}}{m_{liq}+m_{vap}}\\in[0,1]$. Any specific property interpolates linearly: $h=(1-x)h_f+x\\,h_g$, and identically for $v$, $u$, $s$. To find $x$ at a known $p$ and $s$: $x=\\dfrac{s-s_f}{s_g-s_f}$."
+    },
+    {
+      "kind": "example",
+      "title": "Quality at an isentropic turbine exit",
+      "text": "Steam enters a turbine as saturated vapor at $8\\ \\mathrm{bar}$: $h_1=2768.9$, $s_1=6.6625\\ \\mathrm{kJ/kgK}$. It expands isentropically to the condenser at $0.08\\ \\mathrm{bar}$, where $s_f=0.5925$, $s_g=8.2267$, $h_f=173.9$, $h_g=2576.1$.\n\n- $x_{2s}=\\dfrac{s_1-s_f}{s_g-s_f}=\\dfrac{6.6625-0.5925}{8.2267-0.5925}=0.795$.\n- $h_{2s}=(1-0.795)(173.9)+0.795(2576.1)=2083.6\\ \\mathrm{kJ/kg}$.\n\nLow quality (0.795) means ~20% liquid droplets — bad for turbine blades, a key design concern."
+    },
+    {
+      "kind": "sim",
+      "simKey": "rankine",
+      "title": "Rankine cycle on T-s",
+      "caption": "Drag boiler pressure, condenser pressure and superheat. Watch the cycle area (net work), the efficiency, and the exit quality move. Confirm: raising boiler $p$ or superheat raises $\\eta$; lowering condenser $p$ raises $\\eta$ but can drop the exit quality."
+    },
+    {
+      "kind": "heading",
+      "text": "Improving efficiency: pressure, temperature, superheat"
+    },
+    {
+      "kind": "prose",
+      "text": "A fully reversible cycle between two reservoirs obeys $\\eta_{max}=1-T_C/T_H$. So efficiency rises if we **add heat hotter** (higher average $T$ of heat addition) or **reject heat colder**. Three knobs follow directly."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "The three levers",
+      "text": "- **Raise boiler pressure** (fixed condenser): higher average heat-addition temperature $\\to$ $\\eta$ up. But the turbine exit moves left $\\to$ **quality drops** (erosion risk).\n- **Lower condenser pressure**: lower heat-rejection temperature $\\to$ $\\eta$ up. Again exit quality drops.\n- **Superheat** (heat past saturated vapor into the superheated region): raises average heat-addition temperature $\\to$ $\\eta$ up, **and** raises exit quality. Best of both — that's why real plants superheat."
+    },
+    {
+      "kind": "definition",
+      "term": "Reheat",
+      "text": "Steam expands in a high-pressure turbine to an intermediate pressure, is sent **back to the boiler to be reheated**, then expands in a low-pressure turbine to the condenser. This keeps the expansion line in the high-quality region. Turbine work $=(h_1-h_2)+(h_3-h_4)$ and $\\dot Q_{in}=(h_1-h_6)+(h_3-h_2)$, where 2 is HP-exit, 3 reheat-exit, 4 LP-exit, 6 boiler inlet."
+    },
+    {
+      "kind": "definition",
+      "term": "Regeneration (open feedwater heater)",
+      "text": "A fraction $y$ of steam is **extracted** from the turbine and mixed with the feedwater to preheat it, raising the average heat-addition temperature. The mixing chamber (open FWH) gives, from energy balance, $y=\\dfrac{h_6-h_5}{h_2-h_5}$ where 2=extracted steam, 5=pumped condensate, 6=saturated-liquid FWH exit."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta=\\frac{(h_1-h_2)+(1-y)(h_2-h_3)-(1-y)(h_5-h_4)-(h_7-h_6)}{h_1-h_7}",
+      "tag": "3.5",
+      "caption": "Regenerative cycle efficiency (one open FWH). Only fraction (1-y) flows through the LP turbine and condenser; the full flow goes through the boiler and the second pump."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "At fixed boiler pressure you **lower** the condenser pressure of an ideal Rankine cycle. What happens to thermal efficiency and to the steam quality at the turbine exit?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\eta$ increases; exit quality decreases"
+          },
+          {
+            "id": "B",
+            "content": "$\\eta$ decreases; exit quality increases"
+          },
+          {
+            "id": "C",
+            "content": "$\\eta$ increases; exit quality increases"
+          },
+          {
+            "id": "D",
+            "content": "$\\eta$ unchanged; exit quality decreases"
+          }
+        ],
+        "correct": "A",
+        "explanation": "Lower condenser pressure means a lower heat-rejection temperature, so $\\eta=1-T_C/T_H$ logic gives **higher** $\\eta$. But the turbine now expands to a lower pressure, pushing the exit point left/down under the dome, so **quality drops** (more droplets). B reverses $\\eta$; C is wrong on quality (only superheat raises both); D is wrong because $\\eta$ does change.",
+        "theory": "Lowering $T_C$ raises efficiency but worsens exit quality; superheat is the lever that improves both.",
+        "source": "Lecture 3, condenser-pressure slides"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "A reliable Rankine solution method"
+    },
+    {
+      "kind": "steps",
+      "title": "How to solve a Rankine problem",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Sketch the T-s cycle and number the four states (1 turbine in, 2 turbine out, 3 condenser out = sat. liquid, 4 pump out)."
+        },
+        {
+          "label": "2",
+          "text": "State 1: from boiler $p$ (and $T$ if superheated) read $h_1$, $s_1$. State 3: from condenser $p$ read $h_3=h_f$, $v_3=v_f$, $s_3=s_f$."
+        },
+        {
+          "label": "3",
+          "text": "State 2s: set $s_{2s}=s_1$. If wet, $x_{2s}=(s_1-s_f)/(s_g-s_f)$ then $h_{2s}$; if superheated, read $h_{2s}$ from tables. Apply $\\eta_t$: $h_2=h_1-\\eta_t(h_1-h_{2s})$."
+        },
+        {
+          "label": "4",
+          "text": "Pump: $\\dot W_p/\\dot m = -v_3(p_4-p_3)$; $h_4=h_3 - \\dot W_p/\\dot m$ (so $h_4 = h_3 + v_3\\cdot\\Delta p$)."
+        },
+        {
+          "label": "5",
+          "text": "Energies: $w_t=h_1-h_2$, $q_{in}=h_1-h_4$, $q_{out}=h_3-h_2$. Then $\\eta=(w_t+\\dot W_p/\\dot m)/q_{in}$ and $bwr=(h_4-h_3)/(h_1-h_2)$."
+        },
+        {
+          "label": "6",
+          "text": "If $\\dot W_{net}$ given: $\\dot m = \\dot W_{net} / (w_t + \\dot W_p/\\dot m)$. Then $\\dot Q_{in}=\\dot m\\cdot q_{in}$, $\\dot Q_{out}=\\dot m\\cdot q_{out}$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked Rankine (Tutorial 3.1)",
+      "text": "Saturated vapor at 8 bar to turbine, condenser at 0.08 bar, $\\eta_t=0.85$, $\\dot W_{net}=100\\ \\mathrm{MW}$.\n\nFrom the quality example: $h_1=2768.9$, $h_{2s}=2083.6$. Then\n- $h_2=h_1-\\eta_t(h_1-h_{2s})=2768.9-0.85(685.3)=2186.4\\ \\mathrm{kJ/kg}$.\n- $w_t=h_1-h_2=582.5\\ \\mathrm{kJ/kg}$.\n- $\\dot W_p/\\dot m=-v_3(p_4-p_3)=-1.0085\\times10^{-3}(800-8)=-0.8\\ \\mathrm{kJ/kg}$, so $h_4=173.9+0.8=174.7$.\n- $q_{in}=h_1-h_4=2768.9-174.7=2594.2\\ \\mathrm{kJ/kg}$.\n- $\\eta=(582.5-0.8)/2594.2=0.224$; $bwr=0.8/582.5=0.14\\%$.\n- $\\dot m=100000/(582.5-0.8)=172\\ \\mathrm{kg/s}$; $\\dot Q_{in}=172\\times2594.2=446.2\\ \\mathrm{MW}$; $\\dot Q_{out}=172(173.9-2186.4)=-346.2\\ \\mathrm{MW}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Vapor-compression refrigeration & heat pumps"
+    },
+    {
+      "kind": "prose",
+      "text": "Reverse the loop and spend work to pump heat uphill. Four devices: **evaporator** (heat in from the cold space, 4→1), **compressor** (work in, 1→2), **condenser** (heat out to warm surroundings, 2→3), and an **expansion valve** (throttle, 3→4). The turbine of the power cycle is replaced by a cheap **throttling valve** because the fluid is low-quality and a turbine would gain little work — and the compressor sucks saturated (or superheated) vapor to avoid liquid droplets."
+    },
+    {
+      "kind": "definition",
+      "term": "Throttling valve (h = const)",
+      "text": "A flow restriction with $\\dot Q=0$, $\\dot W=0$ and negligible KE/PE. The 1st law gives $h_{in}=h_{out}$ — an **isenthalpic** process. So across the valve $h_3=h_4$. It produces a simultaneous pressure and temperature drop (Joule-Thomson effect, $\\mu_{JT}=(\\partial T/\\partial p)_h$)."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\frac{\\dot Q_{in}}{\\dot m}=h_1-h_4,\\quad \\frac{\\dot W_c}{\\dot m}=h_1-h_2<0,\\quad \\frac{\\dot Q_{out}}{\\dot m}=h_3-h_2,\\quad h_3=h_4",
+      "tag": "3.6",
+      "caption": "Refrigeration device energies. State 1 = compressor in (sat. vapor), 2 = compressor out, 3 = condenser out (sat. liquid), 4 = after valve."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\beta=\\frac{\\dot Q_{in}/\\dot m}{|\\dot W_c|/\\dot m}=\\frac{h_1-h_4}{h_2-h_1},\\qquad \\gamma=\\frac{|\\dot Q_{out}|}{|\\dot W_c|}=\\frac{h_2-h_3}{h_2-h_1}=\\beta+1",
+      "tag": "3.7",
+      "caption": "COP of a refrigerator (β, useful = heat removed) and of a heat pump (γ, useful = heat delivered). γ = β + 1."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Carnot limits",
+      "text": "$\\beta_{Carnot}=\\dfrac{T_C}{T_H-T_C}$ and $\\gamma_{Carnot}=\\dfrac{T_H}{T_H-T_C}$, with **T in kelvin**. Real cycles fall below: the refrigerant must be colder than $T_C$ in the evaporator and hotter than $T_H$ in the condenser, and the throttling is irreversible."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Compressor isentropic efficiency goes the other way",
+      "text": "For a **compressor/pump** $\\eta_{is,c}=\\dfrac{h_{2s}-h_1}{h_2-h_1}$ (ideal work over actual). So $h_2=h_1+\\dfrac{h_{2s}-h_1}{\\eta_{is,c}}$ — the real exit enthalpy is **larger**. Don't reuse the turbine formula $\\eta_t=(h_1-h_2)/(h_1-h_{2s})$ here; mixing them up is a classic sign error."
+    },
+    {
+      "kind": "example",
+      "title": "Worked R134a refrigeration (Tutorial 3.8)",
+      "text": "Evaporation $-20\\ \\mathrm{°C}$, condensation $40\\ \\mathrm{°C}$, $\\dot m=10\\ \\mathrm{kg/s}$, $\\eta_{is,c}=0.85$.\n- State 1 (sat. vapor, $-20\\,°C$): $h_1=235.31$, $s_1=0.9332=s_{2s}$.\n- State 3 (sat. liquid, $40\\,°C$): $h_3=106.19=h_4$, with $p_2=p_3\\approx10\\ \\mathrm{bar}$.\n- State 2s ($p_2$, $s_{2s}$): $h_{2s}\\approx276.8\\ \\mathrm{kJ/kg}$.\n- $h_2=h_1+(h_{2s}-h_1)/\\eta_c=235.31+(276.8-235.31)/0.85=284.1\\ \\mathrm{kJ/kg}$.\n- $\\dot W_c=10(235.31-284.1)=-488\\ \\mathrm{kW}$; $\\dot Q_{in}=10(235.31-106.19)=1291\\ \\mathrm{kW}$; $\\dot Q_{out}=10(106.19-284.1)=-1779\\ \\mathrm{kW}$.\n- $\\beta=1291/488=2.64$. Check: $\\dot Q_{in}-\\dot Q_{out}$ magnitude $=1779-1291=488=|\\dot W_c|$. Energy balances."
+    },
+    {
+      "kind": "sim",
+      "simKey": "refrigeration",
+      "title": "Vapor-compression cycle on p-h",
+      "caption": "Move evaporator and condenser temperatures and the compressor efficiency. See the throttle as a vertical ($h=$const) line, the COP, and how a bigger temperature lift lowers $\\beta$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "In an ideal vapor-compression refrigeration cycle, which process is modeled as isenthalpic ($h$ = constant)?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Compression in the compressor"
+          },
+          {
+            "id": "B",
+            "content": "Heat rejection in the condenser"
+          },
+          {
+            "id": "C",
+            "content": "Expansion through the throttling valve"
+          },
+          {
+            "id": "D",
+            "content": "Heat absorption in the evaporator"
+          }
+        ],
+        "correct": "C",
+        "explanation": "A throttling valve has $\\dot Q=\\dot W=0$ and negligible KE/PE, so the 1st law gives $h_{in}=h_{out}$ — isenthalpic. A: compression is (ideally) isentropic, not isenthalpic, and adds enthalpy. B and D are constant-**pressure** heat exchanges where $h$ changes a lot as the fluid condenses/evaporates.",
+        "theory": "Throttling: $\\dot Q=\\dot W=0 \\Rightarrow h_3=h_4$. It replaces the turbine in refrigeration cycles.",
+        "source": "Lecture 3, expansion-valve slides"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "In the ideal Rankine cycle, the pump compresses which state, and why is its work small?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Superheated vapor; because vapor has low density"
+        },
+        {
+          "id": "B",
+          "content": "Saturated liquid; because the liquid's specific volume is very small"
+        },
+        {
+          "id": "C",
+          "content": "A two-phase mixture; because quality is near zero"
+        },
+        {
+          "id": "D",
+          "content": "Saturated vapor; because entropy is constant"
+        }
+      ],
+      "correct": "B",
+      "explanation": "The pump takes **saturated liquid** from the condenser (state 3) to boiler pressure. Reversible work $-\\int v\\,dp\\approx v(p_4-p_3)$ is small because liquid $v\\approx10^{-3}\\ \\mathrm{m^3/kg}$ is tiny. A/D are wrong: pumping vapor would need huge work and is what the compressor does in a gas cycle; the device handling liquid is the pump. C is wrong: at state 3 it is fully saturated liquid ($x=0$), not a mixture.",
+      "theory": "Pump work $=v_3(p_4-p_3)$; small because liquid specific volume is small — this gives the low back-work ratio of steam cycles.",
+      "source": "Tutorial 3.1; Lecture 3"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Saturated vapor at 8 bar ($h_1=2768.9$, $s_1=6.6625$) expands isentropically to 0.08 bar ($s_f=0.5925$, $s_g=8.2267$). The exit quality $x_{2s}$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.62"
+        },
+        {
+          "id": "B",
+          "content": "0.71"
+        },
+        {
+          "id": "C",
+          "content": "0.80"
+        },
+        {
+          "id": "D",
+          "content": "0.88"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$x_{2s}=(s_1-s_f)/(s_g-s_f)=(6.6625-0.5925)/(8.2267-0.5925)=6.0700/7.6342=0.795\\approx0.80$. A, B and D come from arithmetic slips (e.g. forgetting to subtract $s_f$ in the numerator, or using $s_g$ wrongly). Always subtract $s_f$ from both numerator and denominator.",
+      "theory": "At a known $p$ and $s$ in the wet region, $x=(s-s_f)/(s_g-s_f)$.",
+      "source": "Tutorial 3.1"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A steam turbine inlet is $h_1=2768.9\\ \\mathrm{kJ/kg}$ and the isentropic exit is $h_{2s}=2083.6\\ \\mathrm{kJ/kg}$. With $\\eta_{t}=0.85$, the actual specific turbine work $h_1-h_2$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "685.3 kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "582.5 kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "805.1 kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "171.3 kJ/kg"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Actual work $=\\eta_t(h_1-h_{2s})=0.85\\times(2768.9-2083.6)=0.85\\times685.3=582.5\\ \\mathrm{kJ/kg}$. A is the **ideal** (isentropic) work — forgetting to multiply by $\\eta$. C divides by $\\eta$ instead of multiplying (that's the compressor mistake). D is $0.25\\times685.3$, a random factor. For a turbine, actual < ideal.",
+      "theory": "$\\eta_t=(h_1-h_2)/(h_1-h_{2s})$, so actual work $=\\eta_t\\times$ ideal work, smaller than ideal.",
+      "source": "Tutorial 3.1"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For the Tutorial 3.1 cycle, $w_t=582.5$, pump work $=0.8\\ \\mathrm{kJ/kg}$, $q_{in}=2594.2\\ \\mathrm{kJ/kg}$. The thermal efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.245"
+        },
+        {
+          "id": "B",
+          "content": "0.224"
+        },
+        {
+          "id": "C",
+          "content": "0.187"
+        },
+        {
+          "id": "D",
+          "content": "0.310"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\eta=(w_t-w_{pump})/q_{in}=(582.5-0.8)/2594.2=581.7/2594.2=0.224$. A drops the pump term and divides by a slightly different $q$. C and D use wrong $q_{in}$ (e.g. using $h_1$ instead of $h_1-h_4$ or a sign error). The pump term barely matters here but the method must subtract it.",
+      "theory": "$\\eta=(\\dot W_t+\\dot W_p)/\\dot Q_{in}$ with $\\dot W_p$ negative.",
+      "source": "Tutorial 3.1"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Why is the back-work ratio of a Rankine (steam) cycle much smaller than that of a Brayton (gas) cycle?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Because the steam turbine produces less work"
+        },
+        {
+          "id": "B",
+          "content": "Because pumping a liquid costs far less than compressing a gas"
+        },
+        {
+          "id": "C",
+          "content": "Because the steam condenser rejects more heat"
+        },
+        {
+          "id": "D",
+          "content": "Because steam has a higher specific heat"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$bwr=W_{pump}/W_{turbine}$. In Rankine the working fluid is compressed as a **liquid** (small $v$, tiny $v\\Delta p$ work), so bwr ~0.1-1%. In Brayton the compressor squeezes a **gas** (large $v$), so bwr can be 40-60%. A is false (steam turbines produce a lot of work). C and D are irrelevant to the work ratio.",
+      "theory": "bwr is set by how cheap the compression step is; compressing liquid (pump) is cheap, compressing gas is expensive.",
+      "source": "Lecture 3, back-work ratio"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Adding **superheat** to an ideal Rankine cycle (heating steam into the superheated region before the turbine) does which of the following?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Raises efficiency and raises turbine-exit quality"
+        },
+        {
+          "id": "B",
+          "content": "Raises efficiency but lowers turbine-exit quality"
+        },
+        {
+          "id": "C",
+          "content": "Lowers efficiency but raises exit quality"
+        },
+        {
+          "id": "D",
+          "content": "Leaves efficiency unchanged but raises exit quality"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Superheat raises the **average temperature of heat addition** ($\\eta$ up) and moves the turbine exit to the right, **increasing** exit quality (sometimes still superheated) — fewer droplets. B describes raising boiler pressure or lowering condenser pressure. C contradicts the $\\eta$ increase. D is wrong because $\\eta$ rises.",
+      "theory": "Superheat is the lever that improves both $\\eta$ and exit quality, unlike pressure changes.",
+      "source": "Lecture 3, superheated cycle"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "In a reheat Rankine cycle (states: 1 HP-in, 2 HP-out, 3 reheat-out, 4 LP-out, 5 condenser-out, 6 boiler-in), the heat input rate per unit mass is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$(h_1-h_6)$"
+        },
+        {
+          "id": "B",
+          "content": "$(h_1-h_6)+(h_3-h_2)$"
+        },
+        {
+          "id": "C",
+          "content": "$(h_1-h_2)+(h_3-h_4)$"
+        },
+        {
+          "id": "D",
+          "content": "$(h_1-h_6)+(h_3-h_4)$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Heat is added in two places: the main boiler $(h_1-h_6)$ and the reheater $(h_3-h_2)$, so $q_{in}=(h_1-h_6)+(h_3-h_2)$. A forgets the reheat. C is the total **turbine work**, not heat in. D mixes the reheater inlet/outlet wrongly (uses LP-out $h_4$ instead of HP-out $h_2$).",
+      "theory": "Reheat adds heat twice: boiler and reheater. $q_{in}=(h_1-h_6)+(h_3-h_2)$; $w_t=(h_1-h_2)+(h_3-h_4)$.",
+      "source": "Lecture 3 / Tutorial 3.2"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "In an open feedwater heater (regeneration), extracted steam ($h_2$) mixes with pumped condensate ($h_5$) to leave as saturated liquid ($h_6$). The extraction fraction $y$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$y=\\dfrac{h_6-h_5}{h_2-h_5}$"
+        },
+        {
+          "id": "B",
+          "content": "$y=\\dfrac{h_2-h_6}{h_2-h_5}$"
+        },
+        {
+          "id": "C",
+          "content": "$y=\\dfrac{h_6-h_5}{h_2-h_6}$"
+        },
+        {
+          "id": "D",
+          "content": "$y=\\dfrac{h_2-h_5}{h_6-h_5}$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Energy balance: $y\\,h_2+(1-y)h_5=h_6$. Solve: $y(h_2-h_5)=h_6-h_5$, so $y=(h_6-h_5)/(h_2-h_5)$. B uses the wrong numerator difference; C has the wrong denominator; D is the reciprocal of A (it would give a value >1, impossible for a fraction). $y$ must lie between 0 and 1.",
+      "theory": "Open FWH mass+energy balance: $y h_2+(1-y)h_5=h_6 \\Rightarrow y=(h_6-h_5)/(h_2-h_5)$.",
+      "source": "Lecture 3 / Tutorial 3.3"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For R134a refrigeration with $h_1=235.31$ (compressor in), $h_4=h_3=106.19$ (after valve), and $h_2=284.1\\ \\mathrm{kJ/kg}$ (compressor out), the COP (refrigeration) is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "3.64"
+        },
+        {
+          "id": "B",
+          "content": "2.64"
+        },
+        {
+          "id": "C",
+          "content": "1.64"
+        },
+        {
+          "id": "D",
+          "content": "0.38"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\beta=(h_1-h_4)/(h_2-h_1)=(235.31-106.19)/(284.1-235.31)=129.12/48.79=2.65\\approx2.64$. A is $\\gamma=\\beta+1$ (heat-pump COP) — the wrong useful effect. C subtracts 1 wrongly. D is the inverse, $|W_c|/Q_{in}$.",
+      "theory": "Refrigerator COP $\\beta=Q_{in}/|W_c|=(h_1-h_4)/(h_2-h_1)$; heat-pump COP $\\gamma=\\beta+1$.",
+      "source": "Tutorial 3.8"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "A heat pump and a refrigerator run on the same cycle between the same temperatures. If the refrigeration COP is $\\beta = 2.64$, the heat-pump COP $\\gamma$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "2.64"
+        },
+        {
+          "id": "B",
+          "content": "1.64"
+        },
+        {
+          "id": "C",
+          "content": "3.64"
+        },
+        {
+          "id": "D",
+          "content": "5.28"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$\\gamma=|Q_{out}|/|W|=(Q_{in}+|W|)/|W|=\\beta+1=3.64$. A confuses the two COPs; B subtracts 1 (wrong direction); D doubles $\\beta$. The heat pump's useful output (heat delivered) always exceeds the refrigerator's (heat removed) by exactly the work, hence +1.",
+      "theory": "$\\gamma=\\beta+1$ because $|Q_{out}|=Q_{in}+|W|$.",
+      "source": "Lecture 3 / canonical COP relations"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a Carnot refrigerator between $T_C=273\\ \\mathrm{K}$ and $T_H=299\\ \\mathrm{K}$, the maximum COP $\\beta_{Carnot}$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "11.5"
+        },
+        {
+          "id": "B",
+          "content": "10.5"
+        },
+        {
+          "id": "C",
+          "content": "9.5"
+        },
+        {
+          "id": "D",
+          "content": "1.10"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\beta_{Carnot}=T_C/(T_H-T_C)=273/(299-273)=273/26=10.5$. A and C are arithmetic slips on the 26 K span. D uses $T_H/T_C$, which is meaningless here. The real cycle ($\\beta=8.9$ in Tutorial 3.4) is below this limit, as required.",
+      "theory": "$\\beta_{Carnot}=T_C/(T_H-T_C)$ with $T$ in kelvin; the actual cycle's COP is always lower.",
+      "source": "Tutorial 3.4"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A compressor takes R134a from $h_1=235.31$; the isentropic exit is $h_{2s}=276.8\\ \\mathrm{kJ/kg}$ and $\\eta_{is,c}=0.85$. The actual exit enthalpy $h_2$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "270.6 kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "284.1 kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "276.8 kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "302.1 kJ/kg"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\eta_{is,c}=(h_{2s}-h_1)/(h_2-h_1)$, so $h_2=h_1+(h_{2s}-h_1)/\\eta=235.31+41.49/0.85=235.31+48.81=284.1$. A multiplies by $\\eta$ (turbine logic — wrong for a compressor). C ignores irreversibility. D applies a wrong factor. Real compression overshoots the ideal exit.",
+      "theory": "Compressor: actual work > ideal, so $h_2=h_1+(h_{2s}-h_1)/\\eta_{is,c}$.",
+      "source": "Tutorial 3.8"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "In a Rankine cycle the turbine isentropic efficiency is below 1. Compared with the ideal cycle, the actual turbine-exit state has:",
+      "options": [
+        {
+          "id": "A",
+          "content": "Lower enthalpy and lower entropy"
+        },
+        {
+          "id": "B",
+          "content": "Higher enthalpy and higher entropy"
+        },
+        {
+          "id": "C",
+          "content": "Same enthalpy, higher entropy"
+        },
+        {
+          "id": "D",
+          "content": "Higher enthalpy and lower entropy"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Irreversibility means less work is extracted, so the actual exit enthalpy $h_2>h_{2s}$ (**higher $h$**), and friction generates entropy, so $s_2>s_{2s}$ (**higher $s$**) — the expansion line tilts right. A is the ideal/reversed picture. C wrongly keeps $h$ fixed. D violates the second law (entropy cannot drop in an adiabatic irreversible process).",
+      "theory": "Real adiabatic turbine: $h_2>h_{2s}$ and $s_2>s_{2s}$; the cycle does less work and rejects more heat.",
+      "source": "Lecture 3, actual cycle"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Why is the turbine of a vapor-compression refrigeration cycle replaced by a throttling valve?",
+      "options": [
+        {
+          "id": "A",
+          "content": "A valve is reversible while a turbine is not"
+        },
+        {
+          "id": "B",
+          "content": "The fluid is low-quality liquid-rich, so a turbine would recover very little work"
+        },
+        {
+          "id": "C",
+          "content": "A valve raises the fluid temperature, which is desired"
+        },
+        {
+          "id": "D",
+          "content": "A turbine cannot operate at high pressure"
+        }
+      ],
+      "correct": "B",
+      "explanation": "At the condenser exit the refrigerant is nearly saturated liquid; expanding it yields almost no work, so a cheap, robust **throttling valve** (isenthalpic) is used instead. A is backwards — the valve is the **irreversible** device. C is wrong: the valve drops $T$ (the goal). D is false; turbines handle high pressure routinely. The trade is simplicity/cost over a negligible work gain.",
+      "theory": "Refrigeration replaces the turbine with a throttle ($h_3=h_4$) because liquid expansion recovers little work and the valve is cheap and reliable.",
+      "source": "Lecture 3, departure from Carnot"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Steam at 70 bar, 500 °C ($h_1=3410.5$) expands to 0.3 bar with $\\eta_t=0.85$. Given $h_{2s}=2293\\ \\mathrm{kJ/kg}$, the specific power output $\\dot W_{12}/\\dot m$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "1117 kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "950 kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "806 kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "1314 kJ/kg"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Ideal drop $=h_1-h_{2s}=3410.5-2293=1117.5$. Actual $=\\eta_t\\times1117.5=0.85\\times1117.5=950\\ \\mathrm{kJ/kg}$. A is the **ideal** work (forgot $\\eta$). C uses $\\eta^2$ or a wrong factor. D divides by $\\eta$ (compressor mistake). For a turbine, multiply the ideal drop by $\\eta$.",
+      "theory": "$w_t=\\eta_t(h_1-h_{2s})$.",
+      "source": "Tutorial 3.6"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Raising the **boiler pressure** of an ideal Rankine cycle at fixed condenser pressure typically:",
+      "options": [
+        {
+          "id": "A",
+          "content": "Decreases efficiency and increases exit quality"
+        },
+        {
+          "id": "B",
+          "content": "Increases efficiency and decreases exit quality"
+        },
+        {
+          "id": "C",
+          "content": "Increases both efficiency and exit quality"
+        },
+        {
+          "id": "D",
+          "content": "Has no effect on either"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Higher boiler pressure raises the average heat-addition temperature $\\to$ **$\\eta$ up**. But the isentropic expansion now ends further left under the dome $\\to$ **exit quality down** (droplet/erosion risk), which is why superheat or reheat is added. A reverses $\\eta$. C is wrong on quality. D is false.",
+      "theory": "Higher boiler $p$: $\\eta$ up but exit quality down — opposite quality effect to superheat.",
+      "source": "Lecture 3, boiler-pressure slides"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Simple Rankine cycle: full performance",
+      "meta": "Tutorial 3.1 · vapor power · written-test style",
+      "difficulty": "medium",
+      "statement": "In a Rankine cycle saturated vapor enters the turbine at 8 bar and saturated liquid leaves the condenser at 0.08 bar. The turbine isentropic efficiency is 85% and the net power output is 100 MW. Determine the thermal efficiency, the back-work ratio, the steam mass flow rate, and the rates of heat in and out.",
+      "given": "$p_1 = 8\\ \\mathrm{bar}$ (sat. vapor), $p_{cond} = 0.08\\ \\mathrm{bar}$ (sat. liquid out), $\\eta_t = 0.85$, $\\dot W_{net} = 100\\ \\mathrm{MW}$. Tables: $h_1=2768.9$, $s_1=6.6625$; at 0.08 bar $h_f=173.9$, $h_g=2576.1$, $s_f=0.5925$, $s_g=8.2267$, $v_f=1.0085\\times10^{-3}\\ \\mathrm{m^3/kg}$.",
+      "steps": [
+        {
+          "title": "State 1 and 2s",
+          "content": "$h_1=2768.9$, $s_1=6.6625=s_{2s}$. Quality: $x_{2s}=(6.6625-0.5925)/(8.2267-0.5925)=0.795$. $h_{2s}=(1-0.795)(173.9)+0.795(2576.1)=2083.6\\ \\mathrm{kJ/kg}$."
+        },
+        {
+          "title": "Apply turbine efficiency",
+          "content": "$h_2=h_1-\\eta_t(h_1-h_{2s})=2768.9-0.85(685.3)=2186.4$. Turbine work $w_t=h_1-h_2=582.5\\ \\mathrm{kJ/kg}$."
+        },
+        {
+          "title": "Pump and boiler",
+          "content": "$\\dot W_p/\\dot m=-v_3(p_4-p_3)=-1.0085\\times10^{-3}(800-8)=-0.8\\ \\mathrm{kJ/kg} \\Rightarrow h_4=173.9+0.8=174.7$. $q_{in}=h_1-h_4=2594.2\\ \\mathrm{kJ/kg}$."
+        },
+        {
+          "title": "Efficiency and bwr",
+          "content": "$\\eta=(582.5-0.8)/2594.2=0.224$. $bwr=(h_4-h_3)/(h_1-h_2)=0.8/582.5=0.14\\%$."
+        },
+        {
+          "title": "Mass flow and heat rates",
+          "content": "$\\dot m=\\dot W_{net}/(w_t+\\dot W_p/\\dot m)=100000/581.7=172\\ \\mathrm{kg/s}$. $\\dot Q_{in}=172\\times2594.2=446.2\\ \\mathrm{MW}$. $\\dot Q_{out}=172(173.9-2186.4)=-346.2\\ \\mathrm{MW}$."
+        }
+      ],
+      "finalAnswer": "$\\eta = 0.224$; $bwr = 0.14\\%$; $\\dot m = 172\\ \\mathrm{kg/s}$; $\\dot Q_{in} = 446.2\\ \\mathrm{MW}$; $\\dot Q_{out} = -346.2\\ \\mathrm{MW}$.",
+      "tips": "Convert bar to kPa for the pump term ($\\times100$). Keep the pump-work sign negative when forming net work. The condenser duty must equal $\\dot Q_{in} - \\dot W_{net} = 446.2 - 100 = 346.2\\ \\mathrm{MW}$ — a fast check."
+    },
+    {
+      "title": "Superheated + reheated Rankine cycle",
+      "meta": "Tutorial 3.2 · reheat · multi-step",
+      "difficulty": "hard",
+      "statement": "Steam enters the HP turbine at 80 bar, 480 °C and expands to 10 bar; it is reheated to 440 °C, then expands in the LP turbine to 0.08 bar. $\\dot W_{net}=100\\ \\mathrm{MW}$. Treating both expansions as isentropic, find the thermal efficiency, mass flow rate, and $\\dot Q_{in}$, $\\dot Q_{out}$.",
+      "given": "State 1: 80 bar, 480 °C $\\to$ $h_1=3348.6$, $s_1=6.6589$. State 3: 10 bar, 440 °C $\\to$ $h_3=3349.3$, $s_3=7.5882$. Condenser 0.08 bar: $h_5=173.9$, $v_5=1.0085\\times10^{-3}$, $s_f=0.5925$, $h_{g8}=2576.1$, $s_{g8}=8.2267$. State 2s at 10 bar with $s=6.6589$ (superheated): $h_{2s}=2803$. State 4s at 0.08 bar with $s=7.5882$: $x_{4s}=0.9$, $h_{4s}=2335.9$.",
+      "steps": [
+        {
+          "title": "HP exit (2s)",
+          "content": "At 10 bar with $s=6.6589$ the steam is superheated; from tables $T\\approx190\\ \\mathrm{°C}$, $h_{2s}\\approx2803\\ \\mathrm{kJ/kg}$."
+        },
+        {
+          "title": "LP exit (4s)",
+          "content": "$s_{4s}=s_3=7.5882$, wet at 0.08 bar: $x_{4s}=(7.5882-0.5925)/(8.2267-0.5925)=0.90$. $h_{4s}=(1-0.9)(173.9)+0.9(2576.1)=2335.9\\ \\mathrm{kJ/kg}$."
+        },
+        {
+          "title": "Turbine and pump work",
+          "content": "$w_t=(h_1-h_{2s})+(h_3-h_{4s})=(3348.6-2803)+(3349.3-2335.9)=545.6+1013.4=1559\\ \\mathrm{kJ/kg}$. $\\dot W_p/\\dot m=-v_5(p_6-p_5)=-1.0085\\times10^{-3}(8000-8)=-8\\ \\mathrm{kJ/kg} \\Rightarrow h_6=173.9+8=181.9$."
+        },
+        {
+          "title": "Heat input and efficiency",
+          "content": "$q_{in}=(h_1-h_6)+(h_3-h_{2s})=(3348.6-181.9)+(3349.3-2803)=3166.7+546.3=3713\\ \\mathrm{kJ/kg}$. $\\eta=(1559-8)/3713=0.42$."
+        },
+        {
+          "title": "Mass flow and heat rates",
+          "content": "$\\dot m=100000/(1559-8)=64.5\\ \\mathrm{kg/s}$. $\\dot Q_{in}=64.5\\times3713\\approx240\\ \\mathrm{MW}$. $\\dot Q_{out}=\\dot m(h_5-h_{4s})=64.5(173.9-2335.9)=-140\\ \\mathrm{MW}$."
+        }
+      ],
+      "finalAnswer": "$\\eta = 0.42$; $\\dot m = 64.5\\ \\mathrm{kg/s}$; $\\dot Q_{in} = 240\\ \\mathrm{MW}$; $\\dot Q_{out} = -140\\ \\mathrm{MW}$. (With $\\eta_t=0.85$ on both stages instead: $\\eta'\\approx0.365$, $\\dot m'\\approx75.9\\ \\mathrm{kg/s}$, $\\dot Q_{in}'\\approx274\\ \\mathrm{MW}$.)",
+      "tips": "Reheat adds heat twice — never forget the $(h_3-h_{2s})$ term in $q_{in}$. Check: $\\dot Q_{in}-|\\dot Q_{out}| = 240-140 = 100\\ \\mathrm{MW} = \\dot W_{net}$."
+    },
+    {
+      "title": "R134a refrigeration / heat-pump analysis",
+      "meta": "Tutorial 3.8 · refrigeration · COP",
+      "difficulty": "medium",
+      "statement": "R134a runs a simple vapor-compression cycle: vaporisation at -20 °C, condensation at 40 °C, $\\dot m=10\\ \\mathrm{kg/s}$, compressor isentropic efficiency 0.85. Find the compressor power, the evaporator and condenser heat rates, and the refrigeration COP. Then state the heat-pump COP.",
+      "given": "State 1 (sat. vapor, -20 °C): $h_1=235.31$, $s_1=0.9332=s_{2s}$. State 3 (sat. liquid, 40 °C): $h_3=106.19=h_4$, $p_2=p_3\\approx10\\ \\mathrm{bar}$. State 2s (10 bar, $s=0.9332$): $h_{2s}\\approx276.8$. $\\eta_{is,c}=0.85$.",
+      "steps": [
+        {
+          "title": "Actual compressor exit",
+          "content": "$h_2=h_1+(h_{2s}-h_1)/\\eta=235.31+(276.8-235.31)/0.85=235.31+48.81=284.1\\ \\mathrm{kJ/kg}$."
+        },
+        {
+          "title": "Compressor power",
+          "content": "$\\dot W_c=\\dot m(h_1-h_2)=10(235.31-284.1)=-488\\ \\mathrm{kW}$ (work input)."
+        },
+        {
+          "title": "Evaporator (useful cooling)",
+          "content": "$\\dot Q_{in}=\\dot m(h_1-h_4)=10(235.31-106.19)=1291\\ \\mathrm{kW}$."
+        },
+        {
+          "title": "Condenser heat rejected",
+          "content": "$\\dot Q_{out}=\\dot m(h_3-h_2)=10(106.19-284.1)=-1779\\ \\mathrm{kW}$."
+        },
+        {
+          "title": "COPs",
+          "content": "$\\beta=\\dot Q_{in}/|\\dot W_c|=1291/488=2.64$. Heat pump $\\gamma=\\beta+1=3.64$ ($=|\\dot Q_{out}|/|\\dot W_c|=1779/488=3.64$)."
+        }
+      ],
+      "finalAnswer": "$\\dot W_c = -488\\ \\mathrm{kW}$; $\\dot Q_{in} = 1291\\ \\mathrm{kW}$; $\\dot Q_{out} = -1779\\ \\mathrm{kW}$; $\\beta = 2.64$ (heat-pump COP $\\gamma = 3.64$).",
+      "tips": "Compressor efficiency divides (actual work > ideal) — opposite to a turbine. Energy check: $|\\dot Q_{out}| - \\dot Q_{in} = 1779-1291 = 488 = |\\dot W_c|$."
+    },
+    {
+      "title": "Conceptual: draw and explain the ideal Rankine cycle and how to improve it",
+      "meta": "Open-ended · derive/draw · written-test style",
+      "difficulty": "medium",
+      "statement": "Sketch the ideal Rankine cycle on a T-s diagram, label the four devices and four states, write the 1st-law energy equation for each device, and explain three ways to raise the thermal efficiency, noting the effect of each on the turbine-exit quality.",
+      "given": "Working fluid: water. Ideal assumptions: no pressure drop in boiler/condenser; isentropic turbine and pump.",
+      "steps": [
+        {
+          "title": "Diagram and states",
+          "content": "On T-s: 4→1 boiler (rightward at high $p$, into/through the dome to sat. vapor), 1→2 turbine (vertical down, isentropic), 2→3 condenser (leftward at low $p$ to sat. liquid), 3→4 pump (vertical up, isentropic). The enclosed area = net work per unit mass."
+        },
+        {
+          "title": "Device 1st laws (SSSF, $\\Delta KE=\\Delta PE=0$)",
+          "content": "Turbine: $w_t=h_1-h_2$ ($Q=0$). Condenser: $q_{out}=h_3-h_2$ ($W=0$). Pump: $w_p=h_3-h_4=-v_3(p_4-p_3)$ ($Q=0$). Boiler: $q_{in}=h_1-h_4$ ($W=0$)."
+        },
+        {
+          "title": "Efficiency expression",
+          "content": "$\\eta=(w_t+w_p)/q_{in}=1-(h_2-h_3)/(h_1-h_4)$. Reversible reference: $\\eta_{max}=1-T_C/T_H$, so raise average heat-addition $T$ or lower heat-rejection $T$."
+        },
+        {
+          "title": "Improvement 1 — raise boiler pressure",
+          "content": "Higher average $T$ of heat addition $\\Rightarrow$ $\\eta$ up. Exit quality decreases (erosion risk)."
+        },
+        {
+          "title": "Improvement 2 — lower condenser pressure",
+          "content": "Lower heat-rejection $T$ $\\Rightarrow$ $\\eta$ up. Exit quality also decreases."
+        },
+        {
+          "title": "Improvement 3 — superheat (and reheat/regeneration)",
+          "content": "Superheating raises average heat-addition $T$ $\\Rightarrow$ $\\eta$ up AND raises exit quality. Reheat keeps the LP expansion dry; regeneration (open FWH) preheats feedwater with extracted steam, raising the mean heat-addition temperature."
+        }
+      ],
+      "finalAnswer": "Ideal Rankine = isentropic turbine & pump + constant-$p$ boiler & condenser; $\\eta=1-(h_2-h_3)/(h_1-h_4)$. Efficiency rises by raising boiler pressure, lowering condenser pressure, or superheating; only superheat also improves exit quality. Reheat and regeneration further raise the mean heat-addition temperature.",
+      "tips": "In a diagram answer, always mark the saturation dome and which segments are isentropic (vertical) vs. constant-pressure. Mention the quality/erosion trade-off — examiners look for it."
+    }
+  ],
+  "title": "Vapor Power & Refrigeration Cycles",
+  "summary": "The Rankine power cycle (boiler, turbine, condenser, pump) and the vapor-compression refrigeration / heat-pump cycle, solved with steam and R134a tables. You will learn to build a state table, compute pump work via v·Δp, turbine work from enthalpies, thermal efficiency, back-work ratio, and COP, and to reason about superheat, reheat and regeneration.",
+  "minutes": 75,
+  "objectives": [
+    "Draw the ideal Rankine cycle on a T-s diagram and identify the four devices and four states.",
+    "Apply the open-system 1st law to each device to get turbine, pump, boiler and condenser specific energies.",
+    "Compute pump work as $v(p_2-p_1)$, thermal efficiency and back-work ratio, using steam tables and quality.",
+    "Explain how boiler pressure, boiler temperature (superheat) and condenser pressure change efficiency and exit quality.",
+    "Describe reheat and regeneration and write their efficiency expressions, including the open feedwater-heater mass balance.",
+    "Analyse a vapor-compression refrigeration / heat-pump cycle with R134a: COP, compressor work, throttling ($h=$const).",
+    "Use isentropic efficiency for turbine and compressor and compare against Carnot limits."
+  ]
+}

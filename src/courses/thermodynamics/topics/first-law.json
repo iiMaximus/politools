@@ -1,0 +1,744 @@
+{
+  "title": "First Law: Closed & Open Systems",
+  "summary": "Energy conservation applied to thermodynamic systems. Master the closed-system balance $Q-W=\\Delta U$ and the steady-flow (SSSF) balance for control volumes, the sign convention, work as the area under the $p$-$V$ curve, the four basic processes plus polytropic, and the standard flow devices (turbine, compressor, pump, nozzle, throttle, heat exchanger, mixing). Built around the real Tutorial 1 problems.",
+  "minutes": 55,
+  "objectives": [
+    "Apply the first law $Q-W=\\Delta U$ to closed systems with the correct sign convention",
+    "Compute boundary work as the area under the $p$-$V$ curve for any quasi-static process",
+    "Find $W$, $Q$ and $\\Delta U$ for isochoric, isobaric, isothermal, adiabatic and polytropic ideal-gas processes",
+    "Write and simplify the steady-flow energy equation for a control volume",
+    "Analyze turbines, compressors/pumps, nozzles, throttles, heat exchangers and mixing chambers",
+    "Distinguish state functions ($U$, $h$) from path functions ($Q$, $W$) and use them in cycle analysis",
+    "Compute the thermal efficiency of a closed-system cycle"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "The First Law: bookkeeping for energy"
+    },
+    {
+      "kind": "prose",
+      "text": "The first law of thermodynamics is just **energy conservation**: energy is never created or destroyed, only moved or converted. In a thermodynamic system, energy crosses the boundary in two ways only: as **heat** $Q$ (driven by a temperature difference) or as **work** $W$ (an organized force acting through a distance, e.g. a piston or a shaft). Whatever crosses in must show up as a change in the energy stored inside.\n\nEverything in this topic is one master equation written for two situations: a **closed system** (fixed mass, e.g. gas in a piston-cylinder) and an **open system / control volume** (mass flows through, e.g. a turbine)."
+    },
+    {
+      "kind": "definition",
+      "term": "Closed vs open system",
+      "text": "- **Closed system**: no mass crosses the boundary. The boundary may move (piston). We track $U$ (internal energy).\n- **Open system (control volume)**: mass flows in and out through ports. We track enthalpy $h$ because flowing mass also carries **flow work** $pv$. We almost always analyze it at **steady state**."
+    },
+    {
+      "kind": "formula",
+      "tag": "1.1",
+      "tex": "Q_{12} - W_{12} = U_2 - U_1 = \\Delta U_{12}",
+      "caption": "First law for a **closed system**. Heat in minus work out equals the rise in internal energy."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Sign convention (memorize this)",
+      "text": "In this course:\n- $Q > 0$ when heat is **added to** the system.\n- $W > 0$ when work is **done by** the system (e.g. gas expands and pushes the piston).\n\nSo $Q_{12}-W_{12}=\\Delta U$. Heating raises $U$; doing work (expanding) lowers $U$. A stirrer/electric resistor does work **on** the system, so its $W$ is **negative**."
+    },
+    {
+      "kind": "prose",
+      "text": "**Heat and work are path functions; energy is a state function.** $U$ depends only on the state (so $\\Delta U$ is the same for any path between A and B), but $Q$ and $W$ depend on *how* you get there. That is the whole point of Exercise 1.1: $\\Delta U_{AB}$ is fixed at 50 kJ no matter the path, while $Q$ and $W$ change with the path."
+    },
+    {
+      "kind": "heading",
+      "text": "Work as the area under the p-V curve"
+    },
+    {
+      "kind": "prose",
+      "text": "For a closed system undergoing a **quasi-static** (slow, reversible) process, the boundary work is the area under the process line in the $p$-$V$ diagram. \"Quasi-static\" matters: only then does a single pressure $p(V)$ exist so the integral is defined (quiz Q2)."
+    },
+    {
+      "kind": "formula",
+      "tag": "1.2",
+      "tex": "W_{12} = \\int_{V_1}^{V_2} p\\,dV \\qquad (\\text{closed, quasi-static})",
+      "caption": "Positive when the gas expands ($V_2>V_1$), negative when compressed."
+    },
+    {
+      "kind": "sim",
+      "simKey": "pv-process",
+      "title": "p-V process explorer",
+      "caption": "Drag the process between two states and watch the area under the curve (the work) change. Compare isobaric, isothermal, adiabatic and polytropic paths between the same endpoints."
+    },
+    {
+      "kind": "heading",
+      "text": "The four basic closed processes (+ polytropic)"
+    },
+    {
+      "kind": "prose",
+      "text": "For an **ideal gas** ($pV=mRT$, $u=u(T)$, $h=h(T)$), here is the cheat sheet. Recall $\\Delta U = m c_v \\Delta T$ **always** for an ideal gas (quiz Q5), $c_p-c_v=R$, $k=c_p/c_v$."
+    },
+    {
+      "kind": "formula",
+      "tag": "1.3",
+      "tex": "\\begin{aligned}&\\textbf{Isochoric }(V=\\text{const}): &W&=0,\\;\\; Q=\\Delta U=mc_v\\Delta T\\\\&\\textbf{Isobaric }(p=\\text{const}): &W&=p\\,\\Delta V=mR\\Delta T,\\;\\; Q=mc_p\\Delta T\\\\&\\textbf{Isothermal }(T=\\text{const}): &\\Delta U&=0,\\;\\; Q=W=mRT\\ln\\tfrac{V_2}{V_1}\\\\&\\textbf{Adiabatic }(Q=0): &W&=-\\Delta U=-mc_v\\Delta T,\\;\\; pV^k=\\text{const}\\end{aligned}",
+      "caption": "The four standard processes. Each gives $W$, $Q$ and $\\Delta U$ directly."
+    },
+    {
+      "kind": "formula",
+      "tag": "1.4",
+      "tex": "pV^n=\\text{const}\\;\\Rightarrow\\; W_{12}=\\frac{p_2V_2-p_1V_1}{1-n}=\\frac{mR(T_2-T_1)}{1-n}\\quad(n\\ne1)",
+      "caption": "Polytropic work. Note: $n=0$ isobaric, $n=1$ isothermal, $n=k$ adiabatic, $n=\\infty$ isochoric."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Adiabatic (isentropic) relations",
+      "text": "For a reversible adiabatic ideal-gas process:\n$$\\frac{T_2}{T_1}=\\left(\\frac{p_2}{p_1}\\right)^{\\frac{k-1}{k}}=\\left(\\frac{V_1}{V_2}\\right)^{k-1}$$\nUse the pressure form for turbines/compressors (you know inlet/outlet pressures), the volume form for piston cycles (you know the volumes)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Favourite professor traps",
+      "text": "- **Temperatures in Kelvin.** $T(\\mathrm K)=T(^\\circ\\mathrm C)+273$. Any ratio $T_2/T_1$ or $p_2/p_1$ must use absolute T.\n- **$c_v$ vs $c_p$.** $\\Delta U=mc_v\\Delta T$, $\\Delta H=mc_p\\Delta T$. Using $c_p$ for $\\Delta U$ is the classic error.\n- **Sign of W.** Compression and stirrers give $W<0$. A negative $W$ that you forgot to keep negative flips the answer.\n- **Isothermal $\\ne$ adiabatic.** Both look like curves on $p$-$V$; the adiabat is steeper ($pV^k$)."
+    },
+    {
+      "kind": "steps",
+      "title": "Method: any closed-system process",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Identify the system and the process type (which variable is held constant?). Draw it on a p-V sketch."
+        },
+        {
+          "label": "2",
+          "text": "Compute the work: $W=\\int p\\,dV$ using the matching formula (0 if isochoric, $p\\Delta V$ if isobaric, $mRT\\ln(V_2/V_1)$ if isothermal, $(p_2V_2-p_1V_1)/(1-n)$ if polytropic)."
+        },
+        {
+          "label": "3",
+          "text": "Compute $\\Delta U = mc_v(T_2-T_1)$ for ideal gas (or $U_2-U_1$ from tables for steam)."
+        },
+        {
+          "label": "4",
+          "text": "Get the missing quantity from $Q-W=\\Delta U$."
+        },
+        {
+          "label": "5",
+          "text": "For a cycle: $\\sum Q_i=\\sum W_i$ (since $\\oint dU=0$), and $\\eta=W_{net}/Q_{in}$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked: isobaric heating of air (Tutorial 1.13)",
+      "text": "Air ($R=287$ J/kgK, $k=1.4$) at $p_1=1$ bar, $T_1=293$ K, $V_1=10^{-3}$ m$^3$ is heated at constant pressure to $T_2=533$ K. Find $W$ and $Q$.\n\n- Mass: $m=\\dfrac{p_1V_1}{RT_1}=\\dfrac{10^5\\cdot10^{-3}}{287\\cdot293}=1.19\\times10^{-3}$ kg.\n- Work (isobaric): $W=mR\\Delta T=1.19\\times10^{-3}\\cdot287\\cdot240=82.6$ J.\n- $c_v=R/(k-1)=717.5$ J/kgK, so $\\Delta U=mc_v\\Delta T=206.6$ J.\n- First law: $Q=\\Delta U+W=206.6+82.6=\\mathbf{289.2\\ J}$.\n\nCheck: $Q=mc_p\\Delta T$ with $c_p=1004.5$ gives the same 289 J."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A rigid (constant-volume) tank holds an ideal gas. 40 kJ of heat is added. What is $\\Delta U$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$+40$ kJ, because $W=0$ in a rigid tank"
+          },
+          {
+            "id": "B",
+            "content": "$0$, because internal energy is a state function"
+          },
+          {
+            "id": "C",
+            "content": "$-40$ kJ, heat leaves so $U$ drops"
+          },
+          {
+            "id": "D",
+            "content": "Cannot tell without the temperatures"
+          }
+        ],
+        "correct": "A",
+        "explanation": "Rigid tank means $V=$ const, so $W=\\int p\\,dV=0$. The first law $Q-W=\\Delta U$ gives $\\Delta U=Q=+40$ kJ. **B** confuses 'state function' (path-independent) with 'unchanging'. **C** has the wrong sign: $Q>0$ is heat added. **D** is wrong: the first law gives $\\Delta U$ directly without needing T.",
+        "theory": "For an isochoric process $W=0$, so all heat goes into internal energy: $\\Delta U=Q$.",
+        "source": "Quiz Q12 style / Tutorial 1"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Open systems: the steady-flow energy equation"
+    },
+    {
+      "kind": "prose",
+      "text": "In an open system mass flows through a fixed control volume. At **steady state** nothing inside changes with time: mass in = mass out ($\\dot m_{in}=\\dot m_{out}=\\dot m$) and the stored energy is constant ($dE_{cv}/dt=0$). The flowing fluid carries internal energy **plus** flow work $pv$, which combine into enthalpy $h=u+pv$. That is why open systems use $h$, not $u$."
+    },
+    {
+      "kind": "formula",
+      "tag": "1.5",
+      "tex": "\\dot Q_{12}-\\dot W_{12}=\\dot m\\Big[\\Delta h_{12}+\\tfrac{\\overline V_2^{\\,2}-\\overline V_1^{\\,2}}{2}+g(z_2-z_1)\\Big]",
+      "caption": "SSSF (steady-state steady-flow) energy balance. $\\overline V$ = flow speed, $z$ = elevation. Same sign convention: $\\dot Q$ in +, $\\dot W$ (shaft work) out +."
+    },
+    {
+      "kind": "prose",
+      "text": "Solving for the form that appears in the tutorials (out = state 2, in = state 1):\n$$\\dot W_{cv}=\\dot Q_{cv}+\\dot m\\Big[(h_{in}-h_{out})+\\tfrac{\\overline V_{in}^2-\\overline V_{out}^2}{2}+g(z_{in}-z_{out})\\Big]$$\nFor a reversible flow process the shaft work per unit mass is $\\dot W/\\dot m=-\\int_1^2 v\\,dp$ (note: $-\\int v\\,dp$, **not** $\\int p\\,dv$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "What to drop for each device",
+      "text": "Most devices let you kill several terms:\n- **Turbine / compressor / pump**: $\\Delta ke\\approx0$, $\\Delta pe\\approx0$, often adiabatic ($\\dot Q=0$) $\\Rightarrow \\dot W/\\dot m=h_1-h_2$.\n- **Nozzle / diffuser**: $\\dot W=0$, adiabatic $\\Rightarrow h_1+\\tfrac{\\overline V_1^2}{2}=h_2+\\tfrac{\\overline V_2^2}{2}$ (enthalpy converts to kinetic energy).\n- **Throttle (valve)**: $\\dot W=0$, $\\dot Q=0$, $\\Delta ke\\approx0 \\Rightarrow h_1=h_2$ (**isenthalpic**).\n- **Heat exchanger / mixing**: $\\dot W=0$; energy balance on enthalpies of all streams."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: adiabatic steam turbine (Tutorial 1.6)",
+      "text": "Steam enters at 50 bar, 500 $^\\circ$C and leaves as saturated vapor at 5 bar. Adiabatic, $\\Delta ke=\\Delta pe=0$. Find $\\dot W/\\dot m$.\n\n- From superheated tables: $h_1=3433.9$ kJ/kg.\n- From saturation tables: $h_2=h_g(5\\,\\text{bar})=2748.6$ kJ/kg.\n- SSSF with $\\dot Q=0$, $\\Delta ke=\\Delta pe=0$:\n$$\\frac{\\dot W}{\\dot m}=h_1-h_2=3433.9-2748.6=\\mathbf{685.3\\ kJ/kg}$$\nPositive: the turbine produces work, as expected."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Steam is throttled through a partly-open valve. Which statement is correct (adiabatic, $\\Delta ke,\\Delta pe\\approx0$)?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Work is extracted, so $h$ decreases"
+          },
+          {
+            "id": "B",
+            "content": "$h_1=h_2$: enthalpy is conserved across the valve"
+          },
+          {
+            "id": "C",
+            "content": "$u_1=u_2$: internal energy is conserved"
+          },
+          {
+            "id": "D",
+            "content": "$T_1=T_2$ always, because no heat is exchanged"
+          }
+        ],
+        "correct": "B",
+        "explanation": "A throttle has no shaft work ($\\dot W=0$), is adiabatic ($\\dot Q=0$) and negligible $\\Delta ke/\\Delta pe$, so SSSF gives $h_1=h_2$ (isenthalpic). **A** is wrong: a valve produces no work. **C** is wrong: it is enthalpy ($u+pv$), not $u$, that is conserved. **D** is wrong: temperature usually changes (Joule-Thomson effect, quiz Q6); only ideal gases keep $T$ constant since $h=h(T)$.",
+        "theory": "Throttle: $\\dot W=\\dot Q=0,\\ \\Delta ke\\approx0\\Rightarrow h_1=h_2$. Real fluids change T (Joule-Thomson); ideal gases don't.",
+        "source": "Lecture / quiz Q6 style"
+      }
+    },
+    {
+      "kind": "example",
+      "title": "Worked: control volume with KE and heat (Tutorial 1.5)",
+      "text": "Liquid enters at $\\dot m=4$ kg/s, $h_{in}=168$ kJ/kg, $\\overline V_{in}=90$ m/s and leaves at $h_{out}=176$ kJ/kg, $\\overline V_{out}=15$ m/s, same elevation. Heat added $\\dot Q=27$ kW. Find the power $\\dot W$.\n\n$$\\dot W=\\dot Q+\\dot m\\Big[(h_{in}-h_{out})+\\tfrac{\\overline V_{in}^2-\\overline V_{out}^2}{2}\\Big]$$\n$$=27000+4\\Big[(168-176)\\cdot10^3+\\tfrac{90^2-15^2}{2}\\Big]$$\n$$=27000+4(-8000+3937.5)=\\mathbf{10\\,750\\ W=10.75\\ kW}$$\nThe kinetic-energy term ($+3937.5$ J/kg) is not negligible here because the speeds are high."
+    },
+    {
+      "kind": "heading",
+      "text": "Mixing and heat exchangers"
+    },
+    {
+      "kind": "prose",
+      "text": "For a mixing chamber or heat exchanger, write the SSSF balance with **all streams** and $\\dot W=0$. For liquid water with constant $c_p$, $\\Delta h=c_p\\Delta T$. Tutorial 1.20: two water streams mix.\n\n$$\\dot Q_{cv}=\\dot m_1 c_p(T_3-T_1)+\\dot m_2 c_p(T_3-T_2)$$\nWith $\\dot m_1=2$, $\\dot m_2=1$ kg/s, $c_p=4.2$, $T_1=20$, $T_2=50$, $T_3=25\\,^\\circ$C: $\\dot Q=2\\cdot4.2\\cdot5+1\\cdot4.2\\cdot(-25)=42-105=\\mathbf{-63\\ kW}$ (heat rejected). For **adiabatic** mixing ($\\dot Q=0$) the outlet is the mass-weighted average: $T_3'=\\dfrac{\\dot m_1T_1+\\dot m_2T_2}{\\dot m_1+\\dot m_2}=\\dfrac{2\\cdot293+1\\cdot323}{3}=303$ K."
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "Closed-system cycle efficiency",
+      "text": "For a thermodynamic cycle, $\\Delta U_{cycle}=0$, so the net heat equals the net work: $\\sum Q_i=\\sum W_i=W_{net}$. Thermal efficiency is $\\eta=\\dfrac{W_{net}}{Q_{in}}$ where $Q_{in}$ is the **sum of only the positive (added) heats**. In Tutorial 1.4, $\\eta=\\dfrac{359.5}{1765}=0.2$; in 1.14, $\\eta=\\dfrac{255.8}{588.5}=0.43$ (only $Q_{23}>0$); in 1.15, $\\eta=\\dfrac{96.9}{234.8+53}=0.337$."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "A closed system receives $Q=80$ kJ of heat and does $W=30$ kJ of work on the surroundings. What is the change in internal energy?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\Delta U=+110$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$\\Delta U=+50$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$\\Delta U=-50$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$\\Delta U=-110$ kJ"
+        }
+      ],
+      "correct": "B",
+      "explanation": "First law: $\\Delta U=Q-W=80-30=+50$ kJ. **A** adds instead of subtracting the work. **C** has the wrong sign (would need $W-Q$). **D** adds with the wrong sign. The system is heated more than it does work, so $U$ rises.",
+      "theory": "Closed system: $Q_{12}-W_{12}=\\Delta U$, with $Q$ in positive and $W$ out positive.",
+      "source": "Tutorial 1.1"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "A gas ($p_1=3$ bar, $V_1=0.1$ m$^3$) expands to $V_2=0.2$ m$^3$ at constant pressure. The work done by the gas is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$30$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$60$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$20.8$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$0$ kJ"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Isobaric ($n=0$): $W=p\\,\\Delta V=3\\times10^5\\cdot(0.2-0.1)=30\\,000$ J $=30$ kJ. **B** doubles it. **C** is the isothermal result $p_1V_1\\ln(V_2/V_1)$ (wrong process). **D** would be for constant volume.",
+      "theory": "Isobaric work: $W=p(V_2-V_1)$. This is the $n=0$ polytropic case.",
+      "source": "Tutorial 1.2c"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The same gas instead expands **isothermally** from $V_1=0.1$ to $V_2=0.2$ m$^3$ (start $p_1=3$ bar). The work is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$30$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$15$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$20.8$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$17.6$ kJ"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Isothermal ($n=1$): $W=p_1V_1\\ln(V_2/V_1)=3\\times10^5\\cdot0.1\\cdot\\ln 2=20.8$ kJ. **A** is the isobaric answer. **D** is the $n=1.5$ polytropic answer. **B** is just a wrong round number. The isothermal area lies between the steeper polytrope and the flat isobar.",
+      "theory": "Isothermal ideal-gas work: $W=p_1V_1\\ln(V_2/V_1)=mRT\\ln(V_2/V_1)$.",
+      "source": "Tutorial 1.2b"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "8 kg/s of helium ($R=2077$ J/kgK) is compressed isothermally at 300 K from $v_A=35$ to $v_B=20$ m$^3$/kg. The rate of work transfer is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$+2.79$ MW (work done by the gas)"
+        },
+        {
+          "id": "B",
+          "content": "$-2.79$ MW (work done on the gas)"
+        },
+        {
+          "id": "C",
+          "content": "$0$, since $\\Delta U=0$"
+        },
+        {
+          "id": "D",
+          "content": "$-9.3$ MW"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\dot W=\\dot m R T\\ln(v_B/v_A)=8\\cdot2077\\cdot300\\cdot\\ln(20/35)=-2.79$ MW. Compression means work is done **on** the gas, so $\\dot W<0$. **A** has the wrong sign. **C** confuses $\\Delta U=0$ (true) with $W=0$ (false; $Q=W\\ne0$). **D** uses the wrong $T$ or numbers.",
+      "theory": "Isothermal flow/closed: $\\Delta U=0$ so $Q=W=\\dot m RT\\ln(v_2/v_1)$. Compression to smaller $v$ gives negative work.",
+      "source": "Tutorial 1.3"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In a piston-cylinder, an ideal gas follows $pV=$ const. The internal energy rises by 12 kJ while $p$ goes 10$\\to$40 bar with $V_1=0.1$ m$^3$. The heat transfer is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$+140$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$-12$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$-128$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$+128$ kJ"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$V_2=p_1V_1/p_2=0.025$ m$^3$. Isothermal work $W=p_1V_1\\ln(V_2/V_1)=10^6\\cdot0.1\\cdot\\ln(0.25)=-140$ kJ. Then $Q=\\Delta U+W=12+(-140)=-128$ kJ. **A** gives $-W$ alone. **B** ignores the (compression) work. **D** has the wrong sign.",
+      "theory": "$pV=$const is isothermal for an ideal gas. $W<0$ on compression; $Q=\\Delta U+W$.",
+      "source": "Tutorial 1.8"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "An adiabatic piston-cylinder follows a straight line on the p-V plane from (1 MPa, 1 m$^3$) to (200 kPa, 3 m$^3$). The change in internal energy is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$-1200$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$+1200$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$-2400$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$0$ kJ"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Work = trapezoid area $=\\frac{(p_1+p_2)}{2}(V_2-V_1)=\\frac{1000+200}{2}\\cdot2=1200$ kJ. Adiabatic: $Q=0$, so $\\Delta U=Q-W=-1200$ kJ. **B** drops the minus sign. **C** forgets the factor 1/2 (treats it as a rectangle). **D** wrongly assumes adiabatic means $\\Delta U=0$.",
+      "theory": "Straight line on p-V: $W=$ trapezoid area $=\\frac12(p_1+p_2)(V_2-V_1)$. Adiabatic $\\Rightarrow\\Delta U=-W$.",
+      "source": "Tutorial 1.9"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An adiabatic, rigid tank holds 40 kg of water at 30 $^\\circ$C. A stirrer delivers 300 kW. With $c=4186$ J/kgK, the time to reach 36 $^\\circ$C is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$3.35$ s"
+        },
+        {
+          "id": "B",
+          "content": "$33.5$ s"
+        },
+        {
+          "id": "C",
+          "content": "$0.34$ s"
+        },
+        {
+          "id": "D",
+          "content": "$13.4$ s"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$\\Delta U=mc\\Delta T=40\\cdot4186\\cdot6=1004$ kJ. Adiabatic, so $\\Delta U=-W=-\\dot W t$. The stirrer does work on the system: $\\dot W=-300$ kW, hence $t=\\Delta U/300=1004/300=3.35$ s. **B/C** are off by factors of 10. **D** uses a wrong $\\Delta T$.",
+      "theory": "Stirrer work is negative (done on the system). Adiabatic closed: $\\Delta U=-W=-\\dot W t$.",
+      "source": "Tutorial 1.10"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "An adiabatic steam turbine takes steam at $h_1=3433.9$ kJ/kg and exhausts at $h_2=2748.6$ kJ/kg ($\\Delta ke=\\Delta pe\\approx0$). The specific work output is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$685.3$ kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "$-685.3$ kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "$6182.5$ kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "$2748.6$ kJ/kg"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Adiabatic SSSF: $\\dot W/\\dot m=h_1-h_2=3433.9-2748.6=685.3$ kJ/kg, positive (turbine produces work). **B** has the wrong sign (that would be a compressor on this fluid). **C** adds the enthalpies. **D** just reports $h_2$.",
+      "theory": "Adiabatic turbine: $\\dot W/\\dot m=h_{in}-h_{out}$; positive means work produced.",
+      "source": "Tutorial 1.6"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Air ($k=1.4$, $c_v=717.5$ J/kgK) enters an adiabatic compressor at 20 $^\\circ$C, 1 bar and exits at 5 bar (reversible). The outlet temperature and specific work input are about:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$T_2\\approx191\\,^\\circ$C, $\\dot W/\\dot m\\approx-171.8$ kJ/kg"
+        },
+        {
+          "id": "B",
+          "content": "$T_2\\approx191\\,^\\circ$C, $\\dot W/\\dot m\\approx+171.8$ kJ/kg"
+        },
+        {
+          "id": "C",
+          "content": "$T_2\\approx100\\,^\\circ$C, $\\dot W/\\dot m\\approx-123$ kJ/kg"
+        },
+        {
+          "id": "D",
+          "content": "$T_2\\approx464\\,^\\circ$C, $\\dot W/\\dot m\\approx-171.8$ kJ/kg"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Isentropic: $T_2=293\\cdot5^{0.4/1.4}=464$ K $=191\\,^\\circ$C. With $c_p=kc_v=1004.5$, $\\dot W/\\dot m=c_p(T_1-T_2)=1004.5(293-464)=-171.8$ kJ/kg (work **input**, negative). **B** has the wrong (positive) sign. **C** uses a wrong $T_2$. **D** confuses 464 K with 464 $^\\circ$C.",
+      "theory": "Adiabatic compressor: $T_2/T_1=(p_2/p_1)^{(k-1)/k}$; $\\dot W/\\dot m=c_p(T_1-T_2)<0$.",
+      "source": "Tutorial 1.17"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An ideal gas in a rigid tank at 2.5 bar, 20 $^\\circ$C is heated until $p=5$ bar. The final temperature is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$40\\,^\\circ$C"
+        },
+        {
+          "id": "B",
+          "content": "$313\\,^\\circ$C"
+        },
+        {
+          "id": "C",
+          "content": "$586\\,^\\circ$C"
+        },
+        {
+          "id": "D",
+          "content": "$146\\,^\\circ$C"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Rigid tank $\\Rightarrow V$ const, so $p/T=$ const: $T_2=T_1(p_2/p_1)=293\\cdot2=586$ K $=313\\,^\\circ$C. **A** wrongly doubles the Celsius value ($20\\to40$). **C** confuses 586 K with 586 $^\\circ$C. **D** halves wrongly. Always use Kelvin in the ratio.",
+      "theory": "Isochoric ideal gas: $p_1/T_1=p_2/T_2$ (T in Kelvin).",
+      "source": "Quiz Q12"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Air ($c_p=1004.5$ J/kgK, $k=1.4$) enters a compressor at 100 kPa, 15 $^\\circ$C and leaves at 400 kPa, 350 $^\\circ$C. The isentropic efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.42$"
+        },
+        {
+          "id": "B",
+          "content": "$0.58$"
+        },
+        {
+          "id": "C",
+          "content": "$1.0$"
+        },
+        {
+          "id": "D",
+          "content": "$2.4$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$T_{2s}=288\\cdot4^{0.4/1.4}=428$ K. $\\eta_{is,c}=\\dfrac{T_{2s}-T_1}{T_2-T_1}=\\dfrac{428-288}{623-288}=0.42$. **B** is $1-\\eta$. **C** ignores irreversibility. **D** inverts the ratio (using turbine form). For a compressor the ideal work is the smaller one, so $\\eta_{is,c}<1$.",
+      "theory": "Compressor isentropic efficiency: $\\eta_{is,c}=\\dfrac{h_{2s}-h_1}{h_2-h_1}=\\dfrac{T_{2s}-T_1}{T_2-T_1}$.",
+      "source": "Quiz Q4"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A tank holds 1 kg of saturated water mixture at 1 bar ($h_f=417$, $h_g=2675$ kJ/kg), quality $x=0.75$. Heat added at constant pressure to reach saturated vapor is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$2258$ kJ"
+        },
+        {
+          "id": "B",
+          "content": "$564.5$ kJ"
+        },
+        {
+          "id": "C",
+          "content": "$1693$ kJ"
+        },
+        {
+          "id": "D",
+          "content": "$668$ kJ"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$Q=m(h_g-h_A)=m(1-x)(h_g-h_f)=1\\cdot0.25\\cdot(2675-417)=564.5$ kJ. **A** is the full latent heat $h_{fg}$ (as if $x=0$). **C** uses $x=0.75$ of $h_{fg}$ (wrong fraction). **D** is unrelated. Only the remaining $(1-x)$ liquid must be vaporized.",
+      "theory": "Constant-p heating in two-phase region: $Q=m(h_g-h)=m(1-x)h_{fg}$.",
+      "source": "Quiz Q8"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Which set of quantities are all path functions (depend on the process, not just endpoints)?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Internal energy, enthalpy, entropy"
+        },
+        {
+          "id": "B",
+          "content": "Work, heat, entropy production"
+        },
+        {
+          "id": "C",
+          "content": "Temperature, pressure, volume"
+        },
+        {
+          "id": "D",
+          "content": "Work, internal energy, temperature"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Work, heat and entropy production $\\sigma$ all depend on the path. **A** lists state functions ($U,h,s$). **C** lists state properties. **D** mixes a path function (work) with two state functions. State functions have exact differentials; path functions do not.",
+      "theory": "State functions ($U,H,S,p,V,T$) depend only on the state; $Q$, $W$, $\\sigma$ depend on the path.",
+      "source": "Quiz Q14"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a closed-system thermodynamic cycle, which is always true?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\sum Q_i=\\sum W_i$ and $\\Delta U_{cycle}=0$"
+        },
+        {
+          "id": "B",
+          "content": "$\\sum Q_i=0$ separately"
+        },
+        {
+          "id": "C",
+          "content": "$\\sum W_i=0$ separately"
+        },
+        {
+          "id": "D",
+          "content": "$\\eta=W_{net}/\\sum|Q_i|$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$U$ is a state function, so over a closed cycle $\\Delta U=0$, which forces $\\sum Q_i=\\sum W_i=W_{net}$. **B** and **C** are false (net heat and net work are nonzero and equal for a power cycle). **D** is wrong: efficiency divides by $Q_{in}$ (sum of positive heats only), not by the sum of absolute values.",
+      "theory": "Cycle: $\\oint dU=0\\Rightarrow\\sum Q=\\sum W=W_{net}$; $\\eta=W_{net}/Q_{in}$ with $Q_{in}$ the added heat only.",
+      "source": "Tutorial 1.4 / 1.14"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In an adiabatic nozzle, steam enters slowly with $h_1=3000$ kJ/kg and leaves at $h_2=2900$ kJ/kg with negligible inlet speed. The outlet speed is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$447$ m/s"
+        },
+        {
+          "id": "B",
+          "content": "$100$ m/s"
+        },
+        {
+          "id": "C",
+          "content": "$14$ m/s"
+        },
+        {
+          "id": "D",
+          "content": "$200$ m/s"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Nozzle: $\\dot W=0$, adiabatic, $\\overline V_1\\approx0$, so $h_1=h_2+\\overline V_2^2/2$. Then $\\overline V_2=\\sqrt{2(h_1-h_2)}=\\sqrt{2\\cdot100\\,000}=447$ m/s. **B** forgets the factor 2 and the kJ$\\to$J conversion. **C** forgets the $10^3$ entirely. **D** is a wrong round value. Enthalpy drop converts to kinetic energy.",
+      "theory": "Adiabatic nozzle: $h_1+\\tfrac{\\overline V_1^2}{2}=h_2+\\tfrac{\\overline V_2^2}{2}$; with $\\overline V_1\\approx0$, $\\overline V_2=\\sqrt{2\\Delta h}$.",
+      "source": "Lecture (steady-flow devices)"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Three-process gas cycle (nitrogen)",
+      "meta": "Tutorial 1.4 · closed-system cycle · written-test style",
+      "difficulty": "hard",
+      "statement": "A closed system ($V_1=3$ dm$^3$) contains $m=30$ g of nitrogen (ideal gas, $k=1.399$, $R=296.77$ J/kgK) at $-50\\,^\\circ$C. It undergoes three quasi-static processes: (1$\\to$2) adiabatic expansion with $V_2=3V_1$; (2$\\to$3) isothermal compression to $V_3=V_1$; (3$\\to$1) constant-volume heating. Draw the cycle on a p-V diagram and find $W$, $Q$, $\\Delta U$ for each process and the thermal efficiency.",
+      "given": "$V_1=3\\times10^{-3}$ m$^3$, $m=0.03$ kg, $k=1.399$, $R=296.77$ J/kgK, $T_1=223$ K, $c_v=R/(k-1)=742$ J/kgK.",
+      "steps": [
+        {
+          "title": "1→2 adiabatic expansion",
+          "content": "$Q_{12}=0$. Temperature: $T_2=T_1(V_1/V_2)^{k-1}=223\\cdot(1/3)^{0.399}=143.7$ K. Work: $W_{12}=-\\Delta U=-mc_v(T_2-T_1)=-0.03\\cdot742\\cdot(143.7-223)=+1765$ J. So $\\Delta U_{12}=-1765$ J."
+        },
+        {
+          "title": "2→3 isothermal compression",
+          "content": "$T_3=T_2=143.7$ K so $\\Delta U_{23}=0$. $W_{23}=mRT_2\\ln(V_3/V_2)=0.03\\cdot296.77\\cdot143.7\\cdot\\ln(1/3)=-1405.5$ J. Isothermal: $Q_{23}=W_{23}=-1405.5$ J."
+        },
+        {
+          "title": "3→1 constant volume",
+          "content": "$V=$const $\\Rightarrow W_{31}=0$. $Q_{31}=\\Delta U_{31}=mc_v(T_1-T_3)=0.03\\cdot742\\cdot(223-143.7)=+1765$ J."
+        },
+        {
+          "title": "Net work and heat",
+          "content": "$W_{net}=1765-1405.5+0=+359.5$ J $=Q_{net}$ (check: $\\sum Q=0-1405.5+1765=359.5$ J). Consistent since $\\Delta U_{cycle}=0$."
+        },
+        {
+          "title": "Thermal efficiency",
+          "content": "Heat added only in 3→1: $Q_{in}=Q_{31}=1765$ J. $\\eta=W_{net}/Q_{in}=359.5/1765=0.20$."
+        }
+      ],
+      "finalAnswer": "$W_{12}=+1765$ J, $W_{23}=-1405.5$ J, $W_{31}=0$; $Q_{12}=0$, $Q_{23}=-1405.5$ J, $Q_{31}=+1765$ J; $\\eta=0.20$.",
+      "tips": "Use Kelvin everywhere. For the adiabat use $TV^{k-1}=$const. Efficiency divides by the **positive** heat only. Sketch: 1→2 steep down-right (adiabat), 2→3 isotherm up-left, 3→1 vertical up at constant V."
+    },
+    {
+      "title": "Steam turbine with kinetic and potential energy",
+      "meta": "Tutorial 1.16 · open system SSSF · numeric",
+      "difficulty": "medium",
+      "statement": "Steam flows through an adiabatic turbine at 5000 kg/h producing 500 kW. (a) Find $\\Delta h=h_1-h_2$ neglecting kinetic and potential energy. (b) Now include inlet speed 40 m/s, outlet speed 250 m/s and an elevation change $\\Delta z=z_1-z_2=-3$ m. Find $\\Delta h$.",
+      "given": "$\\dot m=5000/3600=1.39$ kg/s, $\\dot W=500$ kW, adiabatic ($\\dot Q=0$), $g=9.81$ m/s$^2$.",
+      "steps": [
+        {
+          "title": "Mass flow",
+          "content": "$\\dot m=5000\\,\\text{kg/h}\\div3600=1.39$ kg/s."
+        },
+        {
+          "title": "(a) Simplified SSSF",
+          "content": "$\\dot W=\\dot m(h_1-h_2)\\Rightarrow\\Delta h=\\dot W/\\dot m=500/1.39=359.7$ kJ/kg."
+        },
+        {
+          "title": "(b) Full balance",
+          "content": "$\\dfrac{\\dot W}{\\dot m}=(h_1-h_2)+\\dfrac{\\overline V_1^2-\\overline V_2^2}{2}+g(z_1-z_2)$, so $\\Delta h=\\dfrac{\\dot W}{\\dot m}-\\dfrac{\\overline V_1^2-\\overline V_2^2}{2}-g\\Delta z$."
+        },
+        {
+          "title": "Plug numbers",
+          "content": "$\\dfrac{\\overline V_1^2-\\overline V_2^2}{2}=\\dfrac{40^2-250^2}{2}=-30\\,450$ J/kg; $g\\Delta z=9.81\\cdot(-3)=-29.4$ J/kg. So $\\Delta h=359\\,700-(-30\\,450)-(-29.4)\\approx390\\,000$ J/kg."
+        }
+      ],
+      "finalAnswer": "(a) $\\Delta h=359.7$ kJ/kg. (b) $\\Delta h\\approx390$ kJ/kg.",
+      "tips": "The KE term dominates the correction (210 m/s difference). The PE term ($\\approx0.03$ kJ/kg) is tiny but shown for completeness. Watch the signs of the velocity and elevation differences."
+    },
+    {
+      "title": "Spring-loaded piston with steam (extrapolation)",
+      "meta": "Tutorial 1.7 · closed system + tables · multi-step",
+      "difficulty": "hard",
+      "statement": "A cylinder ($d=20$ cm) holds $m=0.01$ kg of steam at quality $x_1=0.9$. A piston (mass 160 kg) rests on the steam; a spring ($K=50$ kN/m) just touches the top of the piston. Heat is supplied until the spring is compressed $\\Delta z=15.7$ cm. Find the final temperature. Take $p_{atm}=1$ bar.",
+      "given": "$A=\\pi d^2/4=0.0314$ m$^2$, $m_{piston}=160$ kg, $g=9.81$, $K=50\\,000$ N/m, $\\Delta z=0.157$ m; saturation at 1.5 bar: $v_f=1.0527\\times10^{-3}$, $v_g=1.15953$ m$^3$/kg; $R_{steam}=461.5$ J/kgK.",
+      "steps": [
+        {
+          "title": "Initial pressure",
+          "content": "$p_1=p_{atm}+\\dfrac{m_{piston}g}{A}=10^5+\\dfrac{160\\cdot9.81}{0.0314}=1.5\\times10^5$ Pa $=1.5$ bar."
+        },
+        {
+          "title": "Initial specific volume and height",
+          "content": "$v_1=(1-x_1)v_f+x_1v_g=0.1\\cdot0.00105+0.9\\cdot1.1595=1.043$ m$^3$/kg. $V_1=mv_1=0.01043$ m$^3$, so $H=V_1/A=0.332$ m."
+        },
+        {
+          "title": "Final volume and specific volume",
+          "content": "$V_2=A(H+\\Delta z)=0.0314\\cdot0.489=0.01535$ m$^3$; $v_2=V_2/m=1.535$ m$^3$/kg."
+        },
+        {
+          "title": "Final pressure (spring adds force)",
+          "content": "$p_2=p_1+\\dfrac{K\\Delta z}{A}=1.5\\times10^5+\\dfrac{50\\,000\\cdot0.157}{0.0314}=1.5\\times10^5+2.5\\times10^5=4$ bar."
+        },
+        {
+          "title": "Final temperature",
+          "content": "At 4 bar, $v_2=1.535$ m$^3$/kg is far into superheat (above the table range). Treat as ideal gas: $T_2=\\dfrac{p_2v_2}{R}=\\dfrac{4\\times10^5\\cdot1.535}{461.5}=1330$ K $=1057\\,^\\circ$C."
+        }
+      ],
+      "finalAnswer": "$T_2\\approx1057\\,^\\circ$C ($\\approx1330$ K).",
+      "tips": "The piston weight sets the initial pressure; the spring force $K\\Delta z/A$ adds on top for the final pressure. When $v$ exceeds the table range at low $p$ and high $T$, superheated steam behaves like an ideal gas."
+    },
+    {
+      "title": "Mixing of two water streams",
+      "meta": "Tutorial 1.20 · open system / mixing · numeric + conceptual",
+      "difficulty": "medium",
+      "statement": "Two water streams mix at constant pressure, steady state, no work. Stream 1: $\\dot m_1=2$ kg/s at $20\\,^\\circ$C. Stream 2: $\\dot m_2=1$ kg/s at $50\\,^\\circ$C. Take $c_p=4.2$ kJ/kgK, $\\Delta ke=\\Delta pe\\approx0$. (a) Find the heat rate $\\dot Q$ if the outlet is $25\\,^\\circ$C. (b) Find the adiabatic outlet temperature.",
+      "given": "$\\dot m_3=\\dot m_1+\\dot m_2=3$ kg/s; $\\Delta h=c_p\\Delta T$ for liquid water.",
+      "steps": [
+        {
+          "title": "Energy balance form",
+          "content": "With $\\dot W=0$: $\\dot Q_{cv}=\\dot m_1(h_3-h_1)+\\dot m_2(h_3-h_2)=\\dot m_1c_p(T_3-T_1)+\\dot m_2c_p(T_3-T_2)$."
+        },
+        {
+          "title": "(a) T₃ = 25 °C",
+          "content": "$\\dot Q=2\\cdot4.2\\cdot(25-20)+1\\cdot4.2\\cdot(25-50)=42-105=-63$ kW. Negative: heat is rejected to the surroundings to cool the mix below the natural mixing temperature."
+        },
+        {
+          "title": "(b) Adiabatic mixing",
+          "content": "Set $\\dot Q=0$: $0=\\dot m_1(T_3'-T_1)+\\dot m_2(T_3'-T_2)$, so $T_3'=\\dfrac{\\dot m_1T_1+\\dot m_2T_2}{\\dot m_1+\\dot m_2}$."
+        },
+        {
+          "title": "Compute",
+          "content": "$T_3'=\\dfrac{2\\cdot293+1\\cdot323}{3}=\\dfrac{909}{3}=303$ K $=30\\,^\\circ$C (mass-weighted average)."
+        }
+      ],
+      "finalAnswer": "(a) $\\dot Q=-63$ kW (rejected). (b) $T_3'=303$ K $=30\\,^\\circ$C.",
+      "tips": "Adiabatic mixing gives the mass-weighted (not arithmetic) average temperature. If the required outlet is colder than that average, heat must be removed ($\\dot Q<0$)."
+    }
+  ]
+}

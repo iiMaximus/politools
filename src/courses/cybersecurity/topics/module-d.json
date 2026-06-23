@@ -1,0 +1,302 @@
+{
+  "title": "Module D: Secure design and access",
+  "summary": "A from-scratch lesson on access control (subjects, objects, policies, the PDP/PEP machinery, and the DAC/MAC/RBAC/ABAC models) and the security-by-design principles that make a system trustworthy. You will learn the vocabulary the exam uses and the reasoning behind each design rule.",
+  "minutes": 20,
+  "objectives": [
+    "Define access control and distinguish it from authentication, authorization, and audit",
+    "Explain the subject / object / action vocabulary and why policy is separated from mechanism",
+    "Compare the four policy models: DAC, MAC, RBAC, and ABAC",
+    "Apply least privilege, separation of duties, and separation of privilege correctly",
+    "State and recognize the security-by-design principles (defense in depth, fail-safe defaults, complete mediation, economy of mechanism, open design, psychological acceptability)"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. What access control is"
+    },
+    {
+      "kind": "prose",
+      "text": "Any information system must protect its data and resources along three lines: keep them from being seen by the wrong people (**secrecy**), keep them from being changed improperly (**integrity**), and keep them available to legitimate users (**no denial of service**). To enforce this, **every** access to the system must be controlled so that **all and only** authorized accesses can take place. That process is called **access control**."
+    },
+    {
+      "kind": "definition",
+      "term": "Access control",
+      "text": "RFC 4949: \"a process by which use of system resources is regulated according to a security policy and is permitted only by authorized entities (users, programs, processes, or other systems) according to that policy.\"\n\nIn short, access control decides **who is allowed to do what, on what**."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "It limits damage, it does not stop attacks",
+      "text": "Access control is a major building block of security, but by itself it **cannot prevent cyber-attacks**. It regulates legitimate use; it does not detect or block a determined attacker on its own. It is one layer, not the whole defense."
+    },
+    {
+      "kind": "heading",
+      "text": "2. The four neighboring functions"
+    },
+    {
+      "kind": "prose",
+      "text": "Access control sits among four related security functions. Students mix these up constantly, so pin them down:\n\n- **Authentication** — verifying that a subject's claimed credentials are valid (proving *who you are*).\n- **Authorization** — granting a right or permission to a system entity; it determines *who is trusted for a given purpose*.\n- **Access control** — at the moment of a request, deciding whether *this* specific access is permitted, by consulting the authorization database.\n- **Audit** — an independent review of system records and activities to verify controls and detect breaches."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Authentication is not authorization",
+      "text": "Authentication answers \"are you who you claim to be?\" Authorization answers \"are you allowed to do this?\" A correctly logged-in user can still be denied an action. The system **first authenticates**, then the **access control function** checks the requested access against the authorization database."
+    },
+    {
+      "kind": "heading",
+      "text": "3. Mechanism, policy, model (and PDP/PEP)"
+    },
+    {
+      "kind": "prose",
+      "text": "The professor frames access control as a multi-phase approach built on three concepts:\n\n- **Security mechanism** — the low-level software/hardware functions that actually enforce the controls.\n- **Security policy** — the high-level rules: what access is permitted, under what circumstances, by whom.\n- **Security model** — a formal representation of the policy that lets you *prove* security properties.\n\nKeeping **policy separate from mechanism** is a core idea: it lets you discuss requirements independently of implementation, compare different policies on the same mechanism, and build one mechanism that can enforce many policies."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Why separate policy from mechanism",
+      "text": "If a mechanism is hard-wired to one specific policy, then **changing the policy forces you to rebuild the whole access control system**. Separation buys flexibility and lets the same engine serve evolving rules."
+    },
+    {
+      "kind": "definition",
+      "term": "PEP and PDP",
+      "text": "In modern terminology the enforcement engine splits into two cooperating components:\n\n- **PEP (Policy Enforcement Point)** — intercepts every request and applies the verdict (allow / deny). It is the gatekeeper at the door.\n- **PDP (Policy Decision Point)** — evaluates the request against the policy and returns the decision. It is the judge.\n\nThe PEP asks, the PDP decides. This is the practical realization of \"separate mechanism (PEP) from policy (PDP).\""
+    },
+    {
+      "kind": "heading",
+      "text": "4. Subjects, objects, and actions"
+    },
+    {
+      "kind": "prose",
+      "text": "Every access control system is described with three building blocks:\n\n- **Subject** — an active entity capable of accessing objects. Usually this means a *process* acting on behalf of a user or application. A subject is held accountable for the actions it initiates (the audit trail records this).\n- **Object** — a passive resource to which access is controlled: files, records, directories, mailboxes, programs, ports, even network nodes.\n- **Action (operation)** — what the subject may do to the object; typically an **access right** such as Read, Write, Execute, Delete, Create, Search."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Two access-right gotchas",
+      "text": "From the slides: **Write access includes Read access**, and **Read access includes the ability to copy or print**. So granting Write quietly grants Read too — keep this in mind when reasoning about least privilege."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A background process started by a user requests to open a configuration file. In access-control vocabulary, the process, the file, and \"open/read\" are respectively the:",
+        "options": [
+          {
+            "id": "A",
+            "content": "object, subject, action"
+          },
+          {
+            "id": "B",
+            "content": "subject, object, action"
+          },
+          {
+            "id": "C",
+            "content": "policy, mechanism, model"
+          },
+          {
+            "id": "D",
+            "content": "PDP, PEP, action"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The process is the active **subject** (it acts on behalf of the user), the file is the passive **object** (the resource being protected), and read/open is the **action** (access right). A reverses subject and object. C names the three design concepts, not the request triple. D names enforcement components, not the request elements."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "5. The four policy models"
+    },
+    {
+      "kind": "prose",
+      "text": "Access control policies are grouped into four families. They are **not mutually exclusive** — a real system can use several at once for different resource classes."
+    },
+    {
+      "kind": "definition",
+      "term": "DAC — Discretionary Access Control",
+      "text": "Access is decided by the **identity of the requestor** plus explicit access rules. It is \"discretionary\" because owners can **pass their privileges to other users** (grant/revoke), governed by an administrative policy.\n\nDAC is the classic **access matrix**: rows = subjects, columns = objects, each cell = the rights that subject holds on that object. Because the matrix is huge and mostly empty (sparse), it is stored in one of three practical forms: an **authorization table**, an **Access Control List (ACL)** stored per object (a column), or a **capability** held per subject (a row)."
+    },
+    {
+      "kind": "definition",
+      "term": "MAC — Mandatory Access Control",
+      "text": "Access is decided by comparing **security labels** on objects (how sensitive a resource is) with **security clearances** of subjects. It is \"mandatory\" because a user who can access a resource **cannot, of their own volition, pass that access to anyone else** — the system, not the user, enforces the labels."
+    },
+    {
+      "kind": "definition",
+      "term": "RBAC — Role-Based Access Control",
+      "text": "Access is decided by the **roles** users hold, not their personal identity. A role is a *job function*; rights are assigned to roles, and users are assigned to roles. The user-to-role and role-to-resource relationships are **many-to-many**.\n\n**Role hierarchies** let a senior role inherit the rights of subordinate roles. RBAC also supports **constraints**: mutually exclusive roles, cardinality (max users per role), and prerequisite roles. It fits organizations because what matters is *responsibility*, not *who* the person is."
+    },
+    {
+      "kind": "definition",
+      "term": "ABAC — Attribute-Based Access Control",
+      "text": "Access is decided by **attributes** of three independent sources: the **subject** (e.g., job title, role), the **object/resource** (e.g., author, classification, metadata), and the **environment** (e.g., time of day, network zone, current threat level). Rules combine these attributes.\n\nABAC is the most flexible and expressive model — it can even **emulate DAC, RBAC, and MAC** — but at higher design complexity and performance cost (every access evaluates predicates). Web services standardized it via **XACML**."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "DAC vs MAC: who can delegate?",
+      "text": "The single sharpest exam discriminator: in **DAC** a user *can* pass on their privileges (discretion of the owner); in **MAC** an authorized user **cannot** grant access to others — the policy is enforced by the system through labels/clearances. \"Mandatory\" = no personal discretion."
+    },
+    {
+      "kind": "example",
+      "title": "Same scenario, four models",
+      "text": "A hospital controls access to patient records.\n\n- **DAC**: Dr. Rossi owns a record and explicitly grants read to nurse Bianchi.\n- **MAC**: records are labeled \"Confidential\"; only staff with Confidential clearance can read, and no one can re-share.\n- **RBAC**: anyone in the role *Attending Physician* can read records of their ward — no per-person grants.\n- **ABAC**: read is allowed if subject.role = doctor **AND** object.ward = subject.ward **AND** environment.time is during the doctor's shift.\n\nNotice how ABAC layers conditions DAC/RBAC alone cannot express."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A company wants access decisions to depend on the user's department, the document's classification, AND the time of the request. Which model is the natural fit?",
+        "options": [
+          {
+            "id": "A",
+            "content": "DAC, using an access matrix"
+          },
+          {
+            "id": "B",
+            "content": "MAC, using labels and clearances"
+          },
+          {
+            "id": "C",
+            "content": "RBAC, using a role hierarchy"
+          },
+          {
+            "id": "D",
+            "content": "ABAC, combining subject, object, and environment attributes"
+          }
+        ],
+        "correct": "D",
+        "explanation": "Only **ABAC** can combine subject attributes (department), object attributes (classification), and **environment** attributes (time) in one rule. DAC keys only on identity + explicit rules. MAC keys only on labels vs clearances. RBAC keys on roles and has no native notion of time-of-day or arbitrary attributes."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "6. Three privilege principles"
+    },
+    {
+      "kind": "definition",
+      "term": "Least privilege",
+      "text": "An entity (user, process, etc.) should get the **minimum privileges and resources, for the minimum time**, needed to complete its task. This shrinks the window and surface for unauthorized access."
+    },
+    {
+      "kind": "definition",
+      "term": "Separation of duties (SoD)",
+      "text": "A sensitive activity is split so it depends on **multiple conditions / multiple people** — e.g., a payment needs two signatures, or arming a weapon needs two people with different keys. SoD **forces collusion**: no single person can compromise the system alone."
+    },
+    {
+      "kind": "definition",
+      "term": "Separation of privilege",
+      "text": "Break a single privilege across **multiple independent subjects** so that **more than one authorization** is required to perform an action — protecting against one party's malicious intent. (Closely related to SoD; SoD is about dividing a *task*, separation of privilege about dividing a *single privilege*.)"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Least privilege is not separation of duties",
+      "text": "**Least privilege** = give each entity as little as possible. **Separation of duties** = make sure no single entity can do everything for a sensitive operation. One minimizes *each* grant; the other *splits* a powerful operation across parties. They complement each other but answer different questions."
+    },
+    {
+      "kind": "heading",
+      "text": "7. Security-by-design principles"
+    },
+    {
+      "kind": "prose",
+      "text": "**Secure by design** means security is built into the architecture from the foundation, not bolted on later — the best security patterns are chosen by the design and used as guiding rules for developers. Beyond the three privilege principles above, the slides emphasize the following classic principles."
+    },
+    {
+      "kind": "definition",
+      "term": "Defense in depth",
+      "text": "Apply **multiple layers** of protection, so that if one layer is breached a subsequent layer still protects the system. No single control is a single point of failure."
+    },
+    {
+      "kind": "definition",
+      "term": "Fail-safe defaults (Fail secure)",
+      "text": "If the system fails, it must fail to a state where security is **not** compromised — by default **deny** access. Base decisions on **permissions (what is explicitly allowed), not exclusions**. On recovery the system must return to a secure state; if recovery is manual, only the administrator may access until controls are reestablished.\n\n(Contrast *fail safe*, which prioritizes safety/availability, with *fail secure*, which prioritizes security by locking down.)"
+    },
+    {
+      "kind": "definition",
+      "term": "Complete mediation",
+      "text": "**Every** access request must undergo a valid, effective authorization check — and this mediation **cannot be suspended or bypassed**, not even during startup, shutdown, restart, or maintenance. It entails: (1) identify the requesting entity, (2) verify the request hasn't changed since initiation, (3) apply the authorization procedure, (4) re-examine previously authorized requests by the same entity."
+    },
+    {
+      "kind": "definition",
+      "term": "Economy of mechanism / Least common mechanism",
+      "text": "Keep protection mechanisms **as simple and small as possible** (economy of mechanism), and **minimize mechanisms shared among users** (least common mechanism), because shared access paths can become **covert channels** for unintended data transfer. Less sharing and less complexity = fewer ways to go wrong."
+    },
+    {
+      "kind": "definition",
+      "term": "Open design",
+      "text": "Security must **not** depend on the secrecy of the design or implementation — only on the secrecy of keys/credentials. The mechanism can be public and still secure; this is the opposite of \"security through obscurity\" and allows open scrutiny."
+    },
+    {
+      "kind": "definition",
+      "term": "Psychological acceptability",
+      "text": "The security mechanism must be **easy and intuitive to use**. Users must understand the interface and use it correctly **without interpreting complex instructions** — otherwise they will work around it, defeating the protection."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Weakest link",
+      "text": "\"A chain is only as strong as its weakest link.\" Attackers target the most fragile module, so the whole system is only as secure as its weakest part. Review the system repeatedly to find and fix weak links."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A firewall, on encountering an internal error, drops all traffic and blocks every connection until an admin restores it. Which security-by-design principle does this BEST illustrate?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Psychological acceptability"
+          },
+          {
+            "id": "B",
+            "content": "Open design"
+          },
+          {
+            "id": "C",
+            "content": "Fail-safe defaults (fail secure)"
+          },
+          {
+            "id": "D",
+            "content": "Economy of mechanism"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Failing into a **deny-by-default**, locked-down state that protects security is exactly **fail-safe defaults / fail secure**. Psychological acceptability is about usability of the interface. Open design is about not relying on secrecy of the mechanism. Economy of mechanism is about keeping the design small and simple — none of which describes the deny-on-failure behavior."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "A reviewer objects: \"We can't publish our access-control source code — attackers would learn how it works and break it.\" Which principle most directly challenges this objection?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Complete mediation"
+          },
+          {
+            "id": "B",
+            "content": "Open design"
+          },
+          {
+            "id": "C",
+            "content": "Separation of duties"
+          },
+          {
+            "id": "D",
+            "content": "Defense in depth"
+          }
+        ],
+        "correct": "B",
+        "explanation": "**Open design** states that security must not rely on the secrecy of the design — a well-designed mechanism stays secure even when public (secrecy lives in keys, not in the algorithm). The reviewer is arguing for \"security through obscurity,\" which open design rejects. Complete mediation (check every request), separation of duties (split sensitive actions), and defense in depth (layered protection) are all valid principles but do not address whether the design itself can be public."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "One-line recap",
+      "text": "Access control = enforce *who can do what on what*, via a **mechanism** that enforces a **policy** formalized by a **model**; pick from **DAC/MAC/RBAC/ABAC**; and design under **least privilege, separation of duties/privilege, defense in depth, fail-safe defaults, complete mediation, economy of mechanism, open design, and psychological acceptability**."
+    }
+  ]
+}

@@ -1,0 +1,919 @@
+{
+  "title": "Conduction Heat Transfer",
+  "summary": "Master 1-D steady conduction (plane and cylindrical), the thermal-resistance / electrical analogy for composite walls and pipes, the overall U, contact resistance, the critical radius of insulation, extended surfaces (fins), and transient lumped-capacitance cooling with the Biot number. Everything is grounded in the Polito lectures and Tutorial 6.",
+  "minutes": 75,
+  "objectives": [
+    "State Fourier's law and compute conduction heat flux/rate for a plane wall and a hollow cylinder",
+    "Build thermal-resistance circuits (series and parallel) and find heat rate, interface temperatures, and the overall coefficient U",
+    "Handle conduction WITH internal generation (plane slab and current-carrying wire) and locate the maximum temperature",
+    "Apply the critical radius of insulation $r_c = k/h$ and explain when insulation increases heat loss",
+    "Analyze a single fin and a fin array: $m$, tip temperature, $q_{fin}$, effectiveness and efficiency",
+    "Use the lumped-capacitance method, check validity with the Biot number ($Bi < 0.1$), and find time, energy, and instantaneous heat rate"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What conduction is"
+    },
+    {
+      "kind": "prose",
+      "text": "**Conduction** is heat transfer through a medium (solid or fluid at rest) driven by a temperature gradient, with **no macroscopic motion of matter**. Energy passes from more energetic particles to less energetic ones, always from hot to cold.\n\nThis chapter answers one practical question: given temperatures and geometry, **how much heat flows and what are the temperatures inside?** The master tool is an analogy with electrical circuits — temperature plays the role of voltage, heat rate the role of current, and each layer is a **thermal resistance**."
+    },
+    {
+      "kind": "definition",
+      "term": "Heat flux vs heat rate",
+      "text": "**Heat flux** $q''$ is power per unit area, units $\\mathrm{W/m^2}$. **Heat rate** $q$ is total power, units $\\mathrm{W}$, with $q = q''\\,A$. Watch units: tutorials sometimes report $q/A$ (flux) and sometimes $q/L$ (per metre of pipe)."
+    },
+    {
+      "kind": "formula",
+      "tag": "1.1",
+      "tex": "q''_x = -k\\,\\frac{dT}{dx}\\qquad q_x = -kA\\,\\frac{dT}{dx}",
+      "caption": "Fourier's law, 1-D. $k$ = thermal conductivity ($\\mathrm{W/m\\cdot K}$). The minus sign means heat flows DOWN the gradient (toward lower $T$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Read Fourier's law correctly",
+      "text": "The heat rate is **proportional to** the area $A$, to $k$, and to the temperature gradient. It is NOT inversely proportional to $k$ or to the gradient. A bigger gradient or higher conductivity means MORE heat."
+    },
+    {
+      "kind": "heading",
+      "text": "Plane wall (no generation)"
+    },
+    {
+      "kind": "prose",
+      "text": "For steady state, 1-D, no internal generation, the heat equation reduces to $\\dfrac{d^2T}{dx^2}=0$, so the temperature profile is a **straight line**. Integrating Fourier's law across a wall of thickness $L$ and faces $T_{s1}, T_{s2}$ gives a constant heat rate."
+    },
+    {
+      "kind": "formula",
+      "tag": "2.1",
+      "tex": "q = \\frac{kA}{L}\\,(T_{s1}-T_{s2}) = \\frac{T_{s1}-T_{s2}}{R_{cond}},\\qquad R_{cond}=\\frac{L}{kA}",
+      "caption": "Plane-wall conduction. The heat rate is constant and independent of $x$; only the temperature drops linearly."
+    },
+    {
+      "kind": "definition",
+      "term": "The electrical analogy",
+      "text": "Heat rate $q$ behaves like electric current $I$, the temperature difference $\\Delta T$ like voltage $\\Delta V$, and each layer like a resistance $R$. Then $q = \\Delta T / R$, exactly like Ohm's law $I=\\Delta V/R_e$. Resistances in series add; the same $q$ flows through all of them."
+    },
+    {
+      "kind": "formula",
+      "tag": "2.2",
+      "tex": "R_{cond,plane}=\\frac{L}{kA}\\quad R_{conv}=\\frac{1}{hA}\\quad R_{cond,cyl}=\\frac{\\ln(r_2/r_1)}{2\\pi L k}",
+      "caption": "The three resistances you will use constantly. Convection resistance comes from Newton's law $q = hA(T_s - T_\\infty)$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The analogy has conditions",
+      "text": "The thermal-resistance / electrical analogy is valid **only at steady state and only WITHOUT volumetric generation**. The moment heat is generated inside the body, you cannot draw a simple resistance circuit — you must solve the heat equation."
+    },
+    {
+      "kind": "sim",
+      "simKey": "conduction-wall",
+      "title": "Composite wall explorer",
+      "caption": "Stack convection + conduction + conduction + convection resistances in series, watch the linear temperature drops and the single heat rate that flows through every layer."
+    },
+    {
+      "kind": "heading",
+      "text": "Composite walls and the overall U"
+    },
+    {
+      "kind": "prose",
+      "text": "A wall with two fluids and several solid layers is just resistances in series:\n$$R_{tot}=\\frac{1}{h_1A}+\\frac{L_A}{k_AA}+\\frac{L_B}{k_BA}+\\frac{1}{h_3A}$$\nThe heat rate is $q=(T_{\\infty,1}-T_{\\infty,3})/R_{tot}$. The **same** $q$ lets you back out every interface temperature by walking across one resistance at a time."
+    },
+    {
+      "kind": "formula",
+      "tag": "3.1",
+      "tex": "q = U A\\,(T_{\\infty,1}-T_{\\infty,3}),\\qquad U=\\frac{1}{R_{tot}A}=\\frac{1}{\\frac{1}{h_1}+\\frac{L_A}{k_A}+\\frac{L_B}{k_B}+\\frac{1}{h_3}}",
+      "caption": "Overall heat transfer coefficient $U$ ($\\mathrm{W/m^2\\,K}$). For a plane wall $U$ is just $1/(R_{tot}\\cdot A)$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Parallel resistances & contact resistance",
+      "text": "If two materials sit side-by-side across the same $\\Delta T$ (e.g. studs + insulation), they are in **parallel**: $1/R = 1/R_1 + 1/R_2$. A non-perfect joint between two solids adds a **thermal contact resistance** $R_{tc}=1/(h_cA)$ in series — it causes a temperature jump at the interface even though $q$ is continuous."
+    },
+    {
+      "kind": "steps",
+      "title": "Method: composite wall problem",
+      "steps": [
+        {
+          "label": "Sketch the circuit",
+          "text": "Draw every resistance from fluid 1 to fluid 2 in order: convection, each conduction layer, convection."
+        },
+        {
+          "label": "Sum",
+          "text": "Add series resistances; combine any parallel branch first. Get $R_{tot}$."
+        },
+        {
+          "label": "Heat rate",
+          "text": "$q = (T_{\\infty,1} - T_{\\infty,2})/R_{tot}$. This $q$ is the same everywhere."
+        },
+        {
+          "label": "Walk across",
+          "text": "For any interface temperature, $q = \\Delta T_{across\\,one\\,R} / R_{that\\,one}$. Solve for the unknown $T$."
+        },
+        {
+          "label": "Check U if asked",
+          "text": "$U = 1/(R_{tot}\\cdot A)$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked: plane wall, find U, q and surface temperatures (Tutorial 6.7)",
+      "text": "**Given:** wall $s=0.15$ m, $k=1.37$ W/mK, fluids $T_{f1}=25^\\circ$C ($h_i=10.5$), $T_{f2}=0^\\circ$C ($h_o=52.3$). Find $q/A$, $T_{s1}$, $T_{s2}$.\n\n**Per unit area** the resistances are $1/h_i=0.0952$, $s/k=0.1095$, $1/h_o=0.0191$ ($\\mathrm{m^2K/W}$). Sum $=0.2238$.\n$$\\frac{q}{A}=\\frac{25-0}{0.2238}=112\\ \\mathrm{W/m^2}$$\nSurface 1: $T_{s1}=T_{f1}-\\frac{q}{A}\\cdot\\frac{1}{h_i}=25-112(0.0952)=\\mathbf{14.4^\\circ C}$.\nSurface 2: $T_{s2}=T_{s1}-\\frac{q}{A}\\cdot\\frac{s}{k}=14.36-112(0.1095)=\\mathbf{2.1^\\circ C}$.\n\nNote $q$ is the same through every layer; the temperature simply steps down across each resistance."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Series resistance reasoning",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Three layers are in **series** between two fluids. Which quantity is the SAME across all three layers at steady state?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The temperature drop across each layer"
+          },
+          {
+            "id": "B",
+            "content": "The thermal resistance of each layer"
+          },
+          {
+            "id": "C",
+            "content": "The heat rate $q$ flowing through them"
+          },
+          {
+            "id": "D",
+            "content": "The thermal conductivity of each layer"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Like current in a series electrical circuit, the **heat rate $q$ is identical** through every series resistance. A: temperature drop differs (larger across larger $R$). B: resistances generally differ. D: each material has its own $k$. That constant $q$ is exactly what lets you find interface temperatures one resistance at a time.",
+        "theory": "Series thermal resistances carry the same heat rate; $\\Delta T$ divides in proportion to each $R$ ($\\Delta T_i = q\\cdot R_i$)."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Hollow cylinder (pipes)"
+    },
+    {
+      "kind": "prose",
+      "text": "For radial conduction the area grows with $r$, so the profile is **logarithmic**, not linear: $T(r)=C_1\\ln r + C_2$. The conduction resistance of a cylindrical shell is $R=\\dfrac{\\ln(r_2/r_1)}{2\\pi L k}$. Convection at a curved surface uses the area at that radius, $A=2\\pi r L$, so $R_{conv}=\\dfrac{1}{2\\pi r L\\,h}$."
+    },
+    {
+      "kind": "formula",
+      "tag": "4.1",
+      "tex": "q_r=\\frac{T_{\\infty1}-T_{\\infty3}}{\\dfrac{1}{2\\pi r_1 L h_1}+\\dfrac{\\ln(r_2/r_1)}{2\\pi L k_A}+\\dfrac{\\ln(r_3/r_2)}{2\\pi L k_B}+\\dfrac{1}{2\\pi r_3 L h_3}}",
+      "caption": "Composite hollow cylinder. Each convection resistance uses ITS OWN radius ($r_1$ inside, $r_3$ outside)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Per-metre vs total",
+      "text": "Pipe answers are often given as $q/L$ (W per metre). If $L$ is not given, you can only find $q/L$ — divide every resistance term by dropping $L$, or equivalently write $q/L = 2\\pi\\,\\Delta T / [\\ln(r_2/r_1)/k + \\dots]$. Don't mix W and W/m."
+    },
+    {
+      "kind": "heading",
+      "text": "Critical radius of insulation"
+    },
+    {
+      "kind": "prose",
+      "text": "Counter-intuitively, adding insulation to a thin pipe or wire can **increase** heat loss. Insulation adds conduction resistance (good) but also increases the outer radius, which **enlarges the convective area** and lowers convection resistance (bad). For a cylinder these two effects compete."
+    },
+    {
+      "kind": "formula",
+      "tag": "5.1",
+      "tex": "R_{tot}=\\frac{\\ln(r_{ins}/r_1)}{2\\pi L k_{ins}}+\\frac{1}{2\\pi r_{ins}L\\,h}\\;\\Rightarrow\\;\\frac{dR_{tot}}{dr_{ins}}=0\\;\\Rightarrow\\;\\boxed{r_c=\\frac{k_{ins}}{h}}",
+      "caption": "Critical radius. At $r_{ins} = r_c$ the total resistance is a MINIMUM, so heat loss is MAXIMUM."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "What rc means practically",
+      "text": "- If $r_1 < r_c$: adding insulation up to $r_c$ first **increases** heat loss, then decreases it.\n- If $r_1 > r_c$: any insulation immediately reduces heat loss (the normal case for big pipes).\n- Example: with $k_{ins}=0.05$ and $h=10$, $r_c=5$ mm — relevant for thin wires, not for fat pipes."
+    },
+    {
+      "kind": "heading",
+      "text": "Conduction WITH internal generation"
+    },
+    {
+      "kind": "prose",
+      "text": "When heat is generated inside (Joule heating, nuclear, chemical) at a volumetric rate $\\dot q_g$ ($\\mathrm{W/m^3}$), the profile becomes **parabolic** and $q$ is no longer constant. You cannot use a resistance circuit; integrate the heat equation with the boundary conditions instead."
+    },
+    {
+      "kind": "formula",
+      "tag": "6.1",
+      "tex": "\\text{Slab (symmetric):}\\;T(x)=\\frac{\\dot q_g L^2}{2k}\\Big(1-\\frac{x^2}{L^2}\\Big)+T_s\\qquad\\text{Wire:}\\;T(r)=\\frac{\\dot q_g}{4k}(R^2-r^2)+T_s",
+      "caption": "Generation profiles. Maximum $T$ is at the centre ($x=0$ or $r=0$) where the gradient is zero — no heat crosses the midplane/axis."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Joule heating gives qg",
+      "text": "For a current-carrying conductor, $\\dot q_g = \\dfrac{P_e}{V}=\\dfrac{\\rho_e I^2/A_c}{A_c}=\\dfrac{\\rho_e I^2}{A_c^2}$ where $A_c=\\pi R^2$ (or $\\pi D^2/4$). Then surface energy balance $\\dot q_g V = h S (T_s-T_\\infty)$ gives the surface temperature, and the parabola gives the centre."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: current-carrying wire centre temperature (Tutorial 6.8)",
+      "text": "**Given:** $D=8$ cm, $k=2.7$, $\\rho_e=0.5\\ \\mu\\Omega\\mathrm{m}$, $I=2000$ A, $T_f=0^\\circ$C, $h=20$.\n\nGeneration: $\\dot q_g=\\rho_e (I/A_c)^2$ with $A_c=\\pi D^2/4=5.03\\times10^{-3}\\ \\mathrm{m^2}$. $\\dot q_g=0.5\\times10^{-6}(2000/5.03\\times10^{-3})^2=7.92\\times10^4\\ \\mathrm{W/m^3}$.\n\nSurface (energy balance $\\dot q_g\\cdot\\pi D^2/4 = h\\,\\pi D\\,(T_s-T_f)$): $T_s=\\dfrac{\\dot q_g D}{4h}=\\dfrac{7.92\\times10^4\\cdot0.08}{4\\cdot20}=\\mathbf{79.2^\\circ C}$.\n\nCentre: $T_c=\\dfrac{\\dot q_g R^2}{4k}+T_s=\\dfrac{7.92\\times10^4(0.04)^2}{4(2.7)}+79.16=\\mathbf{90.9^\\circ C}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Fins (extended surfaces)"
+    },
+    {
+      "kind": "prose",
+      "text": "To boost convective heat loss $q=hA(T_s-T_\\infty)$ when you cannot raise $h$ or $\\Delta T$, you **add area** — fins. Heat conducts along the fin and convects off its sides. Define $\\theta(x)=T(x)-T_\\infty$. The fin equation $\\dfrac{d^2\\theta}{dx^2}-m^2\\theta=0$ has the fin parameter $m$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "fin",
+      "title": "Fin temperature & efficiency",
+      "caption": "Vary length, conductivity and $h$: see the exponential/cosh temperature decay along the fin and how efficiency drops as the fin gets long or $k$ gets small."
+    },
+    {
+      "kind": "formula",
+      "tag": "7.1",
+      "tex": "m=\\sqrt{\\frac{hP}{kA_c}}\\qquad\\text{adiabatic tip:}\\;\\frac{\\theta(x)}{\\theta_b}=\\frac{\\cosh[m(L-x)]}{\\cosh(mL)}\\qquad q_f=\\sqrt{hPkA_c}\\,\\theta_b\\tanh(mL)",
+      "caption": "$P$ = perimeter, $A_c$ = cross-section area, $\\theta_b$ = base excess temperature. For a very long fin $q_f = \\sqrt{hPkA_c}\\cdot\\theta_b$."
+    },
+    {
+      "kind": "definition",
+      "term": "Effectiveness vs efficiency",
+      "text": "**Effectiveness** $\\varepsilon_f=\\dfrac{q_f}{hA_c\\theta_b}$ compares the finned heat rate to the bare base area — fins are worth it only if $\\varepsilon_f>1$ (in practice $\\gg1$). **Efficiency** $\\eta_f=\\dfrac{q_f}{hA_f\\theta_b}$ compares the actual heat rate to an ideal fin held entirely at $T_b$ ($A_f$ = total fin surface). $\\eta_f\\le1$ always."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Don't confuse the two ratios",
+      "text": "Effectiveness divides by the **small base area** $A_c$ (so it can be ~50). Efficiency divides by the **whole fin surface** $A_f$ (so it is between 0 and 1). Mixing the denominators is a classic exam error."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: fin array (Tutorial 6.5)",
+      "text": "**Given:** $w=1$ m, $L=40$ mm, $s=1.5$ mm, $k=200$, $h=23$, $T_0=90^\\circ$C, $T_f=40^\\circ$C, $n=74$ fins on base $b=1$ m.\n\n$\\theta_b=50$ K. $P=2(s+w)=2.003$ m, $A_c=sw=1.5\\times10^{-3}\\ \\mathrm{m^2}$. $m=\\sqrt{hP/(kA_c)}=12.39\\ \\mathrm{m^{-1}}$.\n\nOne fin: $q_f=kA_c m\\theta_b\\tanh(mL)=85.2$ W. Array: $q_{f,tot}=n q_f=6308$ W.\nBare base between fins: $A_{free}=bw-nws=0.889\\ \\mathrm{m^2}$, $q_{bare}=hA_{free}\\theta_b=1022$ W.\nTotal $q=7330$ W.\n$\\varepsilon_f=q_f/(hA_c\\theta_b)=85.2/(23\\cdot1.5\\times10^{-3}\\cdot50)=\\mathbf{49.4}$ (fins very worthwhile).\n$\\eta_f=q_f/(hS_f\\theta_b)$ with $S_f=2Lw+2Ls=0.08\\ \\mathrm{m^2}$ gives $\\mathbf{0.93}$."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Fin worthwhile?",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "The use of fins is **not** justified when the fin effectiveness $\\varepsilon_f$ is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "many times greater than 1"
+          },
+          {
+            "id": "B",
+            "content": "lower than 1"
+          },
+          {
+            "id": "C",
+            "content": "independent of the fin's thermal conductivity"
+          },
+          {
+            "id": "D",
+            "content": "none of the answers provided"
+          }
+        ],
+        "correct": "B",
+        "explanation": "$\\varepsilon_f$ is the finned heat rate divided by what the bare base would lose. If $\\varepsilon_f<1$ the fin actually **reduces** heat transfer (it adds conduction resistance), so it is not justified. A: $\\varepsilon_f\\gg1$ is exactly when fins ARE justified. C: effectiveness does depend on $k$ (high-$k$ fins perform better). D: wrong since (B) is correct.",
+        "theory": "Fins add area but also a conduction resistance; they help only if effectiveness exceeds 1, ideally far above 1."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Transient conduction: lumped capacitance"
+    },
+    {
+      "kind": "prose",
+      "text": "When a body is suddenly dunked in a fluid, its temperature changes in time. If the body conducts heat internally **much** faster than it loses it by convection, the whole body stays nearly uniform and $T=T(t)$ only. This is the **lumped-capacitance** method. Energy balance: $-hA_s(T-T_\\infty)=\\rho c V \\dfrac{dT}{dt}$."
+    },
+    {
+      "kind": "formula",
+      "tag": "8.1",
+      "tex": "\\frac{\\theta}{\\theta_i}=\\frac{T-T_\\infty}{T_i-T_\\infty}=\\exp\\!\\Big(-\\frac{hA_s}{\\rho c V}\\,t\\Big)=e^{-t/t_0},\\qquad t_0=\\frac{\\rho c V}{hA_s}=R_t C_t",
+      "caption": "Exponential cooling. Time constant $t_0$: after $t = t_0$ the excess temperature has fallen to 0.368 of its start."
+    },
+    {
+      "kind": "formula",
+      "tag": "8.2",
+      "tex": "Q(t)=\\rho c V\\,\\theta_i\\Big(1-e^{-t/t_0}\\Big)\\qquad \\dot q_{inst}(t)=hA_s\\,\\theta(t)",
+      "caption": "Total energy released up to time $t$, and the instantaneous heat rate at time $t$."
+    },
+    {
+      "kind": "definition",
+      "term": "Biot number — the validity test",
+      "text": "$Bi=\\dfrac{hL^*}{k}$ with characteristic length $L^*=\\dfrac{V}{A_s}$. It is the ratio of internal conduction resistance to surface convection resistance. **Lumped capacitance is valid only if $Bi<0.1$** — then internal gradients are negligible. $Bi$ is dimensionless. For a sphere $L^*=R/3=D/6$; for a slab cooled both sides $L^*=L/2$ (half-thickness), but using $V/A_s$ always works."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Use kelvin differences, but °C ratios are fine",
+      "text": "The ratio $\\theta/\\theta_i$ uses temperature **differences**, so °C and K give the same number — no conversion needed there. But the exponent argument must be consistent in seconds. And remember $L^*=V/A_s$: a sphere gives $D/6$, NOT $D/2$. Using the radius or diameter directly is the favourite mistake."
+    },
+    {
+      "kind": "steps",
+      "title": "Method: transient lumped problem",
+      "steps": [
+        {
+          "label": "Compute Bi",
+          "text": "$L^* = V/A_s$, then $Bi = hL^*/k$. Confirm $Bi < 0.1$ before using lumped capacitance."
+        },
+        {
+          "label": "Form theta",
+          "text": "$\\theta_i = T_i - T_\\infty$, $\\theta = T(t) - T_\\infty$ (differences, K or °C)."
+        },
+        {
+          "label": "Time to reach T",
+          "text": "$t = -(\\rho c V)/(h A_s) \\cdot \\ln(\\theta/\\theta_i)$, or use $m\\cdot c$ for $V\\cdot\\rho$."
+        },
+        {
+          "label": "Energy / heat rate",
+          "text": "$Q(t) = \\rho c V \\theta_i (1 - e^{-t/t_0})$; $q_{inst} = h A_s \\theta(t)$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked: quenching a steel sphere — Biot number (Quiz 14)",
+      "text": "**Given:** $D=0.18$ m, $\\rho=8000$, $k=50$, $h=20$.\n\n$L^*=\\dfrac{V}{A_s}=\\dfrac{R}{3}=\\dfrac{0.09}{3}=0.03$ m.\n$$Bi=\\frac{hL^*}{k}=\\frac{20\\times0.03}{50}=\\mathbf{0.012}<0.1$$\nSo lumped capacitance is valid. The distractors come from using $L^*=R=0.09$ ($Bi=0.036$), $L^*=D=0.18$ ($Bi=0.072$), or $D/3$ ($Bi=0.024$)."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Biot number meaning",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "The Biot number is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "proportional to the thermal conductivity $k$"
+          },
+          {
+            "id": "B",
+            "content": "inversely proportional to the characteristic dimension $L^*$"
+          },
+          {
+            "id": "C",
+            "content": "dimensionless"
+          },
+          {
+            "id": "D",
+            "content": "proportional to the temperature"
+          }
+        ],
+        "correct": "C",
+        "explanation": "$Bi=hL^*/k$ has units $(\\mathrm{W/m^2K})(\\mathrm{m})/(\\mathrm{W/mK})=$ dimensionless. A: it is inversely proportional to $k$ ($k$ in the denominator). B: it is proportional to $L^*$ (numerator). D: it does not depend on temperature at all.",
+        "theory": "$Bi = hL^*/k$ is a dimensionless ratio of internal conduction resistance to surface convection resistance; $Bi < 0.1$ validates lumped capacitance."
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Fourier's law states that the conduction heat rate is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "inversely proportional to the thermal conductivity"
+        },
+        {
+          "id": "B",
+          "content": "proportional to the heat transfer surface area"
+        },
+        {
+          "id": "C",
+          "content": "inversely proportional to the temperature gradient"
+        },
+        {
+          "id": "D",
+          "content": "independent of the thermal conductivity"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$q=-kA\\,dT/dx$: the rate is proportional to area $A$, to $k$, and to the gradient. B is correct. A and D misstate the role of $k$ (rate rises with $k$, it is not independent of nor inversely related to it). C is wrong because a larger gradient gives MORE heat, not less.",
+      "theory": "Fourier: $q$ is proportional to $A$, $k$ and the temperature gradient; the minus sign sets the direction (hot to cold).",
+      "source": "Heat transfer quizzes Q1"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The units of the overall heat transfer coefficient $U$ are:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\mathrm{m^2K/W}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\mathrm{K/W}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\mathrm{W/m^2}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$q=UA\\Delta T$, so $U=q/(A\\Delta T)$ has units $\\mathrm{W}/(\\mathrm{m^2K})$. A is the units of a unit-area resistance ($1/U$). B is the units of a total resistance $R$. D is a heat flux, missing the per-kelvin.",
+      "theory": "$U$ appears in $q = U\\cdot A\\cdot\\Delta T$; it is $\\mathrm{W/m^2K}$, the reciprocal of the area-based total resistance.",
+      "source": "Heat transfer quizzes Q4"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A flat wall (no generation), thickness $25$ cm, area $10\\,\\mathrm{m^2}$, $k=0.5$ W/mK, is between fluids at $20^\\circ$C ($h=8$) and $-20^\\circ$C ($h=25$). The total thermal resistance between the two fluids is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$5\\ \\mathrm{K/W}$"
+        },
+        {
+          "id": "B",
+          "content": "$0.067\\ \\mathrm{K/W}$"
+        },
+        {
+          "id": "C",
+          "content": "$0.67\\ \\mathrm{K/W}$"
+        },
+        {
+          "id": "D",
+          "content": "$0.067\\ \\mathrm{W/K}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$R_{tot}=\\frac{1}{A}(\\frac1{h_1}+\\frac{s}{k}+\\frac1{h_2})=\\frac1{10}(0.125+0.5+0.04)=0.0665\\approx0.067$ K/W. A drops the $1/A$ factor (uses the per-area sum 0.665, then mis-scales). C is ten times too big (forgot to divide by $A$). D has the right number but inverted units (resistance is K/W, not W/K).",
+      "theory": "Series resistances: $R_{tot} = (1/A)(1/h_1 + s/k + 1/h_2)$, units K/W.",
+      "source": "Heat transfer quizzes Q12"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A stainless-steel sphere, $D=18$ cm, $\\rho=8000$, $k=50$, is quenched with $h=20\\ \\mathrm{W/m^2K}$. The Biot number is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.075$"
+        },
+        {
+          "id": "B",
+          "content": "$0.225$"
+        },
+        {
+          "id": "C",
+          "content": "$0.036$"
+        },
+        {
+          "id": "D",
+          "content": "$0.012$"
+        }
+      ],
+      "correct": "D",
+      "explanation": "$L^*=V/A_s=R/3=0.03$ m, so $Bi=hL^*/k=20\\cdot0.03/50=0.012$. C uses $L^*=R=0.09$ (forgot the $/3$). B uses $L^*=D=0.18$. A uses $L^*\\approx D/2.4$. Only D uses the correct $V/A_s=D/6$.",
+      "theory": "For a sphere $L^* = V/A_s = R/3 = D/6$; $Bi = hL^*/k$.",
+      "source": "Heat transfer quizzes Q14"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The use of fins is NOT justified when the fin effectiveness $\\varepsilon_f$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "independent of the fin's thermal conductivity"
+        },
+        {
+          "id": "B",
+          "content": "lower than 1"
+        },
+        {
+          "id": "C",
+          "content": "many times greater than 1"
+        },
+        {
+          "id": "D",
+          "content": "exactly equal to the fin efficiency"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\varepsilon_f=q_f/(hA_c\\theta_b)$ compares finned to bare-base heat rate; $\\varepsilon_f<1$ means the fin reduces heat transfer, so it is not justified. C is the opposite (when fins are clearly worthwhile). A is false — effectiveness rises with $k$. D mixes two different ratios with different denominators.",
+      "theory": "Fins help only when effectiveness $> 1$ (ideally $\\gg1$); below 1 the added conduction resistance hurts.",
+      "source": "Heat transfer quizzes Q7"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Adding insulation to a thin cylindrical wire can INCREASE its heat loss. The outer radius at which heat loss is maximum is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$r_c = h/k_{ins}$"
+        },
+        {
+          "id": "B",
+          "content": "$r_c = k_{ins}\\,h$"
+        },
+        {
+          "id": "C",
+          "content": "$r_c = k_{ins}/h$"
+        },
+        {
+          "id": "D",
+          "content": "$r_c = 2k_{ins}/h$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Setting $dR_{tot}/dr_{ins}=0$ for a cylinder gives $r_c=k_{ins}/h$, where $R_{tot}$ is minimum so $q$ is maximum. A inverts the ratio. B multiplies instead of dividing. D introduces a spurious factor of 2 (that factor appears for a sphere, not a cylinder).",
+      "theory": "Critical radius of a cylinder: $r_c = k_{ins}/h$. Below $r_c$ insulation raises heat loss; above $r_c$ it lowers it.",
+      "source": "Lecture: critical radius"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A composite pipe carries the resistances $R_{conv,in}, R_{cond,A}, R_{cond,B}, R_{conv,out}$ in series with $T_{\\infty1}=250^\\circ$C, $T_{\\infty2}=25^\\circ$C and $R_{tot}=0.0276$ K/W. The heat rate is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$8150\\ \\mathrm{W}$"
+        },
+        {
+          "id": "B",
+          "content": "$6210\\ \\mathrm{W}$"
+        },
+        {
+          "id": "C",
+          "content": "$225\\ \\mathrm{W}$"
+        },
+        {
+          "id": "D",
+          "content": "$0.122\\ \\mathrm{W}$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$q=(T_{\\infty1}-T_{\\infty2})/R_{tot}=225/0.0276\\approx8152$ W. C forgets to divide by $R_{tot}$ (just the $\\Delta T$ in °C). D divides $\\Delta T$ by $R_{tot}$ inverted / uses wrong powers. B uses a wrong $\\Delta T$ (e.g. an interface temperature).",
+      "theory": "$q = \\Delta T_{overall} / R_{tot}$ for any series resistance network (plane or cylindrical).",
+      "source": "Tutorial 6.2"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In steady 1-D conduction through a single plane wall with no generation, the temperature profile is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "parabolic, with a maximum inside the wall"
+        },
+        {
+          "id": "B",
+          "content": "logarithmic in $x$"
+        },
+        {
+          "id": "C",
+          "content": "linear in $x$"
+        },
+        {
+          "id": "D",
+          "content": "exponential in $x$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$d^2T/dx^2=0$ integrates to $T=C_1x+C_2$, a straight line, so $q$ is constant. A is the profile WITH generation. B is the cylindrical (radial) profile. D is the fin temperature profile, not a plane wall.",
+      "theory": "Plane wall, no generation: linear $T(x)$, constant $q$. Generation makes it parabolic; cylinder makes it logarithmic.",
+      "source": "Lecture: plane wall"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A current-carrying wire generates heat uniformly. At steady state the maximum temperature occurs:",
+      "options": [
+        {
+          "id": "A",
+          "content": "at the surface, where convection removes heat"
+        },
+        {
+          "id": "B",
+          "content": "on the axis ($r=0$), where the gradient is zero"
+        },
+        {
+          "id": "C",
+          "content": "halfway between axis and surface"
+        },
+        {
+          "id": "D",
+          "content": "it is uniform, so there is no maximum"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$T(r)=\\frac{\\dot q_g}{4k}(R^2-r^2)+T_s$ peaks at $r=0$, where $dT/dr=0$ (by symmetry no heat crosses the axis). A is the coldest point (heat leaves there). C has no special meaning. D is false — with generation there IS an internal gradient.",
+      "theory": "With uniform generation, the centre is hottest because all generated heat must flow outward; the gradient is zero on the symmetry axis.",
+      "source": "Tutorial 6.4 / 6.8"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A body is quenched in a fluid. The lumped-capacitance model gives $\\theta/\\theta_i=e^{-t/t_0}$. After one time constant $t=t_0$, the excess temperature $\\theta=T-T_\\infty$ has dropped to about:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.632$ of its initial value"
+        },
+        {
+          "id": "B",
+          "content": "$0.500$ of its initial value"
+        },
+        {
+          "id": "C",
+          "content": "$0.368$ of its initial value"
+        },
+        {
+          "id": "D",
+          "content": "$0.135$ of its initial value"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$e^{-1}=0.368$, so $\\theta=0.368\\,\\theta_i$ at $t=t_0$. A ($0.632=1-e^{-1}$) is the FRACTION already lost, not what remains. B would need $t=t_0\\ln2$. D ($e^{-2}=0.135$) is after two time constants.",
+      "theory": "Exponential decay: at $t = t_0$ the remaining excess temperature is $e^{-1} \\approx 0.368$ of the initial.",
+      "source": "Lecture: time constant"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "For a long single fin with an adiabatic tip, $m=\\sqrt{hP/(kA_c)}$. If the fin's thermal conductivity $k$ is increased (all else fixed), the heat rate $q_f=\\sqrt{hPkA_c}\\,\\theta_b\\tanh(mL)$:",
+      "options": [
+        {
+          "id": "A",
+          "content": "decreases, because $m$ decreases"
+        },
+        {
+          "id": "B",
+          "content": "increases, because the $\\sqrt{k}$ factor grows faster than $\\tanh(mL)$ shrinks"
+        },
+        {
+          "id": "C",
+          "content": "is unchanged, since $k$ cancels"
+        },
+        {
+          "id": "D",
+          "content": "becomes zero once $mL<1$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Higher $k$ raises the $\\sqrt{kA_c}$ prefactor and keeps the fin nearer $T_b$ (better temperature distribution), so $q_f$ rises even though $m\\propto1/\\sqrt{k}$ falls slightly and $\\tanh(mL)$ drops a little; the prefactor dominates. A wrongly assumes $m$ controls $q_f$. C is false — $k$ does not cancel. D misreads $\\tanh$, which is never zero for $L>0$.",
+      "theory": "$q_f$ scales with $\\sqrt{k}$; a more conductive fin spreads heat better and transfers more, the standard reason for using aluminium/copper fins.",
+      "source": "Lecture: fins, heat rate"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Two solid layers are placed SIDE-BY-SIDE across the same overall temperature difference (a parallel arrangement). The equivalent resistance is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$R_{eq}=R_1+R_2$"
+        },
+        {
+          "id": "B",
+          "content": "$R_{eq}=R_1 R_2$"
+        },
+        {
+          "id": "C",
+          "content": "$1/R_{eq}=1/R_1+1/R_2$"
+        },
+        {
+          "id": "D",
+          "content": "$R_{eq}=\\tfrac12(R_1+R_2)$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Parallel paths share the same $\\Delta T$ but carry separate heat rates that add, giving $1/R_{eq}=1/R_1+1/R_2$ (like parallel electrical resistors). A is the SERIES rule. B has wrong units (product of two resistances). D is only the average, valid for nothing general.",
+      "theory": "Same as electrical circuits: series resistances add; parallel resistances combine by reciprocals.",
+      "source": "Lecture: electrical analogy"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A plane wall ($s_1=10$ cm, $k_1=75$, $A=10\\,\\mathrm{m^2}$) sits between fluids at $300^\\circ$C ($h_1=174.4$) and $25^\\circ$C ($h_2=10.5$). The overall coefficient $U$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.102\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "B",
+          "content": "$9.77\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "C",
+          "content": "$97.7\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "D",
+          "content": "$26.9\\ \\mathrm{W/m^2K}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$1/U=1/h_1+s_1/k_1+1/h_2=0.00573+0.00133+0.0952=0.1024$, so $U=9.77\\ \\mathrm{W/m^2K}$. A is $1/U$ (forgot to invert). C is ten times too big. D is the heat rate in kW (26.9 kW), not $U$.",
+      "theory": "$U = 1/(1/h_1 + s/k + 1/h_2)$ for a plane wall; the dominant resistance here is the low-$h$ side.",
+      "source": "Tutorial 6.1"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The thermal-resistance (electrical) analogy can be used:",
+      "options": [
+        {
+          "id": "A",
+          "content": "always, including with internal heat generation"
+        },
+        {
+          "id": "B",
+          "content": "only in transient problems"
+        },
+        {
+          "id": "C",
+          "content": "only at steady state and without volumetric generation"
+        },
+        {
+          "id": "D",
+          "content": "only for cylinders, not plane walls"
+        }
+      ],
+      "correct": "C",
+      "explanation": "The lecture states the analogy is valid only at steady state and with no generation — generation makes $q$ vary along the path, so a single resistance cannot represent it. A directly contradicts this. B is wrong (it is for steady state). D is false — it applies to both geometries.",
+      "theory": "Resistance networks need a constant $q$ along the path: valid only steady-state, no generation.",
+      "source": "Lecture: electrical analogy"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A sphere cools by lumped capacitance with $\\theta_i=475$ K (so $T_i-T_\\infty$). After a time you measure $\\theta=75$ K. The time is $\\tau=-\\frac{\\rho V c}{hA_s}\\ln(\\theta/\\theta_i)$. If $\\theta/\\theta_i$ were mistakenly inverted, the computed time would be:",
+      "options": [
+        {
+          "id": "A",
+          "content": "unchanged (the log is symmetric)"
+        },
+        {
+          "id": "B",
+          "content": "negative, an obviously unphysical result"
+        },
+        {
+          "id": "C",
+          "content": "exactly half the correct value"
+        },
+        {
+          "id": "D",
+          "content": "complex-valued"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Correctly $\\ln(75/475)<0$, and the leading minus sign makes $\\tau>0$. Inverting to $\\ln(475/75)>0$ gives $\\tau<0$, a negative (unphysical) time — a useful sanity check. A is false; $\\ln(1/x)=-\\ln x$, not equal. C and D are not what sign inversion produces.",
+      "theory": "In cooling, $\\theta/\\theta_i < 1$ so its log is negative; the minus sign restores a positive time. A negative time signals you flipped the ratio.",
+      "source": "Tutorial 6.6 / 6.10"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Composite plane wall: U, heat rate and surface temperatures",
+      "meta": "Tutorial 6 · plane wall · written-test style",
+      "difficulty": "medium",
+      "statement": "A plane wall (steady, 1-D, no generation) has thickness $s_1=10$ cm, conductivity $k_1=75$ W/mK and area $A=10\\,\\mathrm{m^2}$. It separates a hot fluid at $T_{f1}=300^\\circ$C ($h_1=174.4\\ \\mathrm{W/m^2K}$) from a cold fluid at $T_{f2}=25^\\circ$C ($h_2=10.5\\ \\mathrm{W/m^2K}$). Find the overall coefficient $U$, the heat rate $q$, and the two wall-surface temperatures $T_1$ and $T_2$.",
+      "given": "$s_1 = 0.10$ m; $k_1 = 75$ W/mK; $A = 10\\ \\mathrm{m^2}$; $T_{f1} = 300$ °C, $h_1 = 174.4\\ \\mathrm{W/m^2K}$; $T_{f2} = 25$ °C, $h_2 = 10.5\\ \\mathrm{W/m^2K}$",
+      "steps": [
+        {
+          "title": "Series resistances",
+          "content": "$R_1 = 1/(h_1\\cdot A) = 1/(174.4\\cdot10) = 5.73\\times10^{-4}$ K/W; $R_2 = s_1/(k_1\\cdot A) = 0.10/(75\\cdot10) = 1.33\\times10^{-4}$ K/W; $R_3 = 1/(h_2\\cdot A) = 1/(10.5\\cdot10) = 9.52\\times10^{-3}$ K/W. $R_{tot} = 1.024\\times10^{-2}$ K/W."
+        },
+        {
+          "title": "Overall U",
+          "content": "$U = 1/(R_{tot}\\cdot A) = 1/(1.024\\times10^{-2}\\cdot10) = 9.77\\ \\mathrm{W/m^2K}$. The outside convection (low $h$) dominates the resistance."
+        },
+        {
+          "title": "Heat rate",
+          "content": "$q = (T_{f1} - T_{f2})/R_{tot} = 275/1.024\\times10^{-2} = 26.87$ kW. (Same as $q = U\\cdot A\\cdot\\Delta T = 9.77\\cdot10\\cdot275$.)"
+        },
+        {
+          "title": "Surface temperatures",
+          "content": "$T_1 = T_{f1} - q\\cdot R_1 = 300 - 26870\\cdot5.73\\times10^{-4} = 284.6$ °C. $T_2 = T_{f2} + q\\cdot R_3 = 25 + 26870\\cdot9.52\\times10^{-3} = 281$ °C. The small drop across the metal ($T_1-T_2 \\approx 3.6$ °C) reflects its tiny conduction resistance."
+        }
+      ],
+      "finalAnswer": "$U \\approx 9.77\\ \\mathrm{W/m^2K}$; $q \\approx 26.9$ kW; $T_1 \\approx 284.6$ °C; $T_2 \\approx 281$ °C.",
+      "tips": "Walk across one resistance at a time using the SAME $q$. Keep °C for differences (fine) but be consistent. The lowest-$h$ side carries most of the temperature drop."
+    },
+    {
+      "title": "Insulated pipe: heat loss and interface temperatures",
+      "meta": "Tutorial 6 · composite cylinder · numeric",
+      "difficulty": "hard",
+      "statement": "A steel pipe ($d_1=10$ cm inside, $d_2=15$ cm outside, $k_1=40$ W/mK), length $L=10$ m, is covered with $s=2$ cm of insulation ($k_2=0.5$ W/mK), so $d_3=19$ cm. Inside: $T_{f1}=250^\\circ$C, $h_1=100$; outside: $T_{f2}=25^\\circ$C, $h_2=10$. Find the heat rate $q$ and the temperatures $T_1$ (inner wall), $T_3$ (outer insulation surface).",
+      "given": "$r_1=0.05$, $r_2=0.075$, $r_3=0.095$ m; $L=10$ m; $k_1=40$, $k_2=0.5$; $T_{f1}=250$°C $h_1=100$; $T_{f2}=25$°C $h_2=10$",
+      "steps": [
+        {
+          "title": "Four series resistances",
+          "content": "$R_{conv,in} = 1/(2\\pi r_1 L h_1) = 1/(2\\pi\\cdot0.05\\cdot10\\cdot100) = 3.18\\times10^{-3}$. $R_{steel} = \\ln(r_2/r_1)/(2\\pi L k_1) = \\ln(1.5)/(2\\pi\\cdot10\\cdot40) = 1.61\\times10^{-4}$. $R_{ins} = \\ln(r_3/r_2)/(2\\pi L k_2) = \\ln(1.267)/(2\\pi\\cdot10\\cdot0.5) = 7.51\\times10^{-3}$. $R_{conv,out} = 1/(2\\pi r_3 L h_2) = 1/(2\\pi\\cdot0.095\\cdot10\\cdot10) = 1.68\\times10^{-2}$."
+        },
+        {
+          "title": "Total resistance",
+          "content": "$R_{tot} = 3.18\\times10^{-3} + 1.61\\times10^{-4} + 7.51\\times10^{-3} + 1.68\\times10^{-2} = 0.0276$ K/W."
+        },
+        {
+          "title": "Heat rate",
+          "content": "$q = (T_{f1} - T_{f2})/R_{tot} = 225/0.0276 = 8152$ W."
+        },
+        {
+          "title": "Inner-wall temperature",
+          "content": "$q = 2\\pi r_1 L h_1 (T_{f1} - T_1) \\Rightarrow T_1 = T_{f1} - q\\cdot R_{conv,in} = 250 - 8152\\cdot3.18\\times10^{-3} = 224$ °C."
+        },
+        {
+          "title": "Outer-surface temperature",
+          "content": "$q = 2\\pi r_3 L h_2 (T_3 - T_{f2}) \\Rightarrow T_3 = T_{f2} + q\\cdot R_{conv,out} = 25 + 8152\\cdot1.68\\times10^{-2} = 161.3$ °C."
+        }
+      ],
+      "finalAnswer": "$q \\approx 8150$ W; $T_1 \\approx 224$ °C; $T_3 \\approx 161$ °C.",
+      "tips": "Each convection resistance uses ITS OWN radius ($r_1$ inside, $r_3$ outside). If $L$ were not given, report $q/L = 2\\pi\\cdot225/[\\ln(r_2/r_1)/k_1 + \\ln(r_3/r_2)/k_2 + \\dots]$."
+    },
+    {
+      "title": "Fin array on a heat sink",
+      "meta": "Tutorial 6 · extended surfaces · numeric multi-step",
+      "difficulty": "hard",
+      "statement": "A heat sink base $b=1$ m by $w=1$ m at $T_0=90^\\circ$C carries $n=74$ rectangular fins, each length $L=40$ mm, thickness $s=1.5$ mm, width $w=1$ m, $k=200$ W/mK. Ambient $T_f=40^\\circ$C, $h=23\\ \\mathrm{W/m^2K}$. Assume an adiabatic tip. Find the single-fin heat rate $q_{fin}$, the total heat rate from the sink $q_{tot}$, the fin effectiveness $\\varepsilon_f$ and efficiency $\\eta_f$.",
+      "given": "$b=w=1$ m; $L=0.04$ m; $s=1.5\\times10^{-3}$ m; $n=74$; $k=200$; $h=23$; $T_0=90$°C; $T_f=40$°C; $\\theta_b=50$ K",
+      "steps": [
+        {
+          "title": "Fin parameter m",
+          "content": "$P = 2(s+w) = 2.003$ m; $A_c = s\\cdot w = 1.5\\times10^{-3}\\ \\mathrm{m^2}$. $m = \\sqrt{hP/(kA_c)} = \\sqrt{23\\cdot2.003/(200\\cdot1.5\\times10^{-3})} = 12.39\\ \\mathrm{m^{-1}}$. $mL = 0.4956$."
+        },
+        {
+          "title": "Single-fin heat rate",
+          "content": "$q_{fin} = k A_c m \\theta_b \\cdot \\tanh(mL) = 200\\cdot1.5\\times10^{-3}\\cdot12.39\\cdot50\\cdot\\tanh(0.4956) = 185.9\\cdot0.4585 = 85.2$ W."
+        },
+        {
+          "title": "Array + bare base",
+          "content": "$q_{fin,tot} = n\\cdot q_{fin} = 74\\cdot85.2 = 6308$ W. Free base area $A_{free} = b\\cdot w - n\\cdot w\\cdot s = 1 - 74\\cdot1\\cdot1.5\\times10^{-3} = 0.889\\ \\mathrm{m^2}$. $q_{bare} = h\\cdot A_{free}\\cdot\\theta_b = 23\\cdot0.889\\cdot50 = 1022$ W. $q_{tot} = 6308 + 1022 = 7330$ W."
+        },
+        {
+          "title": "Effectiveness",
+          "content": "$\\varepsilon_f = q_{fin}/(h A_c \\theta_b) = 85.2/(23\\cdot1.5\\times10^{-3}\\cdot50) = 85.2/1.725 = 49.4$. Far above 1, so the fins are very worthwhile."
+        },
+        {
+          "title": "Efficiency",
+          "content": "$S_{fin} = 2Lw + 2Ls = 2\\cdot0.04\\cdot1 + 2\\cdot0.04\\cdot1.5\\times10^{-3} = 0.0801\\ \\mathrm{m^2}$. $\\eta_f = q_{fin}/(h S_{fin} \\theta_b) = 85.2/(23\\cdot0.0801\\cdot50) = 85.2/92.1 = 0.926$."
+        }
+      ],
+      "finalAnswer": "$q_{fin} \\approx 85.2$ W; $q_{tot} \\approx 7330$ W; $\\varepsilon_f \\approx 49.4$; $\\eta_f \\approx 0.93$.",
+      "tips": "Effectiveness divides by the small base area $A_c$ (gives ~50); efficiency divides by the whole fin surface $S_{fin}$ (gives $<1$). Don't forget the bare base between fins contributes to $q_{tot}$."
+    },
+    {
+      "title": "Transient quenching: time, energy, instantaneous rate",
+      "meta": "Tutorial 6 · lumped capacitance · numeric",
+      "difficulty": "medium",
+      "statement": "A metal block, $m=8$ kg, $L=10$ cm (cube), $k=200$ W/mK, $c=500$ J/kgK, starts at $T_1=120^\\circ$C and is quenched in a fluid at $T_f=20^\\circ$C with $h=20\\ \\mathrm{W/m^2K}$. (A) Verify lumped capacitance applies and find the time $\\tau$ to reach $T_2=40^\\circ$C. (B) After $\\tau'=30$ min find the energy released $Q$ and the instantaneous heat rate.",
+      "given": "$m=8$ kg; cube $L=0.1$ m so $A_s=6L^2=0.06\\ \\mathrm{m^2}$; $k=200$; $c=500$; $T_1=120$, $T_2=40$, $T_f=20$ °C; $h=20$",
+      "steps": [
+        {
+          "title": "Biot check",
+          "content": "$L^* = V/A_s = L^3/(6L^2) = L/6 = 0.0167$ m. $Bi = hL^*/k = 20\\cdot0.0167/200 = 1.67\\times10^{-3} \\ll 0.1$. Lumped capacitance is valid."
+        },
+        {
+          "title": "Time to reach 40 °C",
+          "content": "$\\theta_1 = T_1-T_f = 100$ K, $\\theta_2 = T_2-T_f = 20$ K. $\\tau = -(m c)/(h A_s)\\cdot\\ln(\\theta_2/\\theta_1) = -(8\\cdot500)/(20\\cdot0.06)\\cdot\\ln(0.2) = -3333\\cdot(-1.609) = 5365$ s $\\approx 89$ min."
+        },
+        {
+          "title": "Temperature at τ' = 1800 s",
+          "content": "$\\theta^* = \\theta_1\\cdot\\exp(-hA_s \\tau'/(mc)) = 100\\cdot\\exp(-20\\cdot0.06\\cdot1800/(8\\cdot500)) = 100\\cdot\\exp(-0.54) = 58.3$ K, so $T = 78.3$ °C."
+        },
+        {
+          "title": "Instantaneous heat rate",
+          "content": "$q_{inst} = h A_s \\theta^* = 20\\cdot0.06\\cdot58.3 = 70$ W."
+        },
+        {
+          "title": "Energy released in 0→1800 s",
+          "content": "$Q = m c (\\theta_1 - \\theta^*) = 8\\cdot500\\cdot(100 - 58.3) = 167$ kJ. (Equivalently $Q = mc\\cdot\\theta_1\\cdot(1-e^{-t/t_0})$.)"
+        }
+      ],
+      "finalAnswer": "$Bi = 1.7\\times10^{-3}$ (valid); $\\tau \\approx 5365$ s $\\approx 89$ min; at 30 min: $q_{inst} \\approx 70$ W, $Q \\approx 167$ kJ.",
+      "tips": "Use $mc$ in place of $\\rho V c$ when mass is given. Temperature DIFFERENCES (K or °C) are interchangeable in the ratio. Always check $Bi < 0.1$ before trusting the lumped model."
+    },
+    {
+      "title": "Conceptual: derive the critical radius and explain the curve",
+      "meta": "Tutorial 6 · critical radius · open-ended derivation",
+      "difficulty": "medium",
+      "statement": "For a cylinder of radius $r_1$ at fixed surface temperature, insulation (conductivity $k_{ins}$) is added to outer radius $r_{ins}$, with outside convection coefficient $h$. (a) Write the total resistance per unit length. (b) Derive the critical radius $r_c$. (c) Sketch and explain how heat loss varies with $r_{ins}$ and state when adding insulation actually reduces heat loss.",
+      "given": "Cylinder $r_1$, insulation $k_{ins}$ to $r_{ins}$, outside $h$, ambient $T_\\infty$; steady, no generation",
+      "steps": [
+        {
+          "title": "Total resistance",
+          "content": "Per unit length, $R_{tot} = \\ln(r_{ins}/r_1)/(2\\pi k_{ins}) + 1/(2\\pi r_{ins} h)$. The first term (conduction) grows with $r_{ins}$; the second (convection) SHRINKS because the area grows."
+        },
+        {
+          "title": "Minimise R_tot",
+          "content": "$dR_{tot}/dr_{ins} = 1/(2\\pi k_{ins} r_{ins}) - 1/(2\\pi r_{ins}^2 h) = 0 \\Rightarrow r_{ins} = k_{ins}/h$."
+        },
+        {
+          "title": "Confirm it's a minimum",
+          "content": "The second derivative is positive at $r_{ins} = k_{ins}/h$, so $R_{tot}$ is a MINIMUM there — meaning $q = \\Delta T/R_{tot}$ is a MAXIMUM. Hence $r_c = k_{ins}/h$."
+        },
+        {
+          "title": "The curve",
+          "content": "Plot $q$ vs $r_{ins}$: $q$ rises from $r_1$ to a peak at $r_c$, then falls. If $r_1 < r_c$, the first bit of insulation INCREASES heat loss (bad for thermal protection, good for cooling a wire). If $r_1 > r_c$, any insulation immediately reduces heat loss."
+        },
+        {
+          "title": "Practical statement",
+          "content": "Insulation reliably reduces heat loss only when the bare radius already exceeds the critical radius, or when you insulate well past $r_c$. For a wire with $k_{ins} = 0.05$, $h = 10$, $r_c = 5$ mm — thin wires can be cooled MORE by a thin sheath."
+        }
+      ],
+      "finalAnswer": "$R_{tot} = \\ln(r_{ins}/r_1)/(2\\pi k_{ins}) + 1/(2\\pi r_{ins} h)$; $r_c = k_{ins}/h$ ($R_{tot}$ minimum, $q$ maximum); insulation lowers heat loss only once $r_{ins} > r_c$ (or if $r_1$ already $> r_c$).",
+      "tips": "The competition is conduction resistance (up) vs convection area (up $\\Rightarrow$ convection resistance down). This effect exists for cylinders/spheres, NOT for plane walls where added thickness always helps."
+    }
+  ]
+}

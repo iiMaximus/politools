@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+*.tsbuildinfo
+
+# Authoring reference material (large PDFs) — not used by the build or runtime
+course_material

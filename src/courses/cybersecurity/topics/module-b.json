@@ -1,0 +1,295 @@
+{
+  "blocks": [
+    {
+      "kind": "prose",
+      "text": "Every cybersecurity defence — firewalls, encryption, antivirus, two-factor authentication — protects machines. But behind every machine sits a **human**, and humans can be tricked. This lesson covers the **human factor**: why people are the weakest link, how attackers manipulate them through **social engineering** and **phishing**, and the **physical attacks** that walk straight past your digital walls."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The core idea",
+      "text": "As Kevin Mitnick put it: *\"No matter how strong your firewalls, intrusion detection systems, encryption, antivirus, you are still the weakest link in cybersecurity. People are more vulnerable than computers.\"* Attackers don't break the system — they get **you** to break it for them."
+    },
+    {
+      "kind": "heading",
+      "text": "Where the human fits in: classifying vulnerabilities"
+    },
+    {
+      "kind": "prose",
+      "text": "The slides classify vulnerabilities along two axes:\n- **Nature**: *unintentional* (bugs, flaws) vs *intentional* (backdoors)\n- **Domain**: *technology* (hardware, software, communications, specifications), *organization*, and **human**\n\nThe human is a full domain of its own. You can patch software, but you can't patch a person — which is exactly why attackers target them."
+    },
+    {
+      "kind": "definition",
+      "term": "Social Engineering",
+      "text": "The **art and science of making people do what you want them to do**. More precisely, a combination of *sociological, psychological, and information-gathering techniques* used to manipulate people into:\n- releasing sensitive information (passwords, credit card details),\n- performing actions that bypass normal security measures (visiting malicious sites, opening suspicious attachments),\n- granting unauthorized access (opening doors, lending devices)."
+    },
+    {
+      "kind": "prose",
+      "text": "Mitnick frames it as *\"the use of one's influence and persuasion skills to deceive or manipulate others into believing that the social engineer is what she/he is not.\"* The key insight: **it doesn't require being a hacker or programmer** — most of the time it just requires being able to send an email."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why it works",
+      "text": "Two root causes from the slides:\n- **Lack of awareness and culture** across *all* stakeholders — non-technical people often think cybersecurity is just \"a few people with laptops in a basement.\"\n- **Misperception of risk** — attackers exploit information that users consider meaningless."
+    },
+    {
+      "kind": "heading",
+      "text": "How humans get hacked: Dual Process Theory"
+    },
+    {
+      "kind": "prose",
+      "text": "To understand manipulation, the course uses **Dual Process Theory** (Wason & Evans, 1974). Decision-making is the interaction of two systems in the brain. Social engineers attack the gap between them."
+    },
+    {
+      "kind": "definition",
+      "term": "System 1 vs System 2",
+      "text": "- **System 1 (Intuitive)**: automatic, fast, instinctive, emotional. Requires no effort or voluntary control, and is *always active*.\n- **System 2 (Analytical)**: conscious, slow, logical, deliberate. Requires effort, concentration, and voluntary control — and is **easily exhausted**."
+    },
+    {
+      "kind": "example",
+      "title": "Telling the two apart",
+      "text": "- **System 1**: recognising anger in a yelling face. You don't *calculate* the mood — you instantly *know* it. Zero effort.\n- **System 2**: solving $17 \\times 24$. The answer doesn't pop into your head; you must consciously start, hold numbers in working memory, and follow rules. If someone talks to you mid-calculation, you lose your place — System 2 has limited capacity."
+    },
+    {
+      "kind": "definition",
+      "term": "Cognitive Bias",
+      "text": "A systematic error that interferes with intuitive (System 1) thinking and alters the perception of events. The social engineer **deliberately triggers** cognitive biases in the victim to keep them in fast, uncritical System 1 mode — never giving slow, sceptical System 2 a chance to engage."
+    },
+    {
+      "kind": "example",
+      "title": "The \"Urgent Wire Transfer\" email",
+      "text": "A finance employee gets an email that looks like it's from the CEO:\n\n*\"I'm in a board meeting and can't talk, but we need to secure this vendor contract immediately or we'll lose the deal. Please wire $50,000 to the attached account details right now. I need a confirmation in 10 minutes.\"*\n\nThe attacker isn't hacking the computer — they're hacking the biases that govern System 1:\n- **Authority**: a \"message from the CEO\" triggers a compliance reflex *before* System 2 can ask \"is this address actually correct?\"\n- **Urgency**: a 10-minute deadline creates stress that *suppresses* slow System 2, so the brain relies on fast System 1 to resolve the pressure by simply complying.\n- **Loss risk**: the threat of \"losing the deal\" triggers fear of loss — and we're evolutionarily wired to avoid losses over seeking gains, pushing the employee to act impulsively."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Common misconception",
+      "text": "\"Smart, careful people don't fall for social engineering.\" **Wrong.** Everyone has System 1, and it can be hijacked under stress, fatigue, or authority pressure. The slides state plainly: *each of us can be the chosen victim*. The **primary targets** are typically help-desk, secretarial, and support staff — but no one is immune."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Checkpoint: the mechanics of manipulation.",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In the \"Urgent Wire Transfer\" scam, why is the 10-minute deadline so effective?",
+        "options": [
+          {
+            "id": "A",
+            "content": "It gives the victim time to verify the CEO's identity"
+          },
+          {
+            "id": "B",
+            "content": "High stress and urgency suppress the slow, rational System 2, forcing reliance on fast System 1"
+          },
+          {
+            "id": "C",
+            "content": "It proves the email is from a real executive"
+          },
+          {
+            "id": "D",
+            "content": "It exploits a software bug in the email client"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Correct: B. Urgency creates pressure; because System 2 is slow and resource-heavy, the brain falls back on System 1 and simply complies to relieve the stress. A is backwards — the deadline removes time to verify. C is false — looking like an executive (authority) is a separate bias. D is wrong — social engineering hacks people, not software."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Phishing: the most common attack vector"
+    },
+    {
+      "kind": "prose",
+      "text": "The slides organise social-engineering attack vectors into four groups: **various types of phishing**, **posing as others**, **physical attacks**, and **cognitive-type attacks**. We start with the biggest: phishing."
+    },
+    {
+      "kind": "definition",
+      "term": "Phishing",
+      "text": "An internet fraud in which the attacker tries to trick the victim into:\n- providing **personal information** (login credentials, bank/credit-card details),\n- **clicking malicious links**, or\n- **opening attachments** that contain malware.\n\nIt's usually delivered by emails that mimic the graphics and layout of banks or postal sites. Attackers craft subject lines to trigger strong emotion or urgency — or, more cleverly, use realistic subjects like *\"Problem with your order\"* or *\"Your invoice is attached.\"*"
+    },
+    {
+      "kind": "definition",
+      "term": "Targeted phishing variants",
+      "text": "- **Spear phishing**: highly targeted at a *specific individual* with access or authority (e.g. a finance manager), using personal details to seem authentic.\n- **Whaling**: spear phishing aimed at the *highest-value targets* — C-level executives (CEO, CFO, COO), senior leaders, political figures. These \"whales\" can approve large payments without extra approval.\n- **Business Email Compromise (BEC)**: a spear-phishing attack where emails appear to come from a colleague, vendor, or trusted contact, often after the attacker has gained access to a real account — making fake invoices and fraudulent transfers look legitimate."
+    },
+    {
+      "kind": "definition",
+      "term": "Vishing & Smishing",
+      "text": "- **Vishing** (voice phishing): phone calls using *caller-ID spoofing* to look like a trusted organisation, alarming victims with claims of credit-card issues, unpaid bills, or legal trouble.\n- **Smishing** (SMS phishing): fraudulent text messages, often impersonating mobile carriers, promising a \"free gift\" or asking you to \"update\" card details.\n- **Via social media**: impersonating others to steal credentials — especially dangerous for people who *reuse passwords* across accounts."
+    },
+    {
+      "kind": "heading",
+      "text": "How to recognise phishing"
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Check the sender",
+          "text": "Is it **unknown or suspicious**? Look at the *actual* email address, not just the display name."
+        },
+        {
+          "label": "Look for typos",
+          "text": "Spelling and grammar errors are red flags. Also watch the domain itself — `no-reply@microsoft.com` vs `no-reply@rnicrosoft.com`, where **r + n** is disguised to look like an **m**."
+        },
+        {
+          "label": "Question urgency",
+          "text": "An **urgent request for confidential data** is a classic tell. Legitimate organisations don't demand passwords or instant action by email."
+        },
+        {
+          "label": "Inspect links before clicking",
+          "text": "Hover to see where a link really goes. The display text may say one thing while the URL points elsewhere — watch for **typosquatting** (registering a common misspelling of a domain), e.g. `agenzaentrate.com` instead of the real domain."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Exam trap: the look-alike domain",
+      "text": "The PoliTo example shows a sender that *looks* legitimate (from `@polito.it`) but whose **link points to a domain outside PoliTo**, and a landing page that resembles the original but has subtle typos. Lesson: a believable display name or even a spoofed sender does **not** prove the link is safe. Always check the actual destination."
+    },
+    {
+      "kind": "definition",
+      "term": "Cyber Hygiene",
+      "text": "The set of precautionary measures organisations and individuals take to keep sensitive data safe. For email, the rules are strict:\n- ALWAYS be suspicious of emails — especially unsolicited ones or ones that *slightly surprise you*.\n- At the slightest suspicion, understand *who* it's from and *where* links lead.\n- **Never click links; never open or save attachments** — even \"safe\" formats like images, PDFs, or Office files.\n- Remember: **no serious organisation will ever ask for passwords or link-clicks by email.**"
+    },
+    {
+      "kind": "prose",
+      "text": "Why are even \"safe\" attachments dangerous? **Office documents** can carry malicious code in **macros** (VBA) — or, worse, without macros at all via **DDE exploits**. *Dynamic Data Exchange (DDE)* is a legacy Office protocol from 1987 that, for backwards compatibility, can execute embedded code the moment a file is opened — **without the authorization prompt that macros require**."
+    },
+    {
+      "kind": "definition",
+      "term": "Virtual Machine vs Sandbox",
+      "text": "Two ways to safely open untrusted files:\n- **Virtual Machine (VM)**: an emulated computer with its own allocated disk/RAM/CPU. If the guest OS gets compromised, the *host* OS is unaffected.\n- **Sandbox**: an isolated environment for running untrusted apps, downloads, or websites without exposing the host (e.g. Windows Sandbox, Linux namespaces/chroot, app sandboxing)."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Checkpoint: spotting and handling phishing.",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "You receive an unexpected email \"from your bank\" with a PDF attachment titled \"Your invoice.\" What is the safest cyber-hygiene response?",
+        "options": [
+          {
+            "id": "A",
+            "content": "PDFs can't run code, so open it normally"
+          },
+          {
+            "id": "B",
+            "content": "Reply to ask the bank if it's real"
+          },
+          {
+            "id": "C",
+            "content": "Don't click or open it; verify the sender and link destination, and if you truly must open it, do so only in a VM or sandbox"
+          },
+          {
+            "id": "D",
+            "content": "Forward it to colleagues to get their opinion"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Correct: C — exactly the slide's guidance: be suspicious, never open attachments casually, and isolate in a VM/sandbox if unavoidable. A is false: PDFs and Office files can carry malware (macros, DDE). B replies to a possibly attacker-controlled address and proves nothing. D just spreads the risk."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Physical attacks: bypassing every digital defence"
+    },
+    {
+      "kind": "prose",
+      "text": "The slides warn: **physical access bypasses the strongest digital defences** — encryption, firewalls, even 2FA — by attacking the *environment* rather than the network. Attackers exploit social norms (politeness, authority, urgency) to walk through the front door. Once inside, *\"if a bad actor has unrestricted physical access to your computer, it's not your computer anymore.\"*"
+    },
+    {
+      "kind": "definition",
+      "term": "Baiting (USB drops)",
+      "text": "Using a **bait** to attract the victim — classically a USB pendrive left where someone will find, take, and plug it in. But *any* device connected to a USB port can infect the machine. Attackers use **HID (Human Interface Device)** attacks: a device (e.g. a ~$24 Teensy 4.0) pretends to be a keyboard and injects a pre-configured sequence of keystrokes that drops a malicious **payload** — working on Windows, Linux, and macOS."
+    },
+    {
+      "kind": "example",
+      "title": "The Google USB plasma-globe test",
+      "text": "Google's Red Team gifted employees a **USB plasma globe** loaded with malware. When plugged in, it sent keystrokes that downloaded a payload granting remote access. This was the *first link in the kill chain*: infected employees' identities were used to phish the Google Glass team. Result: **17 accounts compromised, 257.9 GB stolen, and 0 alarms raised.**"
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "Even charging is risky (juice jacking)",
+      "text": "At public or hotel charge points, **always plug your charger into the electrical outlet — never the cable directly into a USB port**, which could infect your phone. Alternatively use a **USB data blocker** that connects only the power pins and leaves the data pins disconnected. (Researchers have even inferred user behaviour from a device's power consumption.) **Baiting hygiene:** never connect anything from an untrusted source; access unknown USB sticks only via a VM or sandbox."
+    },
+    {
+      "kind": "definition",
+      "term": "Dumpster Diving",
+      "text": "Collecting and analysing items the victim has **thrown away**: discarded devices with storage (PCs, HDDs, USB sticks, phones, virtual assistants), paper documents (diaries, calendars, notebooks), and account remnants (email, social, cloud)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "\"I deleted the file, so it's gone\" — false!",
+      "text": "When you *delete* a file, the OS doesn't physically erase it — it merely marks the space as available to be overwritten later. **Until it is actually overwritten, the file can be recovered.** This is why simply deleting (or even formatting) before disposing of a device is dangerous."
+    },
+    {
+      "kind": "definition",
+      "term": "Sanitizing",
+      "text": "The process of removing sensitive data so it **cannot be recovered by any known technique**. ALWAYS sanitize *before* disposing of any device with memory. Two main approaches:\n- **Degaussing** (hardware): removing/reducing the magnetic field with a *degausser*. Effective on magnetic media, but often renders the disk inoperable (it erases factory low-level formatting); high-security settings may require an NSA-approved degausser.\n- **Wiping** (software, aka overwriting/shredding): writing new data over each bit/block. \n\nGDPR (EU 2016/679) requires secure deletion so no personal data remains on reused or disposed systems; standards include **NIST SP 800-88** and **DoD 5220.22-M**."
+    },
+    {
+      "kind": "definition",
+      "term": "Keylogger",
+      "text": "A tool that secretly records or transmits everything typed on the keyboard.\n- **Hardware**: a device inserted between keyboard and computer, or inside the keyboard. Countermeasure from the slides: *don't let cleaning staff into sensitive offices when unattended.*\n- **Software**: a malicious program capturing keystrokes — implemented at the **hypervisor**, **kernel** (malicious driver), or **API** level, or via **form grabbing** (capturing web-form data before the browser sends it)."
+    },
+    {
+      "kind": "definition",
+      "term": "Piggybacking / Shoulder Surfing",
+      "text": "Gaining illicit access to a restricted area or information by **following someone authorized at close range** (also called *tailgating*), or by reading their screen over their shoulder. Countermeasures: **privacy filters** on screens in crowded places, and **always lock your screen** when stepping away — never leave a phone or PC unattended."
+    },
+    {
+      "kind": "definition",
+      "term": "Physical Access & Man-in-the-Video",
+      "text": "With direct physical access, an attacker needs only seconds of hands-on time to compromise a machine permanently (cf. the **evil maid** attack on an unattended device). The slides also cover **Man-in-the-Video**: swapping an HDMI cable for a malicious one that intercepts and *manipulates the video output* — e.g. showing the user a legitimate URL while a phishing replica runs underneath."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Checkpoint: physical attacks and countermeasures.",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "Your company is donating old laptops. Which action genuinely prevents data recovery from their hard drives?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Deleting all files and emptying the Recycle Bin"
+          },
+          {
+            "id": "B",
+            "content": "Sanitizing each drive by wiping (overwriting every block) or degaussing"
+          },
+          {
+            "id": "C",
+            "content": "Quick-formatting the drives"
+          },
+          {
+            "id": "D",
+            "content": "Moving the files to the cloud first"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Correct: B. Sanitizing — software wiping/overwriting or hardware degaussing — removes data so it can't be recovered, as required by GDPR and NIST SP 800-88. A and C only mark space as reusable; the data persists until overwritten and is recoverable. D doesn't remove anything from the local drive at all."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "One mindset to remember",
+      "text": "Every attack in this module shares a pattern: the technology is secondary; the **human** is the target. Slow down, engage System 2, verify independently, and treat unexpected urgency or authority as a *signal to be more careful, not less*. You are the firewall that can't be patched — so be the one that can't be fooled."
+    }
+  ],
+  "minutes": 20,
+  "objectives": [
+    "Explain why humans are the weakest link and where the human factor fits in the vulnerability classification",
+    "Define social engineering and use Dual Process Theory (System 1 vs System 2) to explain how cognitive biases like authority, urgency, and loss risk are exploited",
+    "Distinguish phishing, spear phishing, whaling, BEC, vishing, and smishing, and recognise phishing using sender, typos, urgency, and link/typosquatting checks",
+    "Apply email cyber hygiene, including why even 'safe' attachments are dangerous (macros, DDE) and the role of VMs and sandboxes",
+    "Identify physical attacks — baiting/USB drops, dumpster diving, keyloggers, piggybacking/shoulder surfing, physical access/evil maid — and their countermeasures",
+    "Explain why deleting is not erasing, and how sanitizing (wiping, degaussing) prevents data recovery"
+  ],
+  "summary": "A from-zero lesson on the human factor in cybersecurity: why people are the weakest link, how social engineering and phishing exploit cognitive biases, and how physical attacks bypass digital defences — with concrete examples and the cyber-hygiene countermeasures for each.",
+  "title": "Module B: Human factor"
+}

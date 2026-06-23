@@ -1,0 +1,103 @@
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { Icon } from "./Icon";
+import { ThemeToggle } from "./ThemeToggle";
+import { cn } from "../lib/cn";
+
+export function Brand({ compact }: { compact?: boolean }) {
+  return (
+    <Link to="/" className="group flex items-center gap-2.5">
+      <span
+        className="grid h-9 w-9 place-items-center rounded-xl text-[#06080f]"
+        style={{ background: "linear-gradient(180deg, var(--accent), var(--accent-2))" }}
+      >
+        <Icon name="GraduationCap" size={20} />
+      </span>
+      {!compact && (
+        <span className="leading-tight">
+          <span className="block text-sm font-extrabold tracking-tight">Polito Tools</span>
+          <span className="block text-[10px] uppercase tracking-[0.18em] text-[var(--color-faint)]">
+            Mechanical Eng · PoliTo
+          </span>
+        </span>
+      )}
+    </Link>
+  );
+}
+
+export function TopBar({
+  children,
+  crumbs,
+}: {
+  children?: ReactNode;
+  crumbs?: { label: string; to?: string }[];
+}) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-[var(--color-line)] glass">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+        <Brand />
+        {crumbs && crumbs.length > 0 && (
+          <nav className="hidden items-center gap-1.5 text-sm text-[var(--color-faint)] md:flex">
+            {crumbs.map((c, i) => (
+              <span key={i} className="flex items-center gap-1.5">
+                <Icon name="ChevronRight" size={14} className="opacity-50" />
+                {c.to ? (
+                  <Link to={c.to} className="transition hover:text-[var(--color-ink)]">
+                    {c.label}
+                  </Link>
+                ) : (
+                  <span className="text-[var(--color-muted)]">{c.label}</span>
+                )}
+              </span>
+            ))}
+          </nav>
+        )}
+        <div className="ml-auto flex items-center gap-2">
+          {children}
+          <ThemeToggle />
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function Page({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className="min-h-screen">
+      <main className={cn("mx-auto max-w-6xl px-4 py-8 sm:px-6", className)}>{children}</main>
+    </div>
+  );
+}
+
+export function Tabs({
+  items,
+  active,
+}: {
+  items: { id: string; label: string; icon: string; to: string }[];
+  active: string;
+}) {
+  return (
+    <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[var(--color-line)] bg-[var(--color-bg)] p-1.5">
+      {items.map((t) => (
+        <Link
+          key={t.id}
+          to={t.to}
+          className={cn(
+            "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition",
+            active === t.id
+              ? "text-[#06080f]"
+              : "text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+          )}
+          style={
+            active === t.id
+              ? { background: "linear-gradient(180deg, var(--accent), var(--accent-2))" }
+              : undefined
+          }
+        >
+          <Icon name={t.icon} size={16} />
+          {t.label}
+        </Link>
+      ))}
+    </div>
+  );
+}

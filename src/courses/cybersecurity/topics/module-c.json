@@ -1,0 +1,285 @@
+{
+  "title": "Module C: Cryptography",
+  "summary": "Cryptography turns readable data into something unreadable to anyone without the right key, and provides the building blocks for confidentiality, integrity, authentication, and non-repudiation. This lesson walks from classical ciphers through symmetric and public-key crypto, hashing, digital signatures, and certificates/PKI.",
+  "minutes": 22,
+  "objectives": [
+    "State the four security goals cryptography supports: confidentiality, integrity, authentication, and non-repudiation.",
+    "Explain Kerckhoffs' principle and why 'security through obscurity' fails.",
+    "Distinguish symmetric from asymmetric (public-key) cryptography and know when each is used.",
+    "Understand why classical ciphers (Caesar/substitution) fall to frequency analysis.",
+    "Describe hashing, MACs, and digital signatures, and what each guarantees.",
+    "Explain at a high level how certificates and a PKI bind a public key to an identity."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "title": "What cryptography is for"
+    },
+    {
+      "kind": "prose",
+      "text": "Cryptography is the art of transforming a **message** so that it is protected even if it falls into the wrong hands. The original readable message is the **plaintext**; the scrambled output is the **ciphertext**. A **cipher** turns plaintext into ciphertext using a **key**; a **decipher** step reverses it.\n\nThe transformation is controlled by keys, not just by the algorithm:\n\n- $C = enc(K, P)$ encrypts plaintext $P$ with key $K$ to get ciphertext $C$.\n- $P = dec(K, C)$ recovers the plaintext."
+    },
+    {
+      "kind": "definition",
+      "term": "The four security goals",
+      "text": "Cryptography is used to achieve four properties:\n\n- **Confidentiality** — only authorized parties can read the data (achieved by encryption).\n- **Integrity** — the data has not been altered (achieved by hashes/digests).\n- **Authentication** — the data really comes from who it claims (achieved by MACs and signatures).\n- **Non-repudiation** — the sender cannot later deny having sent it (achieved by digital signatures)."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Integrity vs. authentication",
+      "text": "A plain hash proves **integrity** (nothing changed) but not **authentication** (who sent it). To get authentication you must mix in a **secret** — a shared key (MAC) or a private key (signature). Keep this distinction in mind; it is a frequent exam point."
+    },
+    {
+      "kind": "heading",
+      "title": "Kerckhoffs' principle and 'security through obscurity'"
+    },
+    {
+      "kind": "prose",
+      "text": "**Security through obscurity (STO)** is the belief that something is secure simply because how it works is kept secret. This is an illusion: it was already declared useless by Hobbs in 1851. As Shannon put it, *\"The enemy knows the system.\"*"
+    },
+    {
+      "kind": "definition",
+      "term": "Kerckhoffs' principle (1883)",
+      "text": "If the keys are (1) kept secret, (2) managed only by trusted systems, and (3) of adequate length, then it does **not** matter whether the encryption/decryption algorithms are secret.\n\nIn fact it is *better* to make the algorithms public, so the whole world can analyse them and find weaknesses. Security must rest on the **key**, never on the secrecy of the algorithm."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Common misconception",
+      "text": "\"A secret, custom algorithm is safer than a public one.\" Wrong. Public, well-scrutinised algorithms (AES, SHA-2) are trusted *because* they have survived years of public attack. A hidden algorithm is just an unaudited algorithm."
+    },
+    {
+      "kind": "heading",
+      "title": "Classical ciphers: Caesar and substitution"
+    },
+    {
+      "kind": "prose",
+      "text": "The **Caesar cipher** is the first known encryption algorithm. It replaces every letter with another one a fixed number of positions later in the alphabet (the shift is the key). For example, with a shift of 3, $A \\to D$, $B \\to E$, and so on.\n\nIt is **weak and obsolete** — interesting only historically. A more general version, the **substitution cipher**, maps each letter to an arbitrary other letter. Both fall to a simple attack."
+    },
+    {
+      "kind": "sim",
+      "simKey": "caesar",
+      "title": "Try the Caesar cipher",
+      "caption": "Shift the alphabet and watch plaintext become ciphertext. There are only 25 non-trivial shifts, so an attacker can simply try them all — a brute-force key space of just 25."
+    },
+    {
+      "kind": "prose",
+      "text": "Why does substitution fail even though there are $26! \\approx 4 \\times 10^{26}$ possible mappings? Because the ciphertext leaks structure. Each plaintext letter always maps to the *same* ciphertext letter, so the statistics of the language survive."
+    },
+    {
+      "kind": "definition",
+      "term": "Frequency analysis",
+      "text": "In any natural language, letters appear with characteristic frequencies (in English, **E** is most common, then **T**, **A**, **O**...). In a substitution cipher the most common ciphertext symbol is almost certainly **E**, the next **T**, and so on. By matching frequencies the attacker reconstructs the key without trying every combination — the huge key space is irrelevant."
+    },
+    {
+      "kind": "example",
+      "title": "Breaking a substitution cipher",
+      "text": "Suppose a long English message is encrypted with an unknown substitution. You count symbols: \"W\" appears 12% of the time, \"K\" 9%, \"P\" 8%. English letter frequencies suggest $W \\to E$, $K \\to T$, $P \\to A$. You fill these in, then use common short words (\"the\", \"and\") and digraphs to pin down the rest. Within minutes the key collapses — no brute force needed."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A monoalphabetic substitution cipher has about $26! \\approx 4\\times10^{26}$ possible keys, yet it is easily broken. Why?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The key space is actually small enough to brute-force on a laptop."
+          },
+          {
+            "id": "B",
+            "content": "The ciphertext preserves the letter-frequency structure of the language, so frequency analysis recovers the mapping."
+          },
+          {
+            "id": "C",
+            "content": "Substitution ciphers always use a shift of 3, like Caesar."
+          },
+          {
+            "id": "D",
+            "content": "The algorithm is kept secret, which makes it weak."
+          }
+        ],
+        "correct": "B",
+        "explanation": "B is correct: because each letter maps consistently, language statistics survive into the ciphertext and frequency analysis defeats the cipher regardless of key-space size. A is wrong — $26!$ is far too large to brute-force. C is wrong — a general substitution allows any permutation, not just a shift of 3. D is wrong — the weakness is structural, not about algorithm secrecy (Kerckhoffs)."
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "Symmetric cryptography"
+    },
+    {
+      "kind": "definition",
+      "term": "Symmetric (secret-key) cryptography",
+      "text": "The **same key** is shared by sender and receiver and used for both encryption and decryption: $C = enc(K, P)$ and $P = dec(K, C)$. It has **low computational cost**, making it the best choice for encrypting **large quantities of data**.\n\nThe central problem: **how do the two parties share the key securely** in the first place?"
+    },
+    {
+      "kind": "prose",
+      "text": "Symmetric security rests on key length. If the algorithm is well designed and the $n$-bit key is secret, the only attack left is **brute force** — trying every key — requiring up to $T = 2^n$ trials.\n\n- Old **DES** used a 56-bit key and is now obsolete; cryptanalysis even cut its effective strength below 56 bits.\n- Modern keys should be at least **128 bits** ($2^{128}$ is astronomically large). **AES** (128/192/256-bit) is the standard.\n\nAlgorithms still become obsolete over time as hardware (e.g. GPUs with hundreds of cores) and cryptanalysis shrink the effective search space, so keys must be refreshed and chosen **randomly**."
+    },
+    {
+      "kind": "definition",
+      "term": "Stream vs. block ciphers",
+      "text": "- **Stream ciphers** process data one bit or byte at a time. A pseudo-random generator, seeded by the key, produces a keystream that is **XORed** with the plaintext. Examples: RC4 (old), Salsa20, ChaCha20 (state of the art). The ideal but impractical case is the **one-time pad** (key as long as the message).\n- **Block ciphers** transform fixed-size blocks (64-bit = obsolete, 128-bit = modern). The key decides the exact transformation. AES is a block cipher."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Modes of operation",
+      "text": "A block cipher only defines how to handle *one* block. **Modes of operation** extend it to longer messages: **ECB** (insecure — identical plaintext blocks give identical ciphertext blocks, leaking patterns), **CBC** (chains each block with the previous via XOR, needs an Initialization Vector), and **CTR**, CFB, OFB. **Never use ECB on real data.**"
+    },
+    {
+      "kind": "heading",
+      "title": "Hashing and message digests"
+    },
+    {
+      "kind": "definition",
+      "term": "Cryptographic hash function",
+      "text": "A **hash function** produces a fixed-length **digest** (a \"summary\") of a message of any length. A good hash must be:\n\n- **fast** to compute,\n- **one-way** — practically impossible to invert,\n- **collision-resistant** — hard to find two messages with the same digest.\n\nIdeal behaviour: changing **one bit** of input flips about **50%** of the digest bits (the avalanche effect). Examples: MD5 (broken), SHA-1 (deprecated), **SHA-256 / SHA-2** (good), **SHA-3 / Keccak** (excellent)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The birthday paradox in digests",
+      "text": "For an $n$-bit digest, finding a message matching a *given* digest takes about $2^{n}$ tries, but finding *any two* messages that collide takes only about $2^{n/2}$ tries. That is why digests need many bits: a 256-bit hash gives only ~128 bits of collision security. Underestimating this is a classic mistake."
+    },
+    {
+      "kind": "prose",
+      "text": "A bare hash protects integrity only against accidental errors — **not against an active attacker**. In a man-in-the-middle scenario the attacker can change the data *and* recompute the hash, since the hash function is public. To stop this you must add a secret."
+    },
+    {
+      "kind": "definition",
+      "term": "MAC / keyed digest (HMAC)",
+      "text": "A **Message Authentication Code (MAC)**, or **keyed digest**, is a digest computed over both the data **and a shared secret key**. Only someone holding the key can produce or verify it, so a matching MAC proves both **integrity and authentication**. The standard construction is **HMAC**:\n\n$$hmac = H\\big(K' \\oplus opad \\;\\|\\; H(K' \\oplus ipad \\;\\|\\; data)\\big)$$\n\nWhen one operation must provide confidentiality *and* authentication together, use **Authenticated Encryption (AE/AEAD)**, e.g. **GCM** (used by TLS), which outputs ciphertext plus an authentication **tag**."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Alice sends Bob a file plus its SHA-256 hash over an open network. An active attacker sits in the middle. What does the hash alone guarantee?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Confidentiality — the attacker cannot read the file."
+          },
+          {
+            "id": "B",
+            "content": "Authentication — Bob is sure the file came from Alice."
+          },
+          {
+            "id": "C",
+            "content": "Nothing against an active attacker, who can alter the file and recompute the hash."
+          },
+          {
+            "id": "D",
+            "content": "Non-repudiation — Alice cannot deny sending it."
+          }
+        ],
+        "correct": "C",
+        "explanation": "C is correct: because the hash function is public and keyless, an active man-in-the-middle can replace the file and its hash, so the bare hash gives no protection against tampering. A is wrong — hashing does not encrypt, so confidentiality is not provided. B and D require a secret (a MAC for authentication, or a private-key signature for non-repudiation), which a plain hash lacks."
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "Asymmetric (public-key) cryptography"
+    },
+    {
+      "kind": "prose",
+      "text": "Symmetric crypto has a scaling problem: for $N$ people to communicate privately in pairs you need $N \\times (N-1)/2$ keys, all distributed securely out-of-band. Public-key cryptography solves both the key-sharing and the signing problems."
+    },
+    {
+      "kind": "definition",
+      "term": "Asymmetric keys",
+      "text": "Keys are generated in **pairs** with inverse functionality: what one key does, only its partner can undo. They are not random — they share a mathematical relationship.\n\n- The **private key** is kept secret by the owner.\n- The **public key** is distributed to everyone (no confidentiality needed).\n\nPublic-key algorithms are **computationally heavy**, so they are used for small amounts of data — distributing a symmetric key, or signing a digest. Main algorithms: **Diffie-Hellman, RSA, DSA, ElGamal, ECDSA**."
+    },
+    {
+      "kind": "steps",
+      "title": "Two ways to use a key pair",
+      "steps": [
+        {
+          "label": "Confidentiality",
+          "text": "Encrypt with the **recipient's public key**. Only the recipient's private key can decrypt → only they can read it."
+        },
+        {
+          "label": "Authentication / signing",
+          "text": "Encrypt (sign) with the **sender's private key**. Anyone can verify with the sender's public key → proves it came from the sender and provides non-repudiation."
+        },
+        {
+          "label": "Hybrid encryption (the practical pattern)",
+          "text": "Generate a random symmetric key $K$, encrypt the bulk message with fast symmetric crypto using $K$, then encrypt only $K$ with the recipient's public key. This 'enveloped data' combines speed with easy key distribution."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "RSA in a nutshell",
+      "text": "RSA relies on the difficulty of **factoring** large numbers.\n\n- Pick two large secret primes $p, q$; the public modulus is $n = pq$.\n- Compute $\\phi = (p-1)(q-1)$, choose a public exponent $e$, and derive the private exponent $d = e^{-1} \\bmod \\phi$.\n- **Public key** = $(n, e)$, **private key** = $(n, d)$.\n- Encrypt: $C = P^{e} \\bmod n$. Decrypt: $P = C^{d} \\bmod n$.\n\nBreaking RSA means factoring $n$ back into $p$ and $q$ — infeasible for large $n$. A 2048-bit modulus is considered secure for years. **Diffie-Hellman** instead lets two parties agree on a shared secret over a public channel (key agreement), and **ECC** achieves the same security with much shorter keys (~1/10)."
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "Quantum threat",
+      "text": "**Shor's algorithm** on a large quantum computer would factor integers (and solve discrete logs) efficiently, breaking RSA, DSA, and ECC. Such machines do not yet exist, but 'harvest now, decrypt later' is a real worry, driving **post-quantum cryptography** (NIST's ML-KEM, ML-DSA, SLH-DSA). Symmetric crypto and hashes are largely safe — Grover's algorithm only halves their strength, fixed by doubling the key length."
+    },
+    {
+      "kind": "heading",
+      "title": "Digital signatures"
+    },
+    {
+      "kind": "definition",
+      "term": "Digital signature",
+      "text": "To sign efficiently, the signer hashes the message and encrypts **the digest** with their **private key**:\n\n- Signer $S$: $H = enc(S_{Kpri}, hash(M))$, then sends $M \\;\\|\\; H$.\n- Verifier $V$: $X = dec(S_{Kpub}, H)$; if $X == hash(M)$ then OK, else ALARM.\n\nThis provides **integrity, authentication, and non-repudiation** in one step — only the holder of the private key could have produced it, and anyone with the public key can verify it."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In RSA, which key does Alice use to create a digital signature on a document, and which key does Bob use to verify it?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Alice signs with Bob's public key; Bob verifies with his own private key."
+          },
+          {
+            "id": "B",
+            "content": "Alice signs with her private key; Bob verifies with Alice's public key."
+          },
+          {
+            "id": "C",
+            "content": "Alice signs with her public key; Bob verifies with Alice's private key."
+          },
+          {
+            "id": "D",
+            "content": "Both use a shared symmetric key."
+          }
+        ],
+        "correct": "B",
+        "explanation": "B is correct: signing uses the signer's *private* key (only Alice has it, giving authentication and non-repudiation), and verification uses Alice's *public* key (everyone has it). A describes encryption for confidentiality, not signing, and mixes up the owners. C reverses the secrecy — the private key can never be public. D describes a MAC, which provides authentication but not non-repudiation since both parties share the key."
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "Certificates and PKI"
+    },
+    {
+      "kind": "prose",
+      "text": "Public-key crypto works only if the private key stays secret **and** the public key is genuinely linked to its owner. The open question: *who guarantees that a given public key really belongs to the claimed person?* Distributing keys out-of-band does not scale. The solution is **digital certificates**."
+    },
+    {
+      "kind": "definition",
+      "term": "Public-key certificate",
+      "text": "A certificate is *\"a data structure used to securely bind a public key to some attributes\"* — typically an identity (but also email, DNS, IP, etc.). It is **digitally signed by the issuer**, called the **Certification Authority (CA)**, has a **limited lifetime**, and can be **revoked**. By verifying the CA's signature, anyone can trust the key-to-identity binding without meeting the owner."
+    },
+    {
+      "kind": "definition",
+      "term": "PKI (Public-Key Infrastructure)",
+      "text": "The **technical and administrative infrastructure** for creating, distributing, and revoking public-key certificates. To verify a certificate signed by CA1 you need CA1's certificate (signed by CA2), and so on up a **hierarchy** to a trusted **Root CA** (Top-Level CA). Revocation is published via **CRL** (Certificate Revocation List) or **OCSP** (Online Certificate Status Protocol); the relying party must check a certificate was valid at signing time."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The big picture",
+      "text": "- **Symmetric** crypto = fast, bulk encryption, but the key-sharing problem.\n- **Asymmetric** crypto = solves key distribution and signing, but slow → use it to wrap a symmetric key (hybrid).\n- **Hashes** = integrity; **MACs** = integrity + authentication with a shared secret; **signatures** = integrity + authentication + non-repudiation with a private key.\n- **Certificates + PKI** = the trust layer that ties public keys to real identities.\n- Security always rests on the **key**, never on a secret algorithm (Kerckhoffs)."
+    }
+  ]
+}

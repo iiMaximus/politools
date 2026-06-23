@@ -1,0 +1,319 @@
+{
+  "title": "Module F: Trusted computing",
+  "summary": "This lesson explains how a platform can produce hardware-anchored, tamper-evident evidence of the software it actually loaded and runs, using a TPM, PCRs, the extend operation, measured boot, IMA, and remote attestation (quote + event-log verification).",
+  "minutes": 22,
+  "objectives": [
+    "Explain why software-only verification of a platform is unreliable and how a hardware Root of Trust solves it",
+    "Describe the TPM, its three Roots of Trust (RTM, RTS, RTR), PCRs, and the extend operation",
+    "Distinguish Measured Boot, Secure Boot, and Trusted Boot, and trace a chain of trust",
+    "Explain how Integrity Measurement Architecture (IMA) extends the chain of trust from boot to runtime",
+    "Walk through TPM-based remote attestation: nonce, quote, event log, and verifier appraisal",
+    "Explain why a quote alone is insufficient and how the event log is verified against PCRs"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "The problem: can we trust the platform doing the computing?"
+    },
+    {
+      "kind": "prose",
+      "text": "Classical security protects data in two states. **Data at rest** is protected by disk/file/database encryption; **data in transit** is protected by TLS or IPsec. But the hard problem is the third state: protecting data **during computation**.\n\nThe question Trusted Computing asks is simple:\n- **Is this platform in an expected state, or has it been compromised by an attacker?**"
+    },
+    {
+      "kind": "prose",
+      "text": "Modern systems use **Defence in Depth** (TLS, encryption, OS process isolation, sandboxing/containers, SELinux/AppArmor, VMs). If one control fails, another may still limit the damage. But almost every layer depends on **privileged software behaving correctly** — the operating system, hypervisor, firmware.\n\nThe OS is the most dangerous component when compromised: a kernel-level attacker can read any process memory, alter page tables, intercept system calls, and disable security tools. Large OSes have millions of lines of code — a huge attack surface."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Trusted is NOT the same as Secure",
+      "text": "This distinction shows up constantly on exams.\n- **Secure** = enforces a defined security policy under a defined threat model. Question: *Is the policy enforced?*\n- **Trusted** = behaves in a **predictable / expected** way. Question: *Is this the platform state I expected?*\n\nThe professor's example: a **bank** is trusted to provide financial services; a **thief** is trusted to steal. Predictable behaviour is **not** necessarily secure or desirable. Trust does not imply absence of vulnerabilities."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Why software cannot vouch for itself",
+      "text": "A compromised platform can simply lie. A rootkit can intercept verification requests, forge \"I am healthy\" status reports, hide modified files, alter logs before they are read, and replay old healthy evidence.\n\n**Software can report \"I am fine\" even when it has already been compromised.** This is why we need a hardware anchor whose evidence the software cannot rewrite."
+    },
+    {
+      "kind": "heading",
+      "text": "Roots of Trust and the TPM"
+    },
+    {
+      "kind": "definition",
+      "term": "Root of Trust (RoT)",
+      "text": "A component (hardware, firmware, or software) that is **implicitly trusted** to perform one or more security-critical functions correctly. Key properties:\n- it has a small, protected implementation\n- its **misbehaviour cannot be detected at runtime** once deployed — so it must always behave correctly\n- its correct implementation is usually **certified** (e.g. Common Criteria EAL, FIPS 140-3)\n- other security mechanisms rely on it as a foundation\n\nA Root of Trust is **where the trust chain begins.**"
+    },
+    {
+      "kind": "definition",
+      "term": "Trusted Platform Module (TPM)",
+      "text": "A small, low-cost, standardized security component (TCG specification, current version **TPM 2.0**) attached to the motherboard. It is a **platform trust anchor**, not a general-purpose co-processor — you cannot install arbitrary apps in it. Through a command/response interface it provides:\n- shielded memory and **Platform Configuration Registers (PCRs)**\n- protected keys, seeds, and authorization values\n- **attestation functions** to report platform state to a verifier"
+    },
+    {
+      "kind": "prose",
+      "text": "The TCG model says a Trusted Platform must provide **three Roots of Trust**:\n- **RTM — Root of Trust for Measurement**: computes the measurements (hashes) of components. It lives in platform/boot code, starting from the **CRTM** (Core Root of Trust for Measurement) — *this part is outside the TPM*.\n- **RTS — Root of Trust for Storage**: protects measurements, keys, seeds in shielded locations (the **PCRs** and protected objects). *Implemented by the TPM.*\n- **RTR — Root of Trust for Reporting**: reports protected state in an authenticated way (the **TPM quote** over PCR values). *Implemented by the TPM.*"
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "HSM vs TPM",
+      "text": "An **HSM** protects keys and does crypto, but may be removable, isn't necessarily present at boot, and does not know platform state. A **TPM** is bound to the platform, available from the earliest boot phases, can represent platform identity, and is designed to support **platform measurement and attestation**. A TPM is not just a crypto module — it is a platform trust anchor."
+    },
+    {
+      "kind": "heading",
+      "text": "PCRs and the extend operation"
+    },
+    {
+      "kind": "definition",
+      "term": "Platform Configuration Register (PCR)",
+      "text": "A shielded register inside the TPM that accumulates measurement history. A measurement is normally a **cryptographic hash** of a software component or configuration value. PCRs are grouped into **banks** by hash algorithm (e.g. SHA-1 bank, SHA-256 bank); each bank typically has **24 PCRs** (PCR[0]..PCR[23])."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "PCRs are never overwritten — they are extended",
+      "text": "If you could simply write a PCR, a compromised platform could erase a bad measurement and replace it with a good one. So a PCR is updated only by the **extend** operation, which folds the new measurement into the existing value:"
+    },
+    {
+      "kind": "formula",
+      "tex": "PCR_{new} = Hash(PCR_{old} \\,\\|\\, measurement)"
+    },
+    {
+      "kind": "prose",
+      "text": "where $\\|$ is concatenation. Because each new value depends on the previous one, the **final PCR value depends on every measurement extended into it AND on their exact order.**\n\nPCRs therefore behave like a **tamper-evident summary** of measurement history, not like normal registers. A typical PC-client layout:\n- **PCR 0–7**: firmware, platform config, boot manager, Secure Boot policy\n- **PCR 8–15**: static OS / bootloader / kernel measurements\n- **PCR 10**: used by IMA for runtime measurements\n- **PCR 16**: debug; **PCR 23**: application support"
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Two platforms load exactly the same set of three boot components, but in a different order. After boot, what is true of the relevant PCR?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The PCR values are identical, because the same components were measured"
+          },
+          {
+            "id": "B",
+            "content": "The PCR values differ, because extend chains both the values and their order"
+          },
+          {
+            "id": "C",
+            "content": "The PCR values are identical, because extend only keeps the latest measurement"
+          },
+          {
+            "id": "D",
+            "content": "The PCR cannot be computed without the TPM's private key"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Extend computes Hash(PCR_old || measurement) sequentially, so the result depends on both which measurements were extended and their exact order. A is wrong because order matters. C describes overwriting, which extend specifically avoids. D is wrong: computing/extending a PCR is just hashing public values — no signing key is involved (the AK is only used later to sign the quote)."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Measured Boot and the chain of trust"
+    },
+    {
+      "kind": "definition",
+      "term": "Measured Boot",
+      "text": "The process by which each security-relevant component loaded at start-up is **measured** (hashed) and the measurement is **extended into a TPM PCR**. It records *what was loaded* — it does **not** prevent a modified component from executing. The goal is to make the boot state **verifiable after** the platform has started."
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Measure",
+          "text": "The current stage computes the hash of the **next** component (measure-before-execute)."
+        },
+        {
+          "label": "Extend",
+          "text": "It extends that measurement into a PCR inside the TPM, and also appends an entry to the **event log** in normal memory."
+        },
+        {
+          "label": "Execute",
+          "text": "Only then does it transfer control to the measured component, which repeats the process for the next stage."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "CRTM and Chain of Trust for Measurement",
+      "text": "The **CRTM (Core Root of Trust for Measurement)** is the first *immutable* code that runs after reset. It measures the first mutable code before handing over control. This forms a **transitive chain**: each component measures the next before passing control. If a component's measurement is as expected (trusted), we can trust the measurements it in turn takes.\n\nExample: **CRTM → measures firmware → firmware measures bootloader → bootloader measures kernel → kernel measures later components.**"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Measured Boot vs Secure Boot vs Trusted Boot",
+      "text": "A classic exam confusion. They are complementary, not synonyms:\n- **Measured Boot**: *records* what was loaded (extends PCRs). No decision; detect later. Needs a TPM.\n- **Secure Boot**: *verifies-before-execute* and **blocks** unauthorized components **now**, using signatures/keys/certificates and a boot policy (Root of Trust for Detection, RTD). Does **not** need a TPM.\n- **Trusted Boot**: lets a **remote verifier** evaluate the boot state *after* the system booted, via remote attestation.\n\nSlogan: *Measured Boot records. Secure Boot enforces. Trusted Boot enables remote verification.*"
+    },
+    {
+      "kind": "definition",
+      "term": "Measurement Event Log (Event Log)",
+      "text": "A PCR value alone is opaque: `PCR[4] = a3f9...` tells you nothing about *what* produced it. The **Event Log** records each Measurement Event: which PCR was extended, what type of event, which digest was extended, and descriptive data. It lives **outside the TPM**, so its integrity must be checked against the protected PCR.\n\nSlogan: *the PCR is the protected aggregate; the event log is the detailed explanation.*"
+    },
+    {
+      "kind": "heading",
+      "text": "Sealing, the EK and the AK"
+    },
+    {
+      "kind": "definition",
+      "term": "Sealing",
+      "text": "Protecting data with a TPM policy so it can be released **only if** (1) it is on a platform with the correct TPM (binding) **and** (2) the current PCR values match the required policy. Example: release the disk-encryption key only if firmware, bootloader and Secure Boot policy match the approved state. **Warning:** a legitimate firmware/kernel update changes PCR values and may legitimately *prevent* unsealing — PCR policies must be designed carefully."
+    },
+    {
+      "kind": "prose",
+      "text": "Two keys matter for attestation:\n- **Endorsement Key (EK)**: the TPM's long-term **identity** key, derived from the Endorsement Primary Seed, certified by the TPM manufacturer (EK certificate). It is privacy-sensitive and normally a **decryption** key — *not* used for everyday signing, so the manufacturer-backed identity isn't exposed on every attestation.\n- **Attestation Key (AK)**: a TPM-resident **signing** key, non-migratable (private part never leaves the TPM), certified as belonging to a genuine TPM. The AK is the key actually used to **sign quotes**."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why a Privacy CA?",
+      "text": "If the EK signed every attestation, services could correlate all activity of one platform and the long-term identity would be over-exposed. Instead a **Privacy CA** certifies an AK using the **ActivateCredential** protocol: it encrypts a challenge with the EK public key and bound to the AK; the TPM recovers the secret only if it owns the EK private key *and* the AK is resident in the *same* TPM. The CA then issues an AK certificate. Verifiers later check AK certificates, not the EK directly."
+    },
+    {
+      "kind": "heading",
+      "text": "Runtime integrity: IMA"
+    },
+    {
+      "kind": "definition",
+      "term": "Integrity Measurement Architecture (IMA)",
+      "text": "A Linux kernel module (part of the Linux Integrity Subsystem, since kernel 2.6.30) that **extends the chain of trust from boot into runtime**. Boot measurements tell us how the system *started*; IMA measures what the running system *uses*: executables, shared libraries, kernel modules, scripts, configuration files, and security policies — each **before it is used**, according to an **IMA policy**."
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Hook",
+          "text": "When a policy-selected file is opened/executed/mapped, an LSM/IMA hook in kernel space fires."
+        },
+        {
+          "label": "Policy + hash",
+          "text": "IMA checks the configured policy, then computes a digest of the file."
+        },
+        {
+          "label": "Log",
+          "text": "IMA creates a measurement event (typically file digest + file path) and appends it to the **IMA Measurement Log**."
+        },
+        {
+          "label": "Extend",
+          "text": "IMA extends the event digest into a TPM PCR — by default **PCR 10**."
+        }
+      ]
+    },
+    {
+      "kind": "prose",
+      "text": "IMA has three components, enabled via policy: **IMA Measurement** (log + extend, as above); **IMA Appraisal** (checks file integrity *locally* before access, comparing against trusted metadata in the `security.ima` extended attribute — a reference hash or a signature — and **denies access** if it fails); and **IMA Audit** (records events to audit logs). The **EVM** module protects the extended attributes IMA Appraisal relies on.\n\n**Limits:** IMA measures structured, high-integrity files. It does **not** cover user input, network traffic, dynamic application data, or process memory after loading — and it does not guarantee the absence of vulnerabilities."
+    },
+    {
+      "kind": "heading",
+      "text": "Remote attestation: proving state to a remote verifier"
+    },
+    {
+      "kind": "definition",
+      "term": "Remote Attestation",
+      "text": "A process in which a platform (the **Attester / Prover**) provides cryptographic evidence about its identity and state to a **Verifier**, which appraises it and produces an **Attestation Result** for a **Relying Party** to make an access/trust decision. The IETF **RATS** architecture also defines an **Endorser** (provides endorsements for trust anchors/keys) and a **Reference Value Provider** (provides known-good measurements)."
+    },
+    {
+      "kind": "example",
+      "title": "TPM-based integrity-challenge protocol",
+      "text": "A concrete challenge–response between a Verifier and an Attestation Agent on a TPM-equipped node:\n- **1.** Verifier sends a challenge with a fresh **nonce** (for freshness).\n- **2.** The Attestation Agent asks the TPM for a **quote**, specifying the nonce, the AK to use, and which PCRs to sign.\n- **3.** The TPM signs the selected PCRs with the AK and returns the signature.\n- **4–5.** The Agent reads the selected raw PCR values and retrieves the **measurement logs** (boot log and/or IMA log).\n- **6.** The Agent sends the **Integrity Evidence**: the quote, the PCR values, the measurement logs, and the **AK certificate**."
+    },
+    {
+      "kind": "definition",
+      "term": "TPM quote",
+      "text": "A TPM-produced signature over selected PCR state plus freshness data. Inputs: selected PCRs, the Verifier's nonce, and the AK handle. Output:"
+    },
+    {
+      "kind": "formula",
+      "tex": "Quote = Sign_{AK_{priv}}(\\text{selected PCR values} \\,\\|\\, nonce \\,\\|\\, \\text{optional metadata})"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Why the nonce — and why the quote alone is not enough",
+      "text": "**The nonce defeats replay.** Without freshness an attacker could store a valid quote while the platform was healthy at time $t_1$ and replay it after compromise at time $t_2$. The TPM signs the Verifier's nonce into the quote, so the Verifier accepts only quotes containing *its* nonce: *this evidence was produced for this challenge, not copied from the past.*\n\n**The quote authenticates PCR values, but PCRs are only aggregates.** A single hash value cannot tell you which components produced it. So the Verifier also needs the **event log**. Slogan: *Quote authenticates PCRs. PCRs authenticate the logs. Logs explain history.*"
+    },
+    {
+      "kind": "heading",
+      "text": "Verifier-side appraisal and event-log verification"
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "1. Authenticate AK",
+          "text": "Check that the quote-signing key is a legitimate, TPM-resident attestation key for this platform: trusted certificate chain (Privacy CA / Root CA, or EK + TPM manufacturer), not revoked."
+        },
+        {
+          "label": "2. Verify quote",
+          "text": "Signature valid under the trusted AK; nonce matches the challenge (freshness); required PCRs are covered; received PCR values match the quoted state."
+        },
+        {
+          "label": "3. Validate the log",
+          "text": "Replay the extend operation over the log against the protected PCR (see below)."
+        },
+        {
+          "label": "4. Appraise measurements",
+          "text": "Compare individual events against **Reference Values** (known-good digests / allowlist) under the **Appraisal Policy** (which components are allowed, are unknown ones rejected, is debug mode acceptable, what action on failure)."
+        },
+        {
+          "label": "5. Produce Attestation Result",
+          "text": "trusted / untrusted / warning / remediation-required, with reasons, freshness context and recommended action (allow, deny, quarantine, redeploy, isolate)."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Verifying the event log against the PCR",
+      "text": "The log is outside the TPM, so the Verifier must prove it matches the protected PCR. The Verifier **replays** the extends:\n- start from the PCR initial/reset value (typically all zeros)\n- for each log entry in order, recompute the extend\n- compare the recomputed PCR with the quoted PCR"
+    },
+    {
+      "kind": "formula",
+      "tex": "PCR_{recomputed} \\stackrel{?}{=} PCR_{quoted}"
+    },
+    {
+      "kind": "prose",
+      "text": "- **Match** ⟹ the log is consistent with the TPM-protected PCR — it is **authentic** and each entry can now be inspected against reference values.\n- **No match** ⟹ the log was modified, truncated, reordered, or simply does not correspond to the current state ⟹ **reject the evidence.**\n\nFor IMA the same procedure runs over **PCR 10**; the Verifier also checks the quote's reset/restart counters to detect discontinuities between attestations."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "During appraisal the AK certificate is trusted, the signature and nonce check out, and the received PCR 10 value matches the quoted one — but when the Verifier replays the IMA log, the recomputed PCR 10 does NOT equal the quoted PCR 10. What should the Verifier conclude?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The platform is trusted, since the quote signature and nonce are valid"
+          },
+          {
+            "id": "B",
+            "content": "Only the boot state is suspect; the runtime (IMA) state is fine"
+          },
+          {
+            "id": "C",
+            "content": "The evidence must be rejected: the log does not correspond to the protected PCR state"
+          },
+          {
+            "id": "D",
+            "content": "The TPM is counterfeit, because the EK certificate failed"
+          }
+        ],
+        "correct": "C",
+        "explanation": "A valid quote only proves the PCR value is authentic and fresh; it says nothing about whether the log explains that value. If the replayed log does not reproduce the quoted PCR 10, the log was modified, truncated, reordered, or doesn't match this state, so the evidence is rejected. A ignores that the log is unverifiable. B is backwards — it's exactly the IMA/runtime log that failed replay. D is wrong: the EK/AK chain passed; the failure is log consistency, not TPM authenticity."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Putting it together: Keylime",
+      "text": "**Keylime** (CNCF, originating from MIT Lincoln Laboratory) turns these building blocks into continuous monitoring. An **Agent** on each node collects TPM quotes, PCRs, UEFI boot logs and IMA logs; a **Registrar** enrols agents and verifies AK/EK binding; a **Verifier** continuously attests them and fires **revocation** events on failure; a **Tenant** sets policy and releases secure payloads only after a first successful attestation (using a split key: half **U** to the agent, half **V** released by the verifier only if the node is trusted, so `Key = U XOR V`)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Boot-time trust is not runtime trust",
+      "text": "If a machine booted correctly at 09:00, that does not prove it is still trustworthy at 14:00 — it may since have run malicious binaries, loaded untrusted kernel modules, or altered configs. **Trusted Boot verifies how the system started; it does not describe what happens after boot.** That gap is exactly why IMA + continuous attestation exist."
+    }
+  ]
+}

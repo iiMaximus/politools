@@ -1,0 +1,870 @@
+{
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "The big picture: four cycles, two families"
+    },
+    {
+      "kind": "prose",
+      "text": "Every gas cycle here uses **air treated as an ideal gas** (the \"air standard\"). The combustion is replaced by heat addition from an external reservoir, specific heats are constant, and all internal processes are reversible. With $k=c_p/c_v=1.4$, $R=287$ J/kgK, you get $c_v=R/(k-1)=717.5$ J/kgK and $c_p=kc_v=1004.5$ J/kgK."
+    },
+    {
+      "kind": "prose",
+      "text": "There are two families:\n- **Internal-combustion engines** (Otto, Diesel): the air sits in a **piston-cylinder** — a *closed* system. Work is $W=\\int p\\,dV$ and you use **internal energy $u$** ($c_v$).\n- **Gas turbines** (Brayton-Joule, and its reverse for refrigeration): air *flows* through compressor, heater, turbine, cooler — an *open* SSSF system. Work is shaft work $-\\int v\\,dp$ and you use **enthalpy $h$** ($c_p$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The one decision that fixes everything",
+      "text": "Closed (Otto/Diesel) -> use $c_v$ for $u$, work from $p\\,dV$. Open/flow (Brayton) -> use $c_p$ for $h$, work from $-v\\,dp$. Heat *added at constant v* uses $c_v$; heat *added at constant p* uses $c_p$. This single choice is the professor's #1 trap."
+    },
+    {
+      "kind": "heading",
+      "text": "Otto cycle (spark ignition)"
+    },
+    {
+      "kind": "definition",
+      "term": "Compression ratio r",
+      "text": "$r=\\dfrac{V_{BDC}}{V_{TDC}}=\\dfrac{V_{max}}{V_{min}}=\\dfrac{v_1}{v_2}$. It is a *volume* ratio, set by the engine geometry. For the Otto cycle $v_1=v_4$ and $v_2=v_3$ (the two constant-volume processes)."
+    },
+    {
+      "kind": "prose",
+      "text": "The four processes of the air-standard Otto cycle:\n- **1->2** isentropic compression (piston BDC->TDC)\n- **2->3** constant-volume heat addition (combustion): $q_{in}=c_v(T_3-T_2)$\n- **3->4** isentropic expansion (power stroke)\n- **4->1** constant-volume heat rejection: $q_{out}=c_v(T_1-T_4)$"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta_{Otto}=1-\\frac{T_4-T_1}{T_3-T_2}=1-\\frac{T_1}{T_2}=1-\\frac{1}{r^{\\,k-1}}=1-r^{1-k}",
+      "tag": "Otto"
+    },
+    {
+      "kind": "prose",
+      "text": "The middle step uses two facts: the two isentropics give $T_2/T_1=(v_1/v_2)^{k-1}=r^{k-1}$ and $T_3/T_4=r^{k-1}$, so $T_4/T_1=T_3/T_2$ and the bracket collapses to $T_1/T_2$. Efficiency depends **only on $r$ and $k$** — not on the temperatures. Higher $r$ -> higher $\\eta$, but knocking (self-ignition) caps $r$ around 8-10 for gasoline."
+    },
+    {
+      "kind": "sim",
+      "simKey": "gas-cycle",
+      "title": "Otto / Diesel / Brayton explorer",
+      "caption": "Drag the compression ratio $r$ (or pressure ratio $r_p$) and watch the p-v and T-s shapes change. Notice how the enclosed area (net work) and the efficiency respond, and how Diesel's constant-pressure top differs from Otto's constant-volume top."
+    },
+    {
+      "kind": "example",
+      "title": "Worked Otto (Tutorial 4.1)",
+      "text": "Air-standard Otto, $T_1=20\\,^{\\circ}\\mathrm{C}=293$ K, $p_1=1$ bar, $T_3=1200\\,^{\\circ}\\mathrm{C}=1473$ K, $r=8$, $k=1.4$.\n- **1->2:** $T_2=T_1 r^{k-1}=293\\cdot 8^{0.4}=673$ K. With $v_1=RT_1/p_1=0.841\\ \\mathrm{m^3/kg}$ and $v_2=v_1/8=0.105\\ \\mathrm{m^3/kg}$, $p_2=RT_2/v_2=18.4$ bar.\n- **2->3:** constant v, $p_3=p_2\\,T_3/T_2=18.4\\cdot1473/673=40.3$ bar.\n- **3->4:** $T_4=T_3(v_3/v_4)^{k-1}=1473\\cdot(1/8)^{0.4}=641$ K; $p_4=RT_4/v_4=2.2$ bar.\n- **$\\eta$:** $1-8^{-0.4}=\\mathbf{0.565}$. Check: $w_{net}=c_v(T_3-T_4)+c_v(T_1-T_2)=324.1$ kJ/kg and $q_{in}=c_v(T_3-T_2)=573.9$ kJ/kg give $\\eta=324.1/573.9=0.565$. ✓"
+    },
+    {
+      "kind": "checkpoint",
+      "title": "Otto check",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "An air-standard Otto cycle has compression ratio $r=9$ and $k=1.4$. Its thermal efficiency is closest to:",
+        "options": [
+          {
+            "id": "A",
+            "content": "0.47"
+          },
+          {
+            "id": "B",
+            "content": "0.58"
+          },
+          {
+            "id": "C",
+            "content": "0.62"
+          },
+          {
+            "id": "D",
+            "content": "0.41"
+          }
+        ],
+        "correct": "B",
+        "explanation": "$\\eta=1-r^{1-k}=1-9^{-0.4}=1-0.415=0.585\\approx0.58$. **A (0.47)** uses $r$ wrong (e.g. $9^{-0.3}$). **C (0.62)** corresponds to a higher $r$ (~12). **D (0.41)** is $r^{-0.4}$ itself (forgetting the \"$1-$\").",
+        "theory": "Otto efficiency depends only on compression ratio and $k$: $\\eta=1-r^{1-k}=1-1/r^{k-1}$."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Diesel cycle (compression ignition)"
+    },
+    {
+      "kind": "prose",
+      "text": "Diesel is identical to Otto **except heat is added at constant pressure** (2->3), because fuel is injected gradually as the piston already moves. So:\n- **2->3** constant-p heating: $q_{in}=c_p(T_3-T_2)$ (note $c_p$, not $c_v$!), and work $w_{23}=p(v_3-v_2)=R(T_3-T_2)$.\n- Heat is still rejected at **constant volume** (4->1): $q_{out}=c_v(T_4-T_1)$."
+    },
+    {
+      "kind": "definition",
+      "term": "Cut-off ratio r_c",
+      "text": "$r_c=\\dfrac{v_3}{v_2}=\\dfrac{T_3}{T_2}$ — the volume expansion during the constant-pressure combustion. It measures how long fuel is injected. $r_c=1$ would mean no heat added; larger $r_c$ means more heat per cycle."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta_{Diesel}=1-\\frac{1}{k}\\,\\frac{1}{r^{\\,k-1}}\\,\\frac{r_c^{\\,k}-1}{r_c-1}",
+      "tag": "Diesel"
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Otto vs Diesel at the same r",
+      "text": "The bracket $\\frac{1}{k}\\frac{r_c^k-1}{r_c-1}>1$ for $r_c>1$, so at the **same compression ratio** Diesel is *less* efficient than Otto. But Diesel engines run at much higher $r$ (16-22, no knock limit) so in practice they win. As $r_c\\to1$ the Diesel formula reduces to the Otto formula."
+    },
+    {
+      "kind": "example",
+      "title": "Worked Diesel (Tutorial 4.3)",
+      "text": "$r=18$, $T_1=300$ K, $p_1=1$ bar, $r_c=2$, $k=1.4$.\n- **1->2:** $T_2=300\\cdot18^{0.4}=953$ K. $v_1=0.861\\ \\mathrm{m^3/kg}$, $v_2=v_1/18=0.0478\\ \\mathrm{m^3/kg}$, $p_2=RT_2/v_2=57$ bar $=p_3$.\n- **2->3:** $T_3=r_c T_2=2\\cdot953=1907$ K; $v_3=r_c v_2=0.0956\\ \\mathrm{m^3/kg}$.\n- **3->4:** $T_4=T_3(v_3/v_4)^{k-1}=1907\\cdot(0.0956/0.861)^{0.4}=793$ K; $p_4=RT_4/v_4=2.64$ bar.\n- **$\\eta$:** $1-\\frac{1}{1.4}\\cdot18^{-0.4}\\cdot\\frac{2^{1.4}-1}{2-1}=\\mathbf{0.631}$."
+    },
+    {
+      "kind": "checkpoint",
+      "title": "Which c, which cycle?",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In an air-standard **Diesel** cycle the heat added during combustion (2->3) per unit mass is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$c_v(T_3-T_2)$"
+          },
+          {
+            "id": "B",
+            "content": "$c_p(T_3-T_2)$"
+          },
+          {
+            "id": "C",
+            "content": "$R(T_3-T_2)$"
+          },
+          {
+            "id": "D",
+            "content": "$c_p(T_3-T_2)-R(T_3-T_2)$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Diesel adds heat at **constant pressure**, so $q_{in}=\\Delta h=c_p(T_3-T_2)$. **A** is the Otto (constant-volume) heat and a classic mix-up. **C** is only the *work* part $w=p\\,\\Delta v=R(T_3-T_2)$, not the heat. **D** equals $c_v(T_3-T_2)$ (since $c_p-R=c_v$), the change in internal energy, not the heat input.",
+        "theory": "Constant-pressure heat = $c_p\\Delta T$; constant-volume heat = $c_v\\Delta T$. First law on 2->3: $q=\\Delta u+w=c_v\\Delta T+R\\Delta T=c_p\\Delta T$."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Brayton-Joule cycle (gas turbine)"
+    },
+    {
+      "kind": "prose",
+      "text": "Now the air flows steadily through four devices: compressor (1->2), combustor/heater (2->3) at constant pressure, turbine (3->4), cooler (4->1) at constant pressure. This is an **open, SSSF** system, so every energy balance is in **enthalpy**:\n- $\\dot W_c/\\dot m=c_p(T_1-T_2)<0$ (compressor input)\n- $\\dot q_{in}=c_p(T_3-T_2)$\n- $\\dot W_t/\\dot m=c_p(T_3-T_4)>0$ (turbine output)\n- $\\dot q_{out}=c_p(T_1-T_4)<0$"
+    },
+    {
+      "kind": "definition",
+      "term": "Pressure ratio r_p",
+      "text": "$r_p=\\dfrac{p_2}{p_1}=\\dfrac{p_3}{p_4}$ — the *pressure* ratio across the compressor. This is Brayton's design parameter, the analogue of $r$ for piston engines. Do **not** call it a compression ratio: Brayton has no fixed volumes."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta_{Brayton}=1-\\frac{T_4-T_1}{T_3-T_2}=1-\\frac{T_1}{T_2}=1-\\frac{1}{r_p^{\\,(k-1)/k}}=1-r_p^{-(k-1)/k}",
+      "tag": "Brayton"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "r vs r_p exponent",
+      "text": "Otto/Diesel use **volume** ratio with $T_2/T_1=r^{k-1}$. Brayton uses **pressure** ratio with $T_2/T_1=r_p^{(k-1)/k}$. The exponent is $k-1$ for the volume ratio but $(k-1)/k$ for the pressure ratio. Mixing these up is a guaranteed wrong answer."
+    },
+    {
+      "kind": "definition",
+      "term": "Back-work ratio bwr",
+      "text": "$bwr=\\dfrac{|\\dot W_c|}{\\dot W_t}=\\dfrac{h_2-h_1}{h_3-h_4}=\\dfrac{T_2-T_1}{T_3-T_4}$ — the fraction of the turbine's output eaten by the compressor. For gas turbines it is huge (40-80%); for steam (vapor) plants the pump uses only 1-2%. A high bwr means a large turbine produces a small net output, so the cycle is sensitive to component inefficiency."
+    },
+    {
+      "kind": "steps",
+      "title": "Method: actual Brayton with isentropic efficiencies",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Compressor isentropic exit: $T_{2s}=T_1\\,r_p^{(k-1)/k}$."
+        },
+        {
+          "label": "2",
+          "text": "Actual compressor exit from $\\eta_{is,c}=\\dfrac{T_{2s}-T_1}{T_2-T_1}$  ->  $T_2=T_1+\\dfrac{T_{2s}-T_1}{\\eta_{is,c}}$."
+        },
+        {
+          "label": "3",
+          "text": "Turbine isentropic exit: $T_{4s}=T_3\\,r_p^{-(k-1)/k}$ (i.e. $T_3/(p_3/p_4)^{(k-1)/k}$)."
+        },
+        {
+          "label": "4",
+          "text": "Actual turbine exit from $\\eta_{is,t}=\\dfrac{T_3-T_4}{T_3-T_{4s}}$  ->  $T_4=T_3-\\eta_{is,t}(T_3-T_{4s})$."
+        },
+        {
+          "label": "5",
+          "text": "$\\dot W_c=\\dot m c_p(T_1-T_2)$, $\\dot W_t=\\dot m c_p(T_3-T_4)$, $\\dot W_{net}=\\dot W_t+\\dot W_c$, $\\dot Q_{in}=\\dot m c_p(T_3-T_2)$."
+        },
+        {
+          "label": "6",
+          "text": "$\\eta=\\dot W_{net}/\\dot Q_{in}$ and $bwr=|\\dot W_c|/\\dot W_t$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked actual Brayton (Tutorial 4.5)",
+      "text": "$\\dot m=6\\ \\mathrm{kg/s}$, $p_1=1$ bar, $T_1=300$ K, $r_p=10$, $T_3=1400$ K, $\\eta_{is,c}=\\eta_{is,t}=0.8$.\n- $T_{2s}=300\\cdot10^{0.2857}=579.2$ K  ->  $T_2=300+(579.2-300)/0.8=649$ K.\n- $T_{4s}=1400\\cdot10^{-0.2857}=725.1$ K  ->  $T_4=1400-0.8(1400-725.1)=860$ K.\n- $\\dot W_c=6\\cdot1.0045(300-649)=-2.10$ MW; $\\dot W_t=6\\cdot1.0045(1400-860)=3.25$ MW.\n- $\\dot W_{net}=1.15$ MW; $\\dot Q_{in}=6\\cdot1.0045(1400-649)=4.53$ MW.\n- $\\eta=1.15/4.53=\\mathbf{0.244}$; $bwr=2.10/3.25=\\mathbf{0.65}$ (65%). The compressor swallows two-thirds of the turbine work!"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Increasing r_p: efficiency vs net work",
+      "text": "Raising $r_p$ raises $\\eta$ but, for a fixed turbine-inlet temperature $T_3$, eventually *shrinks* the enclosed area (net work per kg). A high-$r_p$ cycle is efficient but needs a larger mass flow for the same power. There is an $r_p$ that **maximizes net work**: it gives $T_{2s}=T_{4s}=\\sqrt{T_1 T_3}$ (Tutorial 4.17)."
+    },
+    {
+      "kind": "heading",
+      "text": "Regeneration in Brayton"
+    },
+    {
+      "kind": "prose",
+      "text": "After the turbine the exhaust (state 4) is still hot — often hotter than the compressor exit (state 2). A **regenerator** is a heat exchanger that uses exhaust to pre-heat the compressed air from $T_2$ up to $T_x$ before the combustor, so the burner only supplies $q_{in}=c_p(T_3-T_x)$. Less fuel for the same work -> higher $\\eta$. This only helps when $T_4>T_2$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\eta_{reg}=\\frac{h_x-h_2}{h_4-h_2}=\\frac{T_x-T_2}{T_4-T_2}\\quad\\Rightarrow\\quad T_x=T_2+\\eta_{reg}(T_4-T_2)",
+      "tag": "Regen"
+    },
+    {
+      "kind": "example",
+      "title": "Regenerator effect (Tutorial 4.6)",
+      "text": "Take the 4.5 cycle ($T_2=649$ K, $T_4=860$ K, $T_3=1400$ K) and add a regenerator with effectiveness 0.8. Then $T_x=649+0.8(860-649)=818$ K. The net work is unchanged ($\\dot W_{net}=1.15$ MW), but $\\dot Q_{in}'=6\\cdot1.0045(1400-818)=3.5$ MW. New efficiency $\\eta'=1.15/3.5=\\mathbf{0.31}$ — up from 0.244. The regenerator never changes work, only the heat you must add."
+    },
+    {
+      "kind": "heading",
+      "text": "Gas refrigeration: the reverse Brayton-Joule cycle"
+    },
+    {
+      "kind": "prose",
+      "text": "Run Brayton backwards to pump heat from cold to hot. State 1 is the compressor inlet (coldest gas leaving the refrigerated space). Processes:\n- **1->2** compression (work in)\n- **2->3** constant-pressure cooling (reject heat $q_{out}$ to the warm surroundings)\n- **3->4** expansion in a turbine (gas cools below the cold space!)\n- **4->1** constant-pressure heating: this is where heat $q_{in}=c_p(T_1-T_4)$ is absorbed from the cold space — the useful refrigeration."
+    },
+    {
+      "kind": "definition",
+      "term": "COP of refrigeration β",
+      "text": "$\\beta=\\dfrac{\\dot Q_{in}}{|\\dot W_{net}|}=\\dfrac{c_p(T_1-T_4)}{c_p(T_2-T_1)-c_p(T_3-T_4)}$. For the *ideal* cycle this simplifies to $\\beta=\\dfrac{1}{r_p^{(k-1)/k}-1}=\\dfrac{1}{T_2/T_1-1}$, so a **lower** pressure ratio gives a **higher** COP."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why r_p can't drop to 1",
+      "text": "A lower $r_p$ raises $\\beta$, but there's a floor: $T_3$ can't be below the warm region (you must reject heat *to* it) and $T_1$ can't be above the cold region (you must absorb heat *from* it). These two temperature constraints set the minimum allowable $r_p$."
+    },
+    {
+      "kind": "example",
+      "title": "Worked gas refrigeration (Tutorial 4.7)",
+      "text": "Ideal inverse Joule, $p_1=50$ bar, $p_2=200$ bar so $r_p=4$. $T_1=5\\,^{\\circ}\\mathrm{C}=278$ K (compressor inlet), $T_3=20\\,^{\\circ}\\mathrm{C}=293$ K (turbine inlet). $\\dot Q_{in}=2000$ kcal/h $=2325.6$ W.\n- $T_{2s}=278\\cdot4^{0.2857}=413.3$ K.\n- Ideal relation $T_{2s}T_{4s}=T_1T_3$  ->  $T_{4s}=278\\cdot293/413.3=197.3$ K.\n- $\\dot m=\\dot Q_{in}/[c_p(T_1-T_{4s})]=2325.6/[1004.5(278-197.3)]=\\mathbf{0.0286}\\ \\mathrm{kg/s}$.\n- $\\beta=\\dfrac{1}{r_p^{(k-1)/k}-1}=\\dfrac{1}{4^{0.2857}-1}=\\mathbf{2.06}$. (Identical to $\\frac{c_p(T_1-T_{4s})}{c_p(T_{2s}-T_3)-c_p(T_1-T_{4s})}$ rearranged.)"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Always convert temperatures to Kelvin",
+      "text": "Every isentropic relation, every ratio $T_2/T_1$, and every Carnot/COP comparison needs **absolute temperature**. $20\\,^{\\circ}\\mathrm{C}$ becomes $293$ K, not $20$. Forgetting this (or subtracting 273 in the wrong place) is the most common numerical slip in this whole topic. Pressures inside a *ratio* can stay in bar, but temperatures never can."
+    },
+    {
+      "kind": "checkpoint",
+      "title": "Refrigeration COP",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "An ideal gas refrigeration (reverse Brayton) cycle uses air ($k=1.4$) with pressure ratio $r_p=3$. The coefficient of performance $\\beta$ is closest to:",
+        "options": [
+          {
+            "id": "A",
+            "content": "3.0"
+          },
+          {
+            "id": "B",
+            "content": "0.37"
+          },
+          {
+            "id": "C",
+            "content": "1.7"
+          },
+          {
+            "id": "D",
+            "content": "2.7"
+          }
+        ],
+        "correct": "D",
+        "explanation": "$\\beta=\\dfrac{1}{r_p^{(k-1)/k}-1}=\\dfrac{1}{3^{0.2857}-1}=\\dfrac{1}{1.369-1}=2.7$. **A (3.0)** just echoes $r_p$. **B (0.37)** is $r_p^{(k-1)/k}-1$ itself (the denominator, not its reciprocal). **C (1.7)** uses the wrong exponent $k-1=0.4$ instead of $(k-1)/k$.",
+        "theory": "Ideal reverse-Brayton COP: $\\beta=1/(r_p^{(k-1)/k}-1)$. Lower $r_p$ -> higher $\\beta$, bounded below by the warm/cold temperature limits."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Drawing the cycles (you will be asked)"
+    },
+    {
+      "kind": "prose",
+      "text": "Quick shapes to memorize:\n- **Otto** on p-v: two steep isentropics joined by two **vertical** (constant-v) lines. On T-s: two **vertical** isentropics joined by two constant-v curves (both rising to the right, the upper one further right).\n- **Diesel** on p-v: the top of combustion is a **horizontal** (constant-p) line; rejection is constant-v. On T-s: constant-p adds heat (curve), constant-v rejects.\n- **Brayton** on p-v and T-s: two isentropics + two **constant-pressure** lines (horizontal on p-v). The T-s diagram makes $\\eta=1-T_1/T_2$ and the regenerator pre-heating very visual.\n- **Reverse Brayton**: same shape, traversed counter-clockwise; net area is work *input*."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Cheat-sheet of the three efficiencies",
+      "text": "Otto $\\eta=1-r^{1-k}$. Diesel $\\eta=1-\\frac{1}{k}r^{1-k}\\frac{r_c^k-1}{r_c-1}$. Brayton $\\eta=1-r_p^{-(k-1)/k}$. All three also equal $1-T_1/T_2$ for their compression endpoint, and all power cycles satisfy $\\eta=W_{net}/Q_{in}=1-|Q_{out}|/Q_{in}$ — use that as an independent check."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "In an air-standard Otto cycle the thermal efficiency depends on:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the compression ratio $r$ and $k$ only"
+        },
+        {
+          "id": "B",
+          "content": "the maximum and minimum temperatures only"
+        },
+        {
+          "id": "C",
+          "content": "the pressure ratio $r_p$ and $k$"
+        },
+        {
+          "id": "D",
+          "content": "the cut-off ratio $r_c$ and $r$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$\\eta=1-r^{1-k}$ contains only $r$ and $k$; temperatures cancel. **B** is wrong because temperatures cancel out in the derivation. **C** is the *Brayton* parameter — Otto is volume-based, not pressure-ratio-based. **D** introduces $r_c$, which belongs to the Diesel cycle, not Otto.",
+      "theory": "Otto efficiency is a pure function of compression ratio and specific-heat ratio: $\\eta=1-r^{1-k}=1-1/r^{k-1}$.",
+      "source": "Tutorial 4.1 / lecture p.13-14"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An air-standard Otto cycle ($k=1.4$) has minimum temperature 288 K, maximum 1663 K and adds $q_{in}=795$ kJ/kg during combustion. The compression ratio is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "5.2"
+        },
+        {
+          "id": "B",
+          "content": "8.0"
+        },
+        {
+          "id": "C",
+          "content": "3.6"
+        },
+        {
+          "id": "D",
+          "content": "11.4"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$q_{in}=c_v(T_3-T_2)\\Rightarrow T_2=1663-795000/717.5=555$ K. Then $r=(T_2/T_1)^{1/(k-1)}=(555/288)^{2.5}=5.15\\approx5.2$. **B** assumes a typical $r=8$ without using the data. **C** uses $c_p$ instead of $c_v$ for the constant-volume combustion (giving a wrong $T_2$). **D** uses exponent $1/(k-1)=2.5$ with a wrong $T_2$ from the $c_p$ error inverted.",
+      "theory": "Constant-volume heat fixes $T_2$ via $c_v$; then the isentropic compression gives $r=(T_2/T_1)^{1/(k-1)}$.",
+      "source": "Tutorial 4.10"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For the same compression ratio $r$ and same $k$, comparing the air-standard Otto and Diesel cycles:",
+      "options": [
+        {
+          "id": "A",
+          "content": "Diesel is more efficient because of the cut-off ratio"
+        },
+        {
+          "id": "B",
+          "content": "They have identical efficiency"
+        },
+        {
+          "id": "C",
+          "content": "Otto is more efficient because the Diesel bracket exceeds 1"
+        },
+        {
+          "id": "D",
+          "content": "It depends on the turbine inlet temperature"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$\\eta_{Diesel}=1-r^{1-k}\\cdot\\frac{1}{k}\\frac{r_c^k-1}{r_c-1}$ and the factor $\\frac{1}{k}\\frac{r_c^k-1}{r_c-1}>1$ for $r_c>1$, so more is subtracted -> Otto wins at equal $r$. **A** reverses the truth. **B** is only correct in the limit $r_c\\to1$ (no heat). **D** mentions turbine inlet temperature, which is a Brayton concept irrelevant to piston cycles.",
+      "theory": "At equal $r$: $\\eta_{Otto}>\\eta_{Diesel}$. In practice Diesel runs at much higher $r$, reversing the comparison.",
+      "source": "Lecture p.20"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An air-standard Diesel cycle has $r=18$, $r_c=2$, $k=1.4$. The thermal efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.69"
+        },
+        {
+          "id": "B",
+          "content": "0.63"
+        },
+        {
+          "id": "C",
+          "content": "0.56"
+        },
+        {
+          "id": "D",
+          "content": "0.48"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\eta=1-\\frac{1}{1.4}\\cdot18^{-0.4}\\cdot\\frac{2^{1.4}-1}{2-1}=1-0.369=0.631$. **A (0.69)** forgets the $1/k$ factor. **C (0.56)** is the *Otto* value at $r=8$, the wrong cycle/ratio. **D (0.48)** uses exponent $k-1$ instead of $1-k$ on $r$ (i.e. $18^{0.4}$ misuse).",
+      "theory": "$\\eta_{Diesel}=1-\\frac{1}{k}r^{1-k}\\frac{r_c^k-1}{r_c-1}$; all three factors matter.",
+      "source": "Tutorial 4.3"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In a Brayton-Joule gas-turbine cycle, the work of the compressor and turbine are computed from:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$c_v\\,\\Delta T$ because air is the working fluid"
+        },
+        {
+          "id": "B",
+          "content": "$\\int p\\,dV$ over each device"
+        },
+        {
+          "id": "C",
+          "content": "$c_p\\,\\Delta T$ because the devices are open SSSF systems"
+        },
+        {
+          "id": "D",
+          "content": "$R\\,\\Delta T$ at constant pressure"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Compressor and turbine are steady-flow (open) devices, so the energy balance is in enthalpy: $\\dot W/\\dot m=\\Delta h=c_p\\Delta T$. **A** uses $c_v$ ($u$), valid for closed piston cycles, not flow devices. **B** $\\int p\\,dV$ is closed-system work, wrong for SSSF. **D** $R\\Delta T$ is only the constant-pressure boundary work, not shaft work.",
+      "theory": "Open SSSF devices: $\\dot W/\\dot m=\\Delta h=c_p\\Delta T$ (neglecting ke, pe). Closed piston: $w=\\Delta u$ via $c_v$.",
+      "source": "Lecture p.25-26"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An ideal Brayton-Joule cycle ($k=1.4$) operates with pressure ratio $r_p=10$. Its thermal efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.74"
+        },
+        {
+          "id": "B",
+          "content": "0.48"
+        },
+        {
+          "id": "C",
+          "content": "0.60"
+        },
+        {
+          "id": "D",
+          "content": "0.24"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\eta=1-r_p^{-(k-1)/k}=1-10^{-0.2857}=1-0.518=0.482$. **A** uses exponent $(k-1)=0.4$ (Otto-style volume exponent) on $r_p$. **C** is roughly the value at $r_p\\approx20$. **D (0.24)** is the *actual* efficiency once 80% isentropic efficiencies are applied (Tutorial 4.5), not the ideal one.",
+      "theory": "Ideal Brayton efficiency uses the pressure-ratio exponent $(k-1)/k$: $\\eta=1-r_p^{-(k-1)/k}$.",
+      "source": "Tutorial 4.5 / lecture p.28"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "In the actual Brayton cycle of Tutorial 4.5 ($r_p=10$, $T_1=300$ K, $T_3=1400$ K, $\\eta_{is,c}=\\eta_{is,t}=0.8$), the back-work ratio is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.35"
+        },
+        {
+          "id": "B",
+          "content": "0.50"
+        },
+        {
+          "id": "C",
+          "content": "0.65"
+        },
+        {
+          "id": "D",
+          "content": "0.80"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$T_2=300+(579.2-300)/0.8=649$ K, $T_4=1400-0.8(1400-725.1)=860$ K. $bwr=\\frac{T_2-T_1}{T_3-T_4}=\\frac{349}{540}=0.65$. **A** would be the *ideal* bwr (using $T_{2s},T_{4s}$): $279/477\\approx0.58$… actually closer; the irreversibilities raise it to 0.65, so 0.35 is far too low. **B** is a guess between values. **D (0.80)** confuses bwr with the isentropic efficiency.",
+      "theory": "$bwr=|\\dot W_c|/\\dot W_t=(T_2-T_1)/(T_3-T_4)$. Irreversibilities raise $T_2$ and $T_4$, increasing bwr. Gas turbines: 40-80%.",
+      "source": "Tutorial 4.5"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "A regenerator added to a Brayton cycle changes the cycle by:",
+      "options": [
+        {
+          "id": "A",
+          "content": "increasing the net work while keeping $Q_{in}$ fixed"
+        },
+        {
+          "id": "B",
+          "content": "reducing $Q_{in}$ while keeping the net work fixed"
+        },
+        {
+          "id": "C",
+          "content": "reducing the turbine work"
+        },
+        {
+          "id": "D",
+          "content": "increasing the compressor pressure ratio"
+        }
+      ],
+      "correct": "B",
+      "explanation": "The regenerator pre-heats compressed air with turbine exhaust, so the burner adds less heat ($Q_{in}$ drops) but compressor and turbine work are untouched, so $W_{net}$ is unchanged and $\\eta=W_{net}/Q_{in}$ rises. **A** is wrong: net work is unchanged. **C** is wrong: turbine state points 3 and 4 don't move. **D** is wrong: $r_p$ is set by the compressor, not the regenerator.",
+      "theory": "Regeneration: $Q_{in}=c_p(T_3-T_x)$ with $T_x=T_2+\\eta_{reg}(T_4-T_2)$. Work unchanged, $Q_{in}$ reduced, $\\eta$ up.",
+      "source": "Tutorial 4.6 / lecture p.39"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For the cycle of Tutorial 4.5 a regenerator with effectiveness 0.8 is added ($T_2=649$ K, $T_4=860$ K, $T_3=1400$ K). The new thermal efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.24"
+        },
+        {
+          "id": "B",
+          "content": "0.40"
+        },
+        {
+          "id": "C",
+          "content": "0.31"
+        },
+        {
+          "id": "D",
+          "content": "0.50"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$T_x=649+0.8(860-649)=818$ K; $Q_{in}'=c_p(1400-818)$ per kg, $W_{net}/\\dot m$ unchanged. $\\eta'=W_{net}/Q_{in}'=1.15/3.5=0.31$. **A (0.24)** is the original (no-regenerator) value. **B** would need an unrealistically perfect regenerator. **D** overstates the benefit. The regenerator lifts $\\eta$ from 0.24 to 0.31.",
+      "theory": "With regeneration $\\eta'=\\dot W_{net}/[\\dot m c_p(T_3-T_x)]$, $T_x=T_2+\\eta_{reg}(T_4-T_2)$.",
+      "source": "Tutorial 4.6"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In a reverse Brayton-Joule (gas refrigeration) cycle, the useful refrigeration effect $q_{in}$ is absorbed during:",
+      "options": [
+        {
+          "id": "A",
+          "content": "the isentropic compression"
+        },
+        {
+          "id": "B",
+          "content": "the constant-pressure cooling (heat rejection)"
+        },
+        {
+          "id": "C",
+          "content": "the isentropic (turbine) expansion"
+        },
+        {
+          "id": "D",
+          "content": "the constant-pressure heating (4->1) from the cold space"
+        }
+      ],
+      "correct": "D",
+      "explanation": "After expansion the gas (state 4) is the coldest point; it absorbs heat from the refrigerated space at constant pressure on 4->1: $q_{in}=c_p(T_1-T_4)$. **A** is work *input*, not heat from the cold space. **B** is heat *rejected* to the warm surroundings ($q_{out}$). **C** produces cold gas but exchanges no heat with the cold space (it's adiabatic).",
+      "theory": "Reverse Brayton: 1->2 compress, 2->3 reject $q_{out}$, 3->4 expand (gets cold), 4->1 absorb $q_{in}$ from cold space.",
+      "source": "Lecture p.50"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An ideal gas refrigeration cycle ($k=1.4$) has $r_p=4$. Its coefficient of performance $\\beta$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "2.06"
+        },
+        {
+          "id": "B",
+          "content": "0.49"
+        },
+        {
+          "id": "C",
+          "content": "1.49"
+        },
+        {
+          "id": "D",
+          "content": "4.00"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$\\beta=\\frac{1}{r_p^{(k-1)/k}-1}=\\frac{1}{4^{0.2857}-1}=\\frac{1}{1.486-1}=2.06$. **B** is the denominator $r_p^{(k-1)/k}-1=0.49$ (forgot to invert). **C** uses exponent $k-1=0.4$: $1/(4^{0.4}-1)$… gives ~1.16, near this distractor's spirit (wrong exponent). **D** just echoes $r_p$.",
+      "theory": "Ideal reverse-Brayton: $\\beta=1/(r_p^{(k-1)/k}-1)$; lower $r_p$ -> higher $\\beta$.",
+      "source": "Tutorial 4.7"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A gas refrigeration cycle has compressor inlet $T_1=277$ K and (after constant-p cooling) $T_3=298$ K, with $\\eta_{is,c}=0.75$, $\\eta_{is,t}=0.8$, $r_p=5$. The COP $\\beta$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "2.06"
+        },
+        {
+          "id": "B",
+          "content": "0.52"
+        },
+        {
+          "id": "C",
+          "content": "1.10"
+        },
+        {
+          "id": "D",
+          "content": "0.30"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$T_{2s}=277\\cdot5^{0.2857}=438.7$, $T_2=277+(438.7-277)/0.75=492.6$; $T_{4s}=T_1T_3/T_{2s}=188.2$, $T_4=298-0.8(298-188.2)=210.2$. $\\beta=\\frac{c_p(T_1-T_4)}{c_p(T_2-T_1)-c_p(T_3-T_4)}=\\frac{66.8}{215.6-88.4}=0.52$. **A** is the *ideal* result for a different cycle (4.7). **C** ignores the turbine work in the denominator. **D** is the COP of Tutorial 4.8 (different data).",
+      "theory": "Actual reverse-Brayton COP uses real $T_2,T_4$ from isentropic efficiencies: $\\beta=\\frac{T_1-T_4}{(T_2-T_1)-(T_3-T_4)}$.",
+      "source": "Tutorial 4.9"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Which statement about the back-work ratio is correct?",
+      "options": [
+        {
+          "id": "A",
+          "content": "Vapor (steam) plants have bwr around 40-80%"
+        },
+        {
+          "id": "B",
+          "content": "Gas-turbine plants have bwr around 1-2%"
+        },
+        {
+          "id": "C",
+          "content": "Gas-turbine plants have bwr around 40-80%; vapor plants 1-2%"
+        },
+        {
+          "id": "D",
+          "content": "bwr equals the cycle thermal efficiency"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Compressing a gas costs a large fraction of the turbine output (40-80%), whereas pumping liquid water in a Rankine plant is nearly free (1-2%). **A** and **B** swap the two. **D** is wrong: bwr=$|W_c|/W_t$, a ratio of works, unrelated to $\\eta=W_{net}/Q_{in}$.",
+      "theory": "$bwr=|\\dot W_c|/\\dot W_t$. Gas plants: 40-80%; vapor plants: 1-2% because liquid pumping is cheap.",
+      "source": "Lecture p.30"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A Brayton cycle with fixed $T_1$ and $T_3$ is to deliver maximum **net work per unit mass**. The optimum corresponds to a compressor-exit temperature:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$T_2=T_3$"
+        },
+        {
+          "id": "B",
+          "content": "$T_2=\\tfrac{1}{2}(T_1+T_3)$"
+        },
+        {
+          "id": "C",
+          "content": "$T_2=\\sqrt{T_1 T_3}$"
+        },
+        {
+          "id": "D",
+          "content": "$T_2=T_1$ (no compression)"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Differentiating $w_{net}/c_p=T_3-T_{4s}+T_1-T_{2s}$ with the constraint $T_{2s}T_{4s}=T_1T_3$ and setting $dw/dT_{2s}=0$ gives $T_{2s}=\\sqrt{T_1T_3}$ (and $T_{4s}=\\sqrt{T_1T_3}$ too). For $T_1=288$, $T_3=1073$ this is 556 K (Tutorial 4.17). **A** maxes efficiency-ish, not work. **B** is the arithmetic, not geometric, mean. **D** gives zero net work.",
+      "theory": "Max specific work in Brayton: $T_{2s}=T_{4s}=\\sqrt{T_1T_3}$, i.e. $r_{p,opt}=(T_3/T_1)^{k/[2(k-1)]}$.",
+      "source": "Tutorial 4.17"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The cut-off ratio of a Diesel cycle is defined as:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$r_c=v_1/v_2$"
+        },
+        {
+          "id": "B",
+          "content": "$r_c=p_3/p_2$"
+        },
+        {
+          "id": "C",
+          "content": "$r_c=v_3/v_2=T_3/T_2$"
+        },
+        {
+          "id": "D",
+          "content": "$r_c=T_4/T_1$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$r_c=v_3/v_2$, the volume expansion during constant-pressure combustion; since $p$ is constant, $v_3/v_2=T_3/T_2$. **A** is the compression ratio $r$. **B** equals 1 in Diesel (2->3 is constant pressure). **D** is a temperature ratio across the whole cycle, not the cut-off.",
+      "theory": "$r_c=v_3/v_2=T_3/T_2$ (constant-pressure combustion). $r_c\\to1$ recovers the Otto cycle.",
+      "source": "Lecture p.19 / Tutorial 4.3"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An ideal Brayton cycle has $T_1=288$ K, $T_3=1373$ K and adds $q_{in}=800$ kJ/kg. The thermal efficiency is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.50"
+        },
+        {
+          "id": "B",
+          "content": "0.21"
+        },
+        {
+          "id": "C",
+          "content": "0.79"
+        },
+        {
+          "id": "D",
+          "content": "0.35"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$q_{in}=c_p(T_3-T_2)\\Rightarrow T_2=1373-800000/1004.5=576.6$ K. Then $\\eta=1-T_1/T_2=1-288/576.6=0.50$. **B** uses $c_v$ instead of $c_p$ to find $T_2$ (wrong, it's constant-pressure heating). **C** is $T_1/T_2$ subtracted from 1 inverted (sign/ratio slip). **D** would come from a wrong $T_2$.",
+      "theory": "Constant-pressure heat fixes $T_2$ via $c_p$; ideal Brayton $\\eta=1-T_1/T_2$.",
+      "source": "Tutorial 4.15"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Air-standard Otto: full state table and efficiency",
+      "meta": "Tutorial 4.1 · Otto cycle · written-test style",
+      "difficulty": "medium",
+      "statement": "In an air-standard Otto cycle ($k=1.4$, $R=287$ J/kgK) the temperature at the start of compression is 20 °C and the pressure is 1 bar. The maximum cycle temperature is 1200 °C and the compression ratio is 8. The mass is 1 kg. Find (1) T and p at the end of each process, and (2) the thermal efficiency.",
+      "given": "$T_1=293$ K, $p_1=1$ bar, $T_3=1473$ K, $r=v_1/v_2=8$, $m=1$ kg, $c_v=717.5$, $c_p=1004.5$ J/kgK.",
+      "steps": [
+        {
+          "title": "1->2 isentropic compression",
+          "content": "$T_2=T_1 r^{k-1}=293\\cdot8^{0.4}=673$ K. $v_1=RT_1/p_1=287\\cdot293/10^5=0.841\\ \\mathrm{m^3/kg}$, $v_2=v_1/8=0.105\\ \\mathrm{m^3/kg}$. $p_2=RT_2/v_2=287\\cdot673/0.105=18.4$ bar."
+        },
+        {
+          "title": "2->3 constant-volume heating",
+          "content": "Volume fixed, so $p_3=p_2\\,T_3/T_2=18.4\\cdot1473/673=40.3$ bar (= $p_{max}$)."
+        },
+        {
+          "title": "3->4 isentropic expansion",
+          "content": "$v_3=v_2$, $v_4=v_1$, so $T_4=T_3(v_3/v_4)^{k-1}=1473\\cdot8^{-0.4}=641$ K. $p_4=RT_4/v_4=287\\cdot641/0.841=2.2$ bar."
+        },
+        {
+          "title": "Efficiency",
+          "content": "$\\eta=1-r^{1-k}=1-8^{-0.4}=0.565$. Cross-check: $w_{net}=c_v(T_3-T_4)+c_v(T_1-T_2)=324$ kJ/kg, $q_{in}=c_v(T_3-T_2)=574$ kJ/kg, $\\eta=324/574=0.565$. ✓"
+        }
+      ],
+      "finalAnswer": "$T_2=673$ K, $p_2=18.4$ bar; $p_3=40.3$ bar; $T_4=641$ K, $p_4=2.2$ bar; $\\eta=0.565$.",
+      "tips": "Convert °C to K first. Otto uses $c_v$ everywhere (closed system, constant-v combustion). $\\eta$ needs only $r$ and $k$ — the temperatures are a free consistency check."
+    },
+    {
+      "title": "Air-standard Diesel cycle analysis",
+      "meta": "Tutorial 4.3 · Diesel cycle · written-test style",
+      "difficulty": "medium",
+      "statement": "A standard-air Diesel cycle has compression ratio 18; at the start of compression T=300 K, p=0.1 MPa. The cut-off ratio is 2. Determine T and p at the end of each process and the thermal efficiency.",
+      "given": "$r=18$, $T_1=300$ K, $p_1=1$ bar, $r_c=v_3/v_2=2$, $k=1.4$, $R=287$, $c_p=1004.5$, $c_v=717.5$ J/kgK.",
+      "steps": [
+        {
+          "title": "1->2 isentropic compression",
+          "content": "$T_2=300\\cdot18^{0.4}=953$ K. $v_1=RT_1/p_1=0.861\\ \\mathrm{m^3/kg}$, $v_2=v_1/18=0.0478\\ \\mathrm{m^3/kg}$, $p_2=RT_2/v_2=57$ bar. Since 2->3 is constant pressure, $p_3=p_2=57$ bar."
+        },
+        {
+          "title": "2->3 constant-pressure heating",
+          "content": "$v_3=r_c v_2=2\\cdot0.0478=0.0956\\ \\mathrm{m^3/kg}$; $T_3=r_c T_2=2\\cdot953=1907$ K (or $p_3v_3=RT_3$)."
+        },
+        {
+          "title": "3->4 isentropic expansion",
+          "content": "$v_4=v_1=0.861\\ \\mathrm{m^3/kg}$, so $T_4=T_3(v_3/v_4)^{k-1}=1907\\cdot(0.0956/0.861)^{0.4}=793$ K; $p_4=RT_4/v_4=2.64$ bar."
+        },
+        {
+          "title": "Efficiency",
+          "content": "$\\eta=1-\\frac{1}{k}r^{1-k}\\frac{r_c^k-1}{r_c-1}=1-\\frac{1}{1.4}\\cdot18^{-0.4}\\cdot\\frac{2^{1.4}-1}{1}=0.631$. Check via $w_{net}=c_v(T_1-T_2)+R(T_3-T_2)+c_v(T_3-T_4)=604$ kJ/kg, $q_{in}=c_p(T_3-T_2)=958$ kJ/kg, $\\eta=0.631$. ✓"
+        }
+      ],
+      "finalAnswer": "$T_2=953$ K, $p_2=p_3=57$ bar; $T_3=1907$ K; $T_4=793$ K, $p_4=2.64$ bar; $\\eta=0.631$.",
+      "tips": "The combustion is constant pressure: use $c_p$ for $q_{in}$ and $r_c=v_3/v_2=T_3/T_2$. Heat rejection (4->1) is still constant volume ($c_v$). Don't apply the Otto formula here."
+    },
+    {
+      "title": "Actual Brayton-Joule with component efficiencies and back-work ratio",
+      "meta": "Tutorial 4.5 · gas turbine · written-test style",
+      "difficulty": "hard",
+      "statement": "Air (6 kg/s) enters a Brayton-Joule compressor at 100 kPa, 300 K. The pressure ratio is 10 and the turbine inlet temperature is 1400 K. Both turbine and compressor have isentropic efficiency 0.80. Find the thermal efficiency, the back-work ratio, and the net power.",
+      "given": "$\\dot m=6\\ \\mathrm{kg/s}$, $p_1=1$ bar, $T_1=300$ K, $r_p=10$, $T_3=1400$ K, $\\eta_{is,c}=\\eta_{is,t}=0.8$, $c_p=1004.5$ J/kgK, $k=1.4$.",
+      "steps": [
+        {
+          "title": "Compressor",
+          "content": "$T_{2s}=T_1 r_p^{(k-1)/k}=300\\cdot10^{0.2857}=579.2$ K. Real exit: $T_2=T_1+(T_{2s}-T_1)/\\eta_{is,c}=300+279.2/0.8=649$ K."
+        },
+        {
+          "title": "Turbine",
+          "content": "$T_{4s}=T_3 r_p^{-(k-1)/k}=1400\\cdot10^{-0.2857}=725.1$ K. Real exit: $T_4=T_3-\\eta_{is,t}(T_3-T_{4s})=1400-0.8(674.9)=860$ K."
+        },
+        {
+          "title": "Works and heat",
+          "content": "$\\dot W_c=\\dot m c_p(T_1-T_2)=6\\cdot1004.5\\cdot(-349)=-2.10$ MW. $\\dot W_t=\\dot m c_p(T_3-T_4)=6\\cdot1004.5\\cdot540=3.25$ MW. $\\dot W_{net}=1.15$ MW. $\\dot Q_{in}=\\dot m c_p(T_3-T_2)=6\\cdot1004.5\\cdot751=4.53$ MW."
+        },
+        {
+          "title": "Efficiency and bwr",
+          "content": "$\\eta=\\dot W_{net}/\\dot Q_{in}=1.15/4.53=0.244$. $bwr=|\\dot W_c|/\\dot W_t=2.10/3.25=0.65$ (65%)."
+        }
+      ],
+      "finalAnswer": "$\\eta=0.244$, $bwr=65\\%$, $\\dot W_{net}\\approx1.1$ MW.",
+      "tips": "Brayton is a flow cycle: $c_p$ and the pressure-ratio exponent $(k-1)/k$. Apply $\\eta_{is,c}$ by *dividing* the ideal rise and $\\eta_{is,t}$ by *multiplying* the ideal drop. The 65% bwr shows why gas turbines are so sensitive to component efficiency."
+    },
+    {
+      "title": "Gas refrigeration: reverse Brayton COP and mass flow",
+      "meta": "Tutorial 4.7 · gas refrigeration · written-test style",
+      "difficulty": "medium",
+      "statement": "An ideal inverse Joule (reverse Brayton) cycle uses air between $p_1=50$ bar and $p_2=200$ bar. Air enters the compressor at 5 °C and the turbine at 20 °C. A cooling load of 2000 kcal/h is removed from the cold space. Find the mass flow rate and the COP.",
+      "given": "$p_1=50$ bar, $p_2=200$ bar so $r_p=4$; $T_1=278$ K, $T_3=293$ K; $\\dot Q_{in}=2000$ kcal/h $=2000\\cdot4186/3600=2325.6$ W; $c_p=1004.5$ J/kgK, $k=1.4$.",
+      "steps": [
+        {
+          "title": "Compressor exit (isentropic)",
+          "content": "$T_{2s}=T_1 r_p^{(k-1)/k}=278\\cdot4^{0.2857}=413.3$ K."
+        },
+        {
+          "title": "Turbine exit",
+          "content": "Ideal cycle relation $T_{2s}T_{4s}=T_1 T_3\\Rightarrow T_{4s}=T_1T_3/T_{2s}=278\\cdot293/413.3=197.3$ K."
+        },
+        {
+          "title": "Mass flow from the cooling load",
+          "content": "$\\dot Q_{in}=\\dot m c_p(T_1-T_{4s})\\Rightarrow \\dot m=\\dfrac{2325.6}{1004.5\\,(278-197.3)}=0.0286\\ \\mathrm{kg/s}$."
+        },
+        {
+          "title": "COP",
+          "content": "$\\beta=\\dfrac{1}{r_p^{(k-1)/k}-1}=\\dfrac{1}{4^{0.2857}-1}=\\dfrac{1}{0.486}=2.06$. (Same as $\\frac{T_1-T_{4s}}{(T_{2s}-T_3)-(T_1-T_{4s})}$.)"
+        }
+      ],
+      "finalAnswer": "$\\dot m=0.0286\\ \\mathrm{kg/s}$, $\\beta=2.06$.",
+      "tips": "Convert kcal/h to W ($\\times4186/3600$). Use the pressure ratio $r_p=p_2/p_1=4$ (not 200/50 again later). The refrigeration effect is the constant-pressure heating 4->1: $q_{in}=c_p(T_1-T_4)$."
+    },
+    {
+      "title": "Conceptual: describe and contrast the four gas cycles",
+      "meta": "Open-ended · sketch & explain · written-test style",
+      "difficulty": "medium",
+      "statement": "Without numbers: (a) draw the Otto, Diesel and Brayton-Joule cycles on both p-v and T-s diagrams and name each process; (b) explain why Otto/Diesel use $c_v$ for work while Brayton uses $c_p$; (c) state each efficiency formula and explain why Otto beats Diesel at equal $r$; (d) explain how regeneration raises Brayton efficiency and when it is possible.",
+      "given": "Air standard, $k=c_p/c_v=1.4$. No numerical data.",
+      "steps": [
+        {
+          "title": "(a) Shapes",
+          "content": "Otto: 2 isentropics + 2 constant-volume lines (vertical on p-v). Diesel: same but combustion is constant pressure (horizontal top on p-v), rejection constant volume. Brayton: 2 isentropics + 2 constant-pressure lines. On T-s all isentropics are vertical; constant-v and constant-p appear as exponential curves, the constant-p ones flatter."
+        },
+        {
+          "title": "(b) Why c_v vs c_p",
+          "content": "Otto/Diesel are closed piston systems: first law $q-w=\\Delta u$, work $\\int p\\,dV$, internal energy via $c_v$. Brayton is an open SSSF system: each device gives $\\dot W/\\dot m=\\Delta h$ with $h$ via $c_p$. Hence $c_v$ for piston cycles, $c_p$ for turbo machinery."
+        },
+        {
+          "title": "(c) Efficiencies",
+          "content": "Otto $\\eta=1-r^{1-k}$; Diesel $\\eta=1-\\frac{1}{k}r^{1-k}\\frac{r_c^k-1}{r_c-1}$; Brayton $\\eta=1-r_p^{-(k-1)/k}$. At equal $r$ the Diesel correction factor $\\frac{1}{k}\\frac{r_c^k-1}{r_c-1}>1$, so Otto is more efficient; Diesel compensates by using much higher $r$ (no knock limit)."
+        },
+        {
+          "title": "(d) Regeneration",
+          "content": "Turbine exhaust (state 4) is hotter than compressor exit (state 2). A regenerator transfers that heat to pre-heat the air from $T_2$ to $T_x=T_2+\\eta_{reg}(T_4-T_2)$, so the burner adds only $c_p(T_3-T_x)$. Net work is unchanged, $Q_{in}$ falls, $\\eta$ rises. Possible only when $T_4>T_2$ (i.e. moderate pressure ratios)."
+        }
+      ],
+      "finalAnswer": "Otto/Diesel are closed ($c_v$, $\\int p\\,dV$), Brayton is open ($c_p$, $-\\int v\\,dp$); Otto $\\eta=1-r^{1-k}$, Diesel adds the $r_c$ factor (>1, so lower at equal $r$), Brayton $\\eta=1-r_p^{-(k-1)/k}$; regeneration cuts $Q_{in}$ when $T_4>T_2$ and so raises $\\eta$.",
+      "tips": "In an oral/written conceptual question, always (1) label every process with its constraint (s, v or p constant) and (2) tie the work expression to whether the system is closed or flowing. That earns most of the marks."
+    }
+  ],
+  "title": "Gas Power & Refrigeration Cycles (Air-Standard)",
+  "summary": "The air-standard analysis of the four gas cycles you must master at Polito: the Otto and Diesel internal-combustion cycles (closed system, work from $\\int p\\,dV$), the Brayton-Joule gas-turbine cycle (open/SSSF, work from enthalpy), and the reverse Brayton-Joule gas refrigeration cycle. You will learn compression ratio vs pressure ratio, the three efficiency formulas, the back-work ratio, regeneration, and the COP of gas refrigeration — all grounded in Tutorial 4.",
+  "minutes": 75,
+  "objectives": [
+    "Apply the air-standard assumptions and compute state points using isentropic and constant-v/constant-p relations",
+    "Derive and use the Otto efficiency $\\eta=1-r^{1-k}$ and the Diesel efficiency with cut-off ratio $r_c$",
+    "Analyze the Brayton-Joule cycle on p-v and T-s, using $\\eta=1-r_p^{-(k-1)/k}$ and the back-work ratio",
+    "Distinguish compression ratio $r$ (Otto/Diesel) from pressure ratio $r_p$ (Brayton) and know which work expression applies",
+    "Account for isentropic efficiencies of compressor and turbine in the actual Brayton cycle",
+    "Compute the effect of a regenerator on Brayton thermal efficiency",
+    "Analyze the reverse Brayton-Joule gas refrigeration cycle and its coefficient of performance $\\beta$"
+  ]
+}

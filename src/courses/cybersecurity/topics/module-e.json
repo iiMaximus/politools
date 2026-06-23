@@ -1,0 +1,320 @@
+{
+  "title": "Module E: Operating system security",
+  "summary": "A from-zero tour of how an operating system works (kernel vs user mode, processes, system calls) and how it enforces security: protection rings, memory protection, access control models (DAC/MAC/RBAC), file permissions, the reference monitor, and real-world examples from UNIX, Windows, and Android.",
+  "minutes": 22,
+  "objectives": [
+    "Explain what an operating system does and why it sits between users and hardware",
+    "Distinguish kernel mode from user mode and describe how system calls cross that boundary",
+    "Describe protection rings, memory address spaces, and how the OS isolates processes",
+    "Compare DAC, MAC, and RBAC, and read UNIX-style file permissions",
+    "Explain the reference monitor and its three guarantees (complete mediation, tamperproof, verifiable)",
+    "Recognize common OS-level attacks (privilege escalation, buffer overflow) and the defenses against them"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. What is an operating system?"
+    },
+    {
+      "kind": "prose",
+      "text": "An **operating system (OS)** is an organized collection of software that extends the hardware. The professor frames it three ways:\n\n- a set of **control routines** for operating the computer (e.g., gaining access to resources like file I/O)\n- an **environment for executing programs**\n- an **interface between the end user and the hardware**\n\nWithout an OS, every program would have to talk to the disk, RAM, and CPU directly. The OS hides those hardware details so developers and users do not have to deal with them."
+    },
+    {
+      "kind": "prose",
+      "text": "**How software actually runs.** Instructions (software) live in persistent storage (HDD, SSD). To execute, they must be copied into **main memory (RAM)**, because the CPU fetches and executes instructions from RAM.\n\n- On a simple single-application device (e.g., an IoT board), a tiny program called the **bootloader** copies the one application into RAM at startup.\n- On a general-purpose machine, the **OS replaces the bootloader** for user applications: it loads programs into RAM and allocates memory on request. To do this it runs at a **higher privilege level** than the applications."
+    },
+    {
+      "kind": "example",
+      "text": "**Two extremes from the slides:**\n\n- **Arduino** — runs a single task, has **no OS**, and uses a single shared memory space. Simple, but no isolation and no multitasking.\n- **FreeBSD** (a UNIX variant) — a full OS with **multi-tasking**, **multi-user** support, and **process lifecycle management**. Many programs and users coexist safely on one machine."
+    },
+    {
+      "kind": "definition",
+      "term": "Purposes of an OS",
+      "text": "The OS **manages memory**, **manages processes** (services and applications), **manages connected devices**, **manages files**, and provides **security**. Everything else builds on these jobs."
+    },
+    {
+      "kind": "heading",
+      "text": "2. OS services and the user interface"
+    },
+    {
+      "kind": "prose",
+      "text": "The OS provides an execution environment through a set of **services**:\n\n- **User interface** — Command-Line Interface (CLI) or Graphical User Interface (GUI)\n- **Program execution** — load a program into memory, run it, handle errors\n- **I/O operations** — manage input/output with storage devices\n- **Filesystem manipulation** — create and manage files and their **permissions**\n- **Communications** — let running programs talk to each other\n- **Error detection**, **resource allocation** (in a multi-user/multi-program setting), and **logging** (tracking events)\n- **Protection and security**"
+    },
+    {
+      "kind": "definition",
+      "term": "Protection vs Security",
+      "text": "The slides draw a precise line:\n\n- **Protection** = controlling access to all resources **inside** the system.\n- **Security** = handling access attempts from **outsiders** of the system (e.g., **user authentication**).\n\nProtection is the internal rulebook; security is the perimeter."
+    },
+    {
+      "kind": "prose",
+      "text": "**The two interfaces.** The **CLI (shell)** is the first, most direct way to send commands. It can live inside the OS core (the **kernel**) or run as a separate system program; it fetches commands (program names or built-ins) and executes them. The **GUI** is friendlier — mouse, keyboard, monitor, icons representing files/programs/actions — and ships with most commercial OSes. Both are just front-ends to the same underlying services."
+    },
+    {
+      "kind": "heading",
+      "text": "3. The kernel/user boundary and system calls"
+    },
+    {
+      "kind": "prose",
+      "text": "The OS runs its most sensitive code (the **kernel**) at a **higher, privileged level**; ordinary applications run at a lower, restricted level. This split is the heart of OS security: a buggy or malicious app should not be able to touch hardware or other programs directly. So how does an app ask the OS to do privileged things like reading a file? Through **system calls**."
+    },
+    {
+      "kind": "definition",
+      "term": "System call",
+      "text": "A **system call** is the programming interface the OS exposes to let programs access its services. Programs rarely invoke it raw; they go through a higher-level **Application Programming Interface (API)**. Standards include **Win32** (Windows), **POSIX** (Linux, macOS, Solaris), and the **Java API** (the JVM)."
+    },
+    {
+      "kind": "prose",
+      "text": "**How a system call is dispatched (figure in words):**\n\n- Each system call is associated with a **number**.\n- The OS keeps a **table** indexed by these numbers.\n- The **system-call interface** looks up the number, runs the requested call, and returns the result.\n- The caller never needs to know *how* the call is implemented — it only follows the API rules.\n\nThis is the boundary crossing: the program triggers a controlled switch from user mode into the kernel, the kernel does the privileged work, and control returns to the program."
+    },
+    {
+      "kind": "steps",
+      "title": "How printf() becomes a system call (Standard C Library example)",
+      "steps": [
+        {
+          "label": "1",
+          "text": "A C program executes `printf(\"hello\")`."
+        },
+        {
+          "label": "2",
+          "text": "The **standard C library** catches this request — it acts as the bridge between the program and the kernel."
+        },
+        {
+          "label": "3",
+          "text": "The library translates it into the appropriate system call, here **write()**."
+        },
+        {
+          "label": "4",
+          "text": "The **kernel** performs the privileged operation and returns a result to the library."
+        },
+        {
+          "label": "5",
+          "text": "The library relays that return value back to the original program."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "text": "**A real POSIX call.** `ssize_t read(int fd, void *buf, size_t count)` reads from a file:\n\n- `int fd` — which file to read (a file descriptor)\n- `void *buf` — buffer where the read data is stored\n- `size_t count` — maximum number of bytes to read\n\nA program calls this, but the actual reading from disk happens in the kernel. Notice the program supplies a buffer and a size — remembering that pairing matters when we get to buffer overflows."
+    },
+    {
+      "kind": "definition",
+      "term": "Policy vs Mechanism",
+      "text": "A recurring OS design idea: **policy** is *what* needs to be done; **mechanism** is *how* it is done. The mechanism is **transparent to the policy**. A user states a policy (a set of rules, e.g., security requirements); the system is in charge of implementing a mechanism to enforce it. The same rule can have **different implementations**."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Common exam mistake:** confusing policy and mechanism. \"Only the owner may read this file\" is a **policy** (a rule). The permission-bit check the kernel performs to enforce it is the **mechanism**. They are deliberately separate so the mechanism can change without changing the policy."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "An application needs to write data to a file on disk. How does it perform this privileged operation?",
+        "options": [
+          {
+            "id": "A",
+            "content": "It writes directly to the disk controller hardware in user mode"
+          },
+          {
+            "id": "B",
+            "content": "It issues a system call, which switches into the kernel to do the privileged work and return a result"
+          },
+          {
+            "id": "C",
+            "content": "It must be rewritten to run inside the bootloader"
+          },
+          {
+            "id": "D",
+            "content": "It modifies the system-call table to grant itself disk access"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Applications run in restricted user mode and cannot touch hardware directly, so A is wrong. They request services via **system calls**, which cross into the privileged kernel and return a result (B). The bootloader only runs at startup (C). Modifying the system-call table is exactly the kind of tampering the OS prevents (D)."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "4. Protection rings, address spaces, and isolation"
+    },
+    {
+      "kind": "prose",
+      "text": "A **protection ring** is a security boundary that separates the **kernel** from **user-level processes** — it enforces the privileged/unprivileged split in hardware. UNIX adopted protection rings (an idea inspired by the Multics system, along with encrypted password storage and access control lists)."
+    },
+    {
+      "kind": "definition",
+      "term": "Address space",
+      "text": "Every process is given a unique **address space**: the range of memory locations it is allowed to access. Modern UNIX systems implement this by defining which **memory pages** a process may touch. If a process tries to read outside its space, the hardware/OS blocks it — this is **memory protection**, and it is what stops one process from spying on or corrupting another."
+    },
+    {
+      "kind": "prose",
+      "text": "**Isolation is the fundamental goal.** The slides list four ways to separate components in a system:\n\n- **Physical isolation** — give each module its own dedicated hardware\n- **Temporal isolation** — run processes at separate times, never concurrently\n- **Logical isolation** — the OS gives each user an abstracted, isolated workspace without exposing internals (the everyday case)\n- **Cryptographic isolation** — use encryption to hide sensitive data from unauthorized access"
+    },
+    {
+      "kind": "definition",
+      "term": "Least Privilege Principle",
+      "text": "A cornerstone of cybersecurity: restrict every **user and process** to **only** the permissions essential to its role — the **minimum access required** to do its job. Advantages from the slides: better **stability** (smaller blast radius for changes), better **security** (a flaw in one program cannot compromise the whole system), and **simpler deployment** (apps needing fewer permissions are easier to manage)."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Access control: subjects, objects, and the matrix"
+    },
+    {
+      "kind": "definition",
+      "term": "Access control",
+      "text": "A mechanism that regulates whether a **subject** (an active entity — a user or process) may perform an action on an **object** (a passive entity — a file, socket, database, process). Rights are things like **read, write, execute, list, modify, delete**. Two foundations: a **security framework** (the rules/policy) and a **reference monitor** (the enforcer)."
+    },
+    {
+      "kind": "prose",
+      "text": "**The access control matrix (ACM)** organizes this as a table:\n\n- each **row** is a subject (e.g., a user)\n- each **column** is an object (e.g., a file)\n- each **cell** lists the rights that subject has over that object\n\nReading a single row tells you everything a subject is allowed to do — its **protection domain**. The **protection state** is the snapshot of subjects, objects, and authorized actions, plus the operations that can change it."
+    },
+    {
+      "kind": "prose",
+      "text": "**Two ways to slice the matrix:**\n\n- An **Access Control List (ACL)** is a **column**: for one object, the list of every subject and its access level. Each object has exactly one ACL. (NTFS and ext3 use ACL/capability mechanisms.)\n- A **capability** is, in effect, a **row**: a token a subject holds proving what it may access. The slides note capabilities offer **stronger security**."
+    },
+    {
+      "kind": "heading",
+      "text": "6. DAC, MAC, and RBAC"
+    },
+    {
+      "kind": "definition",
+      "term": "Discretionary Access Control (DAC)",
+      "text": "The **owner** of a resource decides who may access it — \"discretionary\" because access is granted at the owner's own judgment. This is the model behind **Windows, Linux, macOS, and most UNIX variants**: create a file, set its permissions, and the OS enforces them. Weakness: an untrusted process that owns an object can change the protection state (grant read/write/ownership to others)."
+    },
+    {
+      "kind": "definition",
+      "term": "Mandatory Access Control (MAC)",
+      "text": "The **system**, not individual users, decides access — only authorized administrators can modify policy, through trusted software. It uses **labels**: subjects get a **security authorization** (e.g., confidential, secret, top secret) and objects get a matching **classification**. Labels are **immutable** except via authorized **transitions**. MAC dominates where protecting sensitive data is critical, e.g., **military** systems. **SELinux** brings MAC to Android/Linux."
+    },
+    {
+      "kind": "definition",
+      "term": "Role Based Access Control (RBAC)",
+      "text": "Permissions are assigned to **roles** (based on competency, authority, responsibility), and users get roles. Roles can be created, modified, or retired as the organization changes — so you do not have to update each user's rights one by one."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Don't confuse DAC and MAC.** The deciding question is *who controls access*: in **DAC the resource owner** decides (and can hand out rights at will); in **MAC the system/administrator** decides via fixed labels and the owner cannot override it. \"It's mandatory\" means mandatory for users, not optional."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "On a military system, a file is labeled 'top secret' and a user holds a 'confidential' authorization. The user owns a different file and wants to grant a colleague read access to it, but the system refuses to let any user re-label data. Which access control model is in force?",
+        "options": [
+          {
+            "id": "A",
+            "content": "DAC, because the user owns a file"
+          },
+          {
+            "id": "B",
+            "content": "RBAC, because the user has an authorization level"
+          },
+          {
+            "id": "C",
+            "content": "MAC, because the system enforces immutable labels and users cannot change them"
+          },
+          {
+            "id": "D",
+            "content": "No access control is in force"
+          }
+        ],
+        "correct": "C",
+        "explanation": "The defining clue is that **the system enforces labels and users cannot re-label data** — that is **MAC** (C), typical of military settings. DAC would let the owner grant access at their discretion (A is the trap). An authorization level alone is not RBAC; RBAC is about roles mapping to permissions (B). Access control is clearly present (D)."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "7. The reference monitor and a secure OS"
+    },
+    {
+      "kind": "definition",
+      "term": "Reference monitor",
+      "text": "The mechanism that **enforces** access control. It has three parts: an **interface** through which access requests arrive, an **authorization module** that evaluates them, and a **policy store** holding the rules. When a security-sensitive action occurs, the interface fires **hooks** that call the authorization module, which queries the policy store and returns an allow/deny decision."
+    },
+    {
+      "kind": "prose",
+      "text": "**How a query flows:** the authorization module turns a request into a triple `{subject_label, object_label, operation_set}` and the policy store answers **yes/no**. A **security-sensitive action** is any operation on an object that could breach policy if done without authorization — e.g., the OS blocking one user from reading another user's private key."
+    },
+    {
+      "kind": "definition",
+      "term": "Three guarantees of a secure OS",
+      "text": "A secure OS enforces access control per the reference monitor principle, anchored by three guarantees:\n\n- **Complete Mediation** — *every* security-sensitive operation is checked\n- **Tamperproof** — the access-control framework cannot be modified by untrusted software\n- **Verifiable** — the enforcement mechanism is small enough to be analyzed and tested for correctness\n\nThe **security kernel** is the hardware+software realization of the reference monitor (first prototyped by MITRE in 1974)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Remember the trio:** Complete Mediation (check everything), Tamperproof (can't be altered), Verifiable (small enough to prove correct). If a security check can be bypassed even once, **complete mediation** fails — and the whole guarantee collapses."
+    },
+    {
+      "kind": "heading",
+      "text": "8. Filesystem security and authentication"
+    },
+    {
+      "kind": "prose",
+      "text": "A **filesystem** stores files and their data on devices (HDD, SSD, USB, CD/DVD) organized into fixed-size **sectors/blocks**, with an **index** to locate each file. Examples: **NTFS/FAT** (Windows), **ext2/ext3** (Linux), **HFS** (macOS), **ISO9660/UDF** (optical). The filesystem maintains **data integrity** mainly by **enforcing access controls** through ACLs or capabilities, with **backup and recovery** as a secondary defense."
+    },
+    {
+      "kind": "prose",
+      "text": "**UNIX security model (the canonical example):**\n\n- The kernel plus key privileged processes form the **Trusted Computing Base (TCB)**; these run as **root** (superuser) with **unrestricted access** to all resources.\n- Every other process carries a **user identity** that limits its file access.\n- In UNIX, **everything is a file** — storage, I/O devices, network interfaces, IPC channels are all represented as files, so file permissions become a universal control.\n- The goal: protect **users from each other** and protect the **TCB from users**."
+    },
+    {
+      "kind": "example",
+      "text": "**Reading UNIX permission bits.** A file shows `rw- r-- r--` for **owner / group / others**:\n\n- owner: **read + write**\n- group: **read** only\n- others: **read** only\n\nThis is **DAC**: the owner set these and the OS enforces them. UNIX uses simple **mode bits**; **Windows** uses richer, more granular **ACLs** and attaches a **token** (encapsulating identity, permissions, and rights) to each process. Authentication (login, password check) is what binds a real person to that identity in the first place — recall: **security** handles outsiders via **user authentication**."
+    },
+    {
+      "kind": "heading",
+      "text": "9. Common OS attacks and defenses"
+    },
+    {
+      "kind": "definition",
+      "term": "Privilege escalation",
+      "text": "An attack where a process or user gains rights beyond what it should have — for example, an ordinary user process tricking the system into running its code as **root**, breaking the user/kernel boundary. It directly violates **least privilege** and, if the protection state can be altered by untrusted code, **tamperproofness**."
+    },
+    {
+      "kind": "definition",
+      "term": "Buffer overflow (high level)",
+      "text": "When a program writes more data into a memory buffer than it can hold, the excess spills into adjacent memory — possibly overwriting an **execution stack** (a protected object). An attacker can use this to corrupt control data and hijack execution. It exploits missing bounds checks — recall `read(fd, buf, count)`: if `count` exceeds the real size of `buf`, data overflows."
+    },
+    {
+      "kind": "prose",
+      "text": "**Defenses, mapped to what we learned:**\n\n- **Memory protection / address spaces** — keep a process's writes inside its own pages so a corrupted process cannot reach others.\n- **Protection rings / kernel-user separation** — privileged operations require crossing a controlled boundary, not a direct jump.\n- **Least privilege** — a compromised low-privilege process can do little damage.\n- **MAC (e.g., SELinux)** and **process isolation** — even root-level exploits are confined by mandatory labels.\n- **Sandboxing and verified boot** (Android) — apps run isolated and each boot stage cryptographically verifies the next from a hardware root of trust."
+    },
+    {
+      "kind": "prose",
+      "text": "**Android ties it all together.** Built on a customized **Linux kernel**: each app gets a **unique user identity** and runs in a **sandbox**, accessing other resources only if the user grants **permission**. **SELinux** enforces **MAC** on processes; the **system partition** is **read-only**; and from Android 7.0 **verified boot** blocks devices with compromised software from booting at all — physical, logical, and cryptographic isolation working together."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "A vulnerable program copies attacker-supplied input into a fixed-size stack buffer without checking the length, letting the attacker overwrite adjacent memory and run code. Which single OS principle, if perfectly applied, most directly LIMITS the damage even after the overflow succeeds?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Policy/mechanism separation, so the rule is stated declaratively"
+          },
+          {
+            "id": "B",
+            "content": "Least privilege, so the compromised process can do little because it holds minimal permissions"
+          },
+          {
+            "id": "C",
+            "content": "Logging, so the event is recorded after it happens"
+          },
+          {
+            "id": "D",
+            "content": "A graphical user interface, making misuse harder"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Even after a buffer overflow hijacks a process, **least privilege** (B) confines what that process can do — a minimally privileged process cannot escalate to harm the whole system. Policy/mechanism separation is a design idea, not a containment control (A). Logging records the incident but does not limit it (C). A GUI is irrelevant to exploit impact (D)."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "**Big picture to carry away:** the OS sits between users and hardware and enforces security by (1) splitting privileged kernel code from restricted user code, (2) isolating processes in their own address spaces, (3) mediating every sensitive action through a reference monitor under a chosen model (DAC/MAC/RBAC), and (4) applying least privilege everywhere. Attacks like privilege escalation and buffer overflows are attempts to break those boundaries; the defenses are simply those same boundaries enforced rigorously."
+    }
+  ]
+}

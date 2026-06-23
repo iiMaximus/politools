@@ -1,0 +1,794 @@
+{
+  "title": "Heat Exchangers: LMTD and ε-NTU",
+  "summary": "Learn to analyse heat exchangers from scratch: per-stream energy balance and capacity rates, parallel vs counter flow temperature profiles, the LMTD method with the correct $\\Delta T$ pairing, building the overall coefficient $U$, and the effectiveness-NTU method ($\\varepsilon$, $NTU$, $C_R$) for inlet-only problems. Includes fully worked tutorial problems and the rule for choosing LMTD vs $\\varepsilon$-NTU.",
+  "minutes": 45,
+  "objectives": [
+    "Write the per-stream energy balance $q=\\dot m\\,c_p\\,\\Delta T$ and compute capacity rates $C=\\dot m\\,c_p$, identifying $C_{min}$ and $C_{max}$",
+    "Sketch parallel and counter flow temperature profiles and define $\\Delta T_1,\\Delta T_2$ correctly for each",
+    "Apply the LMTD method $q=U\\,A\\,\\Delta T_{lm}$ to size area, length, or $U$",
+    "Build the overall heat transfer coefficient $U$ from series convection/conduction resistances",
+    "Use the $\\varepsilon$-NTU method ($\\varepsilon$, $NTU=UA/C_{min}$, $C_R=C_{min}/C_{max}$) for inlet-only problems",
+    "Apply the correct $\\varepsilon$-NTU relations and special cases ($C_R=1$ counter flow, $C_R=0$ phase change)",
+    "Decide when to use LMTD versus $\\varepsilon$-NTU"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What a heat exchanger does"
+    },
+    {
+      "kind": "prose",
+      "text": "A **heat exchanger** is a device that transfers heat from a hot fluid to a cold fluid without mixing them. Think of a car radiator, a boiler, or the condenser of a power plant.\n\nOur job is to connect five quantities:\n- the two mass flow rates $\\dot m_h$ and $\\dot m_c$,\n- the four inlet/outlet temperatures $T_{hi},T_{ho},T_{ci},T_{co}$,\n- the overall heat transfer coefficient $U$,\n- the heat transfer area $A$,\n- the total heat rate $q$.\n\nTwo methods do this: the **LMTD method** (when you know the temperatures) and the **$\\varepsilon$-NTU method** (when you only know inlet temperatures)."
+    },
+    {
+      "kind": "definition",
+      "term": "Flow arrangements",
+      "text": "- **Parallel flow**: both fluids enter at the same end and flow the same direction. The cold outlet can never exceed the hot outlet.\n- **Counter flow**: fluids enter at opposite ends and flow in opposite directions. Here the cold outlet **can** exceed the hot outlet ($T_{co}>T_{ho}$ is allowed).\n- **Cross flow** and **shell-and-tube**: more complex; handled with a correction factor $F$."
+    },
+    {
+      "kind": "heading",
+      "text": "Energy balance and capacity rates"
+    },
+    {
+      "kind": "prose",
+      "text": "Assume steady state, no shaft work, no heat loss to surroundings, negligible kinetic/potential energy, constant pressure, constant $c_p$. The first law for each stream gives the heat each fluid gives up or absorbs. The hot fluid **loses** heat (its $T$ drops); the cold fluid **gains** the same heat (its $T$ rises)."
+    },
+    {
+      "kind": "formula",
+      "tex": "q=\\dot m_h c_{ph}(T_{hi}-T_{ho})=\\dot m_c c_{pc}(T_{co}-T_{ci})",
+      "tag": "1",
+      "caption": "Same $q$ for both streams (energy is conserved). Always use $c_p$, never $c_v$."
+    },
+    {
+      "kind": "definition",
+      "term": "Capacity rate $C$",
+      "text": "The **capacity rate** is the heat needed to change a stream's temperature by 1 K per unit time:\n$$C_h=\\dot m_h c_{ph},\\qquad C_c=\\dot m_c c_{pc}\\quad[\\text{W/K}]$$\nThen $q=C_h(T_{hi}-T_{ho})=C_c(T_{co}-T_{ci})$. The stream with the **smaller** $C$ undergoes the **larger** temperature change. We label the smaller one $C_{min}$ and the larger $C_{max}$."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Which fluid changes temperature more?",
+      "text": "The stream with the small capacity rate swings more in temperature. In a **condenser** the hot fluid condenses at constant $T$, so $C_h\\to\\infty$ ($C_h\\gg C_c$). In an **evaporator** the cold fluid boils at constant $T$, so $C_c\\to\\infty$ ($C_c\\gg C_h$). In both, the phase-change side has $C_{max}$ and the other side is $C_{min}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Temperature profiles: parallel vs counter flow"
+    },
+    {
+      "kind": "prose",
+      "text": "The local temperature difference $\\Delta T=T_h-T_c$ drives the heat transfer, but it changes along the exchanger, so we cannot just use one $\\Delta T$.\n\n- **Parallel flow**: $\\Delta T$ is huge at the inlet and shrinks toward the outlet, approaching zero. The two outlet temperatures converge but never cross.\n- **Counter flow**: $\\Delta T$ is more uniform along the length. This is why counter flow is more effective for the same temperatures."
+    },
+    {
+      "kind": "sim",
+      "simKey": "heat-exchanger",
+      "title": "Parallel vs counter flow profiles",
+      "caption": "Slide the inlet temperatures and capacity rates. Watch how $\\Delta T_1$ and $\\Delta T_2$ are defined at the two ends, and how counter flow keeps $\\Delta T$ flatter and gives a larger $\\Delta T_{lm}$."
+    },
+    {
+      "kind": "heading",
+      "text": "The LMTD method"
+    },
+    {
+      "kind": "prose",
+      "text": "Integrating the differential energy balance along the exchanger shows the correct average $\\Delta T$ to use in $q=UA\\,\\Delta T_m$ is the **log mean temperature difference** (LMTD), not the arithmetic mean."
+    },
+    {
+      "kind": "formula",
+      "tex": "q=U\\,A\\,\\Delta T_{lm},\\qquad \\Delta T_{lm}=\\frac{\\Delta T_1-\\Delta T_2}{\\ln(\\Delta T_1/\\Delta T_2)}",
+      "tag": "2",
+      "caption": "$U$ = overall heat transfer coefficient $[\\mathrm{W/m^2K}]$, $A$ = heat transfer area $[\\mathrm{m^2}]$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Define ΔT1 and ΔT2 correctly — the favourite mistake",
+      "text": "The end differences depend on the arrangement:\n- **Parallel flow**: $\\Delta T_1=T_{hi}-T_{ci}$ (inlet end), $\\Delta T_2=T_{ho}-T_{co}$ (outlet end).\n- **Counter flow**: $\\Delta T_1=T_{hi}-T_{co}$, $\\Delta T_2=T_{ho}-T_{ci}$.\n\nFor the same four temperatures, $\\Delta T_{lm,CF}>\\Delta T_{lm,PF}$, so counter flow needs **less area** for the same $q$. Mixing up these pairings is the single most common error."
+    },
+    {
+      "kind": "definition",
+      "term": "Overall heat transfer coefficient U",
+      "text": "Heat crosses convection (hot fluid $\\to$ wall), conduction (through wall), convection (wall $\\to$ cold fluid). These resistances add:\n$$\\frac{1}{UA}=R_{conv,h}+R_{cond}+R_{conv,c}=\\frac{1}{h_iA_i}+\\frac{\\ln(r_e/r_i)}{2\\pi Lk}+\\frac{1}{h_eA_e}$$\nBecause inner and outer areas differ, $UA$ is the unambiguous quantity: $UA=U_iA_i=U_eA_e$. For a thin tube where $A_i\\approx A_e$, $\\;U=\\big(1/h_i+1/h_e\\big)^{-1}$."
+    },
+    {
+      "kind": "steps",
+      "title": "LMTD method — reliable recipe",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Energy balance: from the known stream, compute $q=\\dot m\\,c_p\\,\\Delta T$. Use it to find any missing outlet temperature on the other stream."
+        },
+        {
+          "label": "2",
+          "text": "Identify the arrangement and write $\\Delta T_1,\\Delta T_2$ at the two ends with the correct pairing."
+        },
+        {
+          "label": "3",
+          "text": "Compute $\\Delta T_{lm}=(\\Delta T_1-\\Delta T_2)/\\ln(\\Delta T_1/\\Delta T_2)$."
+        },
+        {
+          "label": "4",
+          "text": "Apply $q=UA\\,\\Delta T_{lm}$ to solve for the unknown ($A$, or $U$, or $L$ via $A=\\pi D L$)."
+        },
+        {
+          "label": "5",
+          "text": "For cross/shell-and-tube, multiply by correction factor: $q=UAF\\,\\Delta T_{lm,CF}$, with $F=F(R,P)$ from charts."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked LMTD (Tutorial 8.1)",
+      "text": "**Given (parallel flow):** $\\dot m_c=2\\ \\mathrm{kg/s}$, $c_{pc}=1500\\ \\mathrm{J/kgK}$, $T_{ci}=5$°C; $\\dot m_h=0.3\\ \\mathrm{kg/s}$, $c_{ph}=4186\\ \\mathrm{J/kgK}$, $T_{hi}=80$°C, $T_{ho}=40$°C; $U=85\\ \\mathrm{W/m^2K}$. Find $A_{PF}$ and $A_{CF}$.\n\n**Capacity rates:** $C_h=0.3\\times4186=1255.8\\ \\mathrm{W/K}=C_{min}$; $C_c=2\\times1500=3000\\ \\mathrm{W/K}=C_{max}$.\n\n**Heat rate:** $q=C_h(T_{hi}-T_{ho})=1255.8\\times(80-40)=50{,}232\\ \\mathrm{W}$.\n\n**Cold outlet:** $T_{co}=T_{ci}+q/C_c=5+50232/3000=21.7$°C.\n\n**Parallel:** $\\Delta T_1=80-5=75$°C, $\\Delta T_2=40-21.7=18.3$°C. $\\Delta T_{lm,PF}=(75-18.3)/\\ln(75/18.3)=40.2$°C. So $A_{PF}=q/(U\\,\\Delta T_{lm})=50232/(85\\times40.2)=14.7\\ \\mathrm{m^2}$.\n\n**Counter:** $q$ and $T_{co}$ are unchanged. $\\Delta T_1=80-21.7=58.3$°C, $\\Delta T_2=40-5=35$°C. $\\Delta T_{lm,CF}=(58.3-35)/\\ln(58.3/35)=45.7$°C. $A_{CF}=50232/(85\\times45.7)=12.9\\ \\mathrm{m^2}$.\n\n**Result:** $A_{CF}=12.9\\ \\mathrm{m^2}<A_{PF}=14.7\\ \\mathrm{m^2}$ — counter flow needs less area, as expected."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Inline check on ΔT pairing.",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A **counter flow** exchanger has $T_{hi}=120$°C, $T_{ho}=60$°C, $T_{ci}=20$°C, $T_{co}=80$°C. What are $\\Delta T_1$ and $\\Delta T_2$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\Delta T_1=40$°C, $\\Delta T_2=40$°C"
+          },
+          {
+            "id": "B",
+            "content": "$\\Delta T_1=100$°C, $\\Delta T_2=40$°C"
+          },
+          {
+            "id": "C",
+            "content": "$\\Delta T_1=60$°C, $\\Delta T_2=60$°C"
+          },
+          {
+            "id": "D",
+            "content": "$\\Delta T_1=80$°C, $\\Delta T_2=20$°C"
+          }
+        ],
+        "correct": "A",
+        "explanation": "Counter flow pairs $\\Delta T_1=T_{hi}-T_{co}=120-80=40$°C and $\\Delta T_2=T_{ho}-T_{ci}=60-20=40$°C. Both ends equal means $C_h=C_c$ and a constant $\\Delta T$ profile, so $\\Delta T_{lm}=40$°C too. B uses the parallel-flow pairing $T_{hi}-T_{ci}$. C and D mix hot-with-hot or arbitrary differences and ignore the counter-flow end-matching rule.",
+        "theory": "For counter flow, $\\Delta T_1=T_{hi}-T_{co}$ and $\\Delta T_2=T_{ho}-T_{ci}$; equal end differences indicate balanced capacity rates."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "The effectiveness-NTU method"
+    },
+    {
+      "kind": "prose",
+      "text": "When you know only the **inlet** temperatures (not the outlets), LMTD would require iteration. The $\\varepsilon$-NTU method avoids that. It uses three dimensionless groups."
+    },
+    {
+      "kind": "definition",
+      "term": "ε, NTU, CR",
+      "text": "- **Effectiveness** $\\varepsilon=\\dfrac{q}{q_{max}}$, with $q_{max}=C_{min}(T_{hi}-T_{ci})$ (the most heat an infinitely long counter flow exchanger could move). $0\\le\\varepsilon\\le1$.\n- **Number of Transfer Units** $NTU=\\dfrac{UA}{C_{min}}$ — a dimensionless size of the exchanger.\n- **Capacity ratio** $C_R=\\dfrac{C_{min}}{C_{max}}$, with $0\\le C_R\\le1$."
+    },
+    {
+      "kind": "formula",
+      "tex": "q_{max}=C_{min}(T_{hi}-T_{ci}),\\qquad q=\\varepsilon\\,C_{min}(T_{hi}-T_{ci})",
+      "tag": "3",
+      "caption": "$q_{max}$ always uses $C_{min}$ and the full inlet temperature gap $T_{hi}-T_{ci}$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "qmax uses Cmin, not Cmax",
+      "text": "The maximum heat is limited by the fluid that changes temperature the most — the $C_{min}$ fluid. If you plug $C_{max}$ into $q_{max}$ you overestimate it and get $\\varepsilon$ too small. Also $T_{hi}-T_{ci}$ uses the two **inlets**, the largest possible difference in the device."
+    },
+    {
+      "kind": "prose",
+      "text": "Effectiveness also follows directly from the temperature change of the $C_{min}$ fluid:\n- If $C_{min}=C_h$: $\\;\\varepsilon=\\dfrac{T_{hi}-T_{ho}}{T_{hi}-T_{ci}}$.\n- If $C_{min}=C_c$: $\\;\\varepsilon=\\dfrac{T_{co}-T_{ci}}{T_{hi}-T_{ci}}$.\n\nThe denominator is always $T_{hi}-T_{ci}$; the numerator is the temperature change of whichever fluid is $C_{min}$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\varepsilon_{PF}=\\frac{1-e^{-NTU(1+C_R)}}{1+C_R},\\qquad \\varepsilon_{CF}=\\frac{1-e^{-NTU(1-C_R)}}{1-C_R\\,e^{-NTU(1-C_R)}}",
+      "tag": "4",
+      "caption": "$\\varepsilon$-NTU relations for concentric pipes. Parallel flow (left), counter flow (right)."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Special cases worth memorising",
+      "text": "- **Counter flow with $C_R=1$** (balanced, $C_h=C_c$): $\\;\\varepsilon_{CF}=\\dfrac{NTU}{1+NTU}$.\n- **$C_R=0$** (one fluid changes phase, $C_{max}\\to\\infty$): both arrangements give $\\;\\varepsilon=1-e^{-NTU}$.\n- For the **same NTU and $C_R$**, counter flow always gives the highest $\\varepsilon$ of the standard arrangements."
+    },
+    {
+      "kind": "steps",
+      "title": "ε-NTU method — reliable recipe",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Compute $C_h,C_c$; identify $C_{min}$ and $C_{max}$; form $C_R=C_{min}/C_{max}$."
+        },
+        {
+          "label": "2",
+          "text": "Compute $NTU=UA/C_{min}$."
+        },
+        {
+          "label": "3",
+          "text": "Pick the right $\\varepsilon$-NTU relation for the arrangement and evaluate $\\varepsilon$."
+        },
+        {
+          "label": "4",
+          "text": "Get heat: $q=\\varepsilon\\,C_{min}(T_{hi}-T_{ci})$."
+        },
+        {
+          "label": "5",
+          "text": "Back out outlet temperatures from $q=C_h(T_{hi}-T_{ho})=C_c(T_{co}-T_{ci})$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked ε-NTU (Tutorial 8.2)",
+      "text": "**Given (counter flow):** $\\dot m_h=1.5\\ \\mathrm{kg/s}$, $c_{ph}=1883\\ \\mathrm{J/kgK}$, $T_{hi}=115$°C; $\\dot m_c=0.75\\ \\mathrm{kg/s}$, $c_{pc}=4184\\ \\mathrm{J/kgK}$, $T_{ci}=40$°C; $U=340\\ \\mathrm{W/m^2K}$, $A=13\\ \\mathrm{m^2}$. Find $q$, $T_{ho}$, $T_{co}$.\n\n**Capacity rates:** $C_h=1.5\\times1883=2824.5\\ \\mathrm{W/K}=C_{min}$; $C_c=0.75\\times4184=3138\\ \\mathrm{W/K}=C_{max}$. So $C_R=2824.5/3138=0.90$.\n\n**NTU:** $NTU=UA/C_{min}=340\\times13/2824.5=1.56$.\n\n**Effectiveness (counter):** $\\varepsilon_{CF}=\\dfrac{1-e^{-1.56(1-0.9)}}{1-0.9\\,e^{-1.56(1-0.9)}}=\\dfrac{1-e^{-0.156}}{1-0.9e^{-0.156}}=0.62$.\n\n**Heat:** $q=\\varepsilon C_{min}(T_{hi}-T_{ci})=0.62\\times2824.5\\times(115-40)=131{,}300\\ \\mathrm{W}\\approx131.3\\ \\mathrm{kW}$.\n\n**Outlets:** $T_{ho}=T_{hi}-q/C_h=115-131339/2824.5=68.5$°C; $T_{co}=T_{ci}+q/C_c=40+131339/3138=81.8$°C.\n\nNote $T_{co}=81.8$°C $>T_{ho}=68.5$°C — only counter flow allows this crossover."
+    },
+    {
+      "kind": "heading",
+      "text": "When to use which method"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "LMTD vs ε-NTU",
+      "text": "- Use **LMTD** when you know at least **three of the four** temperatures (typical design: find the area for required outlet temps). It is direct.\n- Use **ε-NTU** when you know **only the two inlet** temperatures plus $UA$ (typical rating: find how the exchanger performs). LMTD here would need iteration.\n\nBoth describe the same physics and must give the same answer if you have the same data."
+    },
+    {
+      "kind": "checkpoint",
+      "text": "Inline check on method choice and qmax.",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Air ($C=330\\ \\mathrm{W/K}$) enters at 70°C; water ($C=840\\ \\mathrm{W/K}$) enters at 20°C. You know $UA$ but neither outlet temperature. Which is true?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Use LMTD directly; $q_{max}=840\\times(70-20)$"
+          },
+          {
+            "id": "B",
+            "content": "Use ε-NTU; $q_{max}=330\\times(70-20)=16.5\\ \\mathrm{kW}$"
+          },
+          {
+            "id": "C",
+            "content": "Use ε-NTU; $q_{max}=840\\times(70-20)=42\\ \\mathrm{kW}$"
+          },
+          {
+            "id": "D",
+            "content": "Use LMTD directly; $q_{max}=330\\times(70-20)=16.5\\ \\mathrm{kW}$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "With only inlet temperatures known, LMTD needs iteration, so ε-NTU is the right tool — eliminating A and D. $q_{max}$ must use $C_{min}=330\\ \\mathrm{W/K}$ (the air) and the inlet gap $70-20=50\\ \\mathrm{K}$, giving 16.5 kW. C wrongly uses $C_{max}=840\\ \\mathrm{W/K}$, overstating the ceiling.",
+        "theory": "Choose ε-NTU when only inlets are known; $q_{max}=C_{min}(T_{hi}-T_{ci})$ always uses the minimum capacity rate."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "Units and sign housekeeping",
+      "text": "- $c_p$ in J/kgK gives $C$ in W/K and $q$ in W; if $c_p$ is in kJ/kgK keep it consistent.\n- Temperature **differences** are identical in °C and K, so LMTD and capacity-rate equations can use °C directly. But any **absolute** temperature (rare here, e.g. radiation) needs K.\n- $q$, $\\varepsilon$, and $T_{co}$ do **not** depend on flow arrangement when the same four temperatures are fixed — only the required area does."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "medium",
+      "prompt": "A cross flow exchanger has $A=5\\ \\mathrm{m^2}$. Air ($\\dot m=0.3\\ \\mathrm{kg/s}$, $c_p=1100\\ \\mathrm{J/kgK}$) enters at 70°C and is cooled by water ($\\dot m=0.2\\ \\mathrm{kg/s}$, $c_p=4200\\ \\mathrm{J/kgK}$) entering at 20°C. The exchanged power is 12 kW. The effectiveness is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.044"
+        },
+        {
+          "id": "B",
+          "content": "0.286"
+        },
+        {
+          "id": "C",
+          "content": "0.113"
+        },
+        {
+          "id": "D",
+          "content": "0.727"
+        }
+      ],
+      "correct": "D",
+      "explanation": "$C_{air}=0.3\\times1100=330\\ \\mathrm{W/K}=C_{min}$; $C_{water}=0.2\\times4200=840\\ \\mathrm{W/K}$. $q_{max}=C_{min}(T_{hi}-T_{ci})=330\\times50=16500\\ \\mathrm{W}$. $\\varepsilon=q/q_{max}=12000/16500=0.727$. B uses $C_{max}$ (840) in $q_{max}$ giving 0.286. A and C come from dividing by area or wrong gaps and have no physical basis.",
+      "theory": "$\\varepsilon=q/q_{max}$ with $q_{max}=C_{min}(T_{hi}-T_{ci})$.",
+      "source": "Heat Transfer Quiz Q11"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The number of transfer units NTU is defined as:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$UA/C_{max}$"
+        },
+        {
+          "id": "B",
+          "content": "$C_{min}/C_{max}$"
+        },
+        {
+          "id": "C",
+          "content": "$UA/C_{min}$"
+        },
+        {
+          "id": "D",
+          "content": "$q/q_{max}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "By definition $NTU=UA/C_{min}$ — a dimensionless exchanger size. A uses $C_{max}$ (wrong reference capacity). B is the capacity ratio $C_R$. D is the effectiveness $\\varepsilon$.",
+      "theory": "$NTU=UA/C_{min}$; $C_R=C_{min}/C_{max}$; $\\varepsilon=q/q_{max}$.",
+      "source": "Lecture HT3 — Definitions"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "For the same four inlet/outlet temperatures, how do the log mean temperature differences compare?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\Delta T_{lm,PF}>\\Delta T_{lm,CF}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\Delta T_{lm,CF}>\\Delta T_{lm,PF}$"
+        },
+        {
+          "id": "C",
+          "content": "They are always equal"
+        },
+        {
+          "id": "D",
+          "content": "It depends only on $U$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Counter flow keeps $\\Delta T$ flatter along the length, giving a larger log mean difference, so $\\Delta T_{lm,CF}>\\Delta T_{lm,PF}$. Hence counter flow needs less area for the same $q$. A reverses it. C is false in general (they only coincide in the degenerate $C_h=C_c$ counter case). D is irrelevant — $\\Delta T_{lm}$ depends on temperatures, not $U$.",
+      "theory": "$\\Delta T_{lm,CF}\\ge\\Delta T_{lm,PF}$ for identical end temperatures; counter flow is more area-efficient.",
+      "source": "Lecture HT3 — Comparison PF & CF"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In a condenser the hot fluid condenses at constant temperature. Which statement is correct?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$C_h\\gg C_c$, so $C_{min}=C_c$ and $\\varepsilon=(T_{co}-T_{ci})/(T_{hi}-T_{ci})$"
+        },
+        {
+          "id": "B",
+          "content": "$C_c\\gg C_h$, so $C_{min}=C_h$ and $\\varepsilon=(T_{hi}-T_{ho})/(T_{hi}-T_{ci})$"
+        },
+        {
+          "id": "C",
+          "content": "$C_R=1$ and $\\varepsilon=NTU/(1+NTU)$"
+        },
+        {
+          "id": "D",
+          "content": "$q_{max}=C_{max}(T_{hi}-T_{ci})$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Phase change at constant $T$ means the condensing (hot) side has effectively infinite capacity rate, $C_h\\gg C_c$, so $C_{min}=C_c$ and effectiveness uses the cold fluid's rise. B describes an evaporator (cold side condensing). C is the balanced $C_R=1$ case, opposite of $C_R=0$ here. D wrongly uses $C_{max}$ in $q_{max}$.",
+      "theory": "Condensation: $C_h\\gg C_c$, $C_R\\to0$, $\\varepsilon=1-e^{-NTU}$; effectiveness uses the $C_{min}$ (non-phase-change) fluid.",
+      "source": "Lecture HT3 — Evaporation and condensation"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a counter flow exchanger with balanced capacity rates ($C_h=C_c$), the effectiveness is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$1-e^{-NTU}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\dfrac{NTU}{1+NTU}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\dfrac{1}{1+NTU}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\dfrac{1-e^{-2NTU}}{2}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "When $C_R=1$ the counter flow relation reduces to $\\varepsilon_{CF}=NTU/(1+NTU)$ (equivalently $1/(1+1/NTU)$). A is the $C_R=0$ limit (phase change). C and D are not valid effectiveness expressions for this case.",
+      "theory": "Counter flow, $C_R=1$: $\\varepsilon=NTU/(1+NTU)$. Phase change ($C_R=0$): $\\varepsilon=1-e^{-NTU}$.",
+      "source": "Lecture HT3 — CF effectiveness with Ch=Cc"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Counter flow: $\\dot m_h c_{ph}=2824.5\\ \\mathrm{W/K}$, $\\dot m_c c_{pc}=3138\\ \\mathrm{W/K}$, $T_{hi}=115$°C, $T_{ci}=40$°C, $UA=4420\\ \\mathrm{W/K}$. The heat rate is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "131 kW"
+        },
+        {
+          "id": "B",
+          "content": "212 kW"
+        },
+        {
+          "id": "C",
+          "content": "95 kW"
+        },
+        {
+          "id": "D",
+          "content": "159 kW"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$C_{min}=2824.5$, $C_R=0.90$, $NTU=4420/2824.5=1.56$. $\\varepsilon_{CF}=(1-e^{-0.156})/(1-0.9e^{-0.156})=0.62$. $q=0.62\\times2824.5\\times75=131\\ \\mathrm{kW}$. B uses $q_{max}=C_{min}\\Delta T$ with $\\varepsilon=1$. C uses parallel-flow ε (smaller). D mistakenly uses $C_{max}$ in $q$.",
+      "theory": "$q=\\varepsilon C_{min}(T_{hi}-T_{ci})$ with the counter-flow ε relation.",
+      "source": "Tutorial 8.2"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Parallel flow: $\\Delta T_1=75$°C at the inlet and $\\Delta T_2=18.3$°C at the outlet. The LMTD is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "46.7°C"
+        },
+        {
+          "id": "B",
+          "content": "40.2°C"
+        },
+        {
+          "id": "C",
+          "content": "36.6°C"
+        },
+        {
+          "id": "D",
+          "content": "56.7°C"
+        }
+      ],
+      "correct": "B",
+      "explanation": "$\\Delta T_{lm}=(75-18.3)/\\ln(75/18.3)=56.7/\\ln(4.10)=56.7/1.41=40.2$°C. A is the arithmetic mean wrongly applied to another problem. C is a miscomputed log. D is the numerator $\\Delta T_1-\\Delta T_2$, forgetting to divide by the log.",
+      "theory": "$\\Delta T_{lm}=(\\Delta T_1-\\Delta T_2)/\\ln(\\Delta T_1/\\Delta T_2)$; the LMTD lies below the arithmetic mean.",
+      "source": "Tutorial 8.1"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The maximum possible heat rate in any heat exchanger equals:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$C_{max}(T_{hi}-T_{ci})$"
+        },
+        {
+          "id": "B",
+          "content": "$C_{min}(T_{ho}-T_{co})$"
+        },
+        {
+          "id": "C",
+          "content": "$C_{min}(T_{hi}-T_{ci})$"
+        },
+        {
+          "id": "D",
+          "content": "$UA\\,\\Delta T_{lm}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$q_{max}=C_{min}(T_{hi}-T_{ci})$: the smallest-capacity fluid undergoes the largest possible temperature change (the full inlet gap). A overestimates with $C_{max}$. B uses outlet temperatures, which are unknown and smaller. D is the actual $q$ via LMTD, not the ideal maximum.",
+      "theory": "$q_{max}=C_{min}(T_{hi}-T_{ci})$, achieved by an infinitely long counter flow exchanger.",
+      "source": "Lecture HT3 — Definitions"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In a counter flow exchanger it is possible that:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$T_{co}>T_{ho}$ (cold outlet exceeds hot outlet)"
+        },
+        {
+          "id": "B",
+          "content": "$T_{co}>T_{hi}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\varepsilon>1$"
+        },
+        {
+          "id": "D",
+          "content": "$\\Delta T_{lm}$ is negative"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Counter flow keeps a favourable $\\Delta T$ everywhere, so the cold outlet can exceed the hot outlet ($T_{co}>T_{ho}$) — impossible in parallel flow. B violates the second law: the cold fluid can never exceed the hot inlet. C is impossible since $\\varepsilon=q/q_{max}\\le1$. D cannot happen because $\\Delta T_{lm}$ is built from positive end differences.",
+      "theory": "Counter flow allows $T_{co}>T_{ho}$ but never $T_{co}>T_{hi}$; $0\\le\\varepsilon\\le1$.",
+      "source": "Lecture HT3 — Comparison"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Parallel flow, $C_{min}=C_c=4186\\ \\mathrm{W/K}$, $C_{max}=C_h=12500\\ \\mathrm{W/K}$, $UA=3000\\ \\mathrm{W/K}$, $T_{hi}=250$°C, $T_{ci}=15$°C. The effectiveness is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.717"
+        },
+        {
+          "id": "B",
+          "content": "0.335"
+        },
+        {
+          "id": "C",
+          "content": "0.461"
+        },
+        {
+          "id": "D",
+          "content": "0.539"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$NTU=3000/4186=0.717$, $C_R=4186/12500=0.335$. $\\varepsilon_{PF}=(1-e^{-NTU(1+C_R)})/(1+C_R)=(1-e^{-0.717\\times1.335})/1.335=(1-e^{-0.957})/1.335=0.616/1.335=0.461$. A is NTU itself (not ε). B is $C_R$. D is the counter-flow value for similar numbers.",
+      "theory": "$\\varepsilon_{PF}=(1-e^{-NTU(1+C_R)})/(1+C_R)$.",
+      "source": "Tutorial 8.6"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The units of the overall heat transfer coefficient $U$ are:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\mathrm{K/W}$"
+        },
+        {
+          "id": "C",
+          "content": "$\\mathrm{W/m^2}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\mathrm{m^2K/W}$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "From $q=UA\\,\\Delta T$, $U=q/(A\\Delta T)$ has units $\\mathrm{W/(m^2\\cdot K)}$. B is a thermal resistance. C is a heat flux. D is the inverse, i.e. an area-specific resistance.",
+      "theory": "$q=UA\\,\\Delta T\\Rightarrow[U]=\\mathrm{W/m^2K}$.",
+      "source": "Heat Transfer Quiz Q4"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Which equation correctly combines the resistances for the overall coefficient of a tube exchanger?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$UA=\\dfrac{1}{h_iA_i}+\\dfrac{\\ln(r_e/r_i)}{2\\pi Lk}+\\dfrac{1}{h_eA_e}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\dfrac{1}{UA}=\\dfrac{1}{h_iA_i}+\\dfrac{\\ln(r_e/r_i)}{2\\pi Lk}+\\dfrac{1}{h_eA_e}$"
+        },
+        {
+          "id": "C",
+          "content": "$UA=h_iA_i+\\dfrac{2\\pi Lk}{\\ln(r_e/r_i)}+h_eA_e$"
+        },
+        {
+          "id": "D",
+          "content": "$\\dfrac{1}{UA}=h_iA_i+h_eA_e$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Resistances in series add, and $1/(UA)$ is the total resistance: $1/UA=R_{conv,h}+R_{cond}+R_{conv,c}$. A sets $UA$ (a conductance) equal to a sum of resistances — dimensionally wrong. C and D add conductances directly, which is only valid for parallel paths, not this series chain.",
+      "theory": "$1/(UA)=1/(h_iA_i)+\\ln(r_e/r_i)/(2\\pi Lk)+1/(h_eA_e)$; series resistances add.",
+      "source": "Lecture HT3 — Overall U"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "You must size an exchanger to bring a fluid to a specified outlet temperature; you know three of the four temperatures and $U$. The most direct method is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "ε-NTU, because outlets are unknown"
+        },
+        {
+          "id": "B",
+          "content": "LMTD, applied directly with $q=UA\\,\\Delta T_{lm}$"
+        },
+        {
+          "id": "C",
+          "content": "Iterate ε-NTU until temperatures match"
+        },
+        {
+          "id": "D",
+          "content": "Neither; only charts can solve it"
+        }
+      ],
+      "correct": "B",
+      "explanation": "With three temperatures known, you get the fourth from the energy balance, compute $\\Delta T_{lm}$, and solve $q=UA\\,\\Delta T_{lm}$ for $A$ in one shot — that is the LMTD design method. A and C are for the rating problem where only inlets are known. D is false; the algebra is closed-form.",
+      "theory": "LMTD is direct when $\\ge3$ temperatures are known; ε-NTU is for inlet-only data.",
+      "source": "Lecture HT3 — ε-NTU introduction"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Counter flow exchanger with $C_R=1$ has $UA/C_{min}=1$. Its effectiveness is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "0.50"
+        },
+        {
+          "id": "B",
+          "content": "0.63"
+        },
+        {
+          "id": "C",
+          "content": "0.37"
+        },
+        {
+          "id": "D",
+          "content": "1.00"
+        }
+      ],
+      "correct": "A",
+      "explanation": "For $C_R=1$, $\\varepsilon_{CF}=NTU/(1+NTU)=1/(1+1)=0.50$. B is $1-e^{-1}=0.63$, the $C_R=0$ result (wrong here). C is $e^{-1}$. D would require an infinitely large exchanger.",
+      "theory": "Counter flow with $C_R=1$: $\\varepsilon=NTU/(1+NTU)$.",
+      "source": "Lecture HT3 — CF with Ch=Cc"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In the energy balance $q=\\dot m\\,c_p\\,\\Delta T$ for a heat exchanger stream, the correct specific heat is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$c_v$, since volume is roughly constant"
+        },
+        {
+          "id": "B",
+          "content": "the average of $c_p$ and $c_v$"
+        },
+        {
+          "id": "C",
+          "content": "$c_p$, since the process is at constant pressure"
+        },
+        {
+          "id": "D",
+          "content": "$k=c_p/c_v$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Heat exchanger flows are modelled as steady, constant-pressure open systems, so the enthalpy change uses $c_p$. A is the closed-rigid-volume choice, not applicable to a flow device. B and D have no thermodynamic basis here.",
+      "theory": "Open SSSF, constant pressure: $q=\\dot m\\,c_p\\,\\Delta T$ (enthalpy-based).",
+      "source": "Lecture HT3 — Fluids energy balances"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A thin-walled concentric tube has $h_i=2250\\ \\mathrm{W/m^2K}$ (water) and $h_e=38.8\\ \\mathrm{W/m^2K}$ (oil), wall resistance negligible. The overall coefficient $U$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$1144\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "B",
+          "content": "$38.1\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "C",
+          "content": "$2289\\ \\mathrm{W/m^2K}$"
+        },
+        {
+          "id": "D",
+          "content": "$76.6\\ \\mathrm{W/m^2K}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "For a thin wall, $U=(1/h_i+1/h_e)^{-1}=(1/2250+1/38.8)^{-1}=(0.000444+0.02577)^{-1}=38.1\\ \\mathrm{W/m^2K}$. The small coefficient (oil) dominates the total resistance. A is the arithmetic mean. C is the sum. D is twice the smaller coefficient — none respect series resistance addition.",
+      "theory": "Series convective resistances: $U=(1/h_i+1/h_e)^{-1}$; the smallest $h$ controls $U$.",
+      "source": "Tutorial 8.8"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Parallel vs counter flow sizing",
+      "meta": "Tutorial 8 · concentric pipe · written-test style",
+      "difficulty": "medium",
+      "statement": "A concentric-pipe heat exchanger uses hot water to heat a process fluid. Hot: $\\dot m_h=0.3\\ \\mathrm{kg/s}$, $c_{ph}=4186\\ \\mathrm{J/kgK}$, $T_{hi}=80$°C, $T_{ho}=40$°C. Cold: $\\dot m_c=2\\ \\mathrm{kg/s}$, $c_{pc}=1500\\ \\mathrm{J/kgK}$, $T_{ci}=5$°C. Overall coefficient $U=85\\ \\mathrm{W/m^2K}$. Find the required area for (a) parallel flow and (b) counter flow, and comment.",
+      "given": "$\\dot m_h=0.3$, $c_{ph}=4186$, $T_{hi}=80$°C, $T_{ho}=40$°C; $\\dot m_c=2$, $c_{pc}=1500$, $T_{ci}=5$°C; $U=85\\ \\mathrm{W/m^2K}$.",
+      "steps": [
+        {
+          "title": "Capacity rates and q",
+          "content": "$C_h=0.3\\times4186=1255.8\\ \\mathrm{W/K}=C_{min}$; $C_c=2\\times1500=3000\\ \\mathrm{W/K}=C_{max}$. $q=C_h(T_{hi}-T_{ho})=1255.8\\times40=50{,}232\\ \\mathrm{W}$."
+        },
+        {
+          "title": "Cold outlet",
+          "content": "$T_{co}=T_{ci}+q/C_c=5+50232/3000=21.7$°C (same for both arrangements)."
+        },
+        {
+          "title": "Parallel-flow LMTD and area",
+          "content": "$\\Delta T_1=80-5=75$°C, $\\Delta T_2=40-21.7=18.3$°C. $\\Delta T_{lm,PF}=(75-18.3)/\\ln(75/18.3)=40.2$°C. $A_{PF}=q/(U\\Delta T_{lm})=50232/(85\\times40.2)=14.7\\ \\mathrm{m^2}$."
+        },
+        {
+          "title": "Counter-flow LMTD and area",
+          "content": "$\\Delta T_1=80-21.7=58.3$°C, $\\Delta T_2=40-5=35$°C. $\\Delta T_{lm,CF}=(58.3-35)/\\ln(58.3/35)=45.7$°C. $A_{CF}=50232/(85\\times45.7)=12.9\\ \\mathrm{m^2}$."
+        }
+      ],
+      "finalAnswer": "$A_{PF}=14.7\\ \\mathrm{m^2}$, $A_{CF}=12.9\\ \\mathrm{m^2}$. Counter flow needs about 12% less area because $\\Delta T_{lm,CF}>\\Delta T_{lm,PF}$ for the same temperatures.",
+      "tips": "Compute $q$ and the missing outlet first — they do not depend on arrangement. Only the $\\Delta T_1,\\Delta T_2$ pairing changes between PF and CF."
+    },
+    {
+      "title": "Rating a counter flow exchanger with ε-NTU",
+      "meta": "Tutorial 8 · ε-NTU · written-test style",
+      "difficulty": "hard",
+      "statement": "A counter flow exchanger has $UA$ fixed by its geometry. Hot fluid: $\\dot m_h=1.5\\ \\mathrm{kg/s}$, $c_{ph}=1883\\ \\mathrm{J/kgK}$, $T_{hi}=115$°C. Cold fluid: $\\dot m_c=0.75\\ \\mathrm{kg/s}$, $c_{pc}=4184\\ \\mathrm{J/kgK}$, $T_{ci}=40$°C. $U=340\\ \\mathrm{W/m^2K}$, $A=13\\ \\mathrm{m^2}$. Only the inlets are known. Find $q$, $T_{ho}$ and $T_{co}$.",
+      "given": "$\\dot m_h=1.5$, $c_{ph}=1883$, $T_{hi}=115$°C; $\\dot m_c=0.75$, $c_{pc}=4184$, $T_{ci}=40$°C; $U=340$, $A=13\\ \\mathrm{m^2}$.",
+      "steps": [
+        {
+          "title": "Why ε-NTU",
+          "content": "Only inlet temperatures are known, so LMTD would need iteration. Use ε-NTU."
+        },
+        {
+          "title": "Capacity rates, CR, NTU",
+          "content": "$C_h=1.5\\times1883=2824.5\\ \\mathrm{W/K}=C_{min}$; $C_c=0.75\\times4184=3138\\ \\mathrm{W/K}=C_{max}$. $C_R=2824.5/3138=0.90$. $NTU=UA/C_{min}=340\\times13/2824.5=1.56$."
+        },
+        {
+          "title": "Effectiveness",
+          "content": "$\\varepsilon_{CF}=\\dfrac{1-e^{-NTU(1-C_R)}}{1-C_R e^{-NTU(1-C_R)}}=\\dfrac{1-e^{-0.156}}{1-0.9e^{-0.156}}=0.62$."
+        },
+        {
+          "title": "Heat and outlets",
+          "content": "$q=\\varepsilon C_{min}(T_{hi}-T_{ci})=0.62\\times2824.5\\times75=131{,}300\\ \\mathrm{W}$. $T_{ho}=115-131339/2824.5=68.5$°C; $T_{co}=40+131339/3138=81.8$°C."
+        }
+      ],
+      "finalAnswer": "$q\\approx131.3\\ \\mathrm{kW}$, $T_{ho}=68.5$°C, $T_{co}=81.8$°C. Note $T_{co}>T_{ho}$, possible only in counter flow.",
+      "tips": "$q_{max}$ uses $C_{min}$ and the inlet gap $T_{hi}-T_{ci}$. Check that the energy balance closes: $C_h\\Delta T_h=C_c\\Delta T_c$."
+    },
+    {
+      "title": "Finding length from U and LMTD",
+      "meta": "Tutorial 8 · design · written-test style",
+      "difficulty": "hard",
+      "statement": "Water is heated from $T_{ci}=20$°C to $T_{co}=70$°C by a hot stream cooling from $T_{hi}=150$°C to $T_{ho}=80$°C in a counter flow concentric tube of inner diameter $D_i$. Cold side $\\dot m_c c_{pc}$ gives $q=105\\ \\mathrm{kW}$; $U=350\\ \\mathrm{W/m^2K}$. (a) Find the required area. (b) If instead it were parallel flow with the same temperatures, would the area be larger or smaller? Justify.",
+      "given": "$T_{hi}=150$°C, $T_{ho}=80$°C, $T_{ci}=20$°C, $T_{co}=70$°C; $q=105\\ \\mathrm{kW}$; $U=350\\ \\mathrm{W/m^2K}$.",
+      "steps": [
+        {
+          "title": "Counter-flow end differences",
+          "content": "$\\Delta T_1=T_{hi}-T_{co}=150-70=80$°C; $\\Delta T_2=T_{ho}-T_{ci}=80-20=60$°C."
+        },
+        {
+          "title": "Counter LMTD",
+          "content": "$\\Delta T_{lm,CF}=(80-60)/\\ln(80/60)=20/0.2877=69.5$°C."
+        },
+        {
+          "title": "Area (counter)",
+          "content": "$A_{CF}=q/(U\\Delta T_{lm})=105000/(350\\times69.5)=4.3\\ \\mathrm{m^2}$."
+        },
+        {
+          "title": "Parallel comparison",
+          "content": "Parallel pairing: $\\Delta T_1=150-20=130$°C, $\\Delta T_2=80-70=10$°C, $\\Delta T_{lm,PF}=(130-10)/\\ln(13)=46.8$°C $<69.5$°C, so $A_{PF}=105000/(350\\times46.8)=6.4\\ \\mathrm{m^2}>A_{CF}$."
+        }
+      ],
+      "finalAnswer": "$A_{CF}=4.3\\ \\mathrm{m^2}$; parallel flow would need $6.4\\ \\mathrm{m^2}$ (larger), because $\\Delta T_{lm,PF}<\\Delta T_{lm,CF}$.",
+      "tips": "Length follows from $A=\\pi D_i L$ once $A$ is known. Smaller LMTD always means more area for the same $q$ and $U$."
+    },
+    {
+      "title": "Conceptual: profiles, methods and special cases",
+      "meta": "Tutorial 8 · open-ended · written-test style",
+      "difficulty": "medium",
+      "statement": "(a) Sketch and describe the temperature profiles of parallel and counter flow exchangers, defining $\\Delta T_1$ and $\\Delta T_2$ for each. (b) State when to use the LMTD method and when to use ε-NTU. (c) Explain what happens to $C_R$ and to $\\varepsilon$ in a condenser, and give the limiting effectiveness relation.",
+      "given": "Conceptual — no numbers required.",
+      "steps": [
+        {
+          "title": "Profiles",
+          "content": "Parallel: both fluids start far apart and converge; $\\Delta T$ is largest at the inlet and shrinks. $\\Delta T_1=T_{hi}-T_{ci}$, $\\Delta T_2=T_{ho}-T_{co}$. Counter: fluids flow oppositely, $\\Delta T$ stays flatter; $\\Delta T_1=T_{hi}-T_{co}$, $\\Delta T_2=T_{ho}-T_{ci}$. Counter allows $T_{co}>T_{ho}$."
+        },
+        {
+          "title": "Method choice",
+          "content": "LMTD: use when at least three of four temperatures are known (design/sizing); direct via $q=UA\\,\\Delta T_{lm}$. ε-NTU: use when only the two inlet temperatures and $UA$ are known (rating); avoids iteration via $q=\\varepsilon C_{min}(T_{hi}-T_{ci})$."
+        },
+        {
+          "title": "Condenser limit",
+          "content": "Hot fluid condenses at constant $T$, so $C_h\\to\\infty$, giving $C_R=C_{min}/C_{max}\\to0$. Both PF and CF relations reduce to $\\varepsilon=1-e^{-NTU}$. Effectiveness uses the cold (finite-$C$) fluid: $\\varepsilon=(T_{co}-T_{ci})/(T_{hi}-T_{ci})$."
+        }
+      ],
+      "finalAnswer": "Counter flow gives a flatter $\\Delta T$ and larger $\\Delta T_{lm}$; use LMTD with $\\ge3$ temperatures, ε-NTU with inlets only; a condenser has $C_R\\to0$ and $\\varepsilon=1-e^{-NTU}$.",
+      "tips": "On open questions, always define every symbol and state assumptions (steady, constant $c_p$, no losses). A clear labelled sketch earns marks."
+    }
+  ]
+}

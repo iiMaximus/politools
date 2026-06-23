@@ -1,0 +1,388 @@
+{
+  "title": "Module A: Security foundations",
+  "summary": "A from-zero tour of cybersecurity fundamentals: why security became a systemic necessity, the core vocabulary (danger, threat, asset, vulnerability, risk), the CIA triad and related security properties, privacy vs data protection vs secrecy, access control models, and how attacks are described with the threat chain, kill chain, CWE/CVE, and MITRE ATT&CK.",
+  "minutes": 22,
+  "objectives": [
+    "Explain why cybersecurity is a systemic problem and describe cyberspace as a socio-technical system",
+    "Define and correctly distinguish danger, threat, asset, vulnerability and risk (R = S x P)",
+    "State the CIA triad and the additional properties authenticity, non-repudiation and accountability, and match attacker capabilities to violated properties",
+    "Distinguish privacy, data protection and secrecy, and the role of anonymization vs pseudonymization",
+    "Distinguish authentication from authorization and compare DAC, MAC, RBAC and ABAC access control models",
+    "Describe attacks using the threat chain, the cyber kill chain, the CWE/CVE distinction and MITRE ATT&CK tactics/techniques/procedures"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Why cybersecurity exists"
+    },
+    {
+      "kind": "prose",
+      "text": "Digital services give us **convenience, speed and reach**: online banking, shopping, healthcare portals, smart devices. But the same infrastructure that scales convenience also scales **failures, attacks and disruption**: fraud, ransomware, outages, leaked data, deep fakes.\n\nThe lesson of the course: *one click can unlock convenience... or unleash chaos.* Security is the discipline that tries to keep the first without the second."
+    },
+    {
+      "kind": "prose",
+      "text": "Computing did not always look like this. A quick timeline shows how risk grew with connectivity:\n\n- **1940s-60s - Isolated computing.** Machines like ENIAC were centralized and required physical access. Security assumptions were *physical, not digital*.\n- **1948 - Stored-program concept.** Programs and data share the same memory, so code becomes a modifiable digital object. Flexibility is the root of both innovation *and* software exploitation.\n- **1969-71 - Networking + Creeper.** ARPANET adds remote access; Creeper, the first self-propagating program, shows code can move across a network. *Distance stops being protection.*\n- **1990s - The web goes commercial.** Value moves online, so crime follows.\n- **2007 - today - Pervasive connectivity.** Mobile, always-on, embedded in physical systems. The attack surface explodes."
+    },
+    {
+      "kind": "definition",
+      "term": "Cyberspace",
+      "text": "The complex, dynamic **socio-technical** environment resulting from the interaction of people, software, services and networks connected to the Internet. It is shaped by human behavior and automation and governed by technical, legal and social rules (ISO/IEC 27032)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The core idea of Module A",
+      "text": "Connectivity turned isolated systems into **interdependent ecosystems**, so a single vulnerability can affect thousands or millions of systems at once. Security is therefore no longer *local* - it is **systemic**. Cybersecurity is a response to systemic digital risk."
+    },
+    {
+      "kind": "prose",
+      "text": "A **system** here is not one device. It is a set of interacting components that perform a function, exchange information and depend on each other: hardware, software, networks, data, **users/operators, and procedures**.\n\nTwo families matter:\n- **IT (Information Technology):** manages data, computation, communication (servers, databases, cloud).\n- **OT (Operational Technology):** controls physical processes (industrial controllers, sensors, actuators).\n\nModern infrastructure mixes IT and OT, which creates new attack paths with **real-world physical consequences**."
+    },
+    {
+      "kind": "heading",
+      "text": "2. The vocabulary of risk"
+    },
+    {
+      "kind": "prose",
+      "text": "To talk precisely about security we need five terms the professor defines carefully. The trickiest distinction is **danger vs threat**."
+    },
+    {
+      "kind": "definition",
+      "term": "Danger vs Threat",
+      "text": "**Danger** is an intrinsic property of something with the potential to cause harm - e.g. a high-voltage cabinet is dangerous *regardless of who interacts with it*. Danger exists even with no malicious actor.\n\n**Threat** introduces **intention**: a hostile agent. In cyber terms, a threat is any circumstance or event that could adversely impact assets through an information system via unauthorized access, destruction, disclosure, modification, or denial of service."
+    },
+    {
+      "kind": "definition",
+      "term": "Asset",
+      "text": "Any item of value that can be monetized. Assets are **tangible** (hardware, network devices) or **intangible** (data, software, intellectual property, reputation). Intangible assets are often the primary target of cyberattacks. *No assets -> no meaningful security discussion*: assets define consequences, and consequences define risk acceptance."
+    },
+    {
+      "kind": "formula",
+      "text": "Risk combines how bad an outcome is with how likely it is:",
+      "tex": "R = S \\times P"
+    },
+    {
+      "kind": "definition",
+      "term": "Risk",
+      "text": "$R = S \\times P$, where $S$ is the **severity (impact)** of the consequence and $P$ is the **probability** of occurrence. NIST writes the same idea as Risk = Likelihood x Impact. **Cyber risk** is the possibility of financial loss, service interruption or reputational damage from a malfunction in an organization's information systems."
+    },
+    {
+      "kind": "steps",
+      "text": "The operational loop of risk-based security management:",
+      "steps": [
+        {
+          "label": "Inventory",
+          "text": "Prepare a detailed **asset inventory** - you cannot protect what you have not listed."
+        },
+        {
+          "label": "Analyze threats",
+          "text": "For each asset, analyze the possible threats - these are the **risks** to consider."
+        },
+        {
+          "label": "Protect",
+          "text": "Prepare appropriate protections and countermeasures (controls)."
+        },
+        {
+          "label": "Residual risk",
+          "text": "Evaluate the **residual risk** that remains, and possibly insure it (cyber-insurance)."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Exam trap: danger is not threat, and a CVE is not a risk",
+      "text": "Two recurring mistakes:\n- **Danger** is a passive property; a **threat** requires a hostile, intentional agent. Saying 'a malicious hacker is a danger' is imprecise - they are a threat.\n- A high risk requires **both** high severity *and* non-negligible probability. A catastrophic-but-impossible event is not a high risk; neither is a likely-but-trivial one."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A lithium battery can catch fire. No attacker is involved. In the course's vocabulary, the battery's fire potential is best described as a:",
+        "options": [
+          {
+            "id": "A",
+            "content": "Threat, because it can cause harm"
+          },
+          {
+            "id": "B",
+            "content": "Danger, because it is an intrinsic harmful property independent of any malicious actor"
+          },
+          {
+            "id": "C",
+            "content": "Vulnerability, because it is a flaw"
+          },
+          {
+            "id": "D",
+            "content": "Risk, because harm is possible"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The fire potential exists regardless of any actor, which is exactly the definition of **danger**. It is not a **threat** (no hostile intention/agent), not a **vulnerability** (which is an exploitable flaw in a system), and not a **risk** (risk is severity x probability, a quantified combination, not the property itself)."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "3. Security properties: the CIA triad and friends"
+    },
+    {
+      "kind": "prose",
+      "text": "Before properties, one subtle distinction: **data vs information**.\n\n- **Data** are raw items: 'ZIP = 13053', 'Age = 31'.\n- **Information** is the meaning inferred from data + context: 'Bob has cancer'.\n\nInformation can leak *without* leaking raw data - e.g. a statistic like 'average age in Ward X is 31' can reveal a specific person if the ward is small or auxiliary knowledge exists. This is an **inference attack**, and it is why scale makes privacy a systemic problem."
+    },
+    {
+      "kind": "definition",
+      "term": "CIA triad",
+      "text": "The three security pillars (Italian: **RID**):\n- **Confidentiality** - prevent unauthorized disclosure. Failure = a *data breach*.\n- **Integrity** - prevent (or detect) unauthorized modification.\n- **Availability** - ensure timely, reliable access to data and services. Threatened by DoS/DDoS, ransomware, power failures."
+    },
+    {
+      "kind": "definition",
+      "term": "Authenticity, Non-repudiation, Accountability",
+      "text": "Three properties beyond CIA:\n- **Authenticity** - the message/source is genuine. Answers: *'Did this really come from who it claims?'*\n- **Accountability** - actions can be uniquely traced to the entity that performed them (enables auditing and forensics).\n- **Non-repudiation** - a party cannot falsely deny an action, backed by **cryptographic evidence** (e.g. a digital signature)."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Accountability vs non-repudiation",
+      "text": "They sound similar but differ in strength: **accountability enables tracing** (via secure logging and audit trails), while **non-repudiation provides cryptographic proof** that an action occurred and cannot be denied (via digital signatures and trusted timestamping)."
+    },
+    {
+      "kind": "prose",
+      "text": "A clean way to see CIA is the **source -> destination -> attacker** communication model. A message flows from Source S to Destination D, and an attacker A can perform four actions, each violating a specific property:\n\n- **Read** (eavesdrop) -> breaks **Confidentiality**. Control: encryption.\n- **Modify** (tamper) -> breaks **Integrity**. Control: MACs, digital signatures, TLS.\n- **Block** (deny) -> breaks **Availability**. Control: redundancy, rate limiting.\n- **Inject** (forge) -> breaks **Authenticity**. Control: digital signatures, key management."
+    },
+    {
+      "kind": "example",
+      "title": "Cryptographic countermeasures in one glance",
+      "text": "The course covers three message-protection tools:\n- **Encryption** -> *confidentiality*. Symmetric uses one shared key $K$ ($C=E(K,M)$, $M=D(K,C)$); asymmetric uses a public/private key pair. Security depends on **key management, not secrecy of the algorithm** (Kerckhoffs's principle).\n- **MAC (Message Authentication Code)** -> *integrity + authenticity* using a shared secret key. A plain hash alone only catches accidental errors, not an active attacker.\n- **Digital signature** -> *integrity + authenticity + non-repudiation*. Sign with the sender's **private** key, verify with the **public** key."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "An attacker performs a Man-in-the-Middle attack and silently changes the destination account number of a bank transfer in transit. Which security property is primarily violated, and which control is designed to stop it?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Confidentiality - prevented by encryption"
+          },
+          {
+            "id": "B",
+            "content": "Availability - prevented by redundancy"
+          },
+          {
+            "id": "C",
+            "content": "Integrity - prevented by a MAC or digital signature"
+          },
+          {
+            "id": "D",
+            "content": "Accountability - prevented by logging"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Changing data in transit is unauthorized **modification**, which violates **Integrity**; a MAC or digital signature lets the receiver detect the tampering. Encryption protects confidentiality (reading), not modification. Availability concerns blocking the flow, not altering it. Logging supports accountability after the fact but does not prevent the change."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "4. Privacy, data protection and secrecy"
+    },
+    {
+      "kind": "definition",
+      "term": "Three dimensions of information protection",
+      "text": "- **Privacy** - protects the **individual's private sphere** (autonomy, communications, behavioral patterns, identity). Defined by *fundamental rights*. Privacy protects the person, not just the data.\n- **Data protection** - governs the **processing of personal data**. Defined by legal/governance frameworks (the EU **GDPR**, applicable since 25 May 2018).\n- **Secrecy** - protects **sensitive institutional or state information** to prevent harm from disclosure. Defined by *institutional authority* (national defense, intelligence)."
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "Accessible != Public != Legitimately usable",
+      "text": "That data is technically reachable does not make it lawful to use. **Accessible** = reachable; **public** = intentionally disclosed; **legitimately usable** = allowed by law and purpose. 'Publicly accessible' is *not* the same as 'OK to scrape, merge and profile'. **Availability != authorization.**"
+    },
+    {
+      "kind": "definition",
+      "term": "Anonymization vs Pseudonymization",
+      "text": "- **Anonymization** - removes identifiability so individuals can *no longer be identified in any way*. If effective it is **irreversible**, and the data fall **outside GDPR**.\n- **Pseudonymization** - replaces identifiers with **reversible tokens**, kept separately. Data **remain personal data** and stay under GDPR; it reduces breach impact but does not remove regulatory obligations."
+    },
+    {
+      "kind": "prose",
+      "text": "In Italy, secrecy uses four national classification levels of increasing protection: **RISERVATO (R)**, **RISERVATISSIMO (RR)**, **SEGRETO (S)**, **SEGRETISSIMO (SS)**. Even with clearance, the **need-to-know** principle limits access to what is strictly necessary for a role or mission - clearance is *not* unlimited access. Note that **secrecy** (an institutional/legal regime) is broader than **confidentiality** (a technical CIA property)."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Access control: AuthN vs AuthZ and the four models"
+    },
+    {
+      "kind": "prose",
+      "text": "Security properties must be *enforced*. Access control is the primary mechanism that decides **who can access which resources, under which conditions, for which operations**. Logically it works as a **Subject -> (PDP -> PEP) -> Object** pipeline: the **Policy Decision Point (PDP)** evaluates the policy and decides; the **Policy Enforcement Point (PEP)** enforces that decision."
+    },
+    {
+      "kind": "definition",
+      "term": "AuthN vs AuthZ (and Accountability)",
+      "text": "- **Authentication (AuthN)** - *Who are you?* Verified with factors: something you **know** (password), **have** (token), **are** (biometrics). Combining them = **MFA**.\n- **Authorization (AuthZ)** - *What are you allowed to do?*\n- **Accountability** - *What did you do?* (logging)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Exam trap: authentication != authorization",
+      "text": "Logging in proves **who you are** (AuthN). It does **not** decide **what you may do** (AuthZ). A correctly authenticated user can still be denied an action by the authorization policy. Mixing these up is one of the most common exam errors."
+    },
+    {
+      "kind": "definition",
+      "term": "The four access control models",
+      "text": "Each model differs in its **decision basis**:\n- **DAC** (Discretionary) - identity of the subject and **ownership** of the object; owners grant access at their discretion.\n- **MAC** (Mandatory) - **security labels and classification levels** (e.g. SECRET); set by central authority, not the owner.\n- **RBAC** (Role-Based) - assigned **organizational roles** (e.g. 'nurse', 'professor').\n- **ABAC** (Attribute-Based) - **attributes** of subject, object, action and **environment** (e.g. time, location)."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A hospital system grants access based on rules like: 'a doctor may read a record IF the patient is assigned to them AND it is during a shift AND the request comes from inside the hospital network.' Which access control model is this?",
+        "options": [
+          {
+            "id": "A",
+            "content": "DAC, because the doctor is identified"
+          },
+          {
+            "id": "B",
+            "content": "MAC, because records are sensitive"
+          },
+          {
+            "id": "C",
+            "content": "RBAC, because 'doctor' is a role"
+          },
+          {
+            "id": "D",
+            "content": "ABAC, because the decision combines attributes of subject, object, action and environment"
+          }
+        ],
+        "correct": "D",
+        "explanation": "The rule combines subject attributes (role=doctor, assignment), object attributes (the patient's record), action and **environmental** attributes (shift time, network location). Combining attributes including the environment is the signature of **ABAC**. Plain RBAC would decide on the role alone; DAC decides on identity/ownership; MAC decides on classification labels."
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "6. How attacks work: threat chain, kill chain, CWE vs CVE"
+    },
+    {
+      "kind": "prose",
+      "text": "The **security community** describes how attack opportunities arise with the **threat chain**. (Compare: the safety community uses Fault -> Error -> Failure for *accidental* causes; security uses an *adversarial* chain.)"
+    },
+    {
+      "kind": "definition",
+      "term": "The threat chain",
+      "text": "**Weakness -> Vulnerability -> Exploit -> Attack**\n- **Weakness** - a general, classifiable flaw in design, implementation, configuration or procedure (e.g. improper input validation).\n- **Vulnerability** - that weakness made concrete in a specific component, that an attacker can exploit. A vulnerability *is one only if it is exploitable* (reachability, privileges, user interaction, mitigations all matter).\n- **Exploit** - the means/method (code or technique) that takes advantage of the vulnerability.\n- **Attack** - the concrete set of unauthorized actions against an asset's C, I or A."
+    },
+    {
+      "kind": "definition",
+      "term": "CWE vs CVE",
+      "text": "- **CWE (Common Weakness Enumeration)** - a catalog of recurring weakness **classes** (e.g. CWE-122 Heap-based Buffer Overflow). Used by engineers to **build** secure systems.\n- **CVE (Common Vulnerabilities and Exposures)** - a list of specific, publicly disclosed **instances** in a specific component/version (e.g. CVE-2019-6778). Used by defenders to **defend** systems.\n\nCWE = the class of bug; CVE = the instance of that bug in a real product."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Exam trap: a CVE present does not mean exploitable in your environment",
+      "text": "A CVE describes a vulnerability that exists *somewhere*. Whether it is exploitable for **you** depends on context: is the component Internet-facing, does it need authentication or user interaction, are there mitigations like MFA/EDR/segmentation? 'CVE present' does **not** automatically mean 'exploitable here'."
+    },
+    {
+      "kind": "prose",
+      "text": "While the threat chain explains **why** systems are attackable, the **Cyber Kill Chain** explains **how** an attack is executed, as a sequence of stages."
+    },
+    {
+      "kind": "steps",
+      "text": "The seven phases of the Cyber Kill Chain (with where defenders can break it):",
+      "steps": [
+        {
+          "label": "1 Reconnaissance",
+          "text": "Gather info on the target (passive: websites, LinkedIn, GitHub; active: scanning). Defend: exposure management, monitoring."
+        },
+        {
+          "label": "2 Weaponization",
+          "text": "Prepare the malicious payload (e.g. a malicious document). Defend: threat intel, sandboxing/detonation."
+        },
+        {
+          "label": "3 Delivery",
+          "text": "Transmit the payload (phishing email, drive-by, removable media). Defend: email/web filtering, user training."
+        },
+        {
+          "label": "4 Exploitation",
+          "text": "Payload triggers a vulnerability or user action -> code executes. Defend: patching, hardening."
+        },
+        {
+          "label": "5 Installation",
+          "text": "Establish persistence (backdoor, startup task). Defend: application control, least privilege."
+        },
+        {
+          "label": "6 Command & Control (C2)",
+          "text": "Malware phones home for remote control. Defend: network detection, egress control."
+        },
+        {
+          "label": "7 Actions on Objectives",
+          "text": "Achieve the goal: exfiltration, sabotage, ransomware. Defend: incident response, containment, recovery."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Threat actors and the attacker-defender asymmetry",
+      "text": "Attacks are classified by **perpetrator**: **state-sponsored** (strategic; carried out by **APTs** - Advanced Persistent Threats), **cybercriminal** (profit; ransomware, Crime-as-a-Service), and **hacktivist** (ideology; visibility over persistence - defacements, DDoS, doxing).\n\nCyberspace creates a structural **asymmetry favoring attackers**: an attacker needs only *one* viable path and chooses the time and place; the defender must cover *every* asset, interface and user, always-on, and is constrained by rules and coordination."
+    },
+    {
+      "kind": "heading",
+      "text": "7. MITRE ATT&CK and defensive mapping"
+    },
+    {
+      "kind": "prose",
+      "text": "The kill chain assumes a fairly **linear** intrusion. Real adversaries pivot between hosts, retry failed actions, re-establish persistence after containment, and reuse techniques in different contexts. To make defense *measurable*, we need to describe **observable behavior**, not just phases. That is what MITRE ATT&CK provides - a **behavioral ontology**."
+    },
+    {
+      "kind": "definition",
+      "term": "MITRE ATT&CK: Tactic, Technique, Procedure",
+      "text": "A curated knowledge base of real-world adversary behavior, organized at three levels:\n- **Tactic** - *why* an action is performed (the adversary's immediate objective, e.g. Credential Access). These are the **columns** of the matrix.\n- **Technique** - *how* the objective is achieved (a reusable method, e.g. OS Credential Dumping). These are the **cells**.\n- **Procedure** - *how it is concretely implemented* in a specific campaign (e.g. dumping LSASS memory with a particular tool)."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "ATT&CK is not another kill chain",
+      "text": "The matrix is **not** read left-to-right as a mandatory sequence. It is a behavioral **space**: multiple techniques can serve the same tactic, the same technique can appear in very different campaigns, and attackers traverse it many ways. Analyst workflow: *observe behavior -> map to technique -> infer objective.*"
+    },
+    {
+      "kind": "prose",
+      "text": "A technique is **defensible only if it is observable**. The defensive chain is:\n\n**Technique -> Artifact -> Telemetry -> Detection logic -> Response**\n\nFor example, *OS Credential Dumping* leaves the **artifact** of abnormal access to LSASS memory; **telemetry** (endpoint process monitoring) captures it; **detection logic** flags a suspicious non-system process reading LSASS; the **response** isolates the host. Without telemetry, artifacts exist but stay invisible - a **blind spot** that becomes **residual risk**."
+    },
+    {
+      "kind": "example",
+      "title": "Case study: Stuxnet (IT + OT + physical)",
+      "text": "Discovered in 2010, Stuxnet caused **physical sabotage** of uranium-enrichment centrifuges at Natanz by manipulating Siemens PLC logic. The plant was **air-gapped**, so the malware entered via **infected removable media** (a USB carried in by a maintenance engineer), then used multiple Windows **zero-days** to propagate, and altered centrifuge rotation speeds while **replaying fake normal readings** to operators.\n\nMapped to ATT&CK: Initial Access = *Replication Through Removable Media*; Defense Evasion = *Rootkit*; Impact = *Modify Controller Logic*. Enduring lessons: **air-gapping reduces exposure but does not remove all attack paths**, and IT compromise can become OT manipulation with strategic physical effects."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "In MITRE ATT&CK, 'Credential Access' is achieved in one campaign by brute force and in another by credential dumping. What does this illustrate, and how does ATT&CK differ from the Cyber Kill Chain here?",
+        "options": [
+          {
+            "id": "A",
+            "content": "It shows a fixed sequence; ATT&CK and the kill chain are the same thing"
+          },
+          {
+            "id": "B",
+            "content": "'Credential Access' is a tactic (an objective) that multiple techniques can satisfy; ATT&CK is a behavioral space, not a mandatory sequence"
+          },
+          {
+            "id": "C",
+            "content": "Brute force and credential dumping are tactics; the kill chain lists them as phases"
+          },
+          {
+            "id": "D",
+            "content": "It shows that ATT&CK catalogs malware families rather than behaviors"
+          }
+        ],
+        "correct": "B",
+        "explanation": "'Credential Access' is a **tactic** (the *why*), and brute force and credential dumping are two **techniques** (the *how*) that both achieve it - same objective, different behaviors. Unlike the kill chain's linear phases, ATT&CK is a behavioral **space** traversed many ways. Brute force/dumping are techniques, not tactics (rules out C); ATT&CK deliberately catalogs **behaviors**, not malware families (rules out D); and it is explicitly **not** a fixed sequence (rules out A)."
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Module A in one breath",
+      "text": "Cyberspace is a systemic socio-technical system, so security must be reasoned about with a shared vocabulary: protect **assets** from **threats** that exploit **vulnerabilities**, quantified as **risk = severity x probability**. Enforce the **CIA** triad (plus authenticity, non-repudiation, accountability) using crypto and **access control** (AuthN vs AuthZ; DAC/MAC/RBAC/ABAC). Respect **privacy/data-protection/secrecy** distinctions. Describe attacks with the **threat chain** (weakness->vulnerability->exploit->attack, CWE vs CVE), the **kill chain** (how), and **MITRE ATT&CK** (observable behavior: tactics/techniques/procedures) to build measurable, threat-informed defense."
+    }
+  ]
+}

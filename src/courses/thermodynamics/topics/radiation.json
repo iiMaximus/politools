@@ -1,0 +1,768 @@
+{
+  "title": "Radiation Heat Transfer",
+  "summary": "Learn how heat moves as electromagnetic waves: blackbody emission and the Stefan-Boltzmann $T^4$ law, Planck and Wien qualitatively, emissivity/absorptivity and Kirchhoff's law for gray diffuse surfaces, view factors with their reciprocity and summation rules, and the electrical analogy (surface and space resistances) for computing net exchange between black and gray surfaces, including radiation shields.",
+  "minutes": 55,
+  "objectives": [
+    "Apply the Stefan-Boltzmann law $E=\\sigma T^4$ correctly, always converting temperatures to kelvin",
+    "Use Planck and Wien qualitatively to describe how the blackbody spectrum shifts with temperature",
+    "Distinguish emissivity, absorptivity, reflectivity and transmissivity and apply Kirchhoff's law ($\\varepsilon=\\alpha$) for gray diffuse surfaces",
+    "Compute view factors using the reciprocity rule $A_1F_{12}=A_2F_{21}$ and the summation rule $\\sum F_{ij}=1$, plus standard geometric cases",
+    "Build the electrical-analogy circuit with surface and space resistances and find net exchange between black and gray surfaces",
+    "Solve radiation-shield problems, including the steady shield temperature from a fourth-power energy balance"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What radiation is and why it's different"
+    },
+    {
+      "kind": "prose",
+      "text": "**Radiation** is the third way heat travels, alongside conduction and convection. Every body above absolute zero emits **electromagnetic waves** that carry energy through space.\n\nTwo features make it special:\n- It needs **no medium** — it crosses a vacuum (that is how the Sun heats Earth).\n- The emitted power depends on the **fourth power of absolute temperature** ($T^4$), so it explodes at high $T$ and is usually negligible at low $T$ unless other modes are also weak.\n\nWe care about two things: the energy a single body **emits/absorbs**, and the energy two or more bodies **exchange**."
+    },
+    {
+      "kind": "definition",
+      "term": "Irradiation G, Radiosity J",
+      "text": "**Irradiation $G$** is the total radiation flux arriving on a surface from all directions ($\\mathrm{W/m^2}$). **Radiosity $J$** is everything leaving the surface: its own **emission $E$** plus the **reflected** part of $G$. So $J = E + \\rho G$. The net flux leaving an opaque surface is $q''_{net}=J-G$."
+    },
+    {
+      "kind": "prose",
+      "text": "When radiation hits a surface it splits into three parts: **absorbed**, **reflected**, **transmitted**. Their fractions are the **absorptivity $\\alpha$**, **reflectivity $\\rho$** and **transmissivity $\\tau$**, and they must sum to one:\n$$\\alpha+\\rho+\\tau=1$$\nMost solids are **opaque** ($\\tau=0$), so $\\alpha+\\rho=1$."
+    },
+    {
+      "kind": "heading",
+      "text": "The black body, Stefan-Boltzmann, Wien"
+    },
+    {
+      "kind": "definition",
+      "term": "Black body",
+      "text": "An ideal surface that (1) emits the **maximum possible** radiation at every temperature and wavelength, (2) emits **diffusely** (same in all directions), and (3) **absorbs everything** that arrives: $\\alpha=\\alpha_\\lambda=1$, $\\rho=0$, $\\tau=0$. It is the reference against which every real surface is measured."
+    },
+    {
+      "kind": "formula",
+      "tex": "E_b=\\sigma T^4,\\qquad \\sigma=5.67\\times10^{-8}\\ \\tfrac{\\mathrm{W}}{\\mathrm{m^2K^4}}",
+      "caption": "**Stefan-Boltzmann law**: total emissive power of a black body. $E_b$ is in $\\mathrm{W/m^2}$, $T$ is the **absolute** temperature in **kelvin**. Always convert °C to K first.",
+      "tag": "Black"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "T must be in KELVIN, and to the 4th power",
+      "text": "The most common exam mistake. $500\\,^\\circ\\mathrm{C}=773\\,\\mathrm{K}$, not 500. And it is $T^4$, not $T$. Using 500 instead of 773 gives a number ~6× too small. Differences like $T_1^4-T_2^4$ must also use kelvin (you cannot subtract in °C and raise to the 4th)."
+    },
+    {
+      "kind": "prose",
+      "text": "**Planck's law** gives the spectral shape — how emission is spread over wavelength $\\lambda$:\n$$e_{\\lambda,b}=\\frac{C_1\\lambda^{-5}}{\\exp(C_2/\\lambda T)-1}$$\nwith $C_1=3.742\\times10^{-16}\\ \\mathrm{W\\,m^2}$, $C_2=1.439\\times10^{-2}\\ \\mathrm{m\\,K}$. Integrating it over all $\\lambda$ gives back $\\sigma T^4$. You rarely plug into Planck on an exam; you need its **qualitative** message and Wien's peak."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\lambda_{max}\\,T = 2898\\ \\mu\\mathrm{m\\cdot K}",
+      "caption": "**Wien's displacement law**: the wavelength of peak emission. Hotter bodies peak at **shorter** wavelengths. The Sun (~5800 K) peaks at ~0.5 µm (visible); a 300 K room peaks at ~10 µm (infrared, invisible).",
+      "tag": "Wien"
+    },
+    {
+      "kind": "sim",
+      "simKey": "radiation",
+      "title": "Blackbody spectrum and surface exchange",
+      "caption": "Drag temperature to watch the Planck curve grow as $T^4$ and its peak slide left (Wien). Then explore how emissivity and view factor change the net exchange between two surfaces."
+    },
+    {
+      "kind": "heading",
+      "text": "Real surfaces: emissivity and Kirchhoff"
+    },
+    {
+      "kind": "definition",
+      "term": "Emissivity ε",
+      "text": "How well a real surface emits compared with a black body at the **same** temperature: $\\varepsilon=E/E_b$, so $E=\\varepsilon\\sigma T^4$ with $0\\le\\varepsilon\\le1$. Because $\\alpha\\le1$ always, $\\varepsilon\\le1$ always — a black body emits more than any real surface at the same $T$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\varepsilon(T)=\\alpha(T)",
+      "caption": "**Kirchhoff's law**: at a given temperature a surface's emissivity equals its absorptivity. A good emitter is a good absorber. This is what lets us treat a gray surface with a single property $\\varepsilon$.",
+      "tag": "Kirchhoff"
+    },
+    {
+      "kind": "definition",
+      "term": "Gray, diffuse surface",
+      "text": "A **gray** surface has $\\varepsilon$ and $\\alpha$ that **do not depend on wavelength**; a **diffuse** surface emits/absorbs the same in all directions. Together they give a single number $\\varepsilon=\\alpha=1-\\rho$ (for an opaque body) that fully describes the surface. This is the standard model for exchange problems."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Emission vs net exchange",
+      "text": "Every wall at 20 °C still **emits** plenty of radiation ($E=\\varepsilon\\sigma T^4\\neq0$). But if both walls are at the **same** temperature, what each sends the other is balanced, so the **net** exchange is **zero** — independent of whether they are black or gray. Quiz favourite: 'two walls both at 20 °C' → net flux is zero, but emitted flux is not."
+    },
+    {
+      "kind": "heading",
+      "text": "View (shape) factors"
+    },
+    {
+      "kind": "definition",
+      "term": "View factor F12",
+      "text": "$F_{12}$ is the **fraction of radiation leaving surface 1 that lands directly on surface 2**. It is purely **geometric** — it depends on sizes, shapes and relative position, never on temperature or material. $0\\le F_{12}\\le1$, dimensionless."
+    },
+    {
+      "kind": "formula",
+      "tex": "A_1F_{12}=A_2F_{21}\\qquad\\text{(reciprocity)}\\qquad\\quad \\sum_{j=1}^{N}F_{ij}=1\\quad\\text{(summation)}",
+      "caption": "The two rules you use constantly. **Reciprocity** swaps perspectives between two surfaces. **Summation**: from any surface in a closed enclosure, all the fractions to every surface (including itself, $F_{ii}$) add to 1.",
+      "tag": "VF"
+    },
+    {
+      "kind": "prose",
+      "text": "Useful special cases:\n- **Flat or convex** surface: $F_{ii}=0$ (it cannot see itself). **Concave**: $F_{ii}\\neq0$.\n- **Small body 1 surrounded by large 2** (or two infinite parallel plates): $F_{12}=1$ — everything leaving 1 hits 2.\n- **Coaxial cylinders / sphere in sphere** (inner = 1): $F_{12}=1$, then $F_{21}=A_1/A_2$ by reciprocity, and $F_{22}=1-A_1/A_2$.\n- A flat surface that is **part of an enclosure**: if it sees only one other surface, $F_{12}=1-F_{13}$ via summation."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A small sphere (surface 1) sits inside a large spherical shell (surface 2), $A_2=4A_1$. What are $F_{12}$ and $F_{21}$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$F_{12}=1$, $F_{21}=0.25$"
+          },
+          {
+            "id": "B",
+            "content": "$F_{12}=0.25$, $F_{21}=1$"
+          },
+          {
+            "id": "C",
+            "content": "$F_{12}=1$, $F_{21}=4$"
+          },
+          {
+            "id": "D",
+            "content": "$F_{12}=0.5$, $F_{21}=0.5$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "All radiation leaving the inner convex sphere must hit the outer shell, so $F_{12}=1$. Reciprocity: $A_1F_{12}=A_2F_{21}\\Rightarrow F_{21}=A_1/A_2=1/4=0.25$. **B** swaps them. **C** violates $F_{21}\\le1$ (a view factor can never exceed 1). **D** ignores that the inner body sees nothing but the shell.",
+        "theory": "For a convex body fully enclosed by another, $F_{12}=1$; the reverse factor follows from reciprocity $F_{21}=A_1/A_2$.",
+        "source": "Lecture HT Part 4, view-factor examples"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Exchange between BLACK surfaces"
+    },
+    {
+      "kind": "formula",
+      "tex": "q_{12}=A_1F_{12}\\,\\sigma\\,(T_1^4-T_2^4)=\\frac{E_{b1}-E_{b2}}{1/(A_1F_{12})}",
+      "caption": "Net heat from black surface 1 to black surface 2. Driving potential = $E_{b1}-E_{b2}$, the only resistance is the **space resistance** $R_{sp}=1/(A_1F_{12})$. Black surfaces have **no** surface resistance.",
+      "tag": "Black-ex"
+    },
+    {
+      "kind": "example",
+      "title": "Two black plates (Tutorial 9.1)",
+      "text": "Two black rectangular plates $a=3\\,\\mathrm m$, $b=4\\,\\mathrm m$ (so $A_1=12\\,\\mathrm{m^2}$), $T_1=500\\,^\\circ\\mathrm{C}=773\\,\\mathrm K$, $T_2=100\\,^\\circ\\mathrm{C}=373\\,\\mathrm K$, $F_{12}=0.117$. Find $q_{12}$.\n\n$$q_{12}=A_1F_{12}\\,\\sigma(T_1^4-T_2^4)=12\\times0.117\\times5.67\\times10^{-8}(773^4-373^4)$$\n$$=12\\times0.117\\times5.67\\times10^{-8}\\times(3.57\\times10^{11}-1.94\\times10^{10})\\approx 26.9\\ \\mathrm{kW}$$\nPositive, so net heat flows from the hot plate to the cold one, as expected."
+    },
+    {
+      "kind": "heading",
+      "text": "The electrical analogy for GRAY surfaces"
+    },
+    {
+      "kind": "prose",
+      "text": "Radiation networks behave like DC circuits. Map them like this:\n- **Potential** = blackbody emissive power $E_b=\\sigma T^4$ (the source nodes) and **radiosity** $J$ (the surface nodes).\n- **Current** = heat rate $q$.\n- **Resistance** = obstacles to that current.\n\nThere are exactly two kinds of resistance."
+    },
+    {
+      "kind": "formula",
+      "tex": "R_{surf}=\\frac{1-\\varepsilon}{\\varepsilon A}\\qquad\\text{(surface)}\\qquad\\qquad R_{sp}=\\frac{1}{A_1F_{12}}\\qquad\\text{(space)}",
+      "caption": "**Surface resistance** sits between $E_b$ and $J$ — it penalises a surface for not being black ($\\varepsilon<1$). It vanishes for a black surface ($\\varepsilon=1\\Rightarrow R_{surf}=0$). **Space resistance** sits between $J_1$ and $J_2$ — it is the geometric gap between two surfaces.",
+      "tag": "Res"
+    },
+    {
+      "kind": "formula",
+      "tex": "q_{12}=\\frac{\\sigma(T_1^4-T_2^4)}{\\dfrac{1-\\varepsilon_1}{\\varepsilon_1A_1}+\\dfrac{1}{A_1F_{12}}+\\dfrac{1-\\varepsilon_2}{\\varepsilon_2A_2}}",
+      "caption": "Net exchange between **two gray surfaces forming an enclosure**: three resistances in series — surface 1, space, surface 2. Set $\\varepsilon=1$ on a surface to drop its term and recover the black case.",
+      "tag": "Gray-ex"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Two infinite parallel gray plates (memorise)",
+      "text": "With $A_1=A_2=A$ and $F_{12}=1$, the formula collapses to\n$$\\frac{q_{12}}{A}=\\frac{\\sigma(T_1^4-T_2^4)}{\\dfrac{1}{\\varepsilon_1}+\\dfrac{1}{\\varepsilon_2}-1}$$\nThis exact shortcut appears in almost every radiation exam. For concentric cylinders/spheres the denominator becomes $\\frac1{\\varepsilon_1}+\\frac{A_1}{A_2}\\!\\left(\\frac1{\\varepsilon_2}-1\\right)$ (use per-unit area of surface 1)."
+    },
+    {
+      "kind": "steps",
+      "title": "Method: net exchange between two gray surfaces",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Convert all temperatures to **kelvin**."
+        },
+        {
+          "label": "2",
+          "text": "Get the areas $A_1,A_2$ and the view factor $F_{12}$ (use summation/reciprocity or a known case like $F_{12}=1$)."
+        },
+        {
+          "label": "3",
+          "text": "Compute the three resistances: $R_{surf,1}=\\frac{1-\\varepsilon_1}{\\varepsilon_1A_1}$, $R_{sp}=\\frac1{A_1F_{12}}$, $R_{surf,2}=\\frac{1-\\varepsilon_2}{\\varepsilon_2A_2}$."
+        },
+        {
+          "label": "4",
+          "text": "Sum them: $R_{tot}=R_{surf,1}+R_{sp}+R_{surf,2}$ (units $\\mathrm{m^{-2}}$)."
+        },
+        {
+          "label": "5",
+          "text": "Apply $q_{12}=\\dfrac{\\sigma(T_1^4-T_2^4)}{R_{tot}}$. A positive result means net flow from 1 to 2."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Two gray surfaces in an enclosure (Tutorial 9.2)",
+      "text": "$A_1=0.5\\,\\mathrm{m^2}$, $\\varepsilon_1=0.35$, $T_1=600\\,^\\circ\\mathrm C=873\\,\\mathrm K$; $A_2=5\\,\\mathrm{m^2}$, $\\varepsilon_2=0.75$, $T_2=27\\,^\\circ\\mathrm C=300\\,\\mathrm K$; $F_{11}=0\\Rightarrow F_{12}=1$.\n\n- $R_{surf,1}=\\frac{1-0.35}{0.35\\times0.5}=3.714\\ \\mathrm{m^{-2}}$\n- $R_{sp}=\\frac{1}{0.5\\times1}=2\\ \\mathrm{m^{-2}}$\n- $R_{surf,2}=\\frac{1-0.75}{0.75\\times5}=0.067\\ \\mathrm{m^{-2}}$\n- $R_{tot}=5.781\\ \\mathrm{m^{-2}}$\n\n$$q_{12}=\\frac{5.67\\times10^{-8}(873^4-300^4)}{5.781}\\approx 5616\\ \\mathrm{W}\\approx5.6\\ \\mathrm{kW}$$"
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In the two-gray-surface circuit, which change makes the **surface** resistance of surface 1 disappear?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Making $F_{12}=1$"
+          },
+          {
+            "id": "B",
+            "content": "Increasing the gap between the surfaces"
+          },
+          {
+            "id": "C",
+            "content": "Making surface 1 black, $\\varepsilon_1=1$"
+          },
+          {
+            "id": "D",
+            "content": "Lowering $T_1$ to equal $T_2$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "$R_{surf,1}=\\frac{1-\\varepsilon_1}{\\varepsilon_1A_1}$; with $\\varepsilon_1=1$ the numerator is 0, so the surface resistance vanishes (a black surface has $J=E_b$). **A** affects the **space** resistance, not the surface one. **B** also changes geometry/space resistance only. **D** makes the driving potential $T_1^4-T_2^4$ zero so $q=0$, but the surface resistance itself still exists.",
+        "theory": "Surface resistance $\\frac{1-\\varepsilon}{\\varepsilon A}$ penalises non-black surfaces and is zero only when $\\varepsilon=1$; space resistance $1/(A_1F_{12})$ is geometric.",
+        "source": "Lecture HT Part 4, gray surfaces / electrical analogy"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Radiation shields"
+    },
+    {
+      "kind": "prose",
+      "text": "Insert a thin third surface (a **shield**, surface 3) between 1 and 2 and you add **two more surface resistances** (both faces of the shield) and a second space resistance — heat must now cross **two** gaps in series. This sharply cuts the exchange.\n\nFor three infinite parallel plates the per-area resistance becomes\n$$\\frac{R_{tot}}{1/A}=\\Big(\\tfrac1{\\varepsilon_1}+\\tfrac1{\\varepsilon_2}-1\\Big)+2\\Big(\\tfrac1{\\varepsilon_3}-1\\Big)$$\nA low-emissivity shield (small $\\varepsilon_3$) is extremely effective — that is how a thermos works."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Shield temperature from energy balance",
+      "text": "At steady state the heat that reaches the shield equals the heat it sends on: $q_{1\\to3}=q_{3\\to2}$. For identical plates this reduces to $T_1^4-T_3^4=T_3^4-T_2^4$, i.e. $T_3^4=\\tfrac12(T_1^4+T_2^4)$. Note it is the **fourth powers** that average, not the temperatures."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "The Stefan-Boltzmann constant $\\sigma$:",
+      "options": [
+        {
+          "id": "A",
+          "content": "is measured in $\\mathrm{W/(m^2\\,K^4)}$"
+        },
+        {
+          "id": "B",
+          "content": "is a dimensionless constant"
+        },
+        {
+          "id": "C",
+          "content": "depends on the temperature of the body"
+        },
+        {
+          "id": "D",
+          "content": "depends on the fourth power of the temperature"
+        }
+      ],
+      "correct": "A",
+      "explanation": "From $E_b=\\sigma T^4$ with $E_b$ in $\\mathrm{W/m^2}$ and $T^4$ in $\\mathrm{K^4}$, $\\sigma$ must carry units $\\mathrm{W/(m^2K^4)}$, and its value is $5.67\\times10^{-8}$. **B** is wrong — it has units. **C/D** confuse the constant with the emissive power: $\\sigma$ is a fixed universal constant; it is $E_b$, not $\\sigma$, that scales with $T^4$.",
+      "theory": "$E_b=\\sigma T^4$; $\\sigma=5.67\\times10^{-8}\\,\\mathrm{W/m^2K^4}$ is a universal constant.",
+      "source": "HT Quiz Q10"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A black body of area $A=10\\,\\mathrm{m^2}$ is at $500\\,^\\circ\\mathrm C$. Its emissive power is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$3.55\\ \\mathrm{kW/m^2}$"
+        },
+        {
+          "id": "B",
+          "content": "$202\\ \\mathrm{kW/m^2}$"
+        },
+        {
+          "id": "C",
+          "content": "$20.2\\ \\mathrm{kW/m^2}$"
+        },
+        {
+          "id": "D",
+          "content": "Cannot be found without the emissivity"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$T=500+273=773\\,\\mathrm K$. $E_b=\\sigma T^4=5.67\\times10^{-8}\\times773^4\\approx2.02\\times10^4\\,\\mathrm{W/m^2}=20.2\\ \\mathrm{kW/m^2}$. **A** uses $T=500\\,\\mathrm K$ (forgot to convert to kelvin). **B** is $\\times10$ (multiplied by the area, but emissive power is per unit area). **D** is wrong: for a **black** body $\\varepsilon=1$ by definition, so no extra data is needed.",
+      "theory": "Emissive power is per unit area: $E_b=\\sigma T^4$, $T$ in K; black body means $\\varepsilon=1$.",
+      "source": "HT Quiz Q13"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Vacuum separates two infinite flat walls, both at $20\\,^\\circ\\mathrm C$. Which statement is correct?",
+      "options": [
+        {
+          "id": "A",
+          "content": "The net radiative heat flux exchanged is zero only if the walls are black"
+        },
+        {
+          "id": "B",
+          "content": "The flux each wall emits is zero"
+        },
+        {
+          "id": "C",
+          "content": "The net radiative heat flux exchanged is zero"
+        },
+        {
+          "id": "D",
+          "content": "The net radiative heat flux exchanged is not zero"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Net exchange is driven by $\\sigma(T_1^4-T_2^4)$. With $T_1=T_2$ this is exactly zero regardless of emissivities, so **C** is right and **A** (which restricts it to black bodies) and **D** are wrong. **B** is false: each wall still emits $E=\\varepsilon\\sigma T^4\\neq0$ at 293 K — only the **net** balances out.",
+      "theory": "Net radiation $\\propto T_1^4-T_2^4$; equal temperatures give zero net exchange but nonzero emission from each surface.",
+      "source": "HT Quiz Q8"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In radiative heat transfer, the view (shape) factors are:",
+      "options": [
+        {
+          "id": "A",
+          "content": "dependent on the temperatures of the surfaces"
+        },
+        {
+          "id": "B",
+          "content": "coefficients $\\ge1$ with units $\\mathrm{W/m^2}$"
+        },
+        {
+          "id": "C",
+          "content": "independent of the temperature"
+        },
+        {
+          "id": "D",
+          "content": "independent of the distance between the surfaces"
+        }
+      ],
+      "correct": "C",
+      "explanation": "View factors are purely **geometric** — they depend only on shape, size and relative position, never on temperature, so **C** is correct and **A** is wrong. **B** is wrong: $F$ is dimensionless and $0\\le F\\le1$. **D** is wrong: distance is part of the geometry, so $F$ does depend on it.",
+      "theory": "$F_{ij}$ = fraction of radiation from $i$ landing on $j$; dimensionless, geometric, between 0 and 1.",
+      "source": "HT Quiz Q9"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "For an opaque surface exchanging heat by radiation, the reflectivity $\\rho$ is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "equal to 0 for a black body"
+        },
+        {
+          "id": "B",
+          "content": "always equal to zero for any opaque surface"
+        },
+        {
+          "id": "C",
+          "content": "dependent on the distance between the surfaces"
+        },
+        {
+          "id": "D",
+          "content": "equal to the emissivity by Kirchhoff's law"
+        }
+      ],
+      "correct": "A",
+      "explanation": "A black body absorbs everything ($\\alpha=1$), so it reflects nothing: $\\rho=0$. **B** is false — a generic opaque surface has $\\alpha+\\rho=1$, so $\\rho$ is usually nonzero. **C** confuses reflectivity (a surface property) with view factors (geometry). **D** misstates Kirchhoff: it links $\\varepsilon$ to $\\alpha$, and for opaque surfaces $\\rho=1-\\alpha=1-\\varepsilon$, not $\\rho=\\varepsilon$.",
+      "theory": "Opaque: $\\alpha+\\rho=1$; black body $\\alpha=1,\\rho=0$; Kirchhoff $\\varepsilon=\\alpha$.",
+      "source": "HT Quiz Q6"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The emissive power of a gray body depends on:",
+      "options": [
+        {
+          "id": "A",
+          "content": "its shape"
+        },
+        {
+          "id": "B",
+          "content": "its absorption coefficient and the emissivity of the black body"
+        },
+        {
+          "id": "C",
+          "content": "the emissive power of a black body at the same temperature, scaled by emissivity"
+        },
+        {
+          "id": "D",
+          "content": "its temperature, shape and surface area"
+        }
+      ],
+      "correct": "C",
+      "explanation": "For a gray body $E=\\varepsilon E_b=\\varepsilon\\sigma T^4$ — it is the blackbody emissive power at the same $T$ scaled by $\\varepsilon$. **A** and **D** wrongly include shape/area: emissive power is a per-area quantity set by $T$ and $\\varepsilon$, not by geometry. **B** garbles the relation (a black body has no single 'emissivity' factor here).",
+      "theory": "Gray body: $E=\\varepsilon E_b=\\varepsilon\\sigma T^4$; emissive power is per unit area, independent of shape.",
+      "source": "HT Quiz Q2"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Two large parallel gray plates have $T_1=503\\,\\mathrm K$, $T_2=298\\,\\mathrm K$, $\\varepsilon_1=\\varepsilon_2=0.3$. The net flux $q_{12}/A$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$3360\\ \\mathrm{W/m^2}$"
+        },
+        {
+          "id": "B",
+          "content": "$562\\ \\mathrm{W/m^2}$"
+        },
+        {
+          "id": "C",
+          "content": "$1010\\ \\mathrm{W/m^2}$"
+        },
+        {
+          "id": "D",
+          "content": "$281\\ \\mathrm{W/m^2}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Use $\\frac{q}{A}=\\frac{\\sigma(T_1^4-T_2^4)}{1/\\varepsilon_1+1/\\varepsilon_2-1}$. Numerator $=5.67\\times10^{-8}(503^4-298^4)\\approx3.06\\times10^3$. Denominator $=1/0.3+1/0.3-1=5.667$. Ratio $\\approx562\\,\\mathrm{W/m^2}$. **A** forgets the emissivity denominator (treats them as black). **C** uses $1/\\varepsilon_1+1/\\varepsilon_2=6.67$ but drops the $-1$... actually gives ~459; the trap **C** comes from using $1/(\\varepsilon_1\\varepsilon_2)$ form incorrectly. **D** halves the correct value by mishandling the resistance.",
+      "theory": "Infinite parallel gray plates: $q/A=\\sigma(T_1^4-T_2^4)/(1/\\varepsilon_1+1/\\varepsilon_2-1)$.",
+      "source": "Tutorial 9.3 part A"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "For the same two plates ($\\varepsilon_1=\\varepsilon_2=0.3$, $T_1=503\\,\\mathrm K$, $T_2=298\\,\\mathrm K$), a thin shield with $\\varepsilon_3=0.09$ is inserted. The new flux is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$562\\ \\mathrm{W/m^2}$"
+        },
+        {
+          "id": "B",
+          "content": "$281\\ \\mathrm{W/m^2}$"
+        },
+        {
+          "id": "C",
+          "content": "$118\\ \\mathrm{W/m^2}$"
+        },
+        {
+          "id": "D",
+          "content": "$45\\ \\mathrm{W/m^2}$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "Denominator $=(1/\\varepsilon_1+1/\\varepsilon_2-1)+2(1/\\varepsilon_3-1)=5.667+2(11.11-1)=5.667+20.22=25.89$. $q/A=3.06\\times10^3/25.89\\approx118\\,\\mathrm{W/m^2}$. **A** is the no-shield value (forgot the shield). **B** is a rough halving — wrong, a low-ε shield cuts much more. **D** over-counts the shield resistance. The shield drops the flux by ~5×.",
+      "theory": "Adding a shield adds $2(1/\\varepsilon_3-1)$ to the per-area resistance of parallel plates; low $\\varepsilon_3$ is very effective.",
+      "source": "Tutorial 9.3 part B"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A long cylinder (1) of diameter $D_1=0.08\\,\\mathrm m$ is inside a coaxial cylinder (2) of $D_2=0.2\\,\\mathrm m$, both length $L=0.5\\,\\mathrm m$. The view factor $F_{12}$ equals:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$0.40$"
+        },
+        {
+          "id": "B",
+          "content": "$1.00$"
+        },
+        {
+          "id": "C",
+          "content": "$2.50$"
+        },
+        {
+          "id": "D",
+          "content": "$0.367$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "The inner cylinder is convex and fully enclosed, so everything it emits reaches the outer one: $F_{12}=1$. **D** is actually $F_{21}=A_1/A_2=0.08/0.2=0.4$ (the problem even lists $F_{21}=0.367$ for finite-length end effects). **A** is $F_{21}$ for infinite length. **C** is $A_2/A_1$, impossible since $F\\le1$.",
+      "theory": "Inner convex body in an enclosure: $F_{12}=1$; $F_{21}=A_1/A_2$ by reciprocity.",
+      "source": "Tutorial 9.6"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Two gray surfaces in an enclosure: $A_1=0.36\\,\\mathrm{m^2}$, $\\varepsilon_1=0.35$, $T_1=680\\,\\mathrm K$; $A_2=3.24\\,\\mathrm{m^2}$, $\\varepsilon_2=0.75$, $T_2=310\\,\\mathrm K$, $F_{11}=0$. The net exchange $q_{12}$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$1442\\ \\mathrm W$"
+        },
+        {
+          "id": "B",
+          "content": "$11900\\ \\mathrm W$"
+        },
+        {
+          "id": "C",
+          "content": "$305\\ \\mathrm W$"
+        },
+        {
+          "id": "D",
+          "content": "$4600\\ \\mathrm W$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$F_{12}=1$. $R_{surf,1}=\\frac{0.65}{0.35\\times0.36}=5.16$, $R_{sp}=\\frac1{0.36}=2.78$, $R_{surf,2}=\\frac{0.25}{0.75\\times3.24}=0.103$, $R_{tot}=8.04\\,\\mathrm{m^{-2}}$. $q=\\frac{5.67\\times10^{-8}(680^4-310^4)}{8.04}\\approx1442\\,\\mathrm W$. **B** ignores all resistances ($\\varepsilon=1$, $F$ only). **C** mis-sums resistances. **D** uses °C in the $T^4$ terms.",
+      "theory": "Two gray surfaces: $q_{12}=\\sigma(T_1^4-T_2^4)/(R_{s1}+R_{sp}+R_{s2})$.",
+      "source": "Tutorial 9.7"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "For a thin radiation shield between two identical parallel plates at $T_1$ and $T_2$, the steady shield temperature satisfies:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$T_3=\\tfrac12(T_1+T_2)$"
+        },
+        {
+          "id": "B",
+          "content": "$T_3^4=\\tfrac12(T_1^4+T_2^4)$"
+        },
+        {
+          "id": "C",
+          "content": "$T_3=\\sqrt{T_1T_2}$"
+        },
+        {
+          "id": "D",
+          "content": "$T_3^4=T_1^4+T_2^4$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Steady state requires $q_{1\\to3}=q_{3\\to2}$. For identical plates this gives $T_1^4-T_3^4=T_3^4-T_2^4$, i.e. $T_3^4=\\tfrac12(T_1^4+T_2^4)$. **A** averages the temperatures linearly — wrong because radiation goes as $T^4$. **C** is a geometric mean, not from this balance. **D** doubles the result (forgot the factor $\\tfrac12$).",
+      "theory": "Shield balance $q_{1\\to3}=q_{3\\to2}$ on equal plates gives $T_3^4=\\tfrac12(T_1^4+T_2^4)$.",
+      "source": "Tutorial 9.3 part B"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Wien's displacement law states that as a body gets hotter, the wavelength of peak emission:",
+      "options": [
+        {
+          "id": "A",
+          "content": "stays the same"
+        },
+        {
+          "id": "B",
+          "content": "increases (shifts toward longer wavelengths)"
+        },
+        {
+          "id": "C",
+          "content": "decreases (shifts toward shorter wavelengths)"
+        },
+        {
+          "id": "D",
+          "content": "becomes independent of temperature"
+        }
+      ],
+      "correct": "C",
+      "explanation": "$\\lambda_{max}T=2898\\,\\mu\\mathrm{m\\,K}$, so $\\lambda_{max}\\propto1/T$ — hotter means a shorter peak wavelength (the Sun peaks in visible, a cool body in infrared). **B** is the opposite. **A** and **D** contradict the inverse relation in the law.",
+      "theory": "$\\lambda_{max}T=2898\\,\\mu\\mathrm{m\\,K}$: peak wavelength is inversely proportional to absolute temperature.",
+      "source": "Lecture HT Part 4, Wien law"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Kirchhoff's law for a surface at temperature $T$ states:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\varepsilon=\\rho$"
+        },
+        {
+          "id": "B",
+          "content": "$\\varepsilon=\\alpha$"
+        },
+        {
+          "id": "C",
+          "content": "$\\varepsilon=1/\\alpha$"
+        },
+        {
+          "id": "D",
+          "content": "$\\varepsilon+\\alpha=1$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Kirchhoff's law: emissivity equals absorptivity at the same temperature, $\\varepsilon=\\alpha$ — a good emitter is a good absorber. **A** confuses absorption with reflection (for opaque bodies $\\rho=1-\\alpha=1-\\varepsilon$). **C** is dimensionally and physically wrong. **D** is the energy split $\\alpha+\\rho+\\tau=1$, not Kirchhoff's law.",
+      "theory": "Kirchhoff: $\\varepsilon(T)=\\alpha(T)$; this justifies the single gray-surface property.",
+      "source": "Lecture HT Part 4, Kirchhoff"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In the electrical analogy for gray-surface radiation, the **space resistance** between surfaces 1 and 2 is:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$\\dfrac{1-\\varepsilon_1}{\\varepsilon_1 A_1}$"
+        },
+        {
+          "id": "B",
+          "content": "$\\dfrac{1}{A_1F_{12}}$"
+        },
+        {
+          "id": "C",
+          "content": "$A_1F_{12}$"
+        },
+        {
+          "id": "D",
+          "content": "$\\dfrac{1-\\varepsilon_2}{\\varepsilon_2 A_2}$"
+        }
+      ],
+      "correct": "B",
+      "explanation": "The space resistance is geometric, $R_{sp}=1/(A_1F_{12})=1/(A_2F_{21})$, sitting between the two radiosity nodes. **A** and **D** are **surface** resistances (between $E_b$ and $J$). **C** inverts it — $A_1F_{12}$ is the conductance, not the resistance.",
+      "theory": "Space resistance $1/(A_1F_{12})$ (between $J_1,J_2$); surface resistance $(1-\\varepsilon)/(\\varepsilon A)$ (between $E_b,J$).",
+      "source": "Lecture HT Part 4, electrical analogy"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Two infinitely long parallel black plates ($A_1=12\\,\\mathrm{m^2}$, $F_{12}=0.117$) are at $T_1=773\\,\\mathrm K$ and $T_2=373\\,\\mathrm K$. The net exchange $q_{12}$ is closest to:",
+      "options": [
+        {
+          "id": "A",
+          "content": "$26.9\\ \\mathrm{kW}$"
+        },
+        {
+          "id": "B",
+          "content": "$230\\ \\mathrm{kW}$"
+        },
+        {
+          "id": "C",
+          "content": "$2.5\\ \\mathrm{kW}$"
+        },
+        {
+          "id": "D",
+          "content": "$48\\ \\mathrm{kW}$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Black surfaces have no surface resistance: $q_{12}=A_1F_{12}\\sigma(T_1^4-T_2^4)=12\\times0.117\\times5.67\\times10^{-8}(773^4-373^4)\\approx26.9\\,\\mathrm{kW}$. **B** drops $F_{12}$ (overcounts ~8.5×). **C** uses $T$ in °C-like small numbers. **D** roughly doubles via a sign/area error in $T_2$.",
+      "theory": "Black surfaces: $q_{12}=A_1F_{12}\\sigma(T_1^4-T_2^4)$, no surface resistance.",
+      "source": "Tutorial 9.1"
+    }
+  ],
+  "exam": [
+    {
+      "title": "Net exchange between two gray surfaces in an enclosure",
+      "meta": "Tutorial 9 · gray surfaces · electrical analogy",
+      "difficulty": "medium",
+      "statement": "A small gray surface 1 ($A_1=0.5\\,\\mathrm{m^2}$, $\\varepsilon_1=0.35$, $T_1=600\\,^\\circ\\mathrm C$) is completely enclosed by a larger gray surface 2 ($A_2=5\\,\\mathrm{m^2}$, $\\varepsilon_2=0.75$, $T_2=27\\,^\\circ\\mathrm C$). Surface 1 is convex ($F_{11}=0$). Find the net radiative heat exchange $q_{12}$ using the electrical analogy.",
+      "given": "$A_1=0.5\\,\\mathrm{m^2}$, $\\varepsilon_1=0.35$, $T_1=873\\,\\mathrm K$; $A_2=5\\,\\mathrm{m^2}$, $\\varepsilon_2=0.75$, $T_2=300\\,\\mathrm K$; $F_{11}=0$; $\\sigma=5.67\\times10^{-8}$.",
+      "steps": [
+        {
+          "title": "View factor",
+          "content": "Summation from surface 1: $F_{11}+F_{12}=1$. Since $F_{11}=0$ (convex), $F_{12}=1$."
+        },
+        {
+          "title": "Surface resistances",
+          "content": "$R_{surf,1}=\\frac{1-\\varepsilon_1}{\\varepsilon_1A_1}=\\frac{0.65}{0.35\\times0.5}=3.714\\,\\mathrm{m^{-2}}$; $R_{surf,2}=\\frac{1-\\varepsilon_2}{\\varepsilon_2A_2}=\\frac{0.25}{0.75\\times5}=0.067\\,\\mathrm{m^{-2}}$."
+        },
+        {
+          "title": "Space resistance",
+          "content": "$R_{sp}=\\frac{1}{A_1F_{12}}=\\frac{1}{0.5\\times1}=2\\,\\mathrm{m^{-2}}$."
+        },
+        {
+          "title": "Total resistance",
+          "content": "$R_{tot}=3.714+2+0.067=5.781\\,\\mathrm{m^{-2}}$."
+        },
+        {
+          "title": "Net heat",
+          "content": "$q_{12}=\\frac{\\sigma(T_1^4-T_2^4)}{R_{tot}}=\\frac{5.67\\times10^{-8}(873^4-300^4)}{5.781}\\approx5616\\,\\mathrm W$."
+        }
+      ],
+      "finalAnswer": "$q_{12}\\approx5.6\\ \\mathrm{kW}$ (from surface 1 to surface 2).",
+      "tips": "Convert to kelvin first. The small, low-ε inner surface dominates the resistance, so it controls the answer; the large surface 2 contributes almost nothing ($R_{surf,2}\\approx0.07$)."
+    },
+    {
+      "title": "Parallel plates with a radiation shield",
+      "meta": "Tutorial 9 · radiation shield · two-part",
+      "difficulty": "hard",
+      "statement": "Two large parallel gray plates have $T_1=230\\,^\\circ\\mathrm C$, $T_2=25\\,^\\circ\\mathrm C$ and $\\varepsilon_1=\\varepsilon_2=0.3$. (A) Find the net flux $q_{12}/A$. (B) A thin shield with $\\varepsilon_3=0.09$ is inserted between them. Find the new flux $q'_{12}/A$ and the steady shield temperature $T_3$.",
+      "given": "$T_1=503\\,\\mathrm K$, $T_2=298\\,\\mathrm K$, $\\varepsilon_1=\\varepsilon_2=0.3$, $\\varepsilon_3=0.09$, infinite parallel plates ($F=1$, equal areas), $\\sigma=5.67\\times10^{-8}$.",
+      "steps": [
+        {
+          "title": "Part A driving term",
+          "content": "$\\sigma(T_1^4-T_2^4)=5.67\\times10^{-8}(503^4-298^4)\\approx3.06\\times10^3\\,\\mathrm{W/m^2}$."
+        },
+        {
+          "title": "Part A flux",
+          "content": "$\\frac{q}{A}=\\frac{\\sigma(T_1^4-T_2^4)}{1/\\varepsilon_1+1/\\varepsilon_2-1}=\\frac{3.06\\times10^3}{3.333+3.333-1}=\\frac{3.06\\times10^3}{5.667}\\approx562\\,\\mathrm{W/m^2}$."
+        },
+        {
+          "title": "Part B resistance with shield",
+          "content": "Per-area denominator $=(1/\\varepsilon_1+1/\\varepsilon_2-1)+2(1/\\varepsilon_3-1)=5.667+2(11.11-1)=25.89\\,\\mathrm{m^{-2}}\\cdot A$. So $\\frac{q'}{A}=\\frac{3.06\\times10^3}{25.89}\\approx118\\,\\mathrm{W/m^2}$."
+        },
+        {
+          "title": "Shield temperature",
+          "content": "Steady state $q_{1\\to3}=q_{3\\to2}$ on identical plates gives $T_1^4-T_3^4=T_3^4-T_2^4\\Rightarrow T_3^4=\\tfrac12(T_1^4+T_2^4)$. So $T_3=\\big(\\tfrac12(503^4+298^4)\\big)^{1/4}\\approx435.6\\,\\mathrm K$."
+        }
+      ],
+      "finalAnswer": "(A) $\\approx562\\ \\mathrm{W/m^2}$. (B) $\\approx118\\ \\mathrm{W/m^2}$ (about 5× lower) and $T_3\\approx436\\,\\mathrm K\\ (163\\,^\\circ\\mathrm C)$.",
+      "tips": "A shield adds two surface resistances $2(1/\\varepsilon_3-1)$; a low-ε shield is very effective. For $T_3$ average the **fourth powers**, not the temperatures."
+    },
+    {
+      "title": "Black surfaces in a cylindrical enclosure (view factors)",
+      "meta": "Tutorial 9 · view factors · black exchange",
+      "difficulty": "hard",
+      "statement": "A short black cylinder has two circular end caps (1 = bottom, 3 = top) of diameter $D=1\\,\\mathrm m$ and a lateral surface (2), length $L=1\\,\\mathrm m$. Temperatures: $T_1=227\\,^\\circ\\mathrm C$, $T_2=200\\,^\\circ\\mathrm C$, $T_3=50\\,^\\circ\\mathrm C$. The bottom-to-top view factor is $F_{13}=0.17$. All surfaces are black. Find $q_{12}$, $q_{13}$ and $q_{23}$.",
+      "given": "$D=1\\,\\mathrm m$, $L=1\\,\\mathrm m$; $T_1=500\\,\\mathrm K$, $T_2=473\\,\\mathrm K$, $T_3=323\\,\\mathrm K$; $F_{13}=0.17$; black ($\\varepsilon=1$); $\\sigma=5.67\\times10^{-8}$.",
+      "steps": [
+        {
+          "title": "Areas",
+          "content": "Caps: $A_1=A_3=\\pi D^2/4=0.785\\,\\mathrm{m^2}$. Lateral: $A_2=\\pi D L=3.14\\,\\mathrm{m^2}$."
+        },
+        {
+          "title": "View factors from cap 1",
+          "content": "Summation: $F_{11}+F_{12}+F_{13}=1$, $F_{11}=0$ (flat). So $F_{12}=1-F_{13}=0.83$."
+        },
+        {
+          "title": "Cap-to-cap and cap-to-side",
+          "content": "$q_{13}=A_1F_{13}\\sigma(T_1^4-T_3^4)=0.785\\times0.17\\times5.67\\times10^{-8}(500^4-323^4)\\approx391\\,\\mathrm W$. $q_{12}=A_1F_{12}\\sigma(T_1^4-T_2^4)=0.785\\times0.83\\times5.67\\times10^{-8}(500^4-473^4)\\approx460\\,\\mathrm W$."
+        },
+        {
+          "title": "Side-to-cap via reciprocity",
+          "content": "$F_{21}=A_1F_{12}/A_2=0.785\\times0.83/3.14=0.2075$; by symmetry $F_{23}=F_{21}=0.2075$. Then $q_{23}=A_2F_{23}\\sigma(T_2^4-T_3^4)=3.14\\times0.2075\\times5.67\\times10^{-8}(473^4-323^4)\\approx1447\\,\\mathrm W$."
+        }
+      ],
+      "finalAnswer": "$q_{12}\\approx460\\,\\mathrm W$, $q_{13}\\approx391\\,\\mathrm W$, $q_{23}\\approx1447\\,\\mathrm W$ (all positive, heat leaving the hotter surface).",
+      "tips": "Get the small view factors from summation, then use reciprocity to convert between surfaces. For black surfaces there is no surface resistance — just $q=AF\\sigma\\Delta(T^4)$."
+    },
+    {
+      "title": "Derive and draw the two-gray-body circuit (open-ended)",
+      "meta": "Written-test style · concept + derivation",
+      "difficulty": "medium",
+      "statement": "For two gray, diffuse, opaque surfaces forming an enclosure, derive the net radiation exchange $q_{12}$ using the radiosity method. Draw the equivalent electrical circuit, label every resistance, and explain physically what each one represents and when it vanishes.",
+      "given": "Surfaces 1 and 2, areas $A_1,A_2$, emissivities $\\varepsilon_1,\\varepsilon_2$, temperatures $T_1,T_2$, view factor $F_{12}$; opaque ($\\tau=0$, $\\rho=1-\\varepsilon$), gray ($\\alpha=\\varepsilon$), diffuse, steady state.",
+      "steps": [
+        {
+          "title": "Radiosity definition",
+          "content": "Each surface leaves $J=\\varepsilon E_b+(1-\\varepsilon)G$ (own emission + reflected irradiation). Net flux off surface $i$: $q_i=A_i(J_i-G_i)$."
+        },
+        {
+          "title": "Surface resistance",
+          "content": "Eliminating $G_i$ gives $q_i=\\frac{E_{b,i}-J_i}{(1-\\varepsilon_i)/(\\varepsilon_i A_i)}$. The denominator $R_{surf,i}=\\frac{1-\\varepsilon_i}{\\varepsilon_i A_i}$ is the **surface resistance** — the difficulty a non-black surface has turning its $E_b$ into actual leaving radiation. It is **zero for a black surface** ($\\varepsilon=1$, then $J=E_b$)."
+        },
+        {
+          "title": "Space resistance",
+          "content": "Between the two surfaces, $q_{12}=A_1F_{12}(J_1-J_2)=\\frac{J_1-J_2}{1/(A_1F_{12})}$. The denominator $R_{sp}=\\frac{1}{A_1F_{12}}=\\frac{1}{A_2F_{21}}$ is the **space (geometric) resistance** — how well the surfaces 'see' each other."
+        },
+        {
+          "title": "Series circuit",
+          "content": "In an enclosure of only two surfaces, the same current $q_{12}$ flows through all three resistances in series: node $E_{b1}\\!\\to\\!J_1\\!\\to\\!J_2\\!\\to\\!E_{b2}$ with $R_{surf,1}$, $R_{sp}$, $R_{surf,2}$. Drawing: $E_{b1}-[R_{surf,1}]-J_1-[R_{sp}]-J_2-[R_{surf,2}]-E_{b2}$."
+        },
+        {
+          "title": "Combine",
+          "content": "$q_{12}=\\frac{E_{b1}-E_{b2}}{R_{tot}}=\\frac{\\sigma(T_1^4-T_2^4)}{\\frac{1-\\varepsilon_1}{\\varepsilon_1A_1}+\\frac{1}{A_1F_{12}}+\\frac{1-\\varepsilon_2}{\\varepsilon_2A_2}}$."
+        }
+      ],
+      "finalAnswer": "$q_{12}=\\dfrac{\\sigma(T_1^4-T_2^4)}{\\frac{1-\\varepsilon_1}{\\varepsilon_1A_1}+\\frac{1}{A_1F_{12}}+\\frac{1-\\varepsilon_2}{\\varepsilon_2A_2}}$, a series circuit of surface, space, surface resistances. Setting any $\\varepsilon=1$ removes that surface resistance and recovers the black-surface result $q_{12}=A_1F_{12}\\sigma(T_1^4-T_2^4)$.",
+      "tips": "State the assumptions (gray, diffuse, opaque, steady, two-surface enclosure) up front. The key insight examiners look for: two resistance types — material (surface, $\\propto(1-\\varepsilon)/\\varepsilon$) and geometric (space, $\\propto1/F$) — and that black surfaces have zero surface resistance."
+    }
+  ]
+}

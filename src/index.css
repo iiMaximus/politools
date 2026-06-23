@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Fonts (utilities like font-mono resolve to these)
+ * ------------------------------------------------------------------ */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Lora", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+}
+
+/* ------------------------------------------------------------------ *
+ * Theme tokens — LIGHT is the default; [data-theme="dark"] overrides.
+ * ------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+
+  --color-bg: #eaeef7;
+  --color-bg-2: #f6f8fd;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f8fd;
+  --color-line: #e2e7f1;
+  --color-ink: #131a2e;
+  --color-muted: #515a78;
+  --color-faint: #8089a3;
+  --prose: #2c3349;
+
+  /* semantic status colors (text + faint background) */
+  --good: #0a8f5b;
+  --good-bg: rgba(10, 143, 91, 0.12);
+  --bad: #d8344b;
+  --bad-bg: rgba(216, 52, 75, 0.10);
+  --warn: #b26a09;
+  --warn-bg: rgba(178, 106, 9, 0.13);
+  --info: #2272c8;
+  --info-bg: rgba(34, 114, 200, 0.10);
+
+  --sb-thumb: #cdd5e6;
+  --sb-thumb-hover: #b7c0d8;
+
+  --app-bg:
+    radial-gradient(1100px 720px at 12% -8%, rgba(106, 166, 255, 0.12), transparent 60%),
+    radial-gradient(900px 680px at 100% 0%, rgba(139, 123, 255, 0.10), transparent 55%),
+    linear-gradient(180deg, #f4f7fc, #eaeef7 45%);
+
+  /* default accent (overridden per-course by .course-theme via CourseTheme) */
+  --accent: #3f7fe6;
+  --accent-2: #6a6af0;
+  --accent-soft: rgba(63, 127, 230, 0.12);
+  --accent-line: rgba(63, 127, 230, 0.32);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #0a0e1a;
+  --color-bg-2: #0e1426;
+  --color-surface: #121a30;
+  --color-surface-2: #18223d;
+  --color-line: #25304f;
+  --color-ink: #eef2ff;
+  --color-muted: #9aa6c4;
+  --color-faint: #6b769a;
+  --prose: #d8def3;
+
+  --good: #5fe0a8;
+  --good-bg: rgba(95, 224, 168, 0.12);
+  --bad: #ff7a85;
+  --bad-bg: rgba(255, 122, 133, 0.12);
+  --warn: #ffb454;
+  --warn-bg: rgba(255, 180, 84, 0.12);
+  --info: #7cc4ff;
+  --info-bg: rgba(124, 196, 255, 0.10);
+
+  --sb-thumb: #283353;
+  --sb-thumb-hover: #34416a;
+
+  --app-bg:
+    radial-gradient(1100px 720px at 12% -8%, rgba(106, 166, 255, 0.10), transparent 60%),
+    radial-gradient(900px 680px at 100% 0%, rgba(139, 123, 255, 0.10), transparent 55%),
+    linear-gradient(180deg, var(--color-bg-2), var(--color-bg) 40%);
+
+  --accent: #6aa6ff;
+  --accent-2: #8b7bff;
+  --accent-soft: rgba(106, 166, 255, 0.14);
+  --accent-line: rgba(106, 166, 255, 0.32);
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--app-bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--color-ink);
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-thumb-hover);
+  background-clip: content-box;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reusable surfaces & components
+ * ------------------------------------------------------------------ */
+@layer components {
+  .surface {
+    background: linear-gradient(180deg, var(--color-surface), var(--color-surface-2));
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+
+  .glass {
+    background: color-mix(in oklab, var(--color-surface) 80%, transparent);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--color-line);
+  }
+
+  .card-hover {
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-line);
+    box-shadow: 0 20px 44px -26px var(--accent);
+  }
+
+  .accent-chip {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-line);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.1rem;
+    transition: transform 0.12s ease, filter 0.12s ease, background 0.12s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+  .btn:active {
+    transform: translateY(1px) scale(0.99);
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.06);
+  }
+  .btn-ghost {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent-line);
+  }
+
+  /* Lesson reading typography */
+  .prose-lesson {
+    color: var(--prose);
+    font-size: 1.05rem;
+    line-height: 1.78;
+  }
+  .prose-lesson p {
+    margin: 0 0 1rem;
+  }
+  .prose-lesson strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .prose-lesson em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 500;
+  }
+  .prose-lesson code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    border-radius: 0.4rem;
+    padding: 0.1rem 0.35rem;
+  }
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+.katex {
+  font-size: 1.04em;
+}
