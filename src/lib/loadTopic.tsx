@@ -32,7 +32,7 @@ function mapQuestion(q: Raw, id: string, topic: string): Question {
 function mapBlock(b: Raw, slug: string, i: number, topic: string, sims: SimRegistry): LessonBlock {
   switch (b.kind) {
     case "heading":
-      return { kind: "heading", text: b.text ?? "" };
+      return { kind: "heading", text: b.text ?? b.title ?? "" };
     case "definition":
       return { kind: "definition", term: b.term ?? "", content: b.text ?? "" };
     case "formula":

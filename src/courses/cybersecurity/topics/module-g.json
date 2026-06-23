@@ -6,7 +6,7 @@
     },
     {
       "kind": "heading",
-      "title": "1. What is the IoT?"
+      "text": "1. What is the IoT?"
     },
     {
       "kind": "prose",
@@ -23,6 +23,10 @@
       "text": "- A **Thing** is any identifiable physical or virtual object linked to communication networks.\n- An **IoT Device** is a thing that **must support communication**, and *may* also include sensing, actuation, data capture, storage, and processing."
     },
     {
+      "kind": "prose",
+      "text": "Put simply, IoT combines four ingredients: **physical objects, controllers, sensors, actuators, and the Internet**. The controller (a microcontroller) provides the intelligence, the sensors/actuators interface with the physical world, and the Internet ties everything together so data and commands can flow."
+    },
+    {
       "kind": "callout",
       "tone": "key",
       "title": "Communication is the non-negotiable part",
@@ -34,7 +38,7 @@
     },
     {
       "kind": "heading",
-      "title": "2. Components of an IoT thing"
+      "text": "2. Components of an IoT thing"
     },
     {
       "kind": "prose",
@@ -69,7 +73,7 @@
     },
     {
       "kind": "heading",
-      "title": "3. The ITU-T IoT reference model"
+      "text": "3. The ITU-T IoT reference model"
     },
     {
       "kind": "prose",
@@ -104,7 +108,7 @@
     },
     {
       "kind": "heading",
-      "title": "4. The security landscape (logical framework)"
+      "text": "4. The security landscape (logical framework)"
     },
     {
       "kind": "prose",
@@ -143,7 +147,26 @@
     },
     {
       "kind": "heading",
-      "title": "5. Security requirements (ITU-T Y.2066)"
+      "text": "4b. The four security capabilities (cross-layer)"
+    },
+    {
+      "kind": "prose",
+      "text": "Within this four-layered framework the slides single out **four security features that operate across multiple layers**. Learn them as a named set of exactly four - this is a common exam target:"
+    },
+    {
+      "kind": "definition",
+      "term": "The four cross-layer security capabilities",
+      "text": "- **Role-Based Access Control (RBAC)** - instead of assigning permissions to individual users, RBAC allocates access rights to **roles**; users are then linked to those roles, permanently or temporarily, based on their duties. Widely adopted in commercial cloud and enterprise environments and a proven way to regulate access to IoT devices and the data they generate.\n- **Tamper Resistance and Detection** - crucial primarily at the **device and fog** layers (but also applies to the **core network**), because components at these levels may sit physically **outside the enterprise's secured perimeter**, making tamper detection vital.\n- **Data Security and Privacy** - implemented throughout **every layer** of the architecture to safeguard sensitive information.\n- **Internet Protocol Security** - ensures the **confidentiality and integrity** of data as it travels **between layers**, preventing interception and unauthorized monitoring."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Match each capability to where it lives",
+      "text": "RBAC governs *who* can access things; **Tamper Resistance/Detection** is physical and concentrated at device/fog/core (outside the secure perimeter); **Data Security & Privacy** spans *all* layers; **Internet Protocol Security** protects data *moving between* layers. If a question asks which capability protects against physical tampering of an exposed sensor, the answer is tamper resistance and detection - not encryption-in-transit."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Security requirements (ITU-T Y.2066)"
     },
     {
       "kind": "prose",
@@ -162,16 +185,16 @@
     },
     {
       "kind": "heading",
-      "title": "6. Why IoT is so hard to secure"
+      "text": "6. Why IoT is so hard to secure"
     },
     {
       "kind": "prose",
-      "text": "The slides describe IoT as one of the **least mature** areas of network security. Beyond cost and sheer scale, several structural challenges make it worse:"
+      "text": "The slides describe IoT as one of the **most intricate and least mature** sectors in network security. Beyond cost and sheer scale, several structural challenges make it worse:"
     },
     {
       "kind": "definition",
       "term": "Core IoT security challenges",
-      "text": "- **Unpredictable behavior** - massive numbers and diverse tech produce hard-to-anticipate real-world interactions.\n- **Device homogeneity** - many devices share designs and components, so **one vulnerability affects many** (monoculture risk).\n- **Deployment challenges** - devices placed in remote/exposed spots are hard to protect physically.\n- **Extended life & end-of-support** - devices outlive vendor support and become **\"orphaned\"** with no patches.\n- **Lack of upgrade** - many cannot be updated easily, so users ignore patches.\n- **Limited transparency** - users cannot see internal processes or stop unwanted data collection.\n- **Absence of alerts** - breaches go unnoticed for long periods."
+      "text": "- **Unpredictable behavior** - massive numbers and diverse tech produce hard-to-anticipate real-world interactions. Even a carefully engineered, well-managed system stays risky because its **interactions with other systems remain uncertain**.\n- **Device homogeneity** - many devices share designs, identical connectivity methods, and hardware components, so **one vulnerability affects many** (monoculture risk).\n- **Deployment challenges** - IoT aims to push advanced networks and analytics into previously unreachable areas, but that places devices in unusual/easily accessible spots that are hard to protect physically.\n- **Extended life & end-of-support** - devices outlive vendor support and become **\"orphaned\"** with no patches; traditional systems, by contrast, usually keep getting updates even after users abandon them.\n- **Lack of upgrade** - many cannot be updated easily, and even when updates exist they are inconvenient to apply, so users ignore them.\n- **Limited transparency** - users cannot see or control internal processes, have no control over unwanted features or data collection, and vendor updates can even add undesired functionality.\n- **Absence of alerts** - IoT tries to be seamless and unobtrusive, so users don't actively monitor devices and breaches go unnoticed for long periods."
     },
     {
       "kind": "example",
@@ -180,11 +203,15 @@
     },
     {
       "kind": "heading",
-      "title": "7. The main threats"
+      "text": "7. The main threats"
     },
     {
       "kind": "prose",
-      "text": "The slides group cybersecurity threats in IoT into **three critical areas**:\n\n- **Device failures** - automation controls safety- and property-critical systems; a fault in an IoT heating system could freeze and burst pipes in an empty house.\n- **Data breaches** - data is IoT's greatest asset *and* its biggest vulnerability (targeted for marketing abuse, identity theft, stalking, etc.).\n- **Cyber attacks** - a compromised device (a smart oven, a tampered sprinkler) can open the whole network. Defenses focus on **securing the weakest link**, continuous monitoring, and controlled access."
+      "text": "The slides group cybersecurity threats in IoT into **three critical areas** - **device failures, cyberattacks, and unauthorized data access (data breaches)**:\n\n- **Device failures** - automation controls safety- and property-critical systems; a fault in an IoT heating system could freeze and burst pipes in an empty house, causing water damage. This risk forces organizations to add robust safeguards.\n- **Data breaches** - data is IoT's greatest asset *and* its biggest vulnerability (targeted for marketing exploitation, identity theft, wrongful incrimination, stalking, or plain malice). The same measures that stop attacks also mitigate data theft.\n- **Cyber attacks** - a compromised device (a smart oven, a tampered fire-sprinkler system) can open the whole network and connected systems. Defenses focus on **securing the weakest link**, continuous monitoring, and controlled access."
+    },
+    {
+      "kind": "prose",
+      "text": "The slides also call out **simple yet powerful strategies** to counter these threats:\n\n- **Built-in security** - devices designed with security built directly into their **hardware and firmware**.\n- **Encryption** - essential at the **manufacturing stage** *and* within user environments to safeguard data.\n- **Risk analysis** - both individuals and organizations should evaluate potential risks when **designing or selecting** IoT systems.\n- **Access control** - enforce strict **privilege levels and authentication** wherever feasible to limit unauthorized use."
     },
     {
       "kind": "checkpoint",
@@ -215,27 +242,27 @@
     },
     {
       "kind": "heading",
-      "title": "8. Countermeasures - the toolbox"
+      "text": "8. Countermeasures - the toolbox"
     },
     {
       "kind": "prose",
-      "text": "The slides list the essential security technologies in use for IoT. We will define the most important ones, contrasting the ones students confuse."
+      "text": "The slides list the **essential security technologies in use** for IoT. Know the full set, then we define the most important ones and contrast the ones students confuse.\n\n- data **encryption** techniques\n- **password-based** protection\n- dedicated **Hardware Security Modules (HSMs)**\n- **Multi-Factor Authentication (MFA)**\n- **Trusted Execution Environment (TEE)**\n- comprehensive **data wiping** methods\n- **Public Key Infrastructure (PKI)** certificates\n- **biometric** verification systems\n- specialized **Hardware Cryptographic Processors**\n- distributed ledger technology (**Blockchain**)"
     },
     {
       "kind": "definition",
       "term": "Lightweight cryptography",
-      "text": "Cryptographic methods **designed for resource-limited devices** (RFID tags, sensors, contactless smart cards, medical equipment). They adapt the traditional algorithms used in IPsec and TLS to fit small devices. They still give robust security, but **do not always achieve the ideal balance** between security strength and operational efficiency."
+      "text": "Cryptographic methods **designed for resource-limited devices** (RFID tags, sensors, contactless smart cards, medical equipment). They improve/adapt the traditional algorithms used in Internet security protocols like IPsec and TLS to fit small devices. They still give robust security suitable for many applications, but **do not always fully leverage the balance** between security strength and operational efficiency."
     },
     {
       "kind": "callout",
       "tone": "trap",
       "title": "Passwords are a poor fit for IoT",
-      "text": "Passwords fail for IoT for two reasons: (1) constrained devices struggle to **store/process** them, and (2) passwords need **human input**, which breaks automated **machine-to-machine** authentication. So password-based protection alone is increasingly unviable for IoT - prefer certificates (PKI), keys in hardware, and MFA."
+      "text": "Passwords fail for IoT for two reasons: (1) constrained devices struggle to **store/process** them, and (2) passwords need **human input**, which breaks automated **machine-to-machine** authentication. So password-based protection alone is increasingly unviable for automated IoT data exchanges - prefer certificates (PKI), keys in hardware, and MFA."
     },
     {
       "kind": "definition",
       "term": "TEE vs. Secure Element vs. HSM vs. Crypto-processor",
-      "text": "- **TEE (Trusted Execution Environment)** - a **hardware security extension of the CPU** that creates an isolated, shielded area to run critical code and sensitive data, isolated at hardware level from other software (e.g. ARM, Intel, AMD, Qualcomm). It reuses the main processor.\n- **Secure Element** - a separate **tamper-proof hardware module** with smart-card-grade security; acts as the device **root of trust**, stores secrets, manages the device lifecycle, and supports over-the-air credential/patch updates.\n- **HSM (Hardware Security Module)** - a dedicated physical device (plug-in card or external unit) that generates, stores, and manages keys and offloads asymmetric/symmetric crypto from servers.\n- **Secure crypto-processor** - a chip exclusively for crypto, in a tamper-resistant package, ensuring decrypted data/instructions **never leave** the protected boundary; it is the foundation of a security subsystem."
+      "text": "- **TEE (Trusted Execution Environment)** - a **hardware security extension of the CPU** that creates an isolated, shielded area to run critical code and sensitive data, isolated at hardware level from other software (e.g. ARM, Intel, AMD, Qualcomm). It reuses the main processor and is suitable across the entire IoT system's layers.\n- **Secure Element** - a separate **tamper-proof hardware module** with smart-card-grade security; acts as the device **root of trust**, stores secrets so they are accessible only to authorized users/applications, manages the device's entire lifecycle, and supports remote **over-the-air** updates of credentials, patches, and protection features.\n- **HSM (Hardware Security Module)** - a dedicated physical device (plug-in card or external unit connecting to computers/servers) that **generates keys inside the device**, stores and administers them, handles crypto and sensitive data securely, and offloads asymmetric/symmetric crypto from application servers.\n- **Secure crypto-processor** - a chip exclusively for crypto, in a tamper-resistant package, ensuring decrypted data/instructions **never leave** the protected boundary; it is the foundational element of a security subsystem, removing the need to physically protect the rest of the subsystem."
     },
     {
       "kind": "callout",
@@ -246,16 +273,12 @@
     {
       "kind": "definition",
       "term": "Authentication & identity tools",
-      "text": "- **MFA / 2FA** - require **two distinct forms** of identification, unlike single-factor (SFA) which uses just a password; sharply raises the bar for attackers.\n- **PKI certificates** - the roles, policies, and procedures to generate, manage, distribute, store, and **revoke digital certificates** and oversee public-key crypto; used where simple passwords are inadequate and strong identity proof + data integrity are needed.\n- **Biometrics** - match a person's unique physical/behavioral traits against a stored template (kept in a secure database or on a protected device like a smart card)."
+      "text": "- **MFA / 2FA** - require **two distinct forms** of identification, unlike single-factor (SFA) which uses just one credential (usually a password); a long-trusted way to sharply raise the bar for attackers and protect critical systems and confidential information.\n- **PKI certificates** - the roles, policies, and procedures to generate, manage, distribute, use, store, and **revoke digital certificates** and oversee public-key encryption; enables secure e-commerce, online banking, and confidential email, and is used where simple password authentication is inadequate and strong identity proof + data integrity are needed.\n- **Biometrics** - match a person's unique physical/behavioral traits against a stored template. The reference template is first **enrolled** into a secure database or a protected portable device (e.g. a smart card); at authentication time the system compares the **live biometric input** against that stored template to confirm identity with high accuracy."
     },
     {
       "kind": "definition",
       "term": "Other countermeasures",
-      "text": "- **Tamper resistance & detection** - vital at device and fog layers (and core) because components sit **outside the secured perimeter**; the device must resist and detect physical tampering.\n- **RBAC (Role-Based Access Control)** - assign permissions to **roles**, not individual users; users are then mapped to roles (permanently or temporarily) by duty. Widely used in cloud/enterprise to govern IoT access.\n- **Data erasure (wiping)** - overwrite storage with binary data so original data is unrecoverable; should support standards and confirm complete overwrite.\n- **Blockchain for IoT** - a decentralized, append-only ledger (transactions grouped into time-stamped, tamper-evident blocks; every node holds a full copy). Integrating it with IoT improves data confidentiality/integrity and lets devices **detect and counter tampering**, building trust between parties."
-    },
-    {
-      "kind": "prose",
-      "text": "The slides also note simple but powerful strategies that tie it together: **built-in security** (security in hardware and firmware from the start), **encryption** (at the manufacturing stage and in the field), **risk analysis** (when designing or choosing systems), and **access control** (strict privilege levels and authentication)."
+      "text": "- **Tamper resistance & detection** - vital at device and fog layers (and core) because components sit **outside the secured perimeter**; the device must resist and detect physical tampering.\n- **RBAC (Role-Based Access Control)** - assign permissions to **roles**, not individual users; users are then mapped to roles (permanently or temporarily) by duty. Widely used in cloud/enterprise to govern IoT access.\n- **Data erasure (wiping / clearing)** - a software- or hardware-based technique that overwrites existing data on storage (e.g. hard drives) with binary data (zeros and ones) so the original is unrecoverable, sanitizing the medium. Good techniques should offer a choice of **standards** and **confirm the overwrite covered the entire device**.\n- **Blockchain for IoT** - a decentralized, append-only database/ledger: no single central computer controls it, every node holds a full copy, and records are only added, never removed. It is built from **transactions** (user-initiated activities) grouped into time-stamped **blocks** that are chronologically ordered and tamper-evident. It offers transparency, robustness against failures, auditability, and efficiency; integrating it with IoT improves data confidentiality/integrity and lets devices **detect and counter tampering**, building trust between parties."
     },
     {
       "kind": "checkpoint",
@@ -285,21 +308,49 @@
       }
     },
     {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Within the four-layered IoT framework, which cross-layer security capability is described as protecting confidentiality and integrity of data as it travels BETWEEN layers?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Role-Based Access Control (RBAC)"
+          },
+          {
+            "id": "B",
+            "content": "Tamper Resistance and Detection"
+          },
+          {
+            "id": "C",
+            "content": "Internet Protocol Security"
+          },
+          {
+            "id": "D",
+            "content": "Data Security and Privacy"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Internet Protocol Security ensures confidentiality and integrity of data moving between layers, preventing interception and unauthorized monitoring. RBAC governs who can access resources; Tamper Resistance and Detection is physical protection at device/fog/core layers; Data Security and Privacy spans every layer to safeguard sensitive information but is not specifically the in-transit, between-layers capability."
+      }
+    },
+    {
       "kind": "callout",
       "tone": "key",
       "title": "The big picture",
-      "text": "IoT security is hard because devices are **constrained, homogeneous, long-lived, physically exposed, and rarely updated**. The standards give structure: **Y.2060** defines what IoT is, the **ITU-T 4-layer model** organizes the architecture with security as a cross-cutting pillar, and **Y.2066** lists the security requirements. The countermeasures - lightweight crypto, TEE/Secure Element/HSM, mutual authentication via PKI, MFA, RBAC, tamper resistance, lifecycle management, and blockchain - are the concrete tools that satisfy those requirements on weak devices."
+      "text": "IoT security is hard because devices are **constrained, homogeneous, long-lived, physically exposed, and rarely updated**. The standards give structure: **Y.2060** defines what IoT is, the **ITU-T 4-layer model** organizes the architecture with security as a cross-cutting pillar (RBAC, tamper resistance/detection, data security & privacy, Internet Protocol Security), and **Y.2066** lists the security requirements. The countermeasures - lightweight crypto, TEE/Secure Element/HSM/crypto-processor, mutual authentication via PKI, MFA, biometrics, RBAC, tamper resistance, data erasure, lifecycle management, and blockchain - are the concrete tools that satisfy those requirements on weak devices."
     }
   ],
-  "minutes": 20,
+  "minutes": 26,
   "objectives": [
     "Define IoT, a Thing, and an IoT device using ITU-T Y.2060, and state the one mandatory capability",
     "Describe the ITU-T four-layer IoT reference model and the World Forum framework layers, including security as a cross-cutting pillar",
+    "Name the four cross-layer security capabilities (RBAC, tamper resistance & detection, data security & privacy, Internet Protocol Security) and where each applies",
     "List the ITU-T Y.2066 security requirements, including mutual authentication and security audit",
-    "Explain why constrained IoT devices are hard to secure (homogeneity, end-of-support, lack of upgrades, no alerts, physical exposure)",
-    "Identify the main IoT threat areas: device failures, data breaches, and cyber attacks",
-    "Select appropriate countermeasures and distinguish TEE, Secure Element, HSM, PKI, MFA, RBAC, tamper resistance, and blockchain"
+    "Explain why constrained IoT devices are hard to secure (homogeneity, end-of-support, lack of upgrades, no alerts, physical exposure, limited transparency, unpredictable behavior)",
+    "Identify the main IoT threat areas (device failures, data breaches, cyber attacks) and the simple strategies that counter them (built-in security, encryption, risk analysis, access control)",
+    "Select appropriate countermeasures and distinguish TEE, Secure Element, HSM, crypto-processor, PKI, MFA, biometrics, RBAC, tamper resistance, data erasure, and blockchain"
   ],
-  "summary": "A from-zero lesson on IoT security following the ITU-T standards from the slides: it defines IoT devices and their constraints, walks the four-layer reference model and security landscape, lists the Y.2066 security requirements, surveys the structural challenges and threats, and contrasts the key countermeasures (lightweight crypto, TEE vs Secure Element vs HSM, PKI, MFA, RBAC, tamper resistance, lifecycle, blockchain).",
+  "summary": "A from-zero lesson on IoT security following the ITU-T standards from the slides: it defines IoT devices and their constraints, walks the four-layer reference model and security landscape, names the four cross-layer security capabilities, lists the Y.2066 security requirements, surveys the structural challenges, threats, and counter-strategies, and contrasts the full countermeasure toolbox (lightweight crypto, TEE vs Secure Element vs HSM vs crypto-processor, PKI, MFA, biometrics, RBAC, tamper resistance, data erasure, blockchain).",
   "title": "Module G: IoT security"
 }
