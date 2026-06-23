@@ -186,11 +186,13 @@ function PracticeRunner({
     }
   }, [courseId, topic, mode, initialIds, i, sessionCorrect, sessionWrong, done]);
 
-  // "Locked-in" stat is scoped to the current lecture when one is selected, else the whole bank.
+  // Stats are scoped to the current set (the selected lecture); with no
+  // lecture the set IS the whole bank.
   const statPool = topic ? course.practice.filter((qq) => qq.topic === topic) : course.practice;
   const total = statPool.length;
   const mastered = masteredCount(statPool, progress);
-  const due = dueCount(course.practice, progress);
+  const setDue = dueCount(statPool, progress); // this set only — shown in the stat bar
+  const courseDue = dueCount(course.practice, progress); // whole course — drives the nav badge
   const { level, pct } = levelFromXp(progress.xp);
 
   function answer(optionId: string) {
@@ -222,14 +224,14 @@ function PracticeRunner({
 
       <Page className="max-w-3xl">
         <div className="mb-4">
-          <CourseNav courseId={courseId} due={due} />
+          <CourseNav courseId={courseId} due={courseDue} />
         </div>
 
         {/* Status bar */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat icon="ListChecks" label="Question" value={`${Math.min(i + (done ? 0 : 1), queue.length)}/${queue.length}`} />
           <Stat icon="Check" label="Correct" value={sessionCorrect} tone="good" />
-          <Stat icon="RotateCcw" label="Due" value={due} tone={due ? "warn" : "default"} />
+          <Stat icon="RotateCcw" label="Due" value={setDue} tone={setDue ? "warn" : "default"} />
           <Stat icon="Trophy" label="Locked-in" value={`${mastered}/${total}`} />
         </div>
 
