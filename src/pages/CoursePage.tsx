@@ -103,7 +103,7 @@ export function CoursePage() {
             </div>
             <div className="flex-1 space-y-3">
               <BreakdownRow icon="BookOpen" label="Lessons read" done={s.lessonsDone} total={s.lessonsTotal} />
-              <BreakdownRow icon="Trophy" label="Questions mastered" done={s.mastered} total={s.practiceTotal} due={s.due} />
+              <BreakdownRow icon="Trophy" label="Questions locked-in" done={s.mastered} total={s.practiceTotal} due={s.due} />
               <BreakdownRow icon="FileCheck" label="Exam problems solved" done={s.examSolved} total={s.examTotal} />
             </div>
           </div>

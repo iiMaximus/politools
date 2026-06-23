@@ -53,7 +53,7 @@ export function HubPage() {
 
             <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
               <DashTile icon="BookOpen" label="Lessons" value={`${overall.lessonsDone}/${overall.lessonsTotal}`} />
-              <DashTile icon="Trophy" label="Cards mastered" value={`${overall.mastered}/${overall.practiceTotal}`} />
+              <DashTile icon="Trophy" label="Cards locked-in" value={`${overall.mastered}/${overall.practiceTotal}`} />
               <DashTile icon="FileCheck" label="Exam problems" value={`${overall.examSolved}/${overall.examTotal}`} />
               <DashTile
                 icon="RotateCcw"
@@ -192,7 +192,7 @@ function CourseCard({ course }: { course: Course }) {
         {/* per-subject breakdown */}
         <div className="mt-3 grid grid-cols-3 gap-2 text-center">
           <Mini icon="BookOpen" value={`${s.lessonsDone}/${s.lessonsTotal}`} label="lessons" />
-          <Mini icon="Dumbbell" value={`${s.mastered}/${s.practiceTotal}`} label="mastered" />
+          <Mini icon="Dumbbell" value={`${s.mastered}/${s.practiceTotal}`} label="locked-in" />
           <Mini icon="FileText" value={`${s.examSolved}/${s.examTotal}`} label="exams" />
         </div>
 

@@ -49,8 +49,10 @@ export function PracticePage() {
 
   if (!course) return <NotFound />;
 
-  const total = course.practice.length;
-  const mastered = masteredCount(course.practice, progress);
+  // "Locked-in" stat is scoped to the current lecture when one is selected, else the whole bank.
+  const statPool = topic ? course.practice.filter((qq) => qq.topic === topic) : course.practice;
+  const total = statPool.length;
+  const mastered = masteredCount(statPool, progress);
   const due = dueCount(course.practice, progress);
   const { level, pct } = levelFromXp(progress.xp);
 
@@ -117,7 +119,7 @@ export function PracticePage() {
           <Stat icon="ListChecks" label="Question" value={`${Math.min(i + (done ? 0 : 1), queue.length)}/${queue.length}`} />
           <Stat icon="Check" label="Correct" value={sessionCorrect} tone="good" />
           <Stat icon="RotateCcw" label="Due" value={due} tone={due ? "warn" : "default"} />
-          <Stat icon="Trophy" label="Mastered" value={`${mastered}/${total}`} />
+          <Stat icon="Trophy" label="Locked-in" value={`${mastered}/${total}`} />
         </div>
 
         <div className="surface mb-6 p-4">
