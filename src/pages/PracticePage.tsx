@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
@@ -18,7 +18,8 @@ import {
   shuffle,
 } from "../lib/adaptive";
 import { recordAnswer, useCourseProgress } from "../lib/progress";
-import type { Question } from "../types";
+import { clearSession, readSession, saveSession } from "../lib/session";
+import type { Course, Question } from "../types";
 import { NotFound } from "./NotFound";
 
 export function PracticePage() {
@@ -32,32 +33,46 @@ export function PracticePage() {
   const course = getCourse(courseId);
   const progress = useCourseProgress(courseId);
 
-  // Build the ordered queue once per mount.
-  const queue = useMemo(() => {
-    if (!course) return [];
+  // Build the deck once per scope. If a saved session matches this exact
+  // scope (and its cards still exist), resume its order/position/tally.
+  const init = useMemo(() => {
+    if (!course) return { ids: [] as string[], i: 0, correct: 0, wrong: 0 };
     let pool = course.practice;
     if (topic) pool = pool.filter((q) => q.topic === topic);
     if (dueOnly) pool = pool.filter((q) => isDue(progress.cards[q.id]));
-    return buildSession(pool, progress);
+    const built = buildSession(pool, progress).map((q) => q.id);
+    const saved = readSession(courseId);
+    if (
+      saved &&
+      saved.topic === topic &&
+      saved.mode === mode &&
+      saved.ids.length === built.length &&
+      saved.ids.every((id) => course.practice.some((q) => q.id === id))
+    ) {
+      return { ids: saved.ids, i: saved.i, correct: saved.correct, wrong: saved.wrong };
+    }
+    return { ids: built, i: 0, correct: 0, wrong: 0 };
+    // Build once per scope; deliberately not keyed on `progress` so the deck
+    // doesn't reshuffle out from under you as you answer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId, dueOnly, topic]);
-
-  const [i, setI] = useState(0);
-  const [picked, setPicked] = useState<string | null>(null);
-  const [sessionCorrect, setSessionCorrect] = useState(0);
-  const [sessionWrong, setSessionWrong] = useState(0);
+  }, [courseId, dueOnly, topic, mode]);
 
   if (!course) return <NotFound />;
 
-  // "Locked-in" stat is scoped to the current lecture when one is selected, else the whole bank.
-  const statPool = topic ? course.practice.filter((qq) => qq.topic === topic) : course.practice;
-  const total = statPool.length;
-  const mastered = masteredCount(statPool, progress);
   const due = dueCount(course.practice, progress);
-  const { level, pct } = levelFromXp(progress.xp);
 
   // Lecture-first menu (default landing for Practice)
   if (showMenu) {
+    const saved = readSession(courseId);
+    const resumable = saved && saved.i > 0 && saved.i < saved.ids.length;
+    const resumeHref = saved
+      ? saved.topic
+        ? `/c/${courseId}/practice?topic=${encodeURIComponent(saved.topic)}`
+        : `/c/${courseId}/practice?mode=${saved.mode ?? "all"}`
+      : null;
+    const resumeLabel = saved
+      ? saved.topic ?? (saved.mode === "due" ? "Review mistakes" : "Mix everything")
+      : "";
     return (
       <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
         <TopBar crumbs={[{ label: course.meta.short, to: `/c/${courseId}` }, { label: "Practice" }]} />
@@ -65,6 +80,27 @@ export function PracticePage() {
           <div className="mb-4">
             <CourseNav courseId={courseId} due={due} />
           </div>
+          {resumable && resumeHref && (
+            <Link
+              to={resumeHref}
+              className="card-hover surface mb-5 flex items-center gap-3 p-4"
+              style={{ borderColor: "var(--accent-line)" }}
+            >
+              <span
+                className="grid h-10 w-10 place-items-center rounded-xl text-white"
+                style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
+              >
+                <Icon name="Play" size={20} />
+              </span>
+              <div className="min-w-0">
+                <div className="font-semibold">Resume {resumeLabel}</div>
+                <div className="text-xs text-[var(--color-faint)]">
+                  Pick up at question {saved!.i + 1}/{saved!.ids.length}
+                </div>
+              </div>
+              <Icon name="ArrowRight" size={16} className="ml-auto text-[var(--color-faint)]" />
+            </Link>
+          )}
           <div className="mb-5">
             <Kicker>Practice</Kicker>
             <h1 className="mt-1 text-2xl font-bold tracking-tight">Choose a set</h1>
@@ -79,8 +115,83 @@ export function PracticePage() {
     );
   }
 
+  return (
+    <PracticeRunner
+      key={`${courseId}|${topic ?? ""}|${mode ?? ""}`}
+      courseId={courseId}
+      course={course}
+      topic={topic}
+      mode={mode}
+      initialIds={init.ids}
+      initialI={init.i}
+      initialCorrect={init.correct}
+      initialWrong={init.wrong}
+    />
+  );
+}
+
+function PracticeRunner({
+  courseId,
+  course,
+  topic,
+  mode,
+  initialIds,
+  initialI,
+  initialCorrect,
+  initialWrong,
+}: {
+  courseId: string;
+  course: Course;
+  topic: string | null;
+  mode: string | null;
+  initialIds: string[];
+  initialI: number;
+  initialCorrect: number;
+  initialWrong: number;
+}) {
+  const progress = useCourseProgress(courseId);
+  const dueOnly = mode === "due";
+
+  // Freeze the deck once, on mount. The order must NOT change mid-session:
+  // React may drop a useMemo and re-run buildSession (which uses random
+  // jitter), reshuffling the queue under the advancing index — that is what
+  // made the same card reappear before the deck was finished.
+  const [queue] = useState<Question[]>(() => {
+    const byId = new Map(course.practice.map((q) => [q.id, q]));
+    return initialIds.map((id) => byId.get(id)).filter(Boolean) as Question[];
+  });
+
+  const [i, setI] = useState(initialI);
+  const [picked, setPicked] = useState<string | null>(null);
+  const [sessionCorrect, setSessionCorrect] = useState(initialCorrect);
+  const [sessionWrong, setSessionWrong] = useState(initialWrong);
+
   const done = i >= queue.length;
   const q: Question | undefined = queue[i];
+
+  // Persist position + tally so closing/reopening resumes here. Clear on finish.
+  useEffect(() => {
+    if (done) {
+      clearSession(courseId);
+    } else {
+      saveSession(courseId, {
+        topic,
+        mode,
+        ids: initialIds,
+        i,
+        correct: sessionCorrect,
+        wrong: sessionWrong,
+        updated: Date.now(),
+      });
+    }
+  }, [courseId, topic, mode, initialIds, i, sessionCorrect, sessionWrong, done]);
+
+  // "Locked-in" stat is scoped to the current lecture when one is selected, else the whole bank.
+  const statPool = topic ? course.practice.filter((qq) => qq.topic === topic) : course.practice;
+  const total = statPool.length;
+  const mastered = masteredCount(statPool, progress);
+  const due = dueCount(course.practice, progress);
+  const { level, pct } = levelFromXp(progress.xp);
 
   function answer(optionId: string) {
     if (picked || !q) return;
