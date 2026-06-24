@@ -1,0 +1,309 @@
+{
+  "title": "Combined & Expanded Uncertainty: Propagation, Welch–Satterthwaite, Coverage",
+  "summary": "Once every input has a standard uncertainty $u(x_j)$, this lesson combines them. The **law of propagation of variance** $u^2(y)=\\sum_j (\\partial G/\\partial x_j)^2 u^2(x_j)=\\sum_j c_j^2 u^2(x_j)$ turns input variances into the combined variance through **sensitivity coefficients** $c_j$ (uncorrelated inputs drop the covariance terms). The **Welch–Satterthwaite** formula gives the **effective degrees of freedom** $\\nu_y=\\lfloor u^4(y)/\\sum_j (u_j^4(y)/\\nu_j)\\rfloor$. Finally the **expanded uncertainty** $U=k\\,u(y)$ scales by a coverage factor $k$ read from the Student-$t$ at the chosen confidence (95% → ~2), and the result is reported as $y\\pm U$.",
+  "minutes": 45,
+  "objectives": [
+    "Write a measurand as a model $y=G(x_1,\\dots,x_q)$ and linearise it with a first-order Taylor expansion.",
+    "Compute a sensitivity coefficient $c_j=\\partial G/\\partial x_j$ analytically or as a numerical incremental ratio.",
+    "Apply the law of propagation of variance $u^2(y)=\\sum_j c_j^2 u^2(x_j)$ for uncorrelated inputs, and know that only $c_j^2$ enters (sign irrelevant).",
+    "Recognise the variance–covariance matrix form $u^2(y)=\\{c\\}^T[s^2(x)]\\{c\\}$ and when covariances may be set to zero.",
+    "Handle input/output multiplicities $n_d,n_r$ when an input or the result refers to an average ($s^2(m)=s^2(x)/n$).",
+    "Compute the effective degrees of freedom by the Welch–Satterthwaite formula and floor the result.",
+    "Choose the coverage factor $k=t_{1-\\alpha/2,\\nu_y}$ from the Student-$t$ for a stated confidence (95% → ~2, 98%, 99%), compute $U=k\\,u(y)$, and report $y\\pm U$."
+  ],
+  "blocks": [
+    { "kind": "heading", "text": "1. The measurement model and its linearisation" },
+    {
+      "kind": "prose",
+      "text": "A measurand $Y$ is almost never read directly: it is a **function** of several input quantities $X_j$,\n$$Y=G(X_1,\\dots,X_j,\\dots,X_q),$$\neach known only with some uncertainty. The mean of the output follows the mean of the inputs, $\\bar y=G(\\bar x_1,\\dots,\\bar x_q)$. For a small variation $\\delta x_j$ of each input, a **first-order Taylor expansion** (valid when $G$ is regular near the operating point) gives the output variation:"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\delta y=\\left(\\frac{\\partial G}{\\partial x_1}\\right)\\delta x_1+\\dots+\\left(\\frac{\\partial G}{\\partial x_q}\\right)\\delta x_q",
+      "tag": "10.1",
+      "caption": "Linearised relation between an output deviation and the input deviations, evaluated at the mean values. This is the basis of the whole propagation law."
+    },
+    {
+      "kind": "definition",
+      "term": "Sensitivity coefficient $c_j$",
+      "text": "The partial derivative $c_j=\\left(\\dfrac{\\partial G}{\\partial x_j}\\right)_{\\bar x_j}$, evaluated at the nominal inputs. It quantifies **how strongly $Y$ responds** to a variation of $X_j$ and carries the **units** that convert $u(x_j)$ into the units of $u(y)$. For a model given as a formula, compute it analytically (e.g. $y=kx\\Rightarrow c_k=x,\\ c_x=k$; $y=\\prod x_i\\Rightarrow c_j=y/x_j$); for a model given as a procedure or empirical diagram, approximate it numerically."
+    },
+    {
+      "kind": "formula",
+      "tex": "c_j\\approx\\frac{G(\\bar x_1,\\dots,\\bar x_j+\\Delta x_j,\\dots,\\bar x_q)-G(\\bar x_1,\\dots,\\bar x_j,\\dots,\\bar x_q)}{\\Delta x_j}",
+      "tag": "10.2",
+      "caption": "Numerical sensitivity coefficient (incremental ratio). The perturbation $\\Delta x_j$ must be small enough not to be affected by local nonlinearity."
+    },
+    { "kind": "heading", "text": "2. The law of propagation of variance" },
+    {
+      "kind": "prose",
+      "text": "Replicating the linearised relation over $n$ measurements and forming the variance of $Y$ leads, in matrix form, to $s^2(y)=\\{c_j\\}^T[s^2(x)]\\{c_j\\}$, where $[s^2(x)]$ is the **variance–covariance matrix** of the inputs: variances on the diagonal, covariances off it. When the influence quantities are **strongly random** and there is **no specific indication of dependence**, the covariances are taken **null** and the matrix becomes diagonal. The result is the central formula of the course:"
+    },
+    {
+      "kind": "formula",
+      "tex": "u^2(y)=\\sum_{j=1}^{q}\\left(\\frac{\\partial G}{\\partial x_j}\\right)^2 u^2(x_j)=\\sum_{j=1}^{q} c_j^2\\,u^2(x_j)=\\sum_{j=1}^{q} u_j^2(y)",
+      "tag": "10.3",
+      "caption": "Law of propagation of variance (uncorrelated inputs). Each contribution $u_j^2(y)=c_j^2\\,u^2(x_j)$ is a sensitivity-squared times an input variance; the combined variance is their **sum**, and $u(y)=\\sqrt{u^2(y)}$ — take the root **once**, at the end."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Variances add, then root once",
+      "text": "Build a budget **row by row**: for each input compute $u^2(x_j)$, the sensitivity $c_j$, and the product $u_j^2(y)=c_j^2 u^2(x_j)$. Sum the products to get $u^2(y)$, and only then take $u(y)=\\sqrt{u^2(y)}$. Squaring early or rooting each row is a frequent error. The same equation can be written with both Type A and Type B inputs, because each is just a standard uncertainty $u$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why the sensitivity is squared (sign drops out)",
+      "text": "Only $c_j^2$ enters, so a **negative** sensitivity (e.g. $c=-1.60$ or $c=-4000$ in the canonical budget) contributes exactly as much as a positive one of the same magnitude. The sign matters only when discussing *correlation* or *which way* an input pushes the result — never in the budget sum, where each $c_j^2 u^2(x_j)\\ge 0$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Differences inflate uncertainty",
+      "text": "For $Y=X_2-X_1$ the sensitivities are $\\pm1$, so $u^2(y)=u^2(x_1)+u^2(x_2)$ — **larger** than either input's variance. In *relative* terms this is worse the closer $X_1$ and $X_2$ are, because the difference shrinks while its uncertainty does not. (No issue when $X_1$ is just a small correction to $X_2$.)"
+    },
+    { "kind": "heading", "text": "3. Multiplicities: when an input or the result is an average" },
+    {
+      "kind": "prose",
+      "text": "By the Central Limit Theorem the **variance of an average** of $n$ data is the single-value variance divided by $n$: $s^2(m)=s^2(x)/n$. Whether you must multiply or divide depends on what the information refers to:\n\n- **Input multiplicity $n_d$**: the variability information was obtained on a mean of $n_d$ data → convert to a single-value variance with $s^2(x)=n_d\\,s^2(m)$.\n- **Output multiplicity $n_r$**: the final result is the average of $n_r$ measurements → $s^2(m)=s^2(x)/n_r$.\n\nIn one column this is the factor $u^2(x_j)=\\dfrac{a_j^2}{k_{a}}\\cdot\\dfrac{n_d}{n_r}$ (Type B) or $s_j^2\\cdot\\dfrac{n_d}{n_r}$ (Type A)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Average vs individual value — do not mix them",
+      "text": "Variability that refers to a **mean** ($s^2(m)$) and variability that refers to an **individual value** ($s^2(x)$) differ by a factor $n$. Using the wrong one (e.g. quoting the spread of single parts when designing for the *mean* tensile strength, or vice versa) leads to serious mistakes. Always read whether the quoted figure is per-measurement or per-average."
+    },
+    { "kind": "heading", "text": "4. The uncertainty budget table" },
+    {
+      "kind": "prose",
+      "text": "Organising the propagation law as a **table** (the *uncertainty budget*) gives a global view of the **weight** of each contribution. One row per input lists its value/note, the Type A $s_j$ or the Type B half-width $a_j$ and divisor $k_a$, the resulting $u^2(x_j)$, the sensitivity $c_j$, and the contribution $u_j^2(y)=c_j^2 u^2(x_j)$; the footer sums to $u^2(y)$ and roots to $u(y)$."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Two table rules worth marks",
+      "text": "- **Same multiple/submultiple for every unit (base units).** Keep the whole table homogeneous (µm→m, etc.) so the sensitivity coefficients automatically carry the right units and you need not relabel.\n- **Absolute vs relative.** Do not mix contributions given as an absolute value (with a unit) and as a relative value (often a percentage); non-dimensional quantities need special care.\nThe biggest $u_j^2(y)$ tell you where to spend money to reduce uncertainty; the smallest tell you where you may relax the instrument to cut cost."
+    },
+    {
+      "kind": "example",
+      "title": "Canonical budget — a length corrected to 20 °C",
+      "text": "A length is measured with a flexometer and corrected to the reference temperature, $L_{20}=L_T[1+(\\alpha-\\beta)(20-T)]$, $L_T\\approx800.074$ mm. Six contributions enter, all reduced to **base units (m, °C)**:\n- instrument **bias** — Type B, expanded $3.7\\ \\mu$m at 95% on $n_d=4$ measurements (here treated already as a standard $u$ with $\\nu=3$);\n- reading **resolution** $1\\ \\mu$m — Type B rectangular, $a=0.5\\ \\mu$m;\n- **reproducibility** — Type A, averaged over $n_r=5$;\n- the workpiece/instrument **temperature coefficients** $\\alpha,\\beta$ — Type B rectangular from a handbook;\n- the **temperature** $T=22\\pm5$ °C — Type B (sensitivities $c_\\alpha,c_\\beta\\approx\\pm L_T\\,\\Delta T$, $c_T\\approx -L_T(\\alpha-\\beta)$).\n\nSumming the rows: $u^2(y)=1.3012\\times10^{-11}\\ \\text{m}^2$, so $u(y)=3.607\\ \\mu$m. The **bias** ($\\approx5.41\\times10^{-12}$) and **reproducibility** ($\\approx2.14\\times10^{-12}$) dominate — that is where to improve the measurement."
+    },
+    { "kind": "heading", "text": "5. Effective degrees of freedom: Welch–Satterthwaite" },
+    {
+      "kind": "prose",
+      "text": "The combined $u(y)$ mixes contributions with different reliabilities: a Type A average has $\\nu=n-1$, a regression slope $\\nu=n-n_p$, a Type B value a conventional 100 / 30 / 15. To pick one coverage factor we need a single **effective** number of degrees of freedom for $y$. GUM uses the **Welch–Satterthwaite** formula, which relates each contribution's variance $u_j^2(y)$ and its d.o.f. $\\nu_j$ to the combined variance and its d.o.f. $\\nu_y$:"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\frac{u^4(y)}{\\nu_y}=\\sum_j \\frac{u_j^4(y)}{\\nu_j}\\qquad\\Longrightarrow\\qquad \\nu_y=\\left\\lfloor\\frac{u^4(y)}{\\displaystyle\\sum_j \\dfrac{u_j^4(y)}{\\nu_j}}\\right\\rfloor",
+      "tag": "10.4",
+      "caption": "Welch–Satterthwaite. The numerator is the combined variance squared; each denominator term is a contribution's variance squared over its own d.o.f. Take the **floor** (Excel INT)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Floor it — never round up",
+      "text": "Always take the **floor** ($=$INT$(\\cdot)$). In the canonical budget the raw value is $\\nu_y\\approx15.7$, which becomes $\\nu_y=15$ — not 16. Rounding up would inflate the d.o.f., shrink $k$, and **understate** $U$; flooring keeps the interval conservative. (With many strong Type B contributions $\\nu_y$ can instead come out large, e.g. 64, so $k\\to 2$.)"
+    },
+    { "kind": "heading", "text": "6. Expanded uncertainty and coverage factor" },
+    {
+      "kind": "prose",
+      "text": "The combined $u(y)$ is a **standard deviation**: for a normal output the band $\\pm u$ leaves out more than 30% of the values, so it does not give a *reasonable* coverage. The GUM therefore scales it to a confidence interval. The procedure: **(1)** fix the risk $\\alpha=1-P$ (in metrology, $P=95\\%$, symmetric two-sided, is conventional when consequences are unknown); **(2)** determine the interval boundaries from the Student-$t$ once $\\nu_y$ is known (using $t$ rather than the normal $z$ avoids underestimating the uncertainty); **(3)** apply the coverage factor."
+    },
+    {
+      "kind": "definition",
+      "term": "Coverage factor $k$",
+      "text": "For finite degrees of freedom $k$ is a **Student-$t$ quantile**, not the asymptotic normal $1.96$: $k=t_{1-\\alpha/2,\\,\\nu_y}=$ T.INV$\\left(1-\\tfrac{1-P}{2},\\ \\nu_y\\right)$. As $\\nu_y\\to\\infty$ the $t$-quantile approaches $z$ (e.g. $1.96$ at 95%). In the metrological field the convention is simply $k=2$ ($\\approx$ the $2\\sigma$ level, $\\approx95\\%$ with many d.o.f.)."
+    },
+    {
+      "kind": "formula",
+      "tex": "U(y)=k\\cdot u(y),\\qquad\\text{report}\\quad y=\\bar y\\pm U(y)\\ \\text{at confidence } P",
+      "tag": "10.5",
+      "caption": "Expanded uncertainty: the half-width of the confidence interval reported with the result. The expression of uncertainty is complete only if $P$ (and the d.o.f. used) are also stated. If a value is quoted simply as “uncertainty”, it is to be read as the expanded uncertainty."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-student",
+      "title": "The Student-t behind the coverage factor k",
+      "caption": "Lower the degrees of freedom and watch the tails fatten: the two-sided 95% quantile $t_{0.975,\\nu}$ climbs above the normal $1.96$ (e.g. $2.13$ at $\\nu=15$, $3.18$ at $\\nu=3$). That extra width is exactly why we floor $\\nu_y$ and use $t$, not $z$, for finite samples."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Coverage factors at a glance",
+      "text": "Two-sided coverage factors for large $\\nu$ ($\\to$ normal $z$): **90% → 1.645**, **95% → 1.96** (rounded to 2 by convention), **98% → 2.33**, **99% → 2.58**. For a finite $\\nu_y$ each is larger, read from T.INV$(1-\\alpha/2,\\nu_y)$: at $\\nu_y=15$ and 95%, $k=2.131$."
+    },
+    {
+      "kind": "example",
+      "title": "Finishing the canonical budget",
+      "text": "From $u(y)=3.607\\ \\mu$m and the six contributions, Welch–Satterthwaite gives $\\nu_y=\\lfloor15.7\\rfloor=15$. At $P=95\\%$ the coverage factor is $k=$T.INV$(0.975,15)=2.131$ — a Student-$t$ value, larger than $1.96$ because $\\nu_y$ is finite. Hence\n$$U=k\\,u(y)=2.131\\times3.607\\ \\mu\\text{m}=7.69\\ \\mu\\text{m}.$$\nThe result is reported as $L_{20}=800.0748\\ \\text{mm}\\pm7.7\\ \\mu$m at 95% confidence."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Full budget checklist",
+      "text": "1. Convert every datum to **base units**. 2. For each input: Type A or B? distribution? right divisor? include any $n_d/n_r$ factor → $u^2(x_j)$. 3. Sensitivity $c_j$, then $u_j^2(y)=c_j^2 u^2(x_j)$. 4. $u^2(y)=\\sum u_j^2(y)$, then $u(y)=\\sqrt{\\,\\cdot\\,}$. 5. $\\nu_y$ by Welch–Satterthwaite, **floored**. 6. $k=$T.INV$(1-\\alpha/2,\\nu_y)$. 7. $U=k\\,u(y)$; report $y\\pm U$ at $P$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In the law of propagation $u^2(y)=\\sum_j c_j^2 u^2(x_j)$, one input has a **negative** sensitivity $c_j=-4000$. How does it enter the combined variance?",
+        "options": [
+          { "id": "A", "content": "It subtracts from the variance because $c_j<0$" },
+          { "id": "B", "content": "It is dropped, since variances must be positive" },
+          { "id": "C", "content": "It contributes $c_j^2\\,u^2(x_j)>0$, exactly like $c_j=+4000$" },
+          { "id": "D", "content": "Its sign flips the sign of the final $u(y)$" }
+        ],
+        "correct": "C",
+        "explanation": "Only $c_j^2$ enters, so the sign disappears: $(-4000)^2=(+4000)^2$ and the contribution is positive. **A** misreads the formula — for uncorrelated inputs there is no subtraction. **B** would discard a real contribution. **D** is meaningless: $u(y)=\\sqrt{u^2(y)}\\ge0$ always. The sign of $c_j$ only matters for correlation or for the direction of the effect.",
+        "theory": "Uncorrelated propagation: every contribution $c_j^2 u^2(x_j)\\ge0$; the sign of $c_j$ is irrelevant to the sum.",
+        "tags": ["propagation", "sensitivity"]
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "What does a **sensitivity coefficient** $c_j$ represent in an uncertainty budget?",
+      "options": [
+        { "id": "A", "content": "The partial derivative $\\partial G/\\partial x_j$ at the nominal inputs" },
+        { "id": "B", "content": "The standard uncertainty of input $x_j$" },
+        { "id": "C", "content": "The number of degrees of freedom of input $x_j$" },
+        { "id": "D", "content": "The covariance between $x_j$ and $y$" }
+      ],
+      "correct": "A",
+      "explanation": "$c_j=(\\partial G/\\partial x_j)_{\\bar x_j}$ is the partial derivative of the model evaluated at the mean inputs; it scales how an input's uncertainty propagates to $y$ and carries the unit conversion. **B** is $u(x_j)$, a separate column. **C** is $\\nu_j$, used later in Welch–Satterthwaite. **D** confuses a sensitivity with a covariance, which lives off-diagonal in the variance–covariance matrix.",
+      "theory": "$c_j=\\partial G/\\partial x_j$; the contribution is $u_j^2(y)=c_j^2 u^2(x_j)$.",
+      "tags": ["sensitivity"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Inputs to a budget are uncorrelated, with $u_1^2(y)=4.0$, $u_2^2(y)=9.0$, $u_3^2(y)=0.33$ (units of $\\mu\\text{m}^2$). The combined standard uncertainty $u(y)$ is closest to:",
+      "options": [
+        { "id": "A", "content": "$13.3\\ \\mu$m" },
+        { "id": "B", "content": "$3.65\\ \\mu$m" },
+        { "id": "C", "content": "$5.0\\ \\mu$m" },
+        { "id": "D", "content": "$1.91\\ \\mu$m" }
+      ],
+      "correct": "B",
+      "explanation": "Variances add: $u^2(y)=4.0+9.0+0.33=13.33\\ \\mu\\text{m}^2$, then root once: $u(y)=\\sqrt{13.33}=3.65\\ \\mu$m. **A** forgets the square root and reports the variance. **C** roots only the largest term ($\\sqrt9$+... incorrectly). **D** wrongly takes the square root of each term first and... no — it averages; in any case it ignores that variances add then root once.",
+      "theory": "$u^2(y)=\\sum u_j^2(y)$; $u(y)=\\sqrt{u^2(y)}$ — sum the variances, take the root at the end.",
+      "tags": ["propagation", "combine"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A quantity is computed as the **difference** $Y=X_2-X_1$, with $u(x_1)=3$ and $u(x_2)=4$ (same units), uncorrelated. The standard uncertainty $u(y)$ is:",
+      "options": [
+        { "id": "A", "content": "$5$" },
+        { "id": "B", "content": "$7$ (since $4+3=7$)" },
+        { "id": "C", "content": "$1$ (since $4-3=1$)" },
+        { "id": "D", "content": "$0.5$" }
+      ],
+      "correct": "A",
+      "explanation": "Sensitivities are $c_1=-1$, $c_2=+1$, so $u^2(y)=(-1)^2 3^2+(1)^2 4^2=9+16=25$, $u(y)=5$. **B** adds the uncertainties linearly instead of in quadrature. **C** subtracts them — uncertainties never subtract. **D** is unrelated. Note $u(y)=5$ exceeds *both* input uncertainties: differences inflate uncertainty.",
+      "theory": "For $Y=X_2-X_1$: $u^2(y)=u^2(x_1)+u^2(x_2)$ — uncertainties combine in quadrature, never by subtraction.",
+      "tags": ["propagation", "difference"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Welch–Satterthwaite gives a raw effective degrees of freedom $\\nu_y=15.7$. What value goes into the coverage factor, and why?",
+      "options": [
+        { "id": "A", "content": "$16$ — round to nearest" },
+        { "id": "B", "content": "$15.7$ — keep the fractional value" },
+        { "id": "C", "content": "$\\infty$ — many inputs make it normal" },
+        { "id": "D", "content": "$15$ — take the floor (INT), to stay conservative" }
+      ],
+      "correct": "D",
+      "explanation": "The convention (and the sheet's INT) is to **floor** to $15$. Fewer d.o.f. → fatter-tailed $t$ → larger $k$ → larger, safely conservative $U$. **A** rounds up and would shrink $k$. **B** feeds a non-integer where an integer d.o.f. is expected. **C** is false — a handful of inputs does not give infinite d.o.f.; that limit is only asymptotic.",
+      "theory": "Always floor the Welch–Satterthwaite $\\nu_y$ (INT) before reading $k$ from T.INV.",
+      "tags": ["welch-satterthwaite", "dof"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "With a combined $u(y)=3.607\\ \\mu$m and effective degrees of freedom $\\nu_y=15$, the expanded uncertainty at 95% confidence ($k=t_{0.975,15}=2.131$) is closest to:",
+      "options": [
+        { "id": "A", "content": "$7.07\\ \\mu$m (using $k=1.96$)" },
+        { "id": "B", "content": "$7.69\\ \\mu$m" },
+        { "id": "C", "content": "$3.61\\ \\mu$m (forgetting to apply $k$)" },
+        { "id": "D", "content": "$1.69\\ \\mu$m (dividing instead of multiplying)" }
+      ],
+      "correct": "B",
+      "explanation": "$U=k\\,u(y)=2.131\\times3.607=7.69\\ \\mu$m. **A** uses the asymptotic normal $1.96$, valid only for $\\nu\\to\\infty$; with $\\nu_y=15$ the Student-$t$ value $2.131$ is required. **C** reports $u(y)$ itself, forgetting that the expanded uncertainty multiplies by $k$. **D** divides by $k$ — that is the inverse operation (used to go from expanded back to standard).",
+      "theory": "$U=k\\,u(y)$ with $k=t_{1-\\alpha/2,\\nu_y}$; report $y\\pm U$ at the stated confidence.",
+      "tags": ["expanded", "coverage"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Why does the GUM use the **Student-$t$** quantile for the coverage factor instead of the normal value $1.96$ at 95%?",
+      "options": [
+        { "id": "A", "content": "Because the inputs are never normal" },
+        { "id": "B", "content": "Because with finite degrees of freedom the t-distribution has fatter tails, so $z=1.96$ would underestimate the uncertainty" },
+        { "id": "C", "content": "Because $t$ is easier to compute than $z$" },
+        { "id": "D", "content": "Because the confidence level changes from 95% to 99%" }
+      ],
+      "correct": "B",
+      "explanation": "For a finite $\\nu_y$ the combined uncertainty is itself uncertain, giving the $t$-distribution heavier tails than the normal; using $z=1.96$ would yield too narrow an interval and **underestimate** $U$. As $\\nu_y\\to\\infty$, $t\\to z$. **A** is irrelevant — by the CLT the output is taken normal; it is the *estimated* standard deviation that forces $t$. **C** is false. **D** does not happen — the confidence is fixed at the chosen $P$.",
+      "theory": "Coverage factor $k=t_{1-\\alpha/2,\\nu_y}\\ge z$; equality only as $\\nu_y\\to\\infty$. Using $t$ avoids underestimating $U$.",
+      "tags": ["coverage", "student-t"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In the **metrological field**, when the consequences of error are unknown, what confidence level and coverage factor are conventionally adopted?",
+      "options": [
+        { "id": "A", "content": "$P=68\\%$, $k=1$" },
+        { "id": "B", "content": "$P=99.7\\%$, $k=3$" },
+        { "id": "C", "content": "$P=95\\%$, $k\\approx2$ (the $2\\sigma$ level)" },
+        { "id": "D", "content": "$P=50\\%$, $k=0.67$" }
+      ],
+      "correct": "C",
+      "explanation": "Conventionally metrology reports at the **$2\\sigma$ level**, i.e. $P=95\\%$ with a symmetric two-sided risk and $k\\approx2$ (exactly 2 for many d.o.f.). **A** is the bare $\\pm1\\sigma$ band, which leaves out >30% of values — not a reasonable coverage. **B** is the $3\\sigma$ level, not the convention. **D** is far too narrow to be useful.",
+      "theory": "Default metrological reporting: $P=95\\%$, two-sided, $k=2$ (the $2\\sigma$ level).",
+      "tags": ["coverage", "convention"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A reproducibility input is quoted as a **variance** $V=10.7\\ \\mu\\text{m}^2$ (per single measurement), and the reported result is the **average of $n_r=5$** measurements. What variance $u^2(x_j)$ enters the budget for this input?",
+      "options": [
+        { "id": "A", "content": "$10.7\\ \\mu\\text{m}^2$ — use the variance directly" },
+        { "id": "B", "content": "$\\sqrt{10.7}\\ \\mu$m — take the square root" },
+        { "id": "C", "content": "$10.7\\times5=53.5\\ \\mu\\text{m}^2$ — multiply by $n_r$" },
+        { "id": "D", "content": "$10.7/5=2.14\\ \\mu\\text{m}^2$ — divide by $n_r$" }
+      ],
+      "correct": "D",
+      "explanation": "The variance of an average of $n_r$ values is the single-value variance divided by $n_r$: $V/n_r=10.7/5=2.14\\ \\mu\\text{m}^2$. **A** ignores the output multiplicity (averaging). **B** confuses a standard deviation with a variance — the $u^2(x_j)$ column holds variances. **C** multiplies, which would be the variance of a *sum*, not a mean.",
+      "theory": "Output multiplicity: variance of the mean $=$ single-value variance $/n_r$. Keep variances (not std-devs) in the $u^2(x_j)$ column.",
+      "tags": ["multiplicity", "reproducibility"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Under what condition may the **covariance** terms be dropped from the propagation law, leaving $u^2(y)=\\sum_j c_j^2 u^2(x_j)$?",
+      "options": [
+        { "id": "A", "content": "When all sensitivity coefficients are positive" },
+        { "id": "B", "content": "When the inputs are uncorrelated (no specific indication of dependence)" },
+        { "id": "C", "content": "When all inputs are Type B" },
+        { "id": "D", "content": "When the degrees of freedom are infinite" }
+      ],
+      "correct": "B",
+      "explanation": "The full form $u^2(y)=\\{c\\}^T[s^2(x)]\\{c\\}$ keeps off-diagonal covariances; these vanish when the influence quantities are treated as **uncorrelated** (no indication of dependence), making the matrix diagonal. **A** is irrelevant — the sign of $c_j$ does not control correlation. **C** is false: Type A or B has nothing to do with correlation between inputs. **D** confuses degrees of freedom with covariance.",
+      "theory": "Uncorrelated inputs → covariances null → diagonal variance–covariance matrix → $u^2(y)=\\sum c_j^2 u^2(x_j)$.",
+      "tags": ["propagation", "correlation"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "How should a complete measurement result be **reported** at the end of a GUM budget?",
+      "options": [
+        { "id": "A", "content": "As $y$ alone, since the uncertainty is internal" },
+        { "id": "B", "content": "As $y\\pm u(y)$, the combined standard uncertainty" },
+        { "id": "C", "content": "As $y\\pm U(y)$ with the confidence level $P$ (and the d.o.f. used) stated" },
+        { "id": "D", "content": "As $y\\pm s^2(y)$, the combined variance" }
+      ],
+      "correct": "C",
+      "explanation": "A result is reported as $y\\pm U(y)$ at a stated confidence $P$, where $U=k\\,u(y)$; the expression is complete only if $P$ (and the degrees of freedom used) accompany it. **A** omits the uncertainty entirely. **B** reports only the standard uncertainty ($\\pm1\\sigma$), which leaves out >30% of the values. **D** reports a variance (wrong units, and unscaled).",
+      "theory": "Report $y\\pm U$ at confidence $P$, with $U=k\\,u(y)$; state $P$ and the d.o.f. for a complete expression.",
+      "tags": ["expanded", "reporting"]
+    }
+  ]
+}

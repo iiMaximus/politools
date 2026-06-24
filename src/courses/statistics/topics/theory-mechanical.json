@@ -1,0 +1,594 @@
+{
+  "title": "Mechanical Measurements: Length, Mass & Hardness",
+  "summary": "Lessons M1, M2 & M4. The mechanical-measurements pillar of ESMM, written for the exam's 5-point *true/false* section. You will master **length measurements** (line vs end standards, gauge blocks, calipers/micrometers, the Abbe principle, thermal/force effects, cosine & sine errors), **mass measurements** (balances, the kilogram via the Planck constant, gravity force vs weight force, buoyancy, conventional mass), and **hardness measurements** (Brinell, Vickers, Rockwell, Knoop): indenter geometry, applied load, how each number is computed ($\\mathrm{HV}=0.189\\,F/d^2$, $\\mathrm{HB}=0.102\\cdot 2F/[\\pi D(D-\\sqrt{D^2-d^2})]$, $\\mathrm{HR}=100-h/0.002$) and when to use which.",
+  "minutes": 35,
+  "objectives": [
+    "Distinguish line standards from end standards (gauge blocks) and state the ISO rules for calibrating gauge blocks (vertical $\\le100$ mm, horizontal $>100$ mm; Airy vs Bessel points).",
+    "State the Abbe principle and identify which instruments satisfy it (micrometer) and which do not (caliper, CMM), and relate it to cosine error and sine error.",
+    "Describe the temperature effects on length ($L_{20}-L_T=\\alpha L_T(20-T)$) and the force effects (self-weight, Hertzian contact, gauge-block compression).",
+    "Explain how mass is measured through force, the kilogram definition via the Planck constant, the difference between gravity force and weight force, and the buoyancy/air and gravity corrections.",
+    "State the conventional-mass convention ($\\rho_{mt}=8000\\ \\mathrm{kg/m^3}$ in standard air $\\rho_{at}=1.20\\ \\mathrm{kg/m^3}$) and why it is used.",
+    "Describe the Brinell, Vickers, Rockwell and Knoop tests: indenter, load, measured quantity, computing formula, standard, and selection criteria.",
+    "Compute or judge hardness values and recognise the professor's terminology (HBW D/P, HV P, HR scales, IIT/Martens)."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Length measurements — units, standards, the metre"
+    },
+    {
+      "kind": "prose",
+      "text": "Length is one of the **7 SI base units**. Since **May 2019** the **metre** is *no longer truly a base unit*: it is fixed from the **second** through the **speed of light** $c=299\\,792\\,458\\ \\mathrm{m/s}$ in vacuum (the second, defined from the caesium frequency $\\Delta\\nu_{Cs}$, is the base quantity realized with the **lowest uncertainty**).\n\nThe metre is realized in practice with a **laser**: a radiation of wavelength $\\lambda_0=c/f_0$ acts as a ruler, and a length is found by **counting wavelengths** with an **interferometer** (traceability comes from the calibration of the frequency $f_0$). In **air** the wavelength $\\lambda$ depends on thermodynamic variables (pressure, humidity, $\\mathrm{CO_2}$, temperature) through the speed of light in air, which must be accounted for."
+    },
+    {
+      "kind": "definition",
+      "term": "Line standards vs end standards",
+      "text": "- **Line standards**: length is defined by the *distance between two engraved lines* (e.g. a ruler / graduated scale).\n- **End standards**: length is defined by the *distance between two physical end faces*. The archetype is the **gauge block** (Johansson block): a straight prism with a rectangular base whose two opposite faces are lapped for **flatness** and **parallelism**, so their distance is well defined (uncertainty frequently $<0.1\\ \\mu\\mathrm{m}$). Gauge blocks are the classic **First Line Company Standard**, calibrated by **interferometry**."
+    },
+    {
+      "kind": "prose",
+      "text": "The **main factors affecting a length measurement** are:\n- **temperature** (thermal expansion and distortion);\n- **force** (elastic deformation, Hooke's law);\n- the **shape** of the measurement surfaces and of the measurand (their interaction).\n\nIn addition, two **typical measurement errors** appear: the **zero error** (a constant $A$) and the **sensitivity error** (proportional to length, factor $B$), giving the binomial deviation $A+B\\cdot L$."
+    },
+    {
+      "kind": "heading",
+      "text": "2. Temperature and force effects"
+    },
+    {
+      "kind": "formula",
+      "title": "Thermal-expansion correction",
+      "tex": "L_{20}-L_T=\\alpha\\,L_T\\,(20-T)\\qquad\\Rightarrow\\qquad L_{20}-L_T=(\\alpha-\\beta)\\,L_T\\,(20-T)",
+      "tag": "M1.1",
+      "caption": "The reference temperature is **20 °C** (ISO 1). $\\alpha$ is the thermal-expansion coefficient of the measurand. If the instrument is also temperature-sensitive with coefficient $\\beta$, the difference $(\\alpha-\\beta)$ governs the residual: **thermal compensation** occurs when $\\beta=\\alpha$. Typical $\\alpha$: carbon steel $12\\cdot10^{-6}$, stainless steel $16\\cdot10^{-6}$, aluminium alloys $24\\cdot10^{-6}$, tungsten carbide $6\\cdot10^{-6}\\ \\mathrm{°C^{-1}}$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Expansion vs distortion",
+      "text": "A **homogeneous** temperature field produces only a **change of dimension** (no change of shape) — this can be **corrected** mathematically with $\\alpha$. A **non-homogeneous** field produces a **change of shape** (thermal **distortion**), which is **much more severe and generally cannot be corrected**. Example: heating one finger of a micrometer more than the other tilts the anvil, so the two measurement surfaces are no longer parallel and reproducibility degrades."
+    },
+    {
+      "kind": "prose",
+      "text": "**Force effects** follow Hooke's law. Normal forces give small axial elongations; **bending moments** give large shape changes. A gauge block standing on its lower face shortens under its own weight by $\\Delta L=-\\rho g L^2/(2E)$ — proportional to $L^2$ — so ISO requires blocks **$\\le 100$ mm** to be calibrated in **vertical** position (compression negligible) and blocks **$>100$ mm** in **horizontal** position. A horizontal block is supported on **two points**:\n- **Airy points** $a=L/\\sqrt{12}=0.2887\\,L$ make the **end rotations null** (faces stay parallel) — used when length is between end faces;\n- **Bessel points** $a=0.2779\\,L$ **minimise the deflection** — used when length is not associated with the end faces."
+    },
+    {
+      "kind": "heading",
+      "text": "3. The Abbe principle, cosine and sine errors"
+    },
+    {
+      "kind": "definition",
+      "term": "Abbe's principle",
+      "text": "The **measurement scale and the measurand should be aligned (superimposed) along the same line**, i.e. the scale must lie on the *prolongation* of the measurand. A **micrometer** satisfies Abbe's principle. A **caliper** and a **coordinate measuring machine (CMM)** place the scale **parallel at a distance $d$** from the measurand and therefore **do NOT** satisfy Abbe's principle — convenient for handling the part, but a source of error."
+    },
+    {
+      "kind": "formula",
+      "title": "Cosine error and sine error",
+      "tex": "L_m=L\\cos\\vartheta\\approx L\\!\\left(1-\\tfrac{\\vartheta^2}{2}\\right)\\;\\Rightarrow\\; e=L-L_m=L\\,\\tfrac{\\vartheta^2}{2}\\qquad\\qquad \\Delta L=d\\,\\sin\\alpha\\approx d\\,\\alpha",
+      "tag": "M1.2",
+      "caption": "**Cosine error** (alignment error): a misalignment angle $\\vartheta$ makes the reading shorter, a *second-order* effect $\\propto\\vartheta^2/2$ (relative errors $\\sim10^{-4}$ for $\\vartheta\\sim1°$). **Sine error** (position error): when the scale is offset by $d$ (caliper), a parallelism error $\\alpha$ gives $\\Delta L=d\\sin\\alpha$, a *first-order* effect that is large because $d$ is often greater than $L$. The sine error can affect even Abbe-compliant instruments through local geometry."
+    },
+    {
+      "kind": "prose",
+      "text": "Instruments with a **spherical probe** (CMM) read the **centre** of the sphere, not the contact point; the radius $r$ must be added/subtracted via a **qualification procedure**. If the assumed radius carries an error $e_t$ ($r_{tm}=r+e_t$), the measurement error is $+2e_t$ for an **inside** measurement and $-2e_t$ for an **outside** measurement."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Judge the statement (True/False):\n\n*A caliper satisfies the Abbe principle, whereas a micrometer does not, because the caliper's scale lies on the prolongation of the measurand.*",
+        "options": [
+          { "id": "A", "content": "True" },
+          { "id": "B", "content": "False" }
+        ],
+        "correct": "B",
+        "explanation": "**False — the roles are reversed.** The **micrometer** satisfies Abbe's principle (scale aligned with the measurand); the **caliper** places its scale *parallel at a distance $d$* and therefore does **not** satisfy it, which is precisely why the caliper is prone to the **sine error** $\\Delta L=d\\sin\\alpha$. The CMM likewise does not satisfy Abbe's principle.",
+        "theory": "Abbe principle: measurement scale must be collinear with the measurand. Micrometer = compliant; caliper and CMM = non-compliant.",
+        "source": "Lesson M1 (Abbe's principle, position error)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "4. Mass measurements — the kilogram and the balance"
+    },
+    {
+      "kind": "prose",
+      "text": "Mass **cannot be measured directly**: its traceability is obtained through **force measurements**. The **kilogram** was the *last SI base unit defined with a material prototype* (the Pt–Ir cylinder at the BIPM under three glass bells). Since **20 May 2019** the kilogram is defined by **fixing the Planck constant** $h=6.626\\,070\\,15\\times10^{-34}\\ \\mathrm{J\\,s}$, so no physical artefact is needed and a primary realization (the **Kibble balance**, comparing a gravitational force with an equivalent electromagnetic force) can be made at any point of the mass scale."
+    },
+    {
+      "kind": "prose",
+      "text": "A **balance** measures mass through a **force or a moment**. Classic types:\n- **Equal-arm balance** and **steelyard balance** — equilibrium between **two moments** about the fulcrum; the steelyard rebalances by moving a counterweight so that $(F_1+F_P)\\,a=F_2\\,b$.\n- **Modern electronic balances** — a **load cell** (force transducer based on **strain gauges**) converts the elastic deformation produced by the weight force into a small (mV) electrical signal, then amplified and processed."
+    },
+    {
+      "kind": "formula",
+      "title": "Gravity force vs weight force (buoyancy)",
+      "tex": "F_g=m\\,g_\\ell\\qquad\\qquad F_p=m\\,g_\\ell\\!\\left(1-\\frac{\\rho_a}{\\rho_m}\\right)",
+      "tag": "M2.1",
+      "caption": "The **gravity force** $F_g=m\\,g_\\ell$ is the force in vacuum. In air the **weight force** $F_p$ also includes **Archimedes' buoyancy**: $\\rho_a$ is the air density and $\\rho_m$ the object density. Buoyancy makes a body weigh slightly less than $m\\,g_\\ell$; the correction matters most for **low-density** objects."
+    },
+    {
+      "kind": "definition",
+      "term": "Conventional mass",
+      "text": "Because the densities of the measurand and of the air are generally unknown, the **conventional mass value** $m_t$ is used: the mass of an **ideal reference of density $\\rho_{mt}=8000\\ \\mathrm{kg/m^3}$** that, in **standard air of density $\\rho_{at}=1.20\\ \\mathrm{kg/m^3}$**, produces a weight force equal to that of the measurand. The conventional masses of the measurand and of the standard nearly coincide because the corrective terms are very small — this makes practical weighing manageable."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Gravity is not constant",
+      "text": "Balances that read the **weight force through a force transducer** are proportional to $g_\\ell$, which varies with **latitude and altitude** (geodesy formula; $\\approx3\\times10^{-6}\\ \\mathrm{m/s^2}$ per metre of height, plus local subsoil anomalies). Moving a balance from **Rome to Turin** can shift a $\\sim121$ g reading by tens of mg. Hence such balances need an **on-site calibration** or the **WELMEC** conventional gravity zones; an equal-arm balance comparing two masses largely cancels $g$."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Hardness measurements — definition and the four classic tests"
+    },
+    {
+      "kind": "prose",
+      "text": "**Hardness** (Mohs' historical idea: the resistance a material opposes to the separation of its particles) is, for technological scales, the **resistance to penetration**. Hertz's definition (1895): the normal pressure per unit surface at the centre of the contact that stresses the material to its **limit of elasticity** (permanent deformation for plastic materials, incipient cracking for brittle ones). Technological hardness numbers are **conventional measurements** fixed by standards. Hardness tests succeed because they are **simple, quick, cheap, (semi)non-destructive**, run on the **final component**, with limited sample preparation. Timeline: **Brinell 1900, Rockwell 1920, Vickers 1935, Knoop 1939, Martens ~2000**."
+    },
+    {
+      "kind": "definition",
+      "term": "Brinell test (ISO 6506-1)",
+      "text": "Press a **spherical indenter** (Ø **10 mm** ball, originally hardened steel, now **tungsten carbide WC**) with a known force for a given time; **measure two orthogonal diameters** of the residual indentation and take the mean $d=(d_1+d_2)/2$. Hardness is the ratio $H=P/S$ where $S$ is the **curved surface of the spherical cap** (preferred to the depth $h$, which is hard to measure because of edge piling). Designation: **XX HBW D/P**."
+    },
+    {
+      "kind": "formula",
+      "title": "Brinell hardness",
+      "tex": "\\mathrm{HB}=\\frac{P}{S}=0.102\\cdot\\frac{2F}{\\pi D\\left(D-\\sqrt{D^2-d^2}\\right)}",
+      "tag": "M4.1",
+      "caption": "$P$ = load in kgf, $F$ = force in N (the $0.102\\approx1/9.80665$ converts N to kgf), $D$ = ball diameter (mm), $d$ = mean indentation diameter (mm). The force/diameter ratio $0.102\\,F/D^2$ is standardized (e.g. 30, 10, 5, 2.5, 1). The main uncertainty source is the **numerical aperture** of the optical objective (not standardized), which shadows the indentation edge; still HB is highly **reproducible** and **correlates** with ultimate strength, yield, resilience. Con: not automatic, manual diameter reading, limited at high hardness."
+    },
+    {
+      "kind": "definition",
+      "term": "Vickers test (ISO 6507-1)",
+      "text": "Directly derived from Brinell, **same definition** $H=P/S$. Indenter: a **diamond square-based (reverse) pyramid** with an **apex dihedral angle of 136°** (chosen for compatibility with Brinell, equal to the tangent angle of an average Brinell cap). Press for a dwell time, then **measure the diagonal** $d=(d_1+d_2)/2$ of the square indentation. Introduced to overcome Brinell's limit at **high hardness**; the indenter is easy to shape and gives a **constant aspect ratio** (auto-similar stress state). Designation: **XX HV P**."
+    },
+    {
+      "kind": "formula",
+      "title": "Vickers hardness",
+      "tex": "\\mathrm{HV}=\\frac{P}{S}=\\frac{1}{9.80665}\\cdot\\frac{2F\\sin 68^{\\circ}}{d^2}=0.189\\cdot\\frac{F}{d^2}",
+      "tag": "M4.2",
+      "caption": "$F$ = force in N, $d$ = mean diagonal in mm. (Equivalently $\\mathrm{HV}=0.1891\\,F/d^2$; with $P$ in kgf, $\\mathrm{HV}=1.854\\,P/d^2$.) Standard test forces: HV 5 = 49.03 N, HV 10 = 98.07 N, HV 30 = 294.2 N, etc., with low-force (HV 0.2–HV 5) and micro-hardness (HV 0.01–HV 0.1) ranges. Con: critical measurement of the small indentation diagonal and tip offset."
+    },
+    {
+      "kind": "definition",
+      "term": "Rockwell test (ISO 6508-1)",
+      "text": "Introduced in 1920 to be **faster** and to reach **harder materials**, at the cost of metrological rigour (it is a **purely conventional scale**). The **indentation depth is measured automatically during the test**. Procedure: apply a **pre-load $F_0$** (defines the contact), add an **additional load $F_1$** for a dwell time, **remove $F_1$** to erase elastic deformation, and read the **residual depth $h$**. Indenter: a **diamond cone** (120° apex, tip radius $R=200\\ \\mu\\mathrm{m}$, e.g. scales A/C/D) or a **hardened ball** (e.g. HRB Ø1.5875 mm). **A higher Rockwell number means a harder material** (smaller depth)."
+    },
+    {
+      "kind": "formula",
+      "title": "Rockwell hardness",
+      "tex": "\\mathrm{HR}=100-\\frac{h}{0.002}\\ (\\text{A, C, D})\\qquad \\mathrm{HR}=130-\\frac{h}{0.002}\\ (\\text{B, E, F, G, H, K})\\qquad \\mathrm{HR}=100-\\frac{h}{0.001}\\ (\\text{N, T})",
+      "tag": "M4.3",
+      "caption": "$h$ = permanent penetration depth in mm. Scale **C (HRC)** uses the diamond cone (range 20–70 HRC); scale **B (HRB)** uses the 1.5875 mm ball (20–100 HRB). Pros: fast, no optical reading. Cons: loss of metrological characteristics, hard-to-manufacture diamond-cone geometry."
+    },
+    {
+      "kind": "definition",
+      "term": "Other scales: Knoop, Shore, Martens / IIT",
+      "text": "- **Knoop** (1939): diamond **rhombus-based pyramid**, diagonals with a **length ratio 1:7**, vertex angles **172°30'** and **130°00'**; same procedure as Vickers but measures the **long diagonal**; $\\mathrm{HK}=1.45\\,F/d^2$ ($c\\approx0.0703$). Ideal for **brittle/fragile** materials (glass, ceramics).\n- **Shore**: for **elastomers and rubber**; not maintained by any metrological institute.\n- **Martens / Instrumented Indentation Test (ISO 14577)**: the most recent, **depth-sensing** — force and depth are measured **continuously during loading and unloading**, giving $\\mathrm{HM}=F/A_s(h)$ plus the indentation modulus $E_{IT}$ and hardness $H_{IT}$. Can use Vickers, **Berkovich** (trigonal), hard-metal-ball or diamond-ball indenters."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Which hardness test to use",
+      "text": "- **Brinell**: soft-to-medium metals, coarse/heterogeneous structures (large indentation averages the microstructure); not for very hard materials.\n- **Vickers**: **all hardness ranges**, thin parts, micro-hardness; one scale, but needs a careful optical diagonal reading.\n- **Rockwell**: **fast** production control of hardened steels (HRC) and softer alloys (HRB); reads depth directly, fully conventional.\n- **Knoop**: **brittle** materials and thin layers (the elongated diagonal resists cracking).\nHardness traceability comes from **direct** calibration (force transducer, depth scale, indenter geometry) and/or **indirect** calibration on **certified reference hardness blocks**."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Judge the statement (True/False):\n\n*In the Brinell and Vickers tests the hardness number is obtained by optically measuring an indentation dimension, whereas in the Rockwell test the indentation depth is measured automatically during the test.*",
+        "options": [
+          { "id": "A", "content": "True" },
+          { "id": "B", "content": "False" }
+        ],
+        "correct": "A",
+        "explanation": "**True.** Brinell reads two **orthogonal diameters** of the cap and Vickers reads the **square diagonal**, both optically after the test. Rockwell instead **measures the residual penetration depth $h$ automatically during the test** (after removing the additional load), which is exactly why it is faster but more conventional.",
+        "theory": "Brinell/Vickers/Knoop = optical measurement of the indentation; Rockwell = automatic depth measurement (HR = 100 − h/0.002).",
+        "source": "Lesson M4 (Brinell, Vickers, Rockwell)"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "In the Vickers test the indenter is a square-based diamond pyramid with an apex dihedral angle of 120°.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False — the angle is 136°, not 120°.** The Vickers indenter is indeed a **diamond, square-based (reverse) pyramid**, but its apex dihedral angle (between opposite faces) is **136°**, chosen for compatibility with Brinell. The **120°** value is the apex angle of the **Rockwell diamond cone**, a different indenter.",
+      "theory": "Vickers indenter = diamond square-based pyramid, apex angle 136° (the 120° cone belongs to Rockwell).",
+      "source": "Lesson M4 (Vickers scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Vickers hardness is computed as HV = 1.854·F/d² when the load F is expressed in newton.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False — the coefficient 1.854 goes with the load in kilogram-force, not newton.** With $F$ in **N** the formula is $\\mathrm{HV}=0.189\\,F/d^2$ (since $0.189\\approx1.854/9.80665$). The value $\\mathrm{HV}=1.854\\,P/d^2$ holds when $P$ is in **kgf**. Mixing the unit with the wrong coefficient is the classic trap.",
+      "theory": "HV = 0.189·F/d² (F in N) = 1.854·P/d² (P in kgf).",
+      "source": "Lesson M4 (Vickers formula)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "In the Brinell test the indenter is a sphere (ball) and the hardness is obtained by measuring the diameter of the residual indentation.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** Brinell presses a **spherical** indenter (Ø10 mm, steel originally, now tungsten carbide) and the operator **measures two orthogonal diameters** of the indentation, taking the mean $d=(d_1+d_2)/2$ to compute $\\mathrm{HB}=P/S$.",
+      "theory": "Brinell: spherical indenter, measure mean indentation diameter d, HB = 0.102·2F/[πD(D−√(D²−d²))].",
+      "source": "Lesson M4 (Brinell scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In the Brinell test the hardness is defined as the load divided by the projected (flat circular) area of the indentation.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** Brinell hardness uses the **curved surface area $S$ of the spherical cap**, not the flat projected circle: $S=\\tfrac{1}{2}\\pi D(D-\\sqrt{D^2-d^2})$. The surface is preferred to the depth $h$ because $h$ is hard to measure (edge piling).",
+      "theory": "HB = P/S with S = curved cap surface = ½·πD(D−√(D²−d²)).",
+      "source": "Lesson M4 (Brinell scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Rockwell test measures the indentation depth automatically during the test, instead of optically measuring an indentation dimension afterwards.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The main practical advantage of Rockwell over Brinell/Vickers is that the **penetration depth $h$ is measured automatically during the test**, after the additional load is removed, so no optical reading is needed — making the test fast.",
+      "theory": "Rockwell: automatic depth measurement; HR = 100 − h/0.002 (scales A, C, D).",
+      "source": "Lesson M4 (Rockwell scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "For the Rockwell C scale (HRC) the Rockwell number is computed as HR = 100 − h/0.002, with h the permanent penetration depth in millimetres.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** Scales **A, C and D** use $\\mathrm{HR}=100-h/0.002$ with $h$ in mm. (Scales B, E, F, G, H, K use $130-h/0.002$; scales N, T use $100-h/0.001$.) HRC uses the diamond cone over the 20–70 HRC range.",
+      "theory": "HR = 100 − h/0.002 for A, C, D; 130 − h/0.002 for B, E, F, G, H, K.",
+      "source": "Lesson M4 (Rockwell scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In the Rockwell test, a higher hardness number corresponds to a deeper penetration of the indenter.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** Since $\\mathrm{HR}=100-h/0.002$, a **deeper** penetration $h$ gives a **lower** Rockwell number. A **harder** material is penetrated less, so a **higher** Rockwell number means **smaller** depth, i.e. harder material.",
+      "theory": "HR decreases as depth h increases; higher HR = harder (shallower) material.",
+      "source": "Lesson M4 (Rockwell scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Rockwell test applies first a preliminary pre-load F0 and then an additional load F1, and the additional load is removed before reading the final depth.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The procedure is: apply a known **pre-load $F_0$** (stabilises the contact), apply the **additional load $F_1$** for a dwell time, **remove $F_1$** to eliminate the elastic part, then read the **residual permanent depth**. This staged loading is the essence of Rockwell.",
+      "theory": "Rockwell: F0 pre-load → F1 added → F1 removed → measure permanent depth h.",
+      "source": "Lesson M4 (Rockwell procedure)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Vickers method was introduced because the Brinell spherical indenter gives an indentation whose aspect ratio changes with the load, whereas the Vickers pyramid keeps it constant only at high loads.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The Vickers (geometrically self-similar) square pyramid keeps a **constant aspect ratio at ALL loads** — not only at high loads — generating an auto-similar stress state. It was introduced mainly to overcome the **Brinell limit at high hardness**, and its constant aspect ratio holds across the whole load range.",
+      "theory": "Vickers: constant aspect ratio at every load; overcomes Brinell high-hardness limit.",
+      "source": "Lesson M4 (Vickers pros)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The Knoop hardness test, which uses a rhombus-based diamond pyramid with diagonals in a 1:7 ratio, is particularly suited to brittle and fragile materials such as glass and ceramics.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The Knoop indenter is a **diamond rhombic pyramid** with diagonals in a **1:7 length ratio** (vertex angles 172°30' and 130°00'); the elongated, shallow indentation is well suited to **brittle/fragile** materials (glass, ceramics) and thin layers.",
+      "theory": "Knoop: rhombus pyramid, diagonal ratio 1:7, for brittle materials; HK = 1.45·F/d².",
+      "source": "Lesson M4 (Knoop scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Rockwell scale is a metrologically rigorous absolute hardness scale, more fundamental than the Brinell scale.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** Rockwell traded metrological rigour for speed: it is a **purely conventional scale** that, per the lecture, **loses the metrological characteristics** that Brinell correctly observed. It is convenient and fast, but not more fundamental.",
+      "theory": "Rockwell = purely conventional, fast scale; loses metrological characteristics vs Brinell.",
+      "source": "Lesson M4 (Rockwell pros/cons)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Martens hardness / Instrumented Indentation Test (ISO 14577) records the force only at the maximum load and never during the unloading phase.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The Instrumented Indentation Test (Martens) is a **depth-sensing** method that **continuously records the applied force and the penetration depth in BOTH the loading AND the unloading phases**, yielding HM = F/A_s(h) plus the indentation modulus E_IT and hardness H_IT. Recording only at maximum load would lose the unloading information.",
+      "theory": "IIT/Martens (ISO 14577): depth-sensing, continuous F–h during loading and unloading.",
+      "source": "Lesson M4 (Martens scale / IIT)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Gauge blocks are line standards: their length is defined by the distance between two engraved reference lines.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** Gauge blocks are **end standards**: the length is the **distance between two lapped, parallel end faces**, not between engraved lines. A graduated **ruler** is the example of a **line standard** (distance between engraved lines).",
+      "theory": "Gauge block = end standard (distance between end faces); ruler = line standard.",
+      "source": "Lesson M1 (gauge blocks)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A micrometer satisfies the Abbe principle, whereas a caliper and a coordinate measuring machine (CMM) do not.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** Abbe's principle requires the scale to be aligned with (on the prolongation of) the measurand. The **micrometer** complies; the **caliper** and **CMM** put the scale **parallel at a distance $d$**, so they do **not** comply — this is the origin of the caliper's sine error.",
+      "theory": "Abbe principle: micrometer compliant; caliper and CMM non-compliant.",
+      "source": "Lesson M1 (Abbe's principle)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "The cosine (alignment) error is a first-order effect in the misalignment angle, so even a small misalignment produces a large length error.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The cosine error is $L_m=L\\cos\\vartheta\\approx L(1-\\vartheta^2/2)$, so the error $e=L\\,\\vartheta^2/2$ is **second order** (relative errors $\\sim10^{-4}$ for $\\vartheta\\sim1°$) — *small*. It is the **sine error** $\\Delta L=d\\sin\\alpha$ that is **first order** and potentially large.",
+      "theory": "Cosine error ∝ ϑ²/2 (second order, small); sine error ∝ d·α (first order, large).",
+      "source": "Lesson M1 (cosine and sine errors)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The reference temperature for dimensional measurements is 20 °C, and a homogeneous temperature field changes only the dimension, not the shape, of the measurand.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** ISO sets the reference temperature at **20 °C**. A **homogeneous** (uniform) field produces nearly homogeneous expansion in every direction — a **change of dimension with no change of shape**, correctable through $\\alpha$. A non-homogeneous field instead causes distortion (shape change).",
+      "theory": "Reference 20 °C; uniform field → dimension change only (correctable); non-uniform → distortion.",
+      "source": "Lesson M1 (temperature effects)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "ISO requires gauge blocks longer than 100 mm to be calibrated in the vertical position to avoid the compression effect of their own weight.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False — it is the opposite.** Blocks **$\\le100$ mm** are calibrated **vertical** (self-weight compression is negligible). Blocks **$>100$ mm** are calibrated **horizontal**, supported on two points, because vertical compression would no longer be negligible; the horizontal bending is then handled with Airy or Bessel points.",
+      "theory": "Gauge blocks ≤100 mm calibrated vertical; >100 mm calibrated horizontal.",
+      "source": "Lesson M1 (gauge-block calibration)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Supporting a horizontal gauge block at the Airy points, a = L/√12 ≈ 0.2887·L, makes the rotations of the two end faces null so that the faces stay parallel.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The **Airy points** $a=L/\\sqrt{12}=0.2887\\,L$ give **null end rotations**, keeping the measurement faces parallel — used when the length is between the end faces. The **Bessel points** ($0.2779\\,L$) instead **minimise the deflection**, used when length is not tied to the end faces.",
+      "theory": "Airy points 0.2887L → null end rotations; Bessel points 0.2779L → minimum deflection.",
+      "source": "Lesson M1 (force effects, support points)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "If the measuring instrument has the same thermal-expansion coefficient as the measurand (β = α), a thermal compensation occurs and the temperature effect cancels.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** With instrument sensitivity $\\beta$, the model is $L_{20}-L_T=(\\alpha-\\beta)L_T(20-T)$. When $\\beta=\\alpha$ the bracket vanishes, giving **thermal compensation** — both expand together, so the temperature error cancels.",
+      "theory": "L20 − LT = (α − β)·LT·(20 − T); β = α ⟹ thermal compensation.",
+      "source": "Lesson M1 (thermal expansion)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Since 20 May 2019 the kilogram is defined by fixing the numerical value of the Planck constant, no longer by a physical platinum–iridium prototype.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The kilogram was the *last* base unit tied to a material artefact (the Pt–Ir cylinder). From **20 May 2019** it is defined by fixing $h=6.626\\,070\\,15\\times10^{-34}\\ \\mathrm{J\\,s}$, so no physical prototype is required; the Kibble balance realizes it.",
+      "theory": "Kilogram redefined via the Planck constant h (20 May 2019); Kibble balance = primary realization.",
+      "source": "Lesson M2 (basic concepts)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Mass can be measured directly without measuring any force.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The lecture states explicitly that **mass cannot be measured directly**; its traceability is obtained through **force measurements** (a balance reads a force or a moment produced by a force).",
+      "theory": "Mass cannot be measured directly — traceability is via force measurements.",
+      "source": "Lesson M2 (basic concepts)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The weight force F_p measured in air includes Archimedes' buoyancy and is therefore slightly smaller than the gravity force m·g in vacuum.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** $F_p=m\\,g_\\ell(1-\\rho_a/\\rho_m)$ subtracts the buoyancy $\\rho_a/\\rho_m$ from the gravity force $F_g=m\\,g_\\ell$. Because $\\rho_a>0$, the weight force in air is **smaller** than the gravity force in vacuum — the effect is largest for low-density objects.",
+      "theory": "F_p = m·g·(1 − ρ_a/ρ_m) < F_g = m·g; buoyancy reduces the apparent weight.",
+      "source": "Lesson M2 (gravity vs weight force)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The conventional mass refers to a reference body of density 8000 kg/m³ weighed in standard air of density 1.20 kg/m³.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The **conventional mass** $m_t$ is the mass of an ideal reference of density $\\rho_{mt}=8000\\ \\mathrm{kg/m^3}$ that, in **standard air $\\rho_{at}=1.20\\ \\mathrm{kg/m^3}$**, produces the same weight force as the measurand. It exists to make practical weighing manageable when densities are unknown.",
+      "theory": "Conventional mass: ρ_mt = 8000 kg/m³ in standard air ρ_at = 1.20 kg/m³.",
+      "source": "Lesson M2 (conventional mass)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A balance based on a force transducer can be assumed to read the same value everywhere because the local gravity acceleration is constant over the Earth.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** A force-transducer balance reads a value proportional to the **weight force**, which depends on **local gravity $g_\\ell$**; $g$ varies significantly with **latitude and altitude** (and local subsoil anomalies). Moving such a balance from Rome to Turin shifts a ~121 g reading by ~22 mg, so the constancy approximation is not allowed.",
+      "theory": "Force-transducer balances depend on g, which varies with latitude/altitude — not constant.",
+      "source": "Lesson M2 (effect of gravity acceleration)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In modern electronic balances the weight force is measured by load cells acting as force transducers, typically based on strain gauges.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** Modern electronic balances use **load cells** (force transducers) that **transduce the applied force into an electrical signal** via the **elastic deformation** sensed by **strain gauges**; the few-mV signal is amplified and processed to give the force, hence the mass.",
+      "theory": "Electronic balance → load cell (force transducer) → strain gauges → electrical signal.",
+      "source": "Lesson M2 (force transducers, strain gauges)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A steelyard balance reaches equilibrium only when the counterweight is at a fixed position, because it works by balancing two equal forces rather than two moments.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The **steelyard** (like the equal-arm balance) works on the **equilibrium between two moments** about the fulcrum, **not** two equal forces. It rebalances precisely by **sliding** the counterweight to a variable distance $b$ so that $(F_1+F_P)\\,a=F_2\\,b$ — the moving counterweight is the whole point.",
+      "theory": "Equal-arm and steelyard balances: equilibrium of two moments about the fulcrum.",
+      "source": "Lesson M2 (basic concepts, balances)",
+      "tags": ["mass"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The reference temperature fixed by ISO for length measurements is 0 °C.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The reference temperature for dimensional measurements is **20 °C** (ISO 1), not 0 °C. Measurements at any other temperature need the thermal-expansion correction $L_{20}-L_T=\\alpha L_T(20-T)$.",
+      "theory": "Reference temperature for dimensional metrology = 20 °C.",
+      "source": "Lesson M1 (temperature effects)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Brinell test is standardised by ISO 6506-1, while the Vickers test is standardised by ISO 6507-1.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** Per the lecture's standardised-scale tables, **Brinell** follows **ISO 6506-1** and **Vickers** follows **ISO 6507-1** (Rockwell follows ISO 6508-1, instrumented indentation ISO 14577).",
+      "theory": "Brinell ISO 6506-1; Vickers ISO 6507-1; Rockwell ISO 6508-1; IIT ISO 14577.",
+      "source": "Lesson M4 (standardised scales)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "When a CMM with a spherical probe makes an inside (internal) measurement and the probe radius carries a qualification error e_t, the resulting measurement error is +2·e_t.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The machine uses $r_{tm}=r+e_t$. For an **inside** measurement it computes $D_c+2r_{tm}=D_c+2r+2e_t$, so the error is **$+2e_t$**. For an **outside** measurement the error is **$-2e_t$**. The probe reads the sphere centre, so the radius must be known accurately.",
+      "theory": "Probe radius error e_t → +2e_t for inside, −2e_t for outside measurements.",
+      "source": "Lesson M1 (probe errors)",
+      "tags": ["length"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Shore hardness scale is the official scale maintained by national metrological institutes for measuring the hardness of metals.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "B",
+      "explanation": "**False.** The **Shore** scale is used for **elastomers and rubber**, not metals, and it is **not currently maintained by any metrological institute**; its traceability relies only on direct calibration of the indentation machine.",
+      "theory": "Shore scale: elastomers/rubber; not maintained by any metrological institute.",
+      "source": "Lesson M4 (Shore scale)",
+      "tags": ["hardness"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A major source of uncertainty in the Brinell test is the numerical aperture of the optical objective used to image the indentation, which is not defined by any standard.",
+      "options": [
+        { "id": "A", "content": "True" },
+        { "id": "B", "content": "False" }
+      ],
+      "correct": "A",
+      "explanation": "**True.** The shadow at the indentation edge depends on the **numerical aperture (NA)** of the objective; because the NA is **not fixed by any standard**, it is the **major source of uncertainty** in reading the Brinell diameter — even though HB itself remains highly reproducible.",
+      "theory": "Brinell uncertainty dominated by the (unstandardised) numerical aperture of the optical objective.",
+      "source": "Lesson M4 (Brinell uncertainty)",
+      "tags": ["hardness"]
+    }
+  ]
+}

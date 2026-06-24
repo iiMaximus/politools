@@ -1,0 +1,166 @@
+{
+  "title": "Mock exam — 14 January 2026 (worked)",
+  "summary": "The real ESMM written exam, reproduced and fully worked. Four exercises — **Analysis of Experimental Data (AD, 8 pts)**, **Evaluation of Uncertainty (TU, 12 pts)**, **Probability & Statistics (PS, 8 pts)** and the **Mechanical Measurements (MM, 5 pts)** true/false set — for **33 points** in about **2 hours**, **Excel allowed**. Below: the three numeric exercises solved step by step with the exact spreadsheet formulas and the official answers, each paired with an interactive capstone so you can solve it yourself in the mock Excel.",
+  "minutes": 50,
+  "objectives": [
+    "Know the exam format: AD 8 + TU 12 + PS 8 + MM 5 = 33 pts, Excel allowed, ~2 h.",
+    "Apply Chauvenet's exclusion principle end to end and report at least 2 decimals.",
+    "Build a full Type A / Type B uncertainty budget in base SI units, combine it, and expand at a stated confidence with Welch–Satterthwaite.",
+    "Compute two-phase acceptance-sampling probabilities with the hypergeometric distribution (sampling without replacement)."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "How the written exam is built"
+    },
+    {
+      "kind": "prose",
+      "text": "The ESMM written test (this is the **14 January 2026** session) is four exercises, worth **33 points** total, to be solved in about **two hours** with a spreadsheet (Excel) allowed:\n\n- **AD — Analysis of Experimental Data: 8 pts.** Descriptive statistics and outlier screening (here: Chauvenet).\n- **TU — Evaluation of Measurement Uncertainty: 12 pts.** The heavy one — a full uncertainty budget (Type A / Type B contributions, sensitivity coefficients, combination, Welch–Satterthwaite degrees of freedom, expanded uncertainty).\n- **PS — Probability & Statistics: 8 pts.** A discrete-distribution problem (here: two-phase acceptance sampling with the hypergeometric law).\n- **MM — Mechanical Measurements: 5 pts.** A short true/false / multiple-choice set on instruments (covered in the *Mechanical Measurements* lesson, not repeated here)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Read the answer format before you compute",
+      "text": "Each blank states its required format and **the marks are lost for the wrong format even with the right physics**: \"at least 2 decimal digits\", \"probability between 0 and 1, NOT a percentage\", \"results in base SI units (no multiples/submultiples)\", \"non-integer results in scientific format 1.23E-4\". Convert mm → m and degrees → rad **first**, and floor the degrees of freedom."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Solve each one yourself",
+      "text": "Below each worked exercise is its **interactive capstone** — the same problem in the mock spreadsheet. Type the formulas, press *Check*, and watch the official numbers turn green. Capstone ids: *exam-da*, *exam-unc*, *exam-ps*."
+    },
+    {
+      "kind": "heading",
+      "text": "Exercise AD — Chauvenet outliers (8 pts)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:exam-da",
+      "title": "Capstone AD — Chauvenet outliers",
+      "caption": "Compute the mean, sample standard deviation, the Chauvenet limits and flag the outlier — exactly as on the exam."
+    },
+    {
+      "kind": "heading",
+      "text": "Exercise TU — flexometer cosine error (12 pts)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:exam-unc",
+      "title": "Capstone TU — uncertainty budget",
+      "caption": "Lay out one row per contribution (bias, resolution, reproducibility, θ), combine, take Welch–Satterthwaite dof, and expand at 98 %."
+    },
+    {
+      "kind": "heading",
+      "text": "Exercise PS — two-phase acceptance sampling (8 pts)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:exam-ps",
+      "title": "Capstone PS — acceptance sampling",
+      "caption": "Hypergeometric probabilities for a two-phase sampling plan: accept in A, perform B, accept after B, and the total acceptance probability."
+    }
+  ],
+  "exam": [
+    {
+      "title": "AD — Chauvenet's exclusion principle (surface roughness)",
+      "meta": "2026 · 14 Jan · 8 pts",
+      "difficulty": "medium",
+      "statement": "Surface-roughness measurements (in µm) of components of the same type, taken by 4 operators (5 readings each):\n\n$$\\begin{array}{lccccc}\\text{Operator 1} & 43 & 42 & 46 & 44 & 48\\\\ \\text{Operator 2} & 44 & 48 & 45 & 45 & 47\\\\ \\text{Operator 3} & 42 & 46 & 47 & 41 & 48\\\\ \\text{Operator 4} & 36 & 46 & 48 & 47 & 45\\end{array}$$\n\nUsing **Chauvenet's exclusion principle**, determine the sample average and sample standard deviation, the per-datum risk $\\alpha$, the lower and upper exclusion limits, whether any outlier is present and, if so, its value.",
+      "given": "$n=20$ readings (4 operators × 5 parts). Report the average, standard deviation and limits with **at least 2 decimals**; report $\\alpha$ as a probability (3 decimals), not a percentage.",
+      "steps": [
+        {
+          "title": "1 · Sample average and standard deviation",
+          "content": "Put the 20 values in a column and use **`=AVERAGE(A2:A21)`** and **`=STDEV.S(A2:A21)`** (sample standard deviation, divisor $n-1$):\n$$\\bar x=\\frac{898}{20}=44.90\\ \\mu\\mathrm{m},\\qquad s=3.01\\ \\mu\\mathrm{m}.$$\nUse STDEV.S, **not** STDEV.P — the exam asks for the *sample* standard deviation."
+        },
+        {
+          "title": "2 · Per-datum risk α",
+          "content": "Chauvenet rejects a reading when its expected number of occurrences in $n$ trials falls below one half. The two-sided risk that a single datum is an outlier is\n$$\\alpha=\\frac{1}{2n}=\\frac{1}{2\\cdot20}=\\frac{1}{40}=0.025.$$\nReport it as a probability ($0.025$), not as $2.5\\%$."
+        },
+        {
+          "title": "3 · Standardized exclusion limit z",
+          "content": "The risk $\\alpha=1/(2n)$ is split across the two tails, so each tail carries $1/(4n)$. The standardized limit is the $(1-1/(4n))$ quantile of the standard normal:\n$$z=\\Phi^{-1}\\!\\left(1-\\frac{1}{4n}\\right)=\\texttt{=NORM.S.INV(1-1/(4*20))}=\\Phi^{-1}(0.9875)=2.2414.$$\n**Trap:** using $1-1/(2n)=0.975$ gives $z=1.96$ and the wrong limits."
+        },
+        {
+          "title": "4 · Exclusion limits",
+          "content": "$$L_{\\text{low}}=\\bar x-z\\,s=44.90-2.2414\\times3.01=38.16\\ \\mu\\mathrm{m},$$\n$$L_{\\text{up}}=\\bar x+z\\,s=44.90+2.2414\\times3.01=51.64\\ \\mu\\mathrm{m}.$$\nIn Excel: **`=C2-C6*C3`** and **`=C2+C6*C3`**. The acceptance band is $[38.16,\\ 51.64]\\ \\mu\\mathrm{m}$."
+        },
+        {
+          "title": "5 · Decision",
+          "content": "Compare the extremes: $\\min=36<38.16$ and $\\max=48<51.64$. So **one outlier is detected**, the value $36\\ \\mu\\mathrm{m}$ (Operator 4's first reading). Standard procedure: discard it (or remeasure) and recompute $\\bar x$ and $s$ on the cleaned set.\n\nSolve it yourself in **Lab — exercise *exam-da*** (sim *lab:exam-da*)."
+        }
+      ],
+      "finalAnswer": "Sample average $\\bar x=44.90\\ \\mu\\mathrm{m}$; sample standard deviation $s=3.01\\ \\mu\\mathrm{m}$; risk $\\alpha=0.025$; lower limit $38.16\\ \\mu\\mathrm{m}$; upper limit $51.64\\ \\mu\\mathrm{m}$; **outlier detected: Yes**, value $36\\ \\mu\\mathrm{m}$.",
+      "tips": "Use STDEV.S (sample), not STDEV.P. The factor in NORM.S.INV is $1-1/(4n)=0.9875$ (each tail $1/(4n)$), not $1-1/(2n)$ — the most common error here. Report $\\alpha$ as a probability and the limits with ≥2 decimals."
+    },
+    {
+      "title": "TU — flexometer cosine error (expanded uncertainty at 98 %)",
+      "meta": "2026 · 14 Jan · 12 pts",
+      "difficulty": "hard",
+      "statement": "A side $L$ of a rectangular plate is measured with a flexometer. A possible misalignment angle $\\theta$ causes a \"cosine error\"; for small $\\theta$ a Taylor expansion gives\n$$L=\\frac{L_m}{1-\\theta^2/2},$$\nwhere $L_m$ is the measured length. Data: the flexometer **bias** is a relative error of **2 % of the measured value**; the manufacturer's **repeatability** is a standard deviation of **0.2 mm**; the **reading resolution** is **1 mm**; **17 repeated measurements under reproducibility conditions** give mean $L_m=100$ mm and standard deviation **2.2 mm**; the **misalignment** is $\\theta=1.0^{\\circ}\\pm0.3^{\\circ}$ (human eye). Evaluate the **expanded uncertainty of $L$ at the 98 % confidence level**, working in **base SI units**.",
+      "given": "$L_m=0.100$ m, $\\theta=1.0^{\\circ}=0.01745$ rad, $a_\\theta=0.3^{\\circ}=0.005236$ rad. Variance propagation $u^2(y)=\\sum c_j^2u^2(x_j)=\\sum u_j^2(y)$ with $u^2(x_j)=s_j^2\\,\\tfrac{n_d}{n_r}$ (Type A) or $(a_j/k_{a_j})^2\\tfrac{n_d}{n_r}$ (Type B); Welch–Satterthwaite $\\nu_y=\\lfloor u^4(y)/\\sum u_j^4(y)/\\nu_j\\rfloor$.",
+      "steps": [
+        {
+          "title": "1 · Mean output and sensitivity coefficients (base units)",
+          "content": "With $\\theta=1.0^{\\circ}=0.017453$ rad, $L=L_m/(1-\\theta^2/2)=0.100/(1-1.523\\times10^{-4})=0.10002$ m, so $y\\approx0.100$ m. The sensitivity coefficients are\n$$c_{L_m}=\\frac{\\partial L}{\\partial L_m}=\\frac{1}{1-\\theta^2/2}=1.0002\\approx1,\\qquad c_\\theta=\\frac{\\partial L}{\\partial\\theta}=\\frac{L_m\\theta}{(1-\\theta^2/2)^2}=1.75\\times10^{-3}\\ \\mathrm{m/rad}.$$"
+        },
+        {
+          "title": "2 · Bias of L_m (Type B, rectangular)",
+          "content": "Half-amplitude $a=0.02\\,L_m=0.002$ m, rectangular divisor $\\sqrt{12}$:\n$$s_j=\\frac{a}{\\sqrt{12}}=\\texttt{=0.02*0.1/SQRT(12)}=5.77\\times10^{-4}\\ \\mathrm{m},\\quad u^2(x_j)=s_j^2=3.33\\times10^{-7},\\quad u_j^2(y)=c_{L_m}^2u^2(x_j)=3.33\\times10^{-7}\\ \\mathrm{m^2}.$$\nAssigned $\\nu_j=30$."
+        },
+        {
+          "title": "3 · Repeatability — Not present",
+          "content": "The manufacturer's repeatability (0.2 mm) is **already captured by the 17-measurement reproducibility study**, so include it as **Not present** (all its numeric fields = 0). Counting both would double-count the same random scatter."
+        },
+        {
+          "title": "4 · Resolution of L_m (Type B, rectangular)",
+          "content": "Resolution $d=1$ mm $=0.001$ m, divisor $\\sqrt{12}$:\n$$s_j=\\frac{d}{\\sqrt{12}}=2.89\\times10^{-4}\\ \\mathrm{m},\\quad u^2(x_j)=8.33\\times10^{-8},\\quad u_j^2(y)=8.34\\times10^{-8}\\ \\mathrm{m^2},\\quad \\nu_j=100.$$"
+        },
+        {
+          "title": "5 · Reproducibility of L_m (Type A) — dominant",
+          "content": "$s=2.2$ mm $=2.20\\times10^{-3}$ m. The propagation carries the factor $n_d/n_r=17$ (a single future reading against the 17-point study):\n$$u^2(x_j)=s^2\\cdot17=\\texttt{=POWER(0.0022;2)*17}=8.23\\times10^{-5},\\quad u_j^2(y)=8.23\\times10^{-5}\\ \\mathrm{m^2},\\quad \\nu_j=n-1=16.$$\nThis single term carries ~99.5 % of the variance."
+        },
+        {
+          "title": "6 · Bias of θ (Type B, U-shaped, k_a = 2)",
+          "content": "The misalignment tends to its extremes, so use the arcsine/U-shaped divisor $\\sqrt{2}$ with $a_\\theta=0.3^{\\circ}=5.236\\times10^{-3}$ rad:\n$$s_j=\\frac{a_\\theta}{\\sqrt2}=\\texttt{=RADIANS(0.3)/SQRT(2)}=3.70\\times10^{-3}\\ \\mathrm{rad},\\quad u^2(x_j)=1.37\\times10^{-5},\\quad u_j^2(y)=c_\\theta^2u^2(x_j)\\approx4\\times10^{-11}\\ \\mathrm{m^2},\\quad\\nu_j=30.$$\nNegligible — six orders of magnitude below reproducibility."
+        },
+        {
+          "title": "7 · Combine, dof, expand",
+          "content": "$$u^2(y)=\\sum u_j^2(y)=3.33\\times10^{-7}+8.34\\times10^{-8}+8.23\\times10^{-5}+4\\times10^{-11}=8.27\\times10^{-5}\\ \\mathrm{m^2},$$\n$$u(y)=\\sqrt{u^2(y)}=9.10\\times10^{-3}\\ \\mathrm{m}.$$\nWelch–Satterthwaite: $\\nu_y=\\big\\lfloor u^4(y)/\\sum u_j^4(y)/\\nu_j\\big\\rfloor=\\lfloor16.2\\rfloor=16$ (dominated by the reproducibility term). At 98 % two-sided confidence, $k=t_{0.99,16}=\\texttt{=T.INV(0.99;16)}=2.58$. Hence\n$$U=k\\,u(y)=2.58\\times9.10\\times10^{-3}=2.35\\times10^{-2}\\ \\mathrm{m}.$$\nSolve it yourself in **Lab — exercise *exam-unc*** (sim *lab:exam-unc*)."
+        }
+      ],
+      "finalAnswer": "$u(y)=9.10\\times10^{-3}$ m, $\\nu_y=16$, $k=2.58$, **expanded uncertainty $U=2.35\\times10^{-2}$ m**. Reported result: $L=(0.100\\pm0.024)$ m at 98 % confidence. Most impacting / cheapest to attack: the **reproducibility of $L_m$**.",
+      "tips": "Convert to base units first (m, rad). Watch the divisors: rectangular $\\sqrt{12}$ for bias and resolution, U-shaped $\\sqrt{2}$ for the misalignment. The 2 % bias is **relative** (of $L_m$), so $a=0.02\\,L_m$. Mark repeatability *Not present* to avoid double-counting reproducibility. Reproducibility carries the factor $n_d/n_r=17$. **Floor** the Welch–Satterthwaite dof. Use $t$ (not the normal) for $k$; at 98 % two-sided it is $t_{0.99,\\nu}$."
+    },
+    {
+      "title": "PS — two-phase acceptance sampling (hypergeometric)",
+      "meta": "2026 · 14 Jan · 8 pts",
+      "difficulty": "medium",
+      "statement": "A testing procedure for electric strain gauges uses two control phases. From a batch of $N_L=111$ strain gauges, in **phase A** a sample of $N_a=18$ is tested; the batch is accepted if no more than $n_1=1$ are out of tolerance. If the out-of-tolerance count is more than $n_1=1$ and no more than $n_2=3$, **phase B** is performed: a further $N_b=6$ are tested and the batch is accepted only if **none** are out of tolerance. The batch contains $N=8$ out-of-tolerance gauges. Find the probability the batch is accepted in phase A, the probability of finding exactly 2 out of tolerance in A, the probability of performing phase B, the probability of acceptance after B, and the total acceptance probability.",
+      "given": "$N_L=111$, $N_a=18$, $n_1=1$, $N_b=6$, $n_2=3$, $N=8$. Sampling is **without replacement** from a finite batch ⇒ use the **hypergeometric** distribution. Answers in percent with 1 decimal.",
+      "steps": [
+        {
+          "title": "1 · P(accept in phase A)",
+          "content": "Accept in A ⇔ at most $n_1=1$ defective among the 18 drawn. Cumulative hypergeometric:\n$$P_A=P(X\\le1)=\\texttt{=HYPGEOM.DIST(1;18;8;111;TRUE)}=0.617=61.7\\%.$$"
+        },
+        {
+          "title": "2 · P(exactly 2 out of tolerance in A)",
+          "content": "Non-cumulative term:\n$$P(X=2)=\\frac{\\binom{8}{2}\\binom{103}{16}}{\\binom{111}{18}}=\\texttt{=HYPGEOM.DIST(2;18;8;111;FALSE)}=0.264=26.4\\%.$$"
+        },
+        {
+          "title": "3 · P(perform phase B)",
+          "content": "Phase B is triggered when the count is $>1$ and $\\le3$, i.e. exactly 2 or 3:\n$$P_B^{\\text{perform}}=P(X=2)+P(X=3)=0.264+0.096=0.360=36.0\\%,$$\nwith $P(X=3)=\\texttt{=HYPGEOM.DIST(3;18;8;111;FALSE)}=0.096$."
+        },
+        {
+          "title": "4 · P(accept after phase B)",
+          "content": "Phase B is **conditional**: after A removed 18 gauges (of which $j$ were defective), the remaining batch is $111-18=93$ with $8-j$ defective. Phase B accepts only with 0 defective in 6 draws, so sum over the two trigger cases:\n$$P_B^{\\text{accept}}=P(X{=}2)\\,\\texttt{HYPGEOM.DIST(0;6;6;93;0)}+P(X{=}3)\\,\\texttt{HYPGEOM.DIST(0;6;5;93;0)}=0.175+0.068=0.243=24.3\\%.$$"
+        },
+        {
+          "title": "5 · Total acceptance probability",
+          "content": "Acceptance in A and acceptance after B are mutually exclusive routes, so they add:\n$$P_{\\text{acc}}=P_A+P_B^{\\text{accept}}=0.617+0.243=0.860=86.0\\%.$$\nSolve it yourself in **Lab — exercise *exam-ps*** (sim *lab:exam-ps*)."
+        }
+      ],
+      "finalAnswer": "P(accept in A) = 61.7 %; P(exactly 2 in A) = 26.4 %; P(perform B) = 36.0 %; P(accept after B) = 24.3 %; **total acceptance probability = 86.0 %**.",
+      "tips": "Sampling is without replacement ⇒ **HYPGEOM.DIST**, never BINOM.DIST. Watch the argument order: HYPGEOM.DIST(successes_in_sample; sample_size; successes_in_population; population_size; cumulative). \"Accept in A\" is cumulative ($\\le1$); \"exactly 2\" is non-cumulative. For phase B the population shrinks to $111-18=93$ and the remaining defectives to $8-j$ — do not reuse 111/8. Give percentages to 1 decimal."
+    }
+  ]
+}

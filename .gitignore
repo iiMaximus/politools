@@ -8,3 +8,6 @@ dist-ssr
 
 # Authoring reference material (large PDFs) — not used by the build or runtime
 course_material
+
+# transient engine bundle from verify scripts
+scripts/.excel-engine*.mjs

@@ -1,0 +1,357 @@
+{
+  "title": "Identifying Systematic Factors: Linear Regression",
+  "summary": "Lecture 7. The $\\chi^2$ test and the NPP *warn* that a systematic factor is present, but they do not *identify* it. When the disturbance is a **tendency** — a *drift* in time — we can pin it down by fitting a model to the data. You will learn the **least-squares** straight line $x=a_0+a_1 t$, how to interpret slope and intercept, why the technique is called *linear regression*, how the **residuals** validate (or reject) the model, the **coefficient of determination** $R^2$, and how the fitted line is used to **correct a systematic effect** (calibration vs use equations).",
+  "minutes": 30,
+  "objectives": [
+    "Explain why a drift (linear tendency in the data sequence) is searched for by plotting data in order of collection.",
+    "Distinguish the independent variable (abscissa, e.g. time / index) from the dependent variable (ordinate) and write the linear model $x=a_0+a_1 t$.",
+    "State the three phases of regression: choose the model, fit by least squares, validate via residuals.",
+    "Compute the least-squares slope and intercept and interpret $a_1$ as the drift rate and $a_0$ as the intercept; know the line passes through $(\\bar t,\\bar x)$.",
+    "Validate a model from its residuals: random pattern / alternating signs $\\Rightarrow$ adequate; grouped signs / regularity $\\Rightarrow$ a systematic factor remains.",
+    "Interpret the coefficient of determination $R^2$ ($0\\le R^2\\le1$) and the t-test on a parameter's significance.",
+    "Use regression to correct a systematic effect: equation of calibration vs equation of use."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. From 'a factor is present' to 'which factor'"
+    },
+    {
+      "kind": "prose",
+      "text": "The $\\chi^2$ test and the Normal Probability Plot indicate the **presence** of systematic factors, and sometimes their *type*, but they do **not identify** them. Finding a systematic factor usually needs an analysis of the whole experimental process. However, when the disturbance is a **tendency** (a continuous factor such as temperature change, wear, or simply the passage of time), we can get further indications by examining the **global trend** of the data."
+    },
+    {
+      "kind": "prose",
+      "text": "A **drift** is a systematic tendency for results obtained at later times to vary in the *same sense* — a monotonic trend versus time, on top of the random irregularities. The time of each datum is usually not registered, but we can still expose a drift by plotting the data **in order of collection** (their temporal sequence). If the cloud rises (or falls) steadily, a drift is present."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "The NPP hint",
+      "text": "A **hyponormal** NPP (heavy tails / bimodal) suggested a systematic factor in the case study. Replotting those same data in temporal sequence reveals a clear upward tendency — a **linear drift** versus the index. That is the cue to fit a line."
+    },
+    {
+      "kind": "heading",
+      "text": "2. The regression idea: dependent vs independent variable"
+    },
+    {
+      "kind": "definition",
+      "term": "Independent and dependent variables",
+      "text": "Regression identifies the functional relationship between one or more **independent variables** $X$ (the inputs, usually on the **abscissa**) and the **dependent variable** $Y$ (the output, on the **ordinate**). For a drift the law is $x=f(t)$: the independent variable is the time/index $t$, the dependent variable is the measured value $x$. Here $t$ has no measurement unit — it is just the *succession* of the tests — which is enough to check for a trend."
+    },
+    {
+      "kind": "formula",
+      "title": "The linear (straight-line) model",
+      "tex": "x=a_0+a_1\\,t",
+      "tag": "7.1",
+      "caption": "If the trend looks straight, we adopt a first-order model with **intercept** $a_0$ and **slope** $a_1$. $a_0,a_1$ are the *parameters* (coefficients) to be determined; $t$ is the independent variable and $x$ the dependent variable."
+    },
+    {
+      "kind": "heading",
+      "text": "3. The three phases of regression"
+    },
+    {
+      "kind": "steps",
+      "title": "General procedure (may be reiterated)",
+      "steps": [
+        {
+          "label": "Phase 1 — model",
+          "text": "**Assume a mathematical model** for the trend, guided by the graph of the data and by physical knowledge of the phenomenon: a straight line, or a more complex curve (parabola, hyperbola, exponential...). Choose, where possible, a model that matches the *physical law* involved."
+        },
+        {
+          "label": "Phase 2 — fit",
+          "text": "**Calculate the parameters** with the **Least Squares method**. This works whenever the model is *linear with respect to the parameters* (hence the name *linear regression*) — even $Y=a_0+a_1 X^2$ or $Y=a_0+a_1 e^{X}$ qualify, because they are linear in $a_0,a_1$. Only forms like $Y=a_0+e^{a_1 X}$ need genuinely non-linear regression."
+        },
+        {
+          "label": "Phase 3 — validate",
+          "text": "**Evaluate the residuals** — the differences between the experimental values and the values predicted by the model — to decide whether the model is adequate. Phase 2 is a pure mathematical process; Phases 1 and 3 rely on the experience of the analyst."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Why 'linear' regression",
+      "text": "*Linear* refers to linearity in the **parameters**, not in the variable. A parabola $Y=a_0+a_1 X+a_2 X^2$ is fitted by *linear* regression (set $X_1=X$, $X_2=X^2$): the model is linear in $a_0,a_1,a_2$. The whole family $Y=G(X_1,\\dots,X_q)=a_0+a_1X_1+\\dots+a_qX_q$ is handled the same way."
+    },
+    {
+      "kind": "heading",
+      "text": "4. Least squares: the criterion and the formulas"
+    },
+    {
+      "kind": "prose",
+      "text": "Each experimental point carries an error $\\varepsilon_i$, attributed entirely to the dependent variable: $y_i=G(x_{i1},\\dots,x_{iq})+\\varepsilon_i$. The least-squares solution is the parameter vector that **minimizes the sum of the squares of the deviations** $\\varepsilon_i$ between the experimental $y_i$ and the corresponding value on the regression curve."
+    },
+    {
+      "kind": "formula",
+      "title": "Matrix least-squares solution",
+      "tex": "\\{y\\}=[1,x]\\{a\\}+\\{\\varepsilon\\}\\;\\Rightarrow\\;\\{a\\}=\\left([1,x]^{T}[1,x]\\right)^{-1}[1,x]^{T}\\{y\\}",
+      "tag": "7.2",
+      "caption": "Pre-multiplying by the transpose and imposing that $[1,x]^{T}\\{\\varepsilon\\}=\\{0\\}$ (each of its elements is null) gives the normal equations. Spreadsheets implement this directly; the number of equations $n$ exceeds the number of parameters $q+1$."
+    },
+    {
+      "kind": "formula",
+      "title": "Straight-line slope and intercept",
+      "tex": "a_1=\\frac{\\sum_i (t_i-\\bar t)(x_i-\\bar x)}{\\sum_i (t_i-\\bar t)^2},\\qquad a_0=\\bar x-a_1\\,\\bar t",
+      "tag": "7.3",
+      "caption": "For the line $x=a_0+a_1 t$, this is the explicit least-squares result (the engine has no SLOPE function, so build it from the deviation sums). The fitted line **always passes through the centroid** $(\\bar t,\\bar x)$."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: the drift in the case study",
+      "text": "The 50 length readings, plotted in temporal sequence, rise linearly. Fitting $x=a_0+a_1 t$ by least squares gives $a_0=8.00369$ mm and $a_1=0.00010$ mm per step.\n\n**Interpretation**: $a_0$ is the value extrapolated to the start of the sequence ($t=0$); $a_1=1.0\\times10^{-4}$ mm/step is the **drift rate** — each successive measurement tends to be $0.1\\ \\mu$m larger. Over the 50 readings the systematic rise is about $50\\times0.0001=0.005$ mm, comparable to the random scatter, which is why the drift was detectable but not obvious in the raw cloud."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Validating the model with residuals"
+    },
+    {
+      "kind": "definition",
+      "term": "Residual",
+      "text": "A **residual** is the deviation of an experimental value from the value the model predicts: $\\Delta x_i=x_i-(a_0+a_1 t_i)$. If the chosen model captures the systematic factor, the residuals should contain **only random effects** — i.e. they should be **normally distributed** and patternless."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Read the SIGNS of the residuals",
+      "text": "If only random factors remain, positive and negative residuals occur at random — a **frequent alternation of signs**. If a systematic factor is **not fully corrected**, its leftover shows as a **regularity**: the signs **group together** (a run of $+$ then a run of $-$). A good alternation $\\Rightarrow$ the model is adequate; grouped signs $\\Rightarrow$ raise the model order or change the model."
+    },
+    {
+      "kind": "example",
+      "title": "First vs second order (dynamometer)",
+      "text": "Calibrating a load cell, a *first-order* line leaves residuals whose signs are **strongly grouped** — non-linearity is an uncorrected systematic factor, so the first-order model is **not appropriate**. A *second-order* (parabolic) fit produces residuals with a **good alternation** of signs: the second-order model is **adequate**. The leftover non-linearity has been absorbed by the quadratic term."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Do not over-fit",
+      "text": "Increasing the polynomial order always lowers the residuals, and a high enough order passes **exactly** through every point — but that has **no use**. The aim is to separate the **systematic** part from the **random** part; artificially erasing the random part hides the true variability and corrupts the uncertainty. Raise the order **only until the residuals lose their regularity**, no further (excessive order causes 'artificial tracking' of the noise)."
+    },
+    {
+      "kind": "prose",
+      "text": "For a more rigorous check, the residuals can be treated as any random variable and run through a **normality test** ($\\chi^2$ or NPP): if normality is **not rejected**, the model may be accepted. In practice, examining the *trend* of the residuals is often more telling than the NPP of the residuals."
+    },
+    {
+      "kind": "heading",
+      "text": "6. Quantitative goodness: R² and the t-test on parameters"
+    },
+    {
+      "kind": "formula",
+      "title": "Coefficient of determination",
+      "tex": "R^{2}=\\frac{\\mathbb{V}\\mathrm{ar}[G(X)]}{\\mathbb{V}\\mathrm{ar}[y]}=1-\\frac{\\mathbb{V}\\mathrm{ar}[\\varepsilon]}{\\mathbb{V}\\mathrm{ar}[y]},\\qquad 0\\le R^{2}\\le 1",
+      "tag": "7.4",
+      "caption": "$R^2$ is the fraction of the data's variability **explained by the model**. $R^2$ near 1 means the model accounts for almost all the variation (e.g. the parabola gave $R^2=0.90$ where the line gave only $0.24$ on the same data); near 0 means it explains little."
+    },
+    {
+      "kind": "definition",
+      "term": "Significance of a parameter (t-test)",
+      "text": "Least squares estimates each parameter $\\hat a_i$ with a standard deviation $s(a_i)$, and $a_i\\sim N(\\hat a_i,s(a_i))$ with $n-(q+1)$ degrees of freedom. To test whether a parameter truly matters, set $H_0:a_i=0$ and form $t_{exp}=\\dfrac{\\hat a_i-0}{s(a_i)}$. If $t_{exp}$ falls **outside** the Student-$t$ confidence interval, reject $H_0$: the parameter is **significant** (its term belongs in the model)."
+    },
+    {
+      "kind": "heading",
+      "text": "7. Using regression to correct a systematic effect"
+    },
+    {
+      "kind": "prose",
+      "text": "Once a drift's law is known, the systematic part can be **subtracted** from the data, leaving the random residuals for a correct uncertainty estimate. The same machinery underlies **instrument calibration**: choose as independent variable the quantity with the **lower uncertainty** (the reference standard), and regress the instrument output against it."
+    },
+    {
+      "kind": "definition",
+      "term": "Equation of calibration vs equation of use",
+      "text": "In a calibration, the reference values (e.g. forces from a standard machine) have the lower uncertainty, so **force = independent**, **output = dependent**: the regression *output = f(force)* is the **equation of calibration**. In normal use the situation is reversed — the output is read and the measurand must be computed — so we invert it to *measurand = g(output)*, the **equation of use**. For instruments with regular metrological characteristics the two are fully compatible, and certificates often quote both."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Regression vs ANOVA on the same data",
+      "text": "Regression exposes a **drift** (a continuous tendency along the whole sequence). ANOVA (next lecture) instead looks at differences **between groups** in much shorter intervals, so it does **not** highlight a slow drift. The two methods are complementary — always look critically at what each can and cannot reveal."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "After fitting a straight line to data taken in temporal sequence, the residuals show a long run of positive values followed by a long run of negative values. What does this indicate?",
+        "options": [
+          { "id": "A", "content": "The line is adequate; the signs alternate well enough" },
+          { "id": "B", "content": "A systematic factor remains uncorrected; a higher-order (or different) model is needed" },
+          { "id": "C", "content": "The data are perfectly random and need no model" },
+          { "id": "D", "content": "The slope $a_1$ must be exactly zero" }
+        ],
+        "correct": "B",
+        "explanation": "Grouped (non-alternating) signs are a **regularity** in the residuals — the fingerprint of a systematic factor the model has not captured, so a higher-order or different model should be tried. **A** is the opposite case: adequacy shows as a *frequent alternation* of signs. **C** contradicts the visible pattern. **D** is unrelated — sign grouping is about the residual pattern, not the value of the slope.",
+        "theory": "Residual diagnostics: random/alternating signs $\\Rightarrow$ model adequate; grouped signs / regularity $\\Rightarrow$ uncorrected systematic factor.",
+        "source": "Lecture 7 (least squares method, residual evaluation)"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "In the drift case study the law is $x=f(t)$. Which variable is the independent one, and where is it usually plotted?",
+      "options": [
+        { "id": "A", "content": "$x$, on the abscissa" },
+        { "id": "B", "content": "$t$ (the time / index), on the abscissa" },
+        { "id": "C", "content": "$t$, on the ordinate" },
+        { "id": "D", "content": "$x$, on the ordinate, because it is independent of the operator" }
+      ],
+      "correct": "B",
+      "explanation": "The independent variable is the input we vary or order by — here the time/index $t$ — and it goes on the **abscissa**; the dependent variable $x$ (the measured value) goes on the ordinate. **A** and **D** mislabel $x$ as independent. **C** puts the independent variable on the wrong axis. Note $t$ has no measurement unit; it is merely the succession of tests, which suffices to detect a trend.",
+      "theory": "Regression: independent variable $X$ (abscissa) drives the dependent variable $Y$ (ordinate); for a drift, $X=t$, $Y=x$.",
+      "tags": ["regression", "variables"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Why is fitting $Y=a_0+a_1 X+a_2 X^2$ still called *linear* regression?",
+      "options": [
+        { "id": "A", "content": "Because the graph of $Y$ versus $X$ is a straight line" },
+        { "id": "B", "content": "Because $a_2$ is forced to zero during the fit" },
+        { "id": "C", "content": "Because least squares only works for straight lines" },
+        { "id": "D", "content": "Because it is linear in the parameters $a_0,a_1,a_2$ (set $X_1=X$, $X_2=X^2$)" }
+      ],
+      "correct": "D",
+      "explanation": "*Linear* refers to linearity in the **parameters**: the model is a linear combination $a_0+a_1X_1+a_2X_2$ with $X_1=X,\\,X_2=X^2$, so the normal-equations machinery applies. **A** confuses linearity in the variable with linearity in the parameters — the curve here is a parabola. **B** is false; $a_2$ is fitted, not zeroed. **C** is wrong: least squares handles any model linear in its parameters, including parabolas and $a_0+a_1e^X$. Only forms like $a_0+e^{a_1X}$ need non-linear regression.",
+      "theory": "Least squares applies whenever the model is linear in the parameters, regardless of how the variable enters.",
+      "tags": ["regression", "linear"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A least-squares line $x=a_0+a_1 t$ is fitted. Which point does the line always pass through?",
+      "options": [
+        { "id": "A", "content": "The origin $(0,0)$" },
+        { "id": "B", "content": "The first data point $(t_1,x_1)$" },
+        { "id": "C", "content": "The centroid $(\\bar t,\\bar x)$" },
+        { "id": "D", "content": "The point of maximum residual" }
+      ],
+      "correct": "C",
+      "explanation": "From $a_0=\\bar x-a_1\\bar t$ it follows that $\\bar x=a_0+a_1\\bar t$, so the line passes through the **centroid** $(\\bar t,\\bar x)$. **A** would require $a_0=0$, which is not generally true. **B** is wrong — the line minimizes the *sum* of squared deviations and need not hit any single point. **D** is meaningless for a best-fit line.",
+      "theory": "The least-squares straight line always passes through the mean point $(\\bar t,\\bar x)$; intercept $a_0=\\bar x-a_1\\bar t$.",
+      "tags": ["least-squares", "slope-intercept"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The least-squares method determines the model parameters by:",
+      "options": [
+        { "id": "A", "content": "minimizing the sum of the squares of the deviations $\\varepsilon_i$ between the data and the regression curve" },
+        { "id": "B", "content": "minimizing the largest single deviation" },
+        { "id": "C", "content": "maximizing the coefficient of determination directly" },
+        { "id": "D", "content": "forcing the curve through every experimental point" }
+      ],
+      "correct": "A",
+      "explanation": "By definition the least-squares estimate minimizes $\\sum_i\\varepsilon_i^2$, the sum of squared deviations between the experimental $y_i$ and the corresponding values on the fitted curve. **B** describes a min-max (Chebyshev) criterion, not least squares. **C** is a *consequence* of a good fit, not the criterion being optimized. **D** is over-fitting — passing through every point (high enough order) has no use, because it erases the random part.",
+      "theory": "Least squares: $\\{a\\}=([1,x]^T[1,x])^{-1}[1,x]^T\\{y\\}$ minimizes $\\sum\\varepsilon_i^2$.",
+      "tags": ["least-squares"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "On the same data the straight line gives $R^2=0.24$ and a parabola gives $R^2=0.90$. What does this say?",
+      "options": [
+        { "id": "A", "content": "The line explains more of the variability than the parabola" },
+        { "id": "B", "content": "The parabola explains about 90% of the data's variability; the line only about 24%" },
+        { "id": "C", "content": "$R^2>1$ for the parabola, so the fit is invalid" },
+        { "id": "D", "content": "Both fits are equivalent because $R^2$ ignores the model" }
+      ],
+      "correct": "B",
+      "explanation": "$R^2$ is the fraction of the data variability explained by the model ($0\\le R^2\\le1$). $R^2=0.90$ means the parabola explains ~90% of the variation, far more than the line's ~24% — consistent with a curved underlying trend. **A** reverses the comparison. **C** is impossible — $R^2$ cannot exceed 1. **D** is false: $R^2$ depends entirely on the model, through $\\mathbb{V}\\mathrm{ar}[G(X)]/\\mathbb{V}\\mathrm{ar}[y]$.",
+      "theory": "$R^2=\\mathbb{V}\\mathrm{ar}[G(X)]/\\mathbb{V}\\mathrm{ar}[y]=1-\\mathbb{V}\\mathrm{ar}[\\varepsilon]/\\mathbb{V}\\mathrm{ar}[y]$, bounded in $[0,1]$.",
+      "tags": ["r-squared", "goodness"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Increasing the polynomial order of a regression model until the curve passes exactly through every data point is undesirable because:",
+      "options": [
+        { "id": "A", "content": "it always lowers $R^2$ to zero" },
+        { "id": "B", "content": "the least-squares formula stops working for high orders" },
+        { "id": "C", "content": "the residuals become perfectly normal, which is forbidden" },
+        { "id": "D", "content": "it artificially erases the random part, hiding the true variability and corrupting the uncertainty estimate" }
+      ],
+      "correct": "D",
+      "explanation": "The goal of regression is to **separate** the systematic part from the random part. A curve through every point removes the random scatter entirely, so the variability field of the data — needed for a correct uncertainty — is lost; the model also 'artificially tracks' the noise and changes wildly with a little new data. **A** is wrong: over-fitting drives $R^2$ toward 1, not 0. **B** is false; the algebra still works (degrees of freedom just vanish). **C** is nonsense — normal residuals are desirable, not forbidden.",
+      "theory": "Raise the model order only until residuals lose their regularity; over-fitting destroys the random component and the uncertainty information.",
+      "tags": ["overfitting", "residuals"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In calibrating a force transducer, the reference forces have the lower uncertainty. The regression *output = f(force)* obtained by taking force as the independent variable is called:",
+      "options": [
+        { "id": "A", "content": "the equation of use" },
+        { "id": "B", "content": "the residual equation" },
+        { "id": "C", "content": "the equation of calibration" },
+        { "id": "D", "content": "the equation of determination" }
+      ],
+      "correct": "C",
+      "explanation": "Choosing the lower-uncertainty quantity (the reference force) as independent gives *output = f(force)* — the **equation of calibration**. **A**, the *equation of use*, is its inverse *force = g(output)*, used in normal operation when the output is read and the measurand must be computed. **B** and **D** are not standard terms. For regular instruments the two equations are fully compatible and certificates often list both.",
+      "theory": "Equation of calibration: output as a function of the (low-uncertainty) reference. Equation of use: its inverse, measurand from the read output.",
+      "tags": ["calibration", "regression"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Least squares estimates a parameter $\\hat a_1$ with standard deviation $s(a_1)$, on $n-(q+1)$ degrees of freedom. To decide whether the term $a_1 t$ belongs in the model, what is tested?",
+      "options": [
+        { "id": "A", "content": "$H_0:a_1=0$, rejected (parameter significant) if $t_{exp}=\\hat a_1/s(a_1)$ falls outside the Student-$t$ confidence interval" },
+        { "id": "B", "content": "$H_0:a_1=1$, rejected if $R^2<0.5$" },
+        { "id": "C", "content": "$H_0:\\hat a_1=\\bar x$, using a $\\chi^2$ test" },
+        { "id": "D", "content": "Nothing; a parameter is always kept once fitted" }
+      ],
+      "correct": "A",
+      "explanation": "Parameter significance is a t-test of the null $H_0:a_1=0$: compute $t_{exp}=(\\hat a_1-0)/s(a_1)$ and compare with the Student-$t$ interval on $n-(q+1)$ dof. If $t_{exp}$ lies **outside** the interval, reject $H_0$ — the parameter is significant and its term stays. **B** invents an irrelevant null and an $R^2$ threshold. **C** uses the wrong reference (a parameter is not compared to the data mean) and the wrong distribution. **D** ignores the validation step — an insignificant term should be dropped.",
+      "theory": "Significance of a regression coefficient: t-test of $a_i=0$ with $n-(q+1)$ degrees of freedom.",
+      "tags": ["t-test", "significance", "regression"]
+    }
+  ],
+  "exam": [
+    {
+      "title": "Fit a drift and interpret slope and intercept",
+      "meta": "Lecture 7 · least-squares line · numeric",
+      "difficulty": "medium",
+      "statement": "Five replicate readings taken in temporal sequence are $t=1,2,3,4,5$ with $x=8.0040,\\,8.0044,\\,8.0049,\\,8.0051,\\,8.0056$ mm. (a) Compute the least-squares slope $a_1$ and intercept $a_0$ of $x=a_0+a_1 t$. (b) Interpret $a_1$ and $a_0$. (c) State the point the line must pass through and use it to check $a_0$.",
+      "given": "$t=\\{1,2,3,4,5\\}$, $x=\\{8.0040,8.0044,8.0049,8.0051,8.0056\\}$ mm; $\\bar t=3$, $\\bar x=8.0048$ mm.",
+      "steps": [
+        {
+          "title": "Deviation sums",
+          "content": "$t_i-\\bar t=\\{-2,-1,0,1,2\\}$, $x_i-\\bar x=\\{-0.0008,-0.0004,0.0001,0.0003,0.0008\\}$ mm.\n$\\sum(t_i-\\bar t)(x_i-\\bar x)=(-2)(-0.0008)+(-1)(-0.0004)+0+(1)(0.0003)+(2)(0.0008)=0.0016+0.0004+0.0003+0.0016=0.0039$.\n$\\sum(t_i-\\bar t)^2=4+1+0+1+4=10$."
+        },
+        {
+          "title": "Slope",
+          "content": "$a_1=\\dfrac{\\sum(t_i-\\bar t)(x_i-\\bar x)}{\\sum(t_i-\\bar t)^2}=\\dfrac{0.0039}{10}=3.9\\times10^{-4}\\ \\mathrm{mm/step}.$"
+        },
+        {
+          "title": "Intercept",
+          "content": "$a_0=\\bar x-a_1\\bar t=8.0048-(3.9\\times10^{-4})(3)=8.0048-0.00117=8.00363\\ \\mathrm{mm}.$"
+        },
+        {
+          "title": "Interpretation and check",
+          "content": "$a_1\\approx3.9\\times10^{-4}$ mm/step is the **drift rate** (each successive reading is ~0.39 µm larger); $a_0\\approx8.0036$ mm is the value extrapolated to $t=0$. The line passes through the centroid $(\\bar t,\\bar x)=(3,\\,8.0048)$: indeed $a_0+a_1\\bar t=8.00363+0.00117=8.0048$ mm. ✓"
+        }
+      ],
+      "finalAnswer": "$a_1\\approx3.9\\times10^{-4}$ mm/step (positive linear drift), $a_0\\approx8.0036$ mm; the line passes through $(\\bar t,\\bar x)=(3,8.0048)$, which checks $a_0$.",
+      "tips": "Build the slope from the deviation sums (there is no SLOPE function in the engine). The sign of $a_1$ tells the drift direction; always verify the centroid relation $\\bar x=a_0+a_1\\bar t$ to catch arithmetic slips."
+    },
+    {
+      "title": "Choosing the model order from the residuals",
+      "meta": "Lecture 7 · model validation · conceptual",
+      "difficulty": "hard",
+      "statement": "A load-cell calibration is fitted first with a straight line and then with a parabola. The first-order residuals have strongly grouped signs (a run of $-$, then $+$, then $-$); the second-order residuals alternate sign frequently. The straight line gives $R^2=0.24$ and the parabola $R^2=0.90$. Decide which model to adopt and justify it, and state how you would finally confirm the choice.",
+      "given": "First-order: grouped residual signs, $R^2=0.24$. Second-order: alternating residual signs, $R^2=0.90$.",
+      "steps": [
+        {
+          "title": "Read the residual pattern",
+          "content": "Grouped signs in the first-order residuals are a **regularity** — evidence that a systematic factor (the instrument's non-linearity) has **not** been corrected. The first-order model is therefore inadequate."
+        },
+        {
+          "title": "Effect of the quadratic term",
+          "content": "The second-order model absorbs the non-linearity: its residuals show a **good alternation** of signs, consistent with only random effects remaining. The model is adequate."
+        },
+        {
+          "title": "Cross-check with R²",
+          "content": "$R^2$ rises from $0.24$ to $0.90$: the parabola explains ~90% of the variability versus ~24% for the line. This corroborates the residual diagnosis."
+        },
+        {
+          "title": "Do not over-fit; confirm",
+          "content": "Stop at second order — the residuals have already lost their regularity, and a higher order would merely track the noise. Confirm rigorously by a **normality test ($\\chi^2$ or NPP) on the second-order residuals**: if normality is not rejected, accept the parabola."
+        }
+      ],
+      "finalAnswer": "Adopt the **second-order (parabolic)** model: its residuals alternate in sign (no leftover regularity) and $R^2=0.90$ vs $0.24$. Confirm by checking that the second-order residuals pass a normality test, and resist raising the order further to avoid over-fitting.",
+      "tips": "The decisive evidence is the **sign pattern of the residuals**, not $R^2$ alone — examiners reward stating that grouped signs = uncorrected systematic factor. Mention the over-fitting trap and the final normality check on the residuals."
+    }
+  ]
+}

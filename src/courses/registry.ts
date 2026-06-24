@@ -3,12 +3,13 @@ import thermodynamics from "./thermodynamics";
 import mathAnalysis2 from "./math-analysis-2";
 import mechanics from "./mechanics";
 import cybersecurity from "./cybersecurity";
+import statistics from "./statistics";
 
 /**
  * Central course registry. Adding a course = build its folder (meta + lessons +
  * practice + exam following the thermodynamics template) and add one line here.
  */
-const COURSES: Course[] = [thermodynamics, mathAnalysis2, mechanics, cybersecurity];
+const COURSES: Course[] = [thermodynamics, mathAnalysis2, mechanics, cybersecurity, statistics];
 
 export function allCourses(): Course[] {
   return COURSES;

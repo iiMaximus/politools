@@ -1,0 +1,400 @@
+[
+  {
+    "id": "p-die20",
+    "title": "Classical probability — fair 20-faced die",
+    "prompt": "Rolling a fair die with **20 faces** (numbered 1–20), what is the probability of getting a **3**?\n\nThe size of the sample space $\\#S$ and the number of favourable events $\\#E$ are given. Compute the probability $P=\\#E/\\#S$ in cell **C6**.",
+    "given": {
+      "A1": "Fair 20-faced die — P(getting a 3)",
+      "A3": "Number of possible outcomes  #S =",
+      "C3": 20,
+      "A4": "Number of favourable outcomes  #E =",
+      "C4": 1,
+      "A6": "Probability  P ="
+    },
+    "checks": [
+      { "cell": "C6", "label": "Probability P", "expected": 0.05, "hintFormula": "=C4/C3", "teach": "Classical (Laplace) probability is the ratio of favourable to possible equally-likely outcomes: $P=\\#E/\\#S=1/20=0.05$ (5%)." }
+    ],
+    "method": "Every face is equally likely, so $P=\\dfrac{\\#E}{\\#S}=\\dfrac{1}{20}=0.05$."
+  },
+  {
+    "id": "p-batch500",
+    "title": "Classical probability — defective pieces",
+    "prompt": "A batch of **500 pieces** contains **8 defective** ones. In a procedure that tests a single piece, what is the probability of picking a defective one?\n\nFill $\\#S$ in **C3**, $\\#E$ in **C4**, then the probability in **C6**.",
+    "given": {
+      "A1": "Batch of 500 pieces, 8 defective — P(defective)",
+      "A3": "Number of possible outcomes  #S =",
+      "A4": "Number of favourable outcomes  #E =",
+      "A6": "Probability  P ="
+    },
+    "checks": [
+      { "cell": "C3", "label": "Sample-space size #S", "expected": 500, "teach": "Any of the 500 pieces can be tested, so $\\#S=500$." },
+      { "cell": "C4", "label": "Favourable count #E", "expected": 8, "teach": "There are 8 defective pieces, so $\\#E=8$." },
+      { "cell": "C6", "label": "Probability P", "expected": 0.016, "hintFormula": "=C4/C3", "teach": "$P=8/500=0.016$ (1.6%)." }
+    ]
+  },
+  {
+    "id": "p-sum5",
+    "title": "Classical probability — sum of two dice",
+    "prompt": "Rolling **two** fair six-sided dice, what is the probability that the two numbers have **sum 5**?\n\nThere are $6\\times 6=36$ equally-likely couples. **Count** the favourable couples (sum = 5) into **C4**, then compute the probability in **C6**.",
+    "given": {
+      "A1": "Two dice — P(sum = 5)",
+      "A3": "Number of possible couples  #S =",
+      "C3": 36,
+      "A4": "Favourable couples (sum = 5)  #E =",
+      "A6": "Probability  P ="
+    },
+    "checks": [
+      { "cell": "C4", "label": "Favourable couples #E", "expected": 4, "teach": "The couples giving 5 are (1,4), (2,3), (3,2), (4,1): four of them." },
+      { "cell": "C6", "label": "Probability P", "expected": 0.1111, "tol": 0.001, "hintFormula": "=C4/C3", "teach": "$P=4/36=0.1\\overline{1}\\approx 0.111$ (about 11.1%)." }
+    ]
+  },
+  {
+    "id": "p-binom",
+    "title": "Binomial distribution — BINOM.DIST",
+    "prompt": "A machine produces items independently with a defect probability $p=0.1$. A sample of $n=10$ items is taken. Use Excel's **BINOM.DIST** to find the probabilities below.\n\nRecall **BINOM.DIST(k; n; p; cumulative)**: the last argument is **0/FALSE** for $P(X=k)$ and **1/TRUE** for $P(X\\le k)$.",
+    "given": {
+      "A1": "Binomial: n independent trials, defect prob. p",
+      "A3": "Number of trials  n =",
+      "C3": 10,
+      "A4": "Defect probability  p =",
+      "C4": 0.1,
+      "A5": "Successes  k =",
+      "C5": 2,
+      "A7": "P(X = 2)  exactly two defective",
+      "A8": "P(X ≤ 2)  at most two defective",
+      "A9": "P(X ≥ 1)  at least one defective"
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(X = 2)", "expected": 0.19371, "tol": 0.0005, "hintFormula": "=BINOM.DIST(C5;C3;C4;0)", "teach": "Exact probability uses cumulative = 0 (FALSE): $\\binom{10}{2}0.1^2 0.9^8 = 0.1937$." },
+      { "cell": "C8", "label": "P(X ≤ 2)", "expected": 0.92981, "tol": 0.0005, "hintFormula": "=BINOM.DIST(C5;C3;C4;1)", "teach": "At-most uses cumulative = 1 (TRUE): it sums $P(0)+P(1)+P(2)=0.9298$." },
+      { "cell": "C9", "label": "P(X ≥ 1)", "expected": 0.65132, "tol": 0.0005, "hintFormula": "=1-BINOM.DIST(0;C3;C4;1)", "teach": "‘At least one’ is the complement of ‘none’: $1-P(X=0)=1-0.9^{10}=0.6513$." }
+    ]
+  },
+  {
+    "id": "p-hyper",
+    "title": "Hypergeometric distribution — HYPGEOM.DIST",
+    "prompt": "A box contains **M = 50** items, of which **C = 8** are defective. You draw **n = 5** items **without replacement** (so trials are not independent → hypergeometric, not binomial).\n\nUse **HYPGEOM.DIST(k; n; C; M; cumulative)** to find the probabilities below.",
+    "given": {
+      "A1": "Hypergeometric: draw n from M without replacement",
+      "A3": "Population size  M =",
+      "C3": 50,
+      "A4": "Defectives in population  C =",
+      "C4": 8,
+      "A5": "Sample size  n =",
+      "C5": 5,
+      "A6": "Successes  k =",
+      "C6": 2,
+      "A8": "P(X = 2)  exactly two defective",
+      "A9": "P(X ≤ 1)  at most one defective"
+    },
+    "checks": [
+      { "cell": "C8", "label": "P(X = 2)", "expected": 0.1517, "tol": 0.0005, "hintFormula": "=HYPGEOM.DIST(C6;C5;C4;C3;0)", "teach": "Exact hypergeometric probability with cumulative = 0: $\\binom{8}{2}\\binom{42}{3}/\\binom{50}{5}=0.1517$." },
+      { "cell": "C9", "label": "P(X ≤ 1)", "expected": 0.8241, "tol": 0.0005, "hintFormula": "=HYPGEOM.DIST(1;C5;C4;C3;1)", "teach": "Cumulative = 1 sums $P(0)+P(1)=0.8241$. Without replacement the population shrinks each draw — that is why we cannot use BINOM.DIST here." }
+    ]
+  },
+  {
+    "id": "p-die6-35",
+    "title": "Classical probability — a 3 or a 5",
+    "prompt": "Rolling a fair die with **six faces** (numbered 1–6), what is the probability of getting **a 3 or a 5**?\n\nThe sample-space size $\\#S$ is given. Count the favourable outcomes (3 or 5) into **C4**, then compute $P=\\#E/\\#S$ in **C6**.",
+    "given": {
+      "A1": "Fair six-faced die — P(3 or 5)",
+      "A3": "Number of possible outcomes  #S =",
+      "C3": 6,
+      "A4": "Favourable outcomes (a 3 or a 5)  #E =",
+      "A6": "Probability  P ="
+    },
+    "checks": [
+      { "cell": "C4", "label": "Favourable count #E", "expected": 2, "teach": "The roll being a 3 or a 5 covers exactly two of the six faces, so $\\#E=2$." },
+      { "cell": "C6", "label": "Probability P", "expected": 0.3333333333333333, "tol": 0.0005, "hintFormula": "=C4/C3", "teach": "‘3 or 5’ are mutually exclusive outcomes, so probabilities add: $P=\\dfrac{\\#E}{\\#S}=\\dfrac{2}{6}=0.3\\overline{3}\\approx 33.3\\%$." }
+    ],
+    "method": "The two faces 3 and 5 are mutually exclusive, so $P(3\\cup 5)=P(3)+P(5)=\\tfrac16+\\tfrac16=\\tfrac26=0.3\\overline{3}$."
+  },
+  {
+    "id": "p-batch500ab",
+    "title": "Classical probability — overlapping defects (inclusion–exclusion)",
+    "prompt": "In a batch of **500 pieces**, **4** have defect **A**, **3** have defect **B**, and **2** of these have **both** defects. Examining a single piece, what is the probability it is **defective**?\n\nA piece is defective if it has A *or* B. Because 2 pieces are counted twice, use inclusion–exclusion $\\#E = n_A+n_B-n_{AB}$ in **C7**, then $P=\\#E/\\#S$ in **C9**.",
+    "given": {
+      "A1": "Batch of 500 — defect A=4, B=3, both=2 — P(defective)",
+      "A3": "Pieces with defect A  n_A =",
+      "C3": 4,
+      "A4": "Pieces with defect B  n_B =",
+      "C4": 3,
+      "A5": "Pieces with both defects  n_AB =",
+      "C5": 2,
+      "A6": "Total pieces  #S =",
+      "C6": 500,
+      "A7": "Defective pieces  #E =",
+      "A9": "Probability  P ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "Defective count #E", "expected": 5, "hintFormula": "=C3+C4-C5", "teach": "By inclusion–exclusion $\\#E=n_A+n_B-n_{AB}=4+3-2=5$. We subtract the 2 'both' pieces once because adding $n_A$ and $n_B$ counts them twice." },
+      { "cell": "C9", "label": "Probability P", "expected": 0.01, "tol": 0.0005, "hintFormula": "=C7/C6", "teach": "$P=\\dfrac{\\#E}{\\#S}=\\dfrac{5}{500}=0.01$ (1%). Forgetting to subtract the overlap would wrongly give $7/500$." }
+    ],
+    "method": "$\\#E=4+3-2=5$ distinct defective pieces, so $P=5/500=0.01$."
+  },
+  {
+    "id": "p-tree-1a",
+    "title": "Probability tree — a 3 then a 5 (two rolls)",
+    "prompt": "Rolling a fair six-sided die **twice**, what is the probability of getting **3 on the first** roll **and 5 on the second**?\n\nThe two rolls are **independent**, so multiply the branch probabilities along the path: $P=P_1\\times P_2$ in **C6**.",
+    "given": {
+      "A1": "Two rolls — P(3 then 5)",
+      "A3": "P1 = P(3 on first roll) =",
+      "C3": "=1/6",
+      "A4": "P2 = P(5 on second roll) =",
+      "C4": "=1/6",
+      "A6": "Probability of the path  P ="
+    },
+    "checks": [
+      { "cell": "C6", "label": "P(3 then 5)", "expected": 0.027777777777777776, "tol": 0.0005, "hintFormula": "=C3*C4", "teach": "Independent actions multiply along a tree path: $P=\\tfrac16\\times\\tfrac16=\\tfrac1{36}\\approx 0.0278$ (about 2.8%)." }
+    ],
+    "method": "One specific path through the tree: $P=P_1\\,P_2=\\tfrac16\\cdot\\tfrac16=\\tfrac1{36}$."
+  },
+  {
+    "id": "p-tree-2",
+    "title": "Probability tree — a 3 and a 5 in any order",
+    "prompt": "Rolling a fair six-sided die **twice**, what is the probability of getting **a 3 and a 5** (in **either** order)?\n\nThere are **two** favourable paths: (3 then 5) and (5 then 3). Each path has probability $\\tfrac16\\times\\tfrac16$. Sum them in **C6**.",
+    "given": {
+      "A1": "Two rolls — P(a 3 and a 5, any order)",
+      "A3": "P(one die face) =",
+      "C3": "=1/6",
+      "A4": "Number of favourable ordered paths =",
+      "C4": 2,
+      "A6": "Probability  P ="
+    },
+    "checks": [
+      { "cell": "C6", "label": "P(3 and 5, any order)", "expected": 0.05555555555555555, "tol": 0.0005, "hintFormula": "=C4*C3*C3", "teach": "Two mutually-exclusive paths, each $\\tfrac16\\cdot\\tfrac16$: $P=2\\times\\tfrac1{36}=\\tfrac2{36}\\approx 0.0556$ (about 5.6%). Order matters in the tree, so '3 then 5' and '5 then 3' are counted separately." }
+    ],
+    "method": "Add the two ordered paths: $P=\\tfrac1{36}+\\tfrac1{36}=\\tfrac2{36}=0.0\\overline{5}$."
+  },
+  {
+    "id": "p-tree-2b",
+    "title": "Probability tree — exactly two 3s in three rolls (binomial)",
+    "prompt": "Rolling a fair six-sided die **three times**, what is the probability of getting **exactly two 3s**?\n\nEach roll is an independent trial with 'success' = rolling a 3, so $p=\\tfrac16$. This is the **binomial** scheme: use **BINOM.DIST(k; n; p; 0)** with $k=2$, $n=3$ in **C7**.",
+    "given": {
+      "A1": "Three rolls — P(exactly two 3s)",
+      "A3": "Number of trials  n =",
+      "C3": 3,
+      "A4": "Success probability  p = P(roll a 3) =",
+      "C4": "=1/6",
+      "A5": "Successes  k =",
+      "C5": 2,
+      "A7": "P(X = 2)  exactly two 3s ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(exactly two 3s)", "expected": 0.06944444444444445, "tol": 0.0005, "hintFormula": "=BINOM.DIST(C5;C3;C4;0)", "teach": "$P=\\binom{3}{2}\\left(\\tfrac16\\right)^2\\left(\\tfrac56\\right)^1=3\\cdot\\tfrac1{36}\\cdot\\tfrac56=\\tfrac{15}{216}\\approx 0.0694$. The factor $\\binom32=3$ counts the three tree paths with two 3s and one non-3 — exactly what the tree diagram enumerates." }
+    ],
+    "method": "Binomial with $n=3,\\,p=\\tfrac16,\\,k=2$: $\\binom32 p^2(1-p)=3\\cdot\\tfrac1{36}\\cdot\\tfrac56=0.0694$. The tree's three favourable paths are the $\\binom32$ term."
+  },
+  {
+    "id": "p-tree-3",
+    "title": "Probability tree — exactly two heads in three coin tosses",
+    "prompt": "Tossing a fair coin **three times**, what is the probability of getting **exactly two heads**?\n\nBinomial scheme with $n=3$, $p=\\tfrac12$. Use **BINOM.DIST(k; n; p; 0)** with $k=2$ in **C7**.",
+    "given": {
+      "A1": "Three coin tosses — P(exactly two heads)",
+      "A3": "Number of tosses  n =",
+      "C3": 3,
+      "A4": "P(head)  p =",
+      "C4": 0.5,
+      "A5": "Successes  k =",
+      "C5": 2,
+      "A7": "P(X = 2)  exactly two heads ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(exactly two heads)", "expected": 0.375, "tol": 0.0005, "hintFormula": "=BINOM.DIST(C5;C3;C4;0)", "teach": "$P=\\binom32\\left(\\tfrac12\\right)^2\\left(\\tfrac12\\right)^1=3\\cdot\\tfrac18=\\tfrac38=0.375$. Of the 8 equally-likely HHH…TTT outcomes, exactly 3 (HHT, HTH, THH) have two heads." }
+    ],
+    "method": "Binomial $n=3,p=\\tfrac12,k=2$: $\\binom32(\\tfrac12)^3=\\tfrac38=0.375$."
+  },
+  {
+    "id": "p-tree-3b",
+    "title": "Probability tree — at least two heads in three tosses",
+    "prompt": "Tossing a fair coin **three times**, what is the probability of getting **at least two heads**?\n\n'At least two' means $k=2$ or $k=3$. Use the cumulative complement: $P(X\\ge 2)=1-P(X\\le 1)$ via **BINOM.DIST** in **C7**.",
+    "given": {
+      "A1": "Three coin tosses — P(at least two heads)",
+      "A3": "Number of tosses  n =",
+      "C3": 3,
+      "A4": "P(head)  p =",
+      "C4": 0.5,
+      "A7": "P(X ≥ 2)  at least two heads ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(at least two heads)", "expected": 0.5, "tol": 0.0005, "hintFormula": "=1-BINOM.DIST(1;C3;C4;1)", "teach": "$P(X\\ge2)=1-P(X\\le1)=1-[P(0)+P(1)]=1-[\\tfrac18+\\tfrac38]=\\tfrac48=0.5$. Equivalently $P(2)+P(3)=\\tfrac38+\\tfrac18=\\tfrac12$." }
+    ],
+    "method": "$P(X\\ge2)=1-P(X\\le1)=1-(\\tfrac18+\\tfrac38)=\\tfrac12=0.5$."
+  },
+  {
+    "id": "p-tree-3c",
+    "title": "Probability tree — at most two heads in three tosses",
+    "prompt": "Tossing a fair coin **three times**, what is the probability of getting **at most two heads**?\n\n'At most two' is the cumulative $P(X\\le 2)$. Use **BINOM.DIST(2; n; p; 1)** in **C7**.",
+    "given": {
+      "A1": "Three coin tosses — P(at most two heads)",
+      "A3": "Number of tosses  n =",
+      "C3": 3,
+      "A4": "P(head)  p =",
+      "C4": 0.5,
+      "A7": "P(X ≤ 2)  at most two heads ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(at most two heads)", "expected": 0.875, "tol": 0.0005, "hintFormula": "=BINOM.DIST(2;C3;C4;1)", "teach": "$P(X\\le2)=1-P(X=3)=1-\\tfrac18=\\tfrac78=0.875$. The only excluded outcome is HHH (all three heads)." }
+    ],
+    "method": "$P(X\\le2)=P(0)+P(1)+P(2)=1-P(3)=1-\\tfrac18=\\tfrac78=0.875$."
+  },
+  {
+    "id": "p-tree-4a",
+    "title": "Probability tree — exactly one defective in two draws (no replacement)",
+    "prompt": "A batch of **500 pieces** contains **5 defective** ones (4 with defect A, 2 with defect B, 1 with both → $4+2-1=5$ distinct defectives). Two pieces are examined **without replacement**. What is the probability of finding **exactly one** defective?\n\nTwo paths give exactly one defective: (defective, good) and (good, defective). After the first draw the batch holds 499 pieces. Compute $P=2\\cdot\\tfrac{5}{500}\\cdot\\tfrac{495}{499}$ in **C8**.",
+    "given": {
+      "A1": "Two draws, no replacement — P(exactly one defective)",
+      "A3": "Total pieces  N =",
+      "C3": 500,
+      "A4": "Defective pieces  d =",
+      "C4": 5,
+      "A6": "Good pieces  N − d =",
+      "C6": "=C3-C4",
+      "A8": "P(exactly one defective in 2) ="
+    },
+    "checks": [
+      { "cell": "C8", "label": "P(exactly one defective)", "expected": 0.019839679358717437, "tol": 1e-6, "hintFormula": "=2*(C4/C3)*(C6/(C3-1))", "teach": "Two ordered paths each have probability $\\tfrac{5}{500}\\cdot\\tfrac{495}{499}$ (the bad one, then a good one from the remaining 499). Summing: $P=2\\cdot\\tfrac{5}{500}\\cdot\\tfrac{495}{499}\\approx0.01984$. Drawing without replacement is why the second factor uses 499, not 500." }
+    ],
+    "method": "$P=P(\\text{bad},\\text{good})+P(\\text{good},\\text{bad})=2\\cdot\\tfrac{5}{500}\\cdot\\tfrac{495}{499}\\approx0.01984$."
+  },
+  {
+    "id": "p-tree-4b",
+    "title": "Probability tree — at least one defective in two draws (complement)",
+    "prompt": "Same batch of **500 pieces** with **5 defective**. Two pieces are examined **without replacement**. What is the probability of finding **at least one** defective?\n\nUse the complement 'no defective in either draw': $P=1-\\tfrac{495}{500}\\cdot\\tfrac{494}{499}$ in **C8**.",
+    "given": {
+      "A1": "Two draws, no replacement — P(at least one defective)",
+      "A3": "Total pieces  N =",
+      "C3": 500,
+      "A4": "Defective pieces  d =",
+      "C4": 5,
+      "A6": "Good pieces  N − d =",
+      "C6": "=C3-C4",
+      "A8": "P(at least one defective in 2) ="
+    },
+    "checks": [
+      { "cell": "C8", "label": "P(at least one defective)", "expected": 0.01991983967935872, "tol": 1e-6, "hintFormula": "=1-(C6/C3)*((C6-1)/(C3-1))", "teach": "‘At least one’ is the complement of ‘none’: $P=1-\\tfrac{495}{500}\\cdot\\tfrac{494}{499}\\approx0.01992$. After drawing one good piece, 494 of the remaining 499 are still good." }
+    ],
+    "method": "$P=1-P(\\text{no defective})=1-\\tfrac{495}{500}\\cdot\\tfrac{494}{499}\\approx0.01992$."
+  },
+  {
+    "id": "p-tree-5",
+    "title": "Probability tree — at least one defective in three draws (complement)",
+    "prompt": "Same batch of **500 pieces** with **5 defective**. **Three** pieces are examined **without replacement**. What is the probability of finding **at least one** defective?\n\nComplement of 'all three good': $P=1-\\tfrac{495}{500}\\cdot\\tfrac{494}{499}\\cdot\\tfrac{493}{498}$ in **C8**.",
+    "given": {
+      "A1": "Three draws, no replacement — P(at least one defective)",
+      "A3": "Total pieces  N =",
+      "C3": 500,
+      "A4": "Defective pieces  d =",
+      "C4": 5,
+      "A6": "Good pieces  N − d =",
+      "C6": "=C3-C4",
+      "A8": "P(at least one defective in 3) ="
+    },
+    "checks": [
+      { "cell": "C8", "label": "P(at least one defective)", "expected": 0.029760001931573996, "tol": 1e-6, "hintFormula": "=1-(C6/C3)*((C6-1)/(C3-1))*((C6-2)/(C3-2))", "teach": "Complement of 'three good in a row': $P=1-\\tfrac{495}{500}\\cdot\\tfrac{494}{499}\\cdot\\tfrac{493}{498}\\approx0.02976$. Each successive draw shrinks both the numerator (good left) and the denominator (pieces left) by one." }
+    ],
+    "method": "$P=1-\\tfrac{495}{500}\\cdot\\tfrac{494}{499}\\cdot\\tfrac{493}{498}\\approx0.02976$."
+  },
+  {
+    "id": "p-pexpr-01",
+    "title": "Total probability & Bayes — two overlapping defects (P01)",
+    "prompt": "Turned parts have a **diameter** defect with probability **1%**, a **shape** (taper) defect with probability **2%**, and **both** defects with probability **0.1%**.\n\n- In **C8**: the **total** probability a part is defective, $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$.\n- In **C9**: the probability that, **given** it is defective, this is due to **both** defects, $P(A\\cap B \\mid \\text{def})=\\tfrac{P(A\\cap B)}{P(A\\cup B)}$.",
+    "given": {
+      "A1": "Turned parts — diameter / shape / both defects",
+      "A3": "P(diameter defect)  P(A) =",
+      "C3": 0.01,
+      "A4": "P(shape defect)  P(B) =",
+      "C4": 0.02,
+      "A5": "P(both defects)  P(A∩B) =",
+      "C5": 0.001,
+      "A8": "Total P(defective)  P(A∪B) =",
+      "A9": "P(both | defective) ="
+    },
+    "checks": [
+      { "cell": "C8", "label": "Total P(defective)", "expected": 0.028999999999999998, "tol": 1e-6, "hintFormula": "=C3+C4-C5", "teach": "Inclusion–exclusion for the union: $P(A\\cup B)=0.01+0.02-0.001=0.029$ (2.9%). Subtracting $P(A\\cap B)$ avoids double-counting the parts with both defects." },
+      { "cell": "C9", "label": "P(both | defective)", "expected": 0.03448275862068966, "tol": 1e-6, "hintFormula": "=C5/C8", "teach": "Conditional probability: $P(\\text{both}\\mid\\text{def})=\\dfrac{P(A\\cap B)}{P(A\\cup B)}=\\dfrac{0.001}{0.029}\\approx0.0345$ (about 3.45%)." }
+    ],
+    "method": "$P(A\\cup B)=0.01+0.02-0.001=0.029$; then $P(A\\cap B\\mid\\text{def})=\\tfrac{0.001}{0.029}\\approx0.0345$."
+  },
+  {
+    "id": "p-pexpr-02",
+    "title": "Total probability & Bayes — four subcontractors (P02)",
+    "prompt": "A producer receives components from four subcontractors A, B, C, D in proportions $P_a,P_b,P_c,P_d$, with declared defectivities $D_a,D_b,D_c,D_d$ (given).\n\n- In **C7**: the probability of using a **defective** component (law of total probability), $\\sum_i P_i D_i$.\n- In **C8**: the probability that a defective component **came from B** (Bayes), $\\dfrac{P_b D_b}{\\sum_i P_i D_i}$.",
+    "given": {
+      "A1": "Four subcontractors — total probability & Bayes",
+      "A3": "P(a) =",
+      "B3": 0.65,
+      "D3": "D(a) =",
+      "E3": 0.02,
+      "A4": "P(b) =",
+      "B4": 0.2,
+      "D4": "D(b) =",
+      "E4": 0.025,
+      "A5": "P(c) =",
+      "B5": 0.1,
+      "D5": "D(c) =",
+      "E5": 0.04,
+      "A6": "P(d) =",
+      "B6": 0.05,
+      "D6": "D(d) =",
+      "E6": 0.1,
+      "A7": "P(using a defective component) =",
+      "A8": "P(from B | defective) ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(defective)", "expected": 0.027000000000000003, "tol": 1e-6, "hintFormula": "=B3*E3+B4*E4+B5*E5+B6*E6", "teach": "Law of total probability — weight each supplier's defectivity by its share: $0.65\\cdot0.02+0.2\\cdot0.025+0.1\\cdot0.04+0.05\\cdot0.1=0.027$ (2.7%)." },
+      { "cell": "C8", "label": "P(from B | defective)", "expected": 0.1851851851851852, "tol": 1e-6, "hintFormula": "=B4*E4/C7", "teach": "Bayes: $P(B\\mid\\text{def})=\\dfrac{P_b D_b}{P(\\text{def})}=\\dfrac{0.2\\cdot0.025}{0.027}=\\dfrac{0.005}{0.027}\\approx0.1852$. Although B supplies only 20%, it contributes about 18.5% of the defectives." }
+    ],
+    "method": "Total: $\\sum P_i D_i=0.027$. Bayes for B: $\\tfrac{0.2\\cdot0.025}{0.027}\\approx0.1852$."
+  },
+  {
+    "id": "p-pexpr-03",
+    "title": "Union of three defects — conditional joints (P03)",
+    "prompt": "A semi-processed part can have three defects A, B, C. Given: $P(A)=0.03$, $P(B)=0.04$, $P(C)=0.02$. Among parts with A: $P(B\\mid A)=0.30$, $P(C\\mid A)=0.17$, $P(B\\cap C\\mid A)=0.03$. Among parts with B: $P(C\\mid B)=0.18$.\n\nThe joint probabilities follow from the definition of conditional probability, e.g. $P(A\\cap B)=P(A)\\,P(B\\mid A)$. Use the union of three sets\n$$P(A\\cup B\\cup C)=P(A)+P(B)+P(C)-P(AB)-P(AC)-P(BC)+P(ABC)$$\nin **C11**.",
+    "given": {
+      "A1": "Three defects A, B, C — probability any defect is present",
+      "A3": "P(A) =",
+      "C3": 0.03,
+      "A4": "P(B) =",
+      "C4": 0.04,
+      "A5": "P(C) =",
+      "C5": 0.02,
+      "A6": "P(B | A) =",
+      "C6": 0.3,
+      "A7": "P(C | A) =",
+      "C7": 0.17,
+      "A8": "P(B∩C | A) =",
+      "C8": 0.03,
+      "A9": "P(C | B) =",
+      "C9": 0.18,
+      "A11": "P(A∪B∪C)  any defect present ="
+    },
+    "checks": [
+      { "cell": "C11", "label": "P(any defect present)", "expected": 0.06960000000000002, "tol": 1e-6, "hintFormula": "=C3+C4+C5-C3*C6-C3*C7-C4*C9+C3*C8", "teach": "Convert conditionals to joints first: $P(AB)=P(A)P(B\\mid A)=0.03\\cdot0.3$, $P(AC)=0.03\\cdot0.17$, $P(BC)=P(B)P(C\\mid B)=0.04\\cdot0.18$, $P(ABC)=P(A)P(BC\\mid A)=0.03\\cdot0.03$. Then the inclusion–exclusion union gives $0.03+0.04+0.02-0.009-0.0051-0.0072+0.0009=0.0696$ (about 6.96%)." }
+    ],
+    "method": "Joints from conditionals: $P(AB)=0.009,\\ P(AC)=0.0051,\\ P(BC)=0.0072,\\ P(ABC)=0.0009$. Union: $0.09-0.0213+0.0009=0.0696$."
+  },
+  {
+    "id": "p-pexpr-04",
+    "title": "Series reliability — mechanism with three critical pieces (P04)",
+    "prompt": "A mechanism has three critical pieces A, B, C; it **fails if any one** is defective. Defect probabilities: $P_A=0.025$, $P_B=0.008$, $P_C=0.007$.\n\n- In **C7**: the probability the mechanism **does not work**, $1-(1-P_A)(1-P_B)(1-P_C)$.\n- In **C9**: the **maximum** acceptable $P_A$ so that the failure probability drops to the target $P_1=0.02$, i.e. $P_A^{\\max}=1-\\dfrac{1-P_1}{(1-P_B)(1-P_C)}$.",
+    "given": {
+      "A1": "Series mechanism — fails if any piece is defective",
+      "A3": "P(A defective)  PA =",
+      "C3": 0.025,
+      "A4": "P(B defective)  PB =",
+      "C4": 0.008,
+      "A5": "P(C defective)  PC =",
+      "C5": 0.007,
+      "A6": "Target failure prob.  P1 =",
+      "C6": 0.02,
+      "A7": "P(mechanism does not work) =",
+      "A9": "Max acceptable PA for failure = P1 ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "P(does not work)", "expected": 0.039570400000000006, "tol": 1e-6, "hintFormula": "=1-(1-C3)*(1-C4)*(1-C5)", "teach": "The mechanism works only if **all** pieces are good (independent): $P(\\text{work})=(1-P_A)(1-P_B)(1-P_C)$. So $P(\\text{fail})=1-(0.975)(0.992)(0.993)\\approx0.03957$ (about 3.96%)." },
+      { "cell": "C9", "label": "Max acceptable PA", "expected": 0.005132703115355852, "tol": 1e-6, "hintFormula": "=1-(1-C6)/((1-C4)*(1-C5))", "teach": "Set $P(\\text{fail})=P_1$ and solve for $P_A$: $1-(1-P_A)(1-P_B)(1-P_C)=P_1\\Rightarrow P_A^{\\max}=1-\\dfrac{1-P_1}{(1-P_B)(1-P_C)}\\approx0.00513$. To hit 2% overall, piece A's defectivity must fall from 2.5% to about 0.51%." }
+    ],
+    "method": "Failure $=1-(0.975)(0.992)(0.993)\\approx0.03957$. For $P_1=0.02$: $P_A^{\\max}=1-\\tfrac{0.98}{(0.992)(0.993)}\\approx0.00513$."
+  }
+]

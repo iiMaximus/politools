@@ -1,0 +1,312 @@
+{
+  "title": "Information in a Measurement Result & Instrument Characteristics",
+  "summary": "Lessons 1 & 3. A measurement is never exact: its information is **distorted by systematic factors and confused by random ones**, so a result is incomplete unless paired with its **uncertainty interval**. You will learn the VIM vocabulary the exam uses — *measurand*, systematic vs random errors, *trueness*, *precision* (repeatability vs reproducibility), *accuracy* — and the metrological characteristics of instruments: *resolution*, *sensitivity*, *stability*, *linearity*, *hysteresis*, *zero drift*, plus calibration, traceability and metrological confirmation.",
+  "minutes": 30,
+  "objectives": [
+    "Explain why every measurement result must be given as a value plus an uncertainty interval, and use the overlap (compatible) / separation (different) rule to compare two results.",
+    "Define the measurand and distinguish systematic factors/errors (constant or predictable) from random factors/errors (unpredictable), and list the methods to reduce systematic effects: correction, compensation, elimination.",
+    "Distinguish trueness (closeness to a reference, inversely related to bias), precision (closeness among replicates), and accuracy (closeness to the true value, the total picture).",
+    "Distinguish repeatability conditions (same procedure, operator, instrument, short time) from reproducibility conditions (different operators, instruments, locations).",
+    "Define and compute the metrological characteristics: resolution, sensitivity, stability, range/linearity, hysteresis and drift.",
+    "Explain calibration, metrological traceability through the unbroken calibration chain, and the role of the GUM and VIM."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. The information contained in a measurement"
+    },
+    {
+      "kind": "prose",
+      "text": "We measure **in order to know**. But experimental data are **not an absolute truth**: repeating the same measurement several times you obtain different results, so you can never get an **exact result**.\n\nEvery measurement result is influenced by a multiplicity of factors:\n- **Systematic factors** — big and regular enough that the relevant cause can be individuated;\n- **Random factors** — small, irregular, not describable in a deterministic way, so they must be treated statistically.\n\nThe information contained in a measure can only be extracted remembering that its numeric data is always **distorted by systematic factors** and **confused by the random ones**."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "A result without its uncertainty is incomplete",
+      "text": "Two gauge blocks of equal nominal length read **identically** on a digital micrometer, yet a higher-resolution instrument (e.g. an LVDT) shows they differ. The paradox comes from the false idea that a block has one defined **true value**. Operatively we move to a **statistical vision** and give a **range of values** around the result in which the value of the measurand reasonably lies — the **uncertainty interval**. The information given by a measurement remains incomplete if no uncertainty interval is associated to the result."
+    },
+    {
+      "kind": "definition",
+      "term": "Measurand",
+      "text": "The **measurand** is the quantity intended to be measured. According to ISO/IEC 17025, the measurement result depends on the whole **measurement complex**: instrument, operator, environmental conditions and the measurand itself — not on the instrument alone."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Compatible vs different results",
+      "text": "To transfer the information contained in two measures, their uncertainty intervals must be given.\n- **Overlapping bands** $\\Rightarrow$ **compatible** results: it is *not* possible to say which is higher; their difference can be just an effect of random errors.\n- **Non-overlapping (separated) bands** $\\Rightarrow$ **not compatible**: you can state the two results are different ($A>B$).\nIt is **never** possible to establish an equality condition; at best results are *compatible*. The guide for evaluating uncertainty is the **GUM** (JCGM 100:2008); the vocabulary is the **VIM** (JCGM 200:2012)."
+    },
+    {
+      "kind": "heading",
+      "text": "2. Measurement errors: systematic and random"
+    },
+    {
+      "kind": "definition",
+      "term": "Measurement error (VIM 2.16)",
+      "text": "**Measurement error** = measured quantity value minus a reference quantity value. It splits into two components:\n- **Systematic error** (VIM 2.17): in replicate measurements it remains **constant or varies in a predictable manner**.\n- **Random error** (VIM 2.19): in replicate measurements it **varies in an unpredictable manner**. Random errors are the residuals of systematic errors and other influencing factors; being many, random and of similar entity, they are managed with statistical methods based on the **normal distribution**."
+    },
+    {
+      "kind": "prose",
+      "text": "Systematic errors are characterized by the **detectability of the relationship** that connects them to their cause; their value is **higher** than the cloud of random errors (otherwise they would be confused with it). Methods to **reduce the effects of systematic errors**:\n- **Correction**: calculate the error and *subtract* it from the measured value;\n- **Compensation**: a physical phenomenon associated to the measurement compensates the variation of the result (e.g. a scale of the **same material** as the measurand, so both expand together with temperature);\n- **Elimination**: identify the cause and remove it (e.g. work in a **thermostatic chamber** to avoid temperature variation)."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: a systematic error you can correct",
+      "text": "Temperature affects the dimensional measurement of a steel piece through thermal expansion: $L=L_0\\,[1+\\alpha\\,(T-T_0)]$, so the error is $\\Delta L=L_0\\,\\alpha\\,(T-T_0)$.\n\nWith $L_0=100$ mm, $\\alpha=11\\times10^{-6}\\ \\mathrm{K^{-1}}$, $T-T_0=10\\,^{\\circ}\\mathrm{C}$:\n$$\\Delta L=100\\times11\\times10^{-6}\\times10=0.011\\ \\mathrm{mm}=11\\ \\mu\\mathrm{m}.$$\nKnowing $T$ and $\\alpha$, this **predictable** error can be **corrected** by subtracting it — that is exactly why it is *systematic*, not random."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Uncertainty = what remains",
+      "text": "After systematic errors are corrected/compensated/eliminated and measurement accidents are excluded, the **measurement uncertainty** is built from what is left — the residuals of systematic errors plus the random errors. Averaging reduces the random variability of the mean."
+    },
+    {
+      "kind": "heading",
+      "text": "3. Trueness, precision, accuracy"
+    },
+    {
+      "kind": "definition",
+      "term": "Trueness (VIM 2.14)",
+      "text": "**Measurement trueness** = closeness of agreement between the **average of an infinite number of replicate** measured values and a **reference** value. Trueness is **inversely related to systematic error** and **not** related to random error. Its numeric counterpart (with opposite sign) is the **bias** (VIM 2.18) = estimate of a systematic measurement error. Do NOT call trueness 'accuracy'."
+    },
+    {
+      "kind": "definition",
+      "term": "Precision (VIM 2.15)",
+      "text": "**Measurement precision** = closeness of agreement between indications obtained by **replicate measurements** on the same/similar objects under specified conditions. It is expressed numerically by measures of **im**precision (standard deviation, variance, coefficient of variation). The 'specified conditions' may be **repeatability**, intermediate precision, or **reproducibility** conditions."
+    },
+    {
+      "kind": "definition",
+      "term": "Accuracy (VIM 2.13)",
+      "text": "**Measurement accuracy** = closeness of agreement between a **measured** value and the **true** value of the measurand. It accounts for the **total variability** (it depends on *both* trueness and precision). Accuracy is **not** a quantity and is **not** given a number; a measurement is 'more accurate' when it has a smaller error. Do NOT use 'accuracy' to mean trueness, nor 'precision' to mean accuracy."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "The dartboard picture",
+      "text": "**Trueness** = the centre of the cluster is on the bull's-eye (small *systematic* error). **Precision** = the darts are tightly grouped (small *random* spread), regardless of where the centre is. **Accuracy** = darts both tight *and* centred — it requires good trueness AND good precision."
+    },
+    {
+      "kind": "heading",
+      "text": "4. Repeatability vs reproducibility"
+    },
+    {
+      "kind": "definition",
+      "term": "Repeatability condition (VIM 2.20)",
+      "text": "Same **measurement procedure**, same **operators**, same **measuring system**, same operating conditions and same **location**, with replicate measurements on the same object **over a short period of time**. Repeatability is strongly linked to the instrument and represents an **ideal condition** (disturbances avoided as much as possible). Example: applying the *same group of masses* slowly to a force transducer, with maximum care, a single operator, in a short time."
+    },
+    {
+      "kind": "definition",
+      "term": "Reproducibility condition (VIM 2.24)",
+      "text": "**Different** locations, **different** operators, **different** measuring systems (possibly different procedures), with replicate measurements on the same object. Reproducibility represents better the **real working conditions**. Example: a force transducer evaluated through a standard force machine, repositioned several times, rotated, and at least once disassembled, packed, reassembled and put back."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A single technician measures the same shaft 20 times in 10 minutes with one micrometer, never changing anything. The dispersion of these 20 values estimates the instrument's:",
+        "options": [
+          { "id": "A", "content": "reproducibility" },
+          { "id": "B", "content": "repeatability" },
+          { "id": "C", "content": "trueness" },
+          { "id": "D", "content": "resolution" }
+        ],
+        "correct": "B",
+        "explanation": "Same operator, same instrument, same place, short time, replicates on the same object — these are exactly **repeatability** conditions, so the spread estimates repeatability. **A** reproducibility would require *changing* operators / instruments / locations. **C** trueness is the closeness of the *average* to a reference and needs a standard, not just spread. **D** resolution is the smallest perceptible change in the indication, a fixed instrument property, not a spread of repeated readings.",
+        "theory": "Repeatability = everything kept the same, short time. Reproducibility = conditions deliberately changed. Both are expressed through the dispersion (precision) of the results.",
+        "source": "Lesson 3 (precision: repeatability vs reproducibility, VIM 2.20 / 2.24)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "5. Metrological characteristics of instruments"
+    },
+    {
+      "kind": "definition",
+      "term": "Resolution (VIM 4.14)",
+      "text": "**Smallest change in a quantity being measured that causes a perceptible change in the corresponding indication.** For an **analogue scale** the line thickness is about $1/2$, $1/5$ or $1/10$ of the elementary division, so the resolution is $1/2$, $1/5$ or $1/10$ of that division (read as $r=e/n$ with $e$ the division and $n$ the number of subdivisions). For a **digital scale** the resolution corresponds to the **maximum increment** — the largest difference between two subsequent indications reported in increasing order."
+    },
+    {
+      "kind": "definition",
+      "term": "Sensitivity (VIM 4.12)",
+      "text": "**Quotient of the change in an indication and the corresponding change in the value of the quantity being measured.** It matters for instruments with different input/output units; for a **direct-reading** instrument the sensitivity is always **1**. Example: a load cell where force (N) is the input and electric tension (µV) the output — a cell of $3\\ \\mu\\mathrm{V/N}$ is *more sensitive* than one of $2\\ \\mu\\mathrm{V/N}$. Do **not** confuse sensitivity with resolution."
+    },
+    {
+      "kind": "definition",
+      "term": "Stability and drift (VIM 4.19)",
+      "text": "**Stability** = property whereby the metrological characteristics of an instrument **remain constant in time**. The opposite is **drift**: e.g. the **zero instability** of a scale varies over time and affects *every* measurement (the zero shift propagates to the whole scale). It is checked by reading with no load or a stable reference weight, and is often overcome by **restoring the zero** with a reset operation."
+    },
+    {
+      "kind": "definition",
+      "term": "Range, linearity and hysteresis",
+      "text": "- **Range** (measuring interval): the set of values of the measurand the instrument can measure within stated limits.\n- **Linearity / linearity error**: how well the input–output relation follows a straight line; a deviation is a **systematic** *linearity error*.\n- **Hysteresis error**: the indication for a given measurand value depends on whether that value was approached by **increasing** or **decreasing** the input — a **systematic** error linked to the instrument."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Which errors are systematic, which random?",
+      "text": "From the lesson's table of specific errors: **reading (parallax) error** and **mobility error** → *random*; **inversion, linearity, hysteresis** errors → *systematic*; **zero error** → *random–systematic*. Parallax (a reading error of analogue scales) is avoided with a **blade pointer** or a **mirror** scale that signals the correct, orthogonal observation direction."
+    },
+    {
+      "kind": "heading",
+      "text": "6. Calibration, traceability, metrological confirmation"
+    },
+    {
+      "kind": "definition",
+      "term": "Calibration (VIM 2.39)",
+      "text": "An operation that, under specified conditions, first establishes a **relation between the quantity values with measurement uncertainties** provided by measurement standards and the corresponding **indications** (with their uncertainties), and then uses this relation to obtain a **measurement result from an indication**. Calibration is the basis of traceability."
+    },
+    {
+      "kind": "definition",
+      "term": "Metrological traceability (VIM 2.41)",
+      "text": "Property of a measurement result whereby the result can be related to a reference through a **documented, unbroken chain of calibrations**, each contributing to the measurement uncertainty. The traceability chain climbs from the plant's process instruments → plant working/reference standards → accredited / national / international calibration laboratories → toward the true value. Quality standards (ISO/IEC 17025) require instruments to be **traceable** to national standards so that results are **compatible** with each other."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Certification vs accreditation; metrological confirmation",
+      "text": "**Metrological confirmation** is the set of operations (calibration + verification + adjustment/repair + re-verification + sealing/labelling) needed to ensure a measuring instrument **conforms to the requirements for its intended use**. We speak of **certification** of the quality of a factory (ISO 9001) and **accreditation** of a calibration or test laboratory (ISO/IEC 17025). When the product *is* a measure, its characteristics are completely defined only by considering its **uncertainty** — which is why the measurement-specific rules differ from the general quality rules."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Why is a measurement result considered **incomplete** if reported as a single number?",
+      "options": [
+        { "id": "A", "content": "Because the instrument is always broken." },
+        { "id": "B", "content": "Because the value is distorted by systematic and confused by random factors, so it must be accompanied by an uncertainty interval." },
+        { "id": "C", "content": "Because only the average of infinite measurements is the true value." },
+        { "id": "D", "content": "Because numbers cannot represent physical quantities." }
+      ],
+      "correct": "B",
+      "explanation": "Every result is distorted by systematic factors and confused by random ones, so it must be given as a **value plus its uncertainty interval** — only then can the information be correctly transferred and results compared. **A** is false; instruments work but are never perfect. **C** describes trueness, not the reason a single number is incomplete. **D** is wrong — numeric data do represent quantities, just imperfectly.",
+      "theory": "A measurement result = value + uncertainty interval. Without the interval the information is incomplete (GUM principle).",
+      "source": "Lesson 1 (information contained in measures)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Block A is measured as $30.0003\\pm0.0004$ mm and block B as $29.9996\\pm0.0004$ mm. What can you conclude?",
+      "options": [
+        { "id": "A", "content": "A is definitely longer than B." },
+        { "id": "B", "content": "The two results are equal." },
+        { "id": "C", "content": "The uncertainty bands overlap, so the results are compatible — you cannot say which is longer." },
+        { "id": "D", "content": "The measurement is invalid because the values differ." }
+      ],
+      "correct": "C",
+      "explanation": "A's band is $[29.9999,\\,30.0007]$ and B's is $[29.9992,\\,30.0000]$; they share the point $30.0000$, so the **bands overlap** and the results are **compatible** — their difference can be a random effect, and you cannot state which is longer. **A** would need *separated* bands. **B** is wrong: it is never possible to establish equality, only compatibility. **D** is wrong — differing values are normal, not invalidating.",
+      "theory": "Overlap of uncertainty bands ⇒ compatible (cannot rank). Separation ⇒ different ($A>B$). Equality can never be proven.",
+      "source": "Lesson 1 (transfer of information; overlap vs separation)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A thermometer always reads $2\\,^{\\circ}\\mathrm{C}$ too high. This error is:",
+      "options": [
+        { "id": "A", "content": "systematic, and can be corrected by subtracting the known offset" },
+        { "id": "B", "content": "random, and reduced by averaging many readings" },
+        { "id": "C", "content": "a measurement accident to be excluded" },
+        { "id": "D", "content": "the resolution of the instrument" }
+      ],
+      "correct": "A",
+      "explanation": "A constant, predictable offset is a **systematic error**; knowing it, you **correct** the result by subtracting it. **B** is wrong: averaging removes random scatter, not a constant bias. **C** an accident is a rare, large, isolated value, not a constant offset. **D** resolution is the smallest perceptible change in the indication, unrelated to an offset.",
+      "theory": "Systematic error: constant or predictable in replicates; reduced by correction, compensation or elimination. Random error: unpredictable; reduced by averaging.",
+      "source": "Lesson 3 (measurement errors; reducing systematic effects)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An instrument is highly **precise** but its readings cluster well **away** from the reference value. The instrument has:",
+      "options": [
+        { "id": "A", "content": "good trueness and good accuracy" },
+        { "id": "B", "content": "poor precision but good trueness" },
+        { "id": "C", "content": "good precision but poor trueness (hence poor accuracy)" },
+        { "id": "D", "content": "high resolution" }
+      ],
+      "correct": "C",
+      "explanation": "Tight clustering = good **precision** (small random spread); offset from the reference = poor **trueness** (large systematic error / bias). Accuracy needs *both*, so accuracy is poor. **A** contradicts the offset. **B** contradicts the tight clustering. **D** resolution is a separate property, not implied by precision or bias.",
+      "theory": "Precision = closeness among replicates (random). Trueness = closeness of the average to a reference (systematic, inverse of bias). Accuracy = both together.",
+      "source": "Lesson 3 (trueness, precision, accuracy)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Two people, using two different micrometers in two different rooms, each measure the same gauge block. The spread of their results estimates the instrument's:",
+      "options": [
+        { "id": "A", "content": "repeatability" },
+        { "id": "B", "content": "reproducibility" },
+        { "id": "C", "content": "sensitivity" },
+        { "id": "D", "content": "trueness" }
+      ],
+      "correct": "B",
+      "explanation": "Different operators, different instruments, different locations on the same object = **reproducibility** conditions, which better represent real working conditions. **A** repeatability would keep operator, instrument, place and time fixed. **C** sensitivity is the output-change / input-change quotient. **D** trueness needs comparison of the average to a reference standard.",
+      "theory": "Reproducibility deliberately varies operators/instruments/locations; repeatability keeps everything the same over a short time.",
+      "source": "Lesson 3 (repeatability vs reproducibility)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A digital indicator shows the successive readings 120, 122, 125 mm. From these, the instrument's **resolution** is taken as:",
+      "options": [
+        { "id": "A", "content": "1 mm" },
+        { "id": "B", "content": "2 mm (the smallest increment)" },
+        { "id": "C", "content": "3 mm (the maximum increment)" },
+        { "id": "D", "content": "120 mm (the first reading)" }
+      ],
+      "correct": "C",
+      "explanation": "For a digital scale the resolution corresponds to the **maximum increment** between subsequent indications: increments are $122-120=2$ and $125-122=3$, so the resolution is **3 mm**. **A** is invented. **B** takes the minimum, not the maximum. **D** is a reading, not an increment.",
+      "theory": "Digital resolution = maximum increment between consecutive indications in increasing order. Analogue resolution = $e/n$ (a fraction 1/2, 1/5, 1/10 of the division).",
+      "source": "Lesson 3 (resolution: digital scales)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A load cell converts force (N) into voltage (µV). What does its **sensitivity** of $3\\ \\mu\\mathrm{V/N}$ describe, and how does it compare to a $2\\ \\mu\\mathrm{V/N}$ cell?",
+      "options": [
+        { "id": "A", "content": "The smallest force it can resolve; the 3 µV/N cell resolves finer." },
+        { "id": "B", "content": "Its zero drift; the 3 µV/N cell drifts more." },
+        { "id": "C", "content": "Its range; the 3 µV/N cell has a wider range." },
+        { "id": "D", "content": "The output change per unit input change; the 3 µV/N cell is more sensitive." }
+      ],
+      "correct": "D",
+      "explanation": "Sensitivity = (change in indication)/(change in measurand), i.e. **output per unit input**; a larger value, $3\\ \\mu\\mathrm{V/N}>2\\ \\mu\\mathrm{V/N}$, means **more sensitive**. **A** confuses sensitivity with resolution. **B** and **C** invent unrelated meanings (drift, range). For a direct-reading instrument the sensitivity would be 1.",
+      "theory": "Sensitivity (VIM 4.12) is the input–output gain; it is 1 for direct-reading instruments and is distinct from resolution.",
+      "source": "Lesson 3 (sensitivity)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A dial gauge gives 5.02 mm when the spindle is pushed **up to** a step and 5.05 mm when it is **let down to** the same step. This $0.03$ mm difference is a:",
+      "options": [
+        { "id": "A", "content": "random reading (parallax) error" },
+        { "id": "B", "content": "resolution limit" },
+        { "id": "C", "content": "zero instability (drift)" },
+        { "id": "D", "content": "hysteresis error, which is systematic" }
+      ],
+      "correct": "D",
+      "explanation": "An indication that depends on whether the measurand was approached **increasing** or **decreasing** is the signature of **hysteresis**, classified in the lesson as a **systematic** error. **A** parallax is a *random* reading error tied to viewing direction, not to approach direction. **B** resolution is the smallest perceptible change, not a direction-dependent gap. **C** zero drift is a slow change of the zero over *time*, not with the direction of loading.",
+      "theory": "Hysteresis: the reading depends on the direction of approach (loading vs unloading); it is a systematic instrument error, like the linearity and inversion errors.",
+      "source": "Lesson 3 (specific measurement errors; hysteresis is systematic)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Metrological **traceability** of a measurement result requires:",
+      "options": [
+        { "id": "A", "content": "a documented, unbroken chain of calibrations to a reference, each contributing to the uncertainty" },
+        { "id": "B", "content": "that the instrument be brand new" },
+        { "id": "C", "content": "that no uncertainty is associated with the result" },
+        { "id": "D", "content": "measuring the same object twice" }
+      ],
+      "correct": "A",
+      "explanation": "Traceability (VIM 2.41) is the property whereby a result can be related to a reference through a **documented, unbroken chain of calibrations**, each step adding to the uncertainty — the chain that climbs from plant instruments to national/international standards. **B** age is irrelevant. **C** is the opposite: every link *contributes* uncertainty. **D** describes a repeat measurement, not traceability.",
+      "theory": "Traceability = unbroken, documented calibration chain to a reference; it underpins the comparability (compatibility) of results between laboratories.",
+      "source": "Lesson 3 (calibration & metrological traceability)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "On an analogue scale, the **parallax (reading) error** is reduced by:",
+      "options": [
+        { "id": "A", "content": "increasing the instrument's range" },
+        { "id": "B", "content": "calibrating against a national standard" },
+        { "id": "C", "content": "averaging many digital readings" },
+        { "id": "D", "content": "using a blade pointer or a mirror scale to fix the orthogonal observation direction" }
+      ],
+      "correct": "D",
+      "explanation": "Parallax arises when the observation direction is **not orthogonal** to the scale plane; a **blade pointer** (which looks narrowest when viewed correctly) or a **mirror** scale (correct when pointer and reflected image overlap) fixes the right direction. **A** range is unrelated. **B** calibration handles systematic offsets/traceability, not the operator's viewing angle. **C** averaging digital readings does not concern an analogue parallax error.",
+      "theory": "Parallax is a random reading error of analogue scales tied to viewing direction; blade pointers and mirror scales reveal the correct, orthogonal line of sight.",
+      "source": "Lesson 3 (reading error: parallax)"
+    }
+  ]
+}

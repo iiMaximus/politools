@@ -1,0 +1,436 @@
+{
+  "title": "Lab 2 · Analysis of Experimental Data",
+  "summary": "The heaviest lab and the **8-point** Data-Analysis exam question. You run the full pipeline a metrologist applies to a batch of measurements: clean it (outliers), characterize it (mean, spread, distribution shape), test it (normality, hypotheses on the mean, ANOVA on operators), and model it (regression). Every step is a real Excel computation you do here by typing formulas and pressing *Check*. The capstone is **Chauvenet outlier identification**, exactly as graded in the exam.",
+  "minutes": 55,
+  "objectives": [
+    "Compute the sample mean and sample standard deviation (STDEV.S) of a measurement set.",
+    "Identify outliers with Chauvenet's criterion: α = 1/(2n), z = NORM.S.INV(1−1/(4n)), limits x̄ ∓ z·s.",
+    "Identify outliers with the IQR / box-plot rule (QUARTILE, 1.5·IQR fences).",
+    "Build a frequency distribution and test normality with a χ² goodness-of-fit (NORM.DIST, CHISQ.INV).",
+    "Read a normal probability plot via plotting positions (i−0.5)/n and NORM.S.INV.",
+    "Run a one-sample t-test on a mean (T.INV.2T) and a one-way ANOVA F-test (F.INV.RT / F.DIST.RT).",
+    "Fit a least-squares regression line and interpret slope, intercept and residuals."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "The toolbox: which function for which step"
+    },
+    {
+      "kind": "prose",
+      "text": "In the exam you have Excel and a strict time budget. The whole Data-Analysis question is a chain of the functions below — learn their argument order cold. Italian Excel uses `;` as the argument separator and `,` as the decimal; this engine accepts both `;` and `,` as separators, so the formulas you type here transfer directly."
+    },
+    {
+      "kind": "definition",
+      "term": "STDEV.S(range)  vs  STDEV.P(range)",
+      "text": "**STDEV.S** divides by $n-1$ and estimates $\\sigma$ from a *sample* — always use it for experimental data. STDEV.P divides by $n$ (whole population only). VAR.S / VAR.P are their squared versions used in ANOVA."
+    },
+    {
+      "kind": "definition",
+      "term": "QUARTILE(range; q)",
+      "text": "The $q$-th quartile: $q=1$ gives $Q_1$ (25th percentile), $q=2$ the median, $q=3$ gives $Q_3$ (75th percentile). The interquartile range is $IQR=Q_3-Q_1$."
+    },
+    {
+      "kind": "definition",
+      "term": "NORM.S.INV(p)  and  NORM.INV(p; mean; s)",
+      "text": "Inverse normal (quantile) functions. **NORM.S.INV(p)** returns the *standardized* value $z$ with cumulative probability $p$ (mean 0, st. dev. 1). **NORM.INV(p; mean; s)** returns the actual value on a normal with that mean and st. dev. They are linked by $x=\\text{mean}+z\\cdot s$."
+    },
+    {
+      "kind": "definition",
+      "term": "NORM.DIST(x; mean; s; cumulative)",
+      "text": "With **cumulative = 1 (TRUE)** it returns $\\Phi(x)$, the probability of being $\\le x$ — used to get the theoretical count in a class as $n[\\Phi(to)-\\Phi(from)]$. With cumulative = 0 it returns the density (height of the bell), used only for plotting."
+    },
+    {
+      "kind": "definition",
+      "term": "CHISQ.INV(p; ν) · CHISQ.INV.RT(α; ν) · CHISQ.DIST.RT(χ²; ν)",
+      "text": "$\\chi^2$ tools. **CHISQ.INV.RT(α; ν)** is the right-tail critical value (use for a one-sided goodness-of-fit). **CHISQ.INV(p; ν)** is the left-tail quantile (use both tails for a two-sided acceptance band). **CHISQ.DIST.RT(χ²; ν)** turns a statistic into its right-tail p-value. $\\nu$ = degrees of freedom."
+    },
+    {
+      "kind": "definition",
+      "term": "T.INV.2T(α; ν) · T.DIST.2T(t; ν)",
+      "text": "Student-$t$ tools for a two-sided mean test. **T.INV.2T(α; ν)** returns the positive critical value leaving $\\alpha$ split over both tails (e.g. $\\alpha=0.05,\\ \\nu=19\\Rightarrow2.093$). **T.DIST.2T(|t|; ν)** returns the two-tailed p-value."
+    },
+    {
+      "kind": "definition",
+      "term": "F.INV.RT(α; ν₁; ν₂) · F.DIST.RT(F; ν₁; ν₂)",
+      "text": "Fisher tools for ANOVA. **F.INV.RT(α; ν₁; ν₂)** is the right-tail critical $F$ (between-dof $\\nu_1$, within-dof $\\nu_2$). **F.DIST.RT(F; ν₁; ν₂)** is the right-tail p-value. Note F.INV.RT$(\\alpha,\\dots)=$ F.INV$(1-\\alpha,\\dots)$."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The pipeline order",
+      "text": "**1.** mean & st. dev. → **2.** remove outliers (Chauvenet / IQR) and recompute → **3.** frequency distribution + $\\chi^2$ normality → **4.** normal probability plot → **5.** hypothesis test on the mean → **6.** ANOVA for an operator effect → **7.** regression for a drift. Each stage reuses the cleaned mean and st. dev. of the stage before."
+    },
+    {
+      "kind": "heading",
+      "text": "The complete worked example (Es01)"
+    },
+    {
+      "kind": "prose",
+      "text": "Before drilling each stage in isolation, walk the **actual lab dataset** end to end. In Es01, five operators each measured the same part **ten** times, giving **50 readings** (in mm). The four exercises below run *that* dataset through the first half of the pipeline — raw statistics → Chauvenet → recompute → frequency classes — and every answer reproduces the corresponding cell of the official solution workbook. Do these first to see the method on real numbers; the stage-by-stage exercises that follow generalize it."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The Es01 numbers to remember",
+      "text": "Raw 50 readings: $\\bar x=4.506192$ mm, $s=0.0029867$ mm, min $=4.4988$, max $=4.5139$ mm. Chauvenet ($P_{xL}=1/(4n)=0.005$) gives limits $[4.498499,\\,4.513885]$ mm — the **maximum 4.5139 mm is the single outlier** (it exceeds the upper limit), while the minimum 4.4988 mm is borderline but stays inside. After replacing the outlier, $\\bar x=4.5061823$ mm and $s$ drops to $0.0025677$ mm; the frequency field $\\bar x\\pm4s$ is split into $\\sqrt{50}+4\\approx11$ classes of width $0.0018674$ mm."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-es01-stats",
+      "title": "Es01 · Step 1 — descriptive statistics of the raw data",
+      "caption": "The real 50-reading dataset: count, mean, sample st. dev., min/max, quartiles."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-es01-chauvenet",
+      "title": "Es01 · Step 2 — Chauvenet outlier check",
+      "caption": "Limits via NORM.INV; the maximum 4.5139 mm is excluded, matching the Escl. sheet."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-es01-after",
+      "title": "Es01 · Step 3 — recompute after outlier management",
+      "caption": "Cleaned mean and st. dev. (the spread shrinks once the outlier is replaced)."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-es01-classes",
+      "title": "Es01 · Step 4 — frequency-distribution set-up",
+      "caption": "Examined field x̄ ± 4s, √n + 4 classes, class width — feeding the χ² test."
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 1 — Mean and standard deviation"
+    },
+    {
+      "kind": "prose",
+      "text": "Everything downstream is built on $\\bar x$ and $s$. The single most common slip is using STDEV.P instead of STDEV.S."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-stats",
+      "title": "Exercise 1 — mean and st. dev. of a sample"
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 2 — Outlier management"
+    },
+    {
+      "kind": "prose",
+      "text": "Real measurement sets contain occasional *accidents* — a misread, a vibration, a chip. Before characterizing the process we must decide, objectively, whether a suspicious value should be discarded. Two criteria are in the syllabus."
+    },
+    {
+      "kind": "definition",
+      "term": "Chauvenet's exclusion principle",
+      "text": "A reading is rejected if the expected number of equally-or-more-extreme samples in $n$ trials is below $\\tfrac12$. Per datum the acceptable risk is $\\alpha=\\dfrac{1}{2n}$; split over the two tails each gets $\\dfrac{1}{4n}$. The standardized cut is $z=\\text{NORM.S.INV}\\!\\left(1-\\dfrac{1}{4n}\\right)$ and the exclusion limits are $\\bar x\\mp z\\,s$ (equivalently $\\text{NORM.INV}\\!\\left(\\tfrac{1}{4n},\\bar x,s\\right)$ and $\\text{NORM.INV}\\!\\left(1-\\tfrac{1}{4n},\\bar x,s\\right)$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Exam capstone — read the units of every box",
+      "text": "The graded Chauvenet question asks for **seven** numbers: mean, sample st. dev., the risk $\\alpha$ (as a probability, e.g. 0.025 — *not* 2.5 %), the lower and upper exclusion limits, whether an outlier exists (Yes/No), and the outlier's value (0 if none). With $n=20$: $\\bar x=44.90$, $s=3.01$, $\\alpha=1/(2n)=0.025$, limits $38.16$ / $51.64$, outlier **Yes**, value **36**. Reporting $\\alpha$ as a percentage, or using STDEV.P, loses marks."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-chauvenet",
+      "title": "Exercise 2 — Chauvenet's criterion (the 8-point exam question)",
+      "caption": "Reproduces the real exam roughness dataset: 20 readings from 4 operators."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-chauvenet50",
+      "title": "Exercise 3 — Chauvenet on a large set via NORM.INV"
+    },
+    {
+      "kind": "definition",
+      "term": "IQR / box-plot (Tukey) rule",
+      "text": "A distribution-free alternative: flag anything below $Q_1-1.5\\,IQR$ or above $Q_3+1.5\\,IQR$. Because quartiles ignore the tails, one wild point cannot inflate the fences the way it would inflate $s$ — so the IQR rule is *robust*. For a normal distribution the $1.5\\,IQR$ fences sit at about $\\pm2.7\\sigma$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-iqr",
+      "title": "Exercise 4 — IQR / box-plot rule"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "After removing an outlier",
+      "text": "Discard the flagged value, then **recompute** $n$, $\\bar x$ and $s$ on the survivors before continuing. The official Chauvenet *limits*, however, are computed once from the raw sample."
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 3 — Frequency distribution and the χ² normality test"
+    },
+    {
+      "kind": "prose",
+      "text": "We bin the cleaned data into classes and compare the observed counts with what a normal distribution predicts. If they agree, we may treat the data as Gaussian (the basis for every later confidence interval)."
+    },
+    {
+      "kind": "definition",
+      "term": "Class scheme",
+      "text": "The reference workbook spans the **examined field** $\\bar x\\pm4s$ and uses $\\sqrt{n}+4$ classes; the class width is the field length divided by the number of classes."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-classes",
+      "title": "Exercise 5 — building the classes"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\chi^2=\\sum_i \\frac{(O_i-E_i)^2}{E_i},\\qquad E_i=n\\,[\\Phi(\\text{to}_i)-\\Phi(\\text{from}_i)]",
+      "caption": "Observed vs expected counts; expected from the cumulative normal."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Degrees of freedom",
+      "text": "$\\nu=(\\text{classes})-1-(\\text{parameters estimated from the data})$. Because we estimate **both** $\\bar x$ and $s$ from the sample, subtract $1+2=3$. Forgetting the $-2$ is the classic $\\chi^2$ error and changes the critical value."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-chi2",
+      "title": "Exercise 6 — χ² goodness-of-fit to a normal"
+    },
+    {
+      "kind": "prose",
+      "text": "The reference lab runs the test **two-sided** at 80 % confidence: it accepts normality (and declares *no systematic effect*) when the experimental $\\chi^2$ falls between a lower and an upper boundary. A $\\chi^2$ that is too *small* is just as suspicious as one that is too large."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-chi2bounds",
+      "title": "Exercise 7 — two-sided χ² acceptance band"
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 4 — Normal probability plot"
+    },
+    {
+      "kind": "prose",
+      "text": "A graphical normality check. Sort the data, give the $i$-th value the plotting position $p_i=\\dfrac{i-0.5}{n}$, convert to a standard-normal quantile $z_i=\\text{NORM.S.INV}(p_i)$, and plot $x_{(i)}$ against $z_i$. A straight line means normal; an S-shape signals skew or heavy tails. The fitted line has slope $\\approx s$ and intercept $\\approx\\bar x$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-npp",
+      "title": "Exercise 8 — plotting positions and quantiles"
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 5 — Hypothesis test on the mean"
+    },
+    {
+      "kind": "prose",
+      "text": "Does the process mean match a nominal target $\\mu_0$? Form the $t$-statistic, compare it with the two-sided Student-$t$ critical value (or read the p-value). With small samples the $t$ distribution — fatter-tailed than the normal — is the correct reference."
+    },
+    {
+      "kind": "formula",
+      "tex": "t=\\frac{\\bar x-\\mu_0}{s/\\sqrt{n}}",
+      "caption": "One-sample t-statistic; the denominator s/√n is the standard error of the mean."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-ttest",
+      "title": "Exercise 9 — one-sample t-test"
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 6 — ANOVA: is there an operator effect?"
+    },
+    {
+      "kind": "prose",
+      "text": "With several operators (columns), ANOVA compares the variance *between* column means with the variance *within* columns. If the between-variance dominates, the operator differences are systematic, not random scatter."
+    },
+    {
+      "kind": "formula",
+      "tex": "F=\\frac{MS_{between}}{MS_{within}},\\qquad MS_{between}=\\operatorname{VAR.S}(\\text{column means})\\cdot m,\\qquad MS_{within}=\\overline{\\operatorname{VAR.S}(\\text{each column})}",
+      "caption": "m = rows per column. Between-dof = k−1, within-dof = N−k."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Reading the F-test",
+      "text": "Reject the null of equal means when $F>F_{crit}=\\text{F.INV.RT}(\\alpha;\\nu_1;\\nu_2)$ — equivalently when the p-value $=\\text{F.DIST.RT}(F;\\nu_1;\\nu_2)$ is below $\\alpha$. Here $\\alpha=0.20$ is chosen deliberately high: re-checking an operator's procedure is cheap, so a high first-kind risk is acceptable and it lowers the second-kind risk of missing a real effect."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-anova",
+      "title": "Exercise 10 — one-way ANOVA F-test"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-ftest-pvalue",
+      "title": "Exercise 11 — the same decision via the p-value"
+    },
+    {
+      "kind": "heading",
+      "text": "Stage 7 — Linear regression"
+    },
+    {
+      "kind": "prose",
+      "text": "If a drift is suspected (measurement value vs time/index), fit a least-squares line $x=a+b\\,t$. The slope $b$ is the sensitivity / drift rate; the residuals (observed − predicted) reveal whether a straight line is adequate. There is no SLOPE function in this engine, so we build the least-squares estimate from the deviation sums — exactly the underlying formula."
+    },
+    {
+      "kind": "formula",
+      "tex": "b=\\frac{\\sum (t_i-\\bar t)(x_i-\\bar x)}{\\sum (t_i-\\bar t)^2},\\qquad a=\\bar x-b\\,\\bar t",
+      "caption": "Least-squares slope and intercept; the line always passes through (t̄, x̄)."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:da-regression",
+      "title": "Exercise 12 — least-squares slope, intercept, prediction, residual"
+    },
+    {
+      "kind": "heading",
+      "text": "Check your understanding"
+    },
+    {
+      "kind": "prose",
+      "text": "Quick conceptual checks on the traps that cost marks."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Which Excel function gives the sample standard deviation that should be used for experimental data?",
+      "options": [
+        {
+          "id": "A",
+          "content": "STDEV.P (divides by $n$)"
+        },
+        {
+          "id": "B",
+          "content": "VAR.P"
+        },
+        {
+          "id": "C",
+          "content": "STDEV.S (divides by $n-1$)"
+        },
+        {
+          "id": "D",
+          "content": "AVERAGE of the absolute deviations"
+        }
+      ],
+      "correct": "C",
+      "explanation": "A finite measurement set is a *sample* of the underlying process, so we estimate $\\sigma$ with Bessel's correction: **STDEV.S**, dividing by $n-1$. **A** (STDEV.P) divides by $n$ and is only correct for a complete population — it underestimates the spread and is the classic exam trap. **B** is a variance, not a standard deviation, and also the population form. **D** is the mean absolute deviation, a different statistic the syllabus does not use here.",
+      "theory": "Sample statistics use $n-1$ degrees of freedom because one is spent estimating the mean.",
+      "tags": [
+        "descriptive"
+      ]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A χ² goodness-of-fit to a normal uses 11 classes, and both the mean and the standard deviation are estimated from the data. The degrees of freedom are",
+      "options": [
+        {
+          "id": "A",
+          "content": "11"
+        },
+        {
+          "id": "B",
+          "content": "10"
+        },
+        {
+          "id": "C",
+          "content": "9"
+        },
+        {
+          "id": "D",
+          "content": "$11-1-2 = 8$"
+        }
+      ],
+      "correct": "D",
+      "explanation": "$\\nu = (\\text{classes}) - 1 - (\\text{parameters estimated}) = 11 - 1 - 2 = 8$. **A** forgets every subtraction. **B** subtracts only the $-1$ for the total-count constraint. **C** subtracts the $-1$ and one parameter, forgetting that *both* $\\bar x$ and $s$ were fitted. Each parameter estimated from the same data removes one more degree of freedom and lowers the critical value.",
+      "theory": "Every constraint imposed on the expected counts (total count, each fitted parameter) costs one degree of freedom in a χ² test.",
+      "tags": [
+        "chi-square",
+        "normality"
+      ]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In the two-sided 80 %-confidence χ² acceptance band, the experimental statistic is **9.12** and the boundaries are 3.49 and 13.36. The conclusion is",
+      "options": [
+        {
+          "id": "A",
+          "content": "Reject normality — 9.12 is too large"
+        },
+        {
+          "id": "B",
+          "content": "Do not reject normality — 9.12 lies inside [3.49, 13.36], no systematic effect"
+        },
+        {
+          "id": "C",
+          "content": "Reject normality — 9.12 is too small"
+        },
+        {
+          "id": "D",
+          "content": "The test is invalid because χ² cannot be compared two-sided"
+        }
+      ],
+      "correct": "B",
+      "explanation": "Since $3.49 < 9.12 < 13.36$, the statistic is inside the acceptance band, so the null hypothesis of a normal distribution is **not** rejected and no systematic effect is evidenced (at a 20 % first-kind risk). **A** and **C** misread the position relative to the band. **D** is wrong: a two-sided χ² band is exactly the workbook's method — a χ² far below the lower boundary would itself be suspicious (an unrealistically perfect fit).",
+      "theory": "A two-sided χ² band rejects both an implausibly bad fit (χ² too high) and an implausibly perfect one (χ² too low).",
+      "tags": [
+        "chi-square"
+      ]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "In a one-way ANOVA the variance ratio is $F = 5.38$ and the critical value at 80 % confidence is $F_{crit} = 1.565$. What do you conclude about the operators?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$F > F_{crit}$, so the differences between operators are systematic (reject equal means)"
+        },
+        {
+          "id": "B",
+          "content": "$F > F_{crit}$, so the operators are equivalent"
+        },
+        {
+          "id": "C",
+          "content": "No conclusion is possible without the regression slope"
+        },
+        {
+          "id": "D",
+          "content": "$F < F_{crit}$, so there is no operator effect"
+        }
+      ],
+      "correct": "A",
+      "explanation": "$F = MS_{between}/MS_{within}=5.38$ greatly exceeds $F_{crit}=1.565$: the between-operator variance dominates the random scatter, so we reject the null of equal means — the operator effect is **systematic** (with a 20 % first-kind risk). **B** has the right inequality but the wrong meaning. **D** has the inequality backwards ($5.38>1.565$). **C** is irrelevant — ANOVA needs no regression. Equivalently the p-value $\\text{F.DIST.RT}(5.38;4;45)=0.0013<0.20$.",
+      "theory": "ANOVA declares an effect systematic when the signal (between-group MS) outweighs the noise (within-group MS) beyond the critical F.",
+      "tags": [
+        "anova",
+        "f-test"
+      ]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "On a normal probability plot, the $i$-th ordered value is assigned the plotting position",
+      "options": [
+        {
+          "id": "A",
+          "content": "$p_i = i/n$"
+        },
+        {
+          "id": "B",
+          "content": "$p_i = \\dfrac{i-0.5}{n}$, then $z_i=\\text{NORM.S.INV}(p_i)$"
+        },
+        {
+          "id": "C",
+          "content": "$p_i = \\text{NORM.DIST}(x_i)$"
+        },
+        {
+          "id": "D",
+          "content": "$p_i = i$ (the raw rank)"
+        }
+      ],
+      "correct": "B",
+      "explanation": "The standard plotting position is $p_i=\\frac{i-0.5}{n}$ and the theoretical quantile is $z_i=\\text{NORM.S.INV}(p_i)$. **A** ($i/n$) sends the largest value to $p=1$, where $z=+\\infty$ — the $-0.5$ continuity correction exists precisely to avoid that. **C** confuses the plotting position with a cumulative probability of the data value. **D** leaves the rank unscaled, so it is not a probability. Plotting $x_{(i)}$ against $z_i$ yields a straight line when the data are normal.",
+      "theory": "The (i−0.5)/n correction keeps the extreme order statistics off the 0 and 1 boundaries where the normal quantile diverges.",
+      "tags": [
+        "npp",
+        "normality"
+      ]
+    }
+  ]
+}

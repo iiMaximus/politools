@@ -1,0 +1,307 @@
+{
+  "title": "Beyond Determinism: Notes on Probability",
+  "summary": "Lesson 4 (+ discrete distributions). When data are random we cannot get a defined result — only the **probability** it falls in a range. You will learn the two objective definitions of probability (**classical / a priori** and **frequentist / a posteriori**), the language of sample space, events, union/intersection, the addition and **total probability** rules, **conditional probability** and **independence**, the combinatorics of permutations and combinations, and the three discrete distributions the exam's Excel uses — **binomial** (BINOM.DIST), **hypergeometric** (HYPGEOM.DIST) and **Poisson** (POISSON.DIST).",
+  "minutes": 35,
+  "objectives": [
+    "Compute classical probability as $\\mathbb{P}[E]=\\#E/\\#S$ for equally-likely outcomes, and explain the frequentist definition $\\mathbb{P}[E]=\\lim_{N\\to\\infty} n_E/N$.",
+    "Use sample space, events, union and intersection; apply the addition rule with the inclusion–exclusion correction $\\mathbb{P}(E\\cup F)=\\mathbb{P}(E)+\\mathbb{P}(F)-\\mathbb{P}(EF)$.",
+    "Apply conditional probability $\\mathbb{P}(E|F)=\\mathbb{P}(EF)/\\mathbb{P}(F)$, the product rule, independence $\\mathbb{P}(EF)=\\mathbb{P}(E)\\mathbb{P}(F)$, and the total-probability theorem.",
+    "Count arrangements with permutations $P_n=n!$ and combinations $C(n,k)=\\binom{n}{k}=n!/[k!(n-k)!]$.",
+    "Choose and apply the binomial (with replacement / independent trials), hypergeometric (without replacement) and Poisson (rare events) distributions and link them to BINOM.DIST, HYPGEOM.DIST, POISSON.DIST.",
+    "Switch correctly between point (exactly k), cumulative (at most k) and complement (at least k) probabilities."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Why probability"
+    },
+    {
+      "kind": "prose",
+      "text": "In real applications the input variables of a formula take **randomly changing values** (random variables), so we cannot get a defined value for the result — we can only estimate the **probability** that it falls within a certain range. A **random phenomenon** is an empirical phenomenon whose result cannot be determined a priori.\n\nKey vocabulary (illustrated with the roll of a six-sided die):\n- **Sample space** $S$: the set of ALL possible observations, e.g. $S=\\{1,2,3,4,5,6\\}$;\n- **Cardinality** $\\#S$: the number of elements of $S$;\n- **Event** $E$: a subset of $S$ ($E\\subset S$), e.g. 'rolling an even number' = $\\{2,4,6\\}$;\n- **Event space** $A$: the set of all possible events."
+    },
+    {
+      "kind": "definition",
+      "term": "Classical (a priori) definition",
+      "text": "Probability = **ratio between the number of favourable events and the total number of possible events**, assuming the outcomes are all **equally possible** and **incompatible**:\n$$\\mathbb{P}[E]=\\frac{\\#E}{\\#S}.$$\nIt requires the enumeration of all possible events (gambling: a fair die, a fair deck). E.g. an even number on a die: $\\#E=3$, $\\#S=6$, so $\\mathbb{P}[E]=3/6=1/2$. Since $E\\subset S$, $\\#E\\le\\#S$, hence $\\mathbb{P}[E]\\in[0,1]$."
+    },
+    {
+      "kind": "definition",
+      "term": "Frequentist (a posteriori) definition",
+      "text": "When a theoretical assessment is impossible (an unbalanced die, unequal sides), evaluate the probability **a posteriori** by performing $N$ trials in nominally equal conditions, counting how many times $n_E$ the event occurs:\n$$f_E=\\frac{n_E}{N}\\ (\\text{relative frequency}),\\qquad \\mathbb{P}[E]=\\lim_{N\\to\\infty}\\frac{n_E}{N}.$$\nIt does **not** require enumerating all events but needs a representative sample and experimental work (cost, time). For a fair die, ~200 rolls confirm the theoretical $1/6\\approx0.1667$, whereas 50 are usually not enough."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Classical vs frequentist",
+      "text": "The **classical** definition accepts equality/homogeneity that may not hold in practice, but is very efficient at generating theoretical schemes without experiments. The **frequentist** definition involves the **real** conditions (mass-centre position, concavity of sides) but needs significant experimental work and depends on the experimental procedure. A third, **subjective (Bayesian)** view defines probability as a degree of belief, used when you can neither list all outcomes nor repeat the experiment freely."
+    },
+    {
+      "kind": "heading",
+      "text": "2. Combining events: union, intersection, addition rule"
+    },
+    {
+      "kind": "prose",
+      "text": "Compatibility/incompatibility of events is shown with **Venn diagrams** ($S$ = the box, an event = a region inside).\n- **Incompatible (disjoint)** events $E$ and $F$ (no common elements): the union's probability is the **sum**:\n$$\\mathbb{P}(E\\cup F)=\\mathbb{P}(E)+\\mathbb{P}(F).$$\n- **Not disjoint** events: you must subtract the shared part (inclusion–exclusion):\n$$\\mathbb{P}(E\\cup F)=\\mathbb{P}(E)+\\mathbb{P}(F)-\\mathbb{P}(EF).$$"
+    },
+    {
+      "kind": "formula",
+      "title": "Kolmogorov axioms",
+      "tex": "0\\le \\mathbb{P}[E_i]\\le 1,\\qquad \\mathbb{P}[S]=1,\\qquad \\mathbb{P}[\\bar E]=1-\\mathbb{P}[E]",
+      "tag": "4.1",
+      "caption": "For **mutually exclusive** (incompatible) events $E_i\\cap E_j=\\varnothing$, probabilities add: $\\mathbb{P}\\big[\\bigcup_i E_i\\big]=\\sum_i \\mathbb{P}[E_i]$. The complement rule $\\mathbb{P}[\\bar E]=1-\\mathbb{P}[E]$ turns 'at least one' into '1 − none'."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: club suit OR a nine (inclusion–exclusion)",
+      "text": "Four club cards (5–8 of clubs) have already been drawn; from the remaining 48 cards you draw one. Let $E$ = 'a club' and $F$ = 'a nine'. Remaining clubs: $\\{A,2,3,4,9,10,J,Q,K\\}$ of clubs $\\Rightarrow \\#E=9$; the four nines $\\Rightarrow \\#F=4$; the $9\\clubsuit$ is in both $\\Rightarrow \\#EF=1$. With $\\#S=48$:\n$$\\mathbb{P}(E\\cup F)=\\frac{\\#E+\\#F-\\#EF}{\\#S}=\\frac{9+4-1}{48}=\\frac{12}{48}=\\frac14.$$\nForgetting to subtract $\\#EF=1$ would **double-count** the $9\\clubsuit$."
+    },
+    {
+      "kind": "heading",
+      "text": "3. Combinatorics: counting #E and #S"
+    },
+    {
+      "kind": "formula",
+      "title": "Permutations and combinations",
+      "tex": "P_n=1\\cdot2\\cdot3\\cdots n=n!,\\qquad C(n,k)=\\binom{n}{k}=\\frac{n!}{k!\\,(n-k)!}",
+      "tag": "4.2",
+      "caption": "A **permutation** is the number of ways to arrange $n$ objects when **order matters** ($P_n=n!$). A **combination** is the number of ways to choose $k$ out of $n$ when **order does NOT matter**. E.g. choosing 2 of 4 objects: $C(4,2)=4!/(2!\\,2!)=6$."
+    },
+    {
+      "kind": "heading",
+      "text": "4. Conditional probability and independence"
+    },
+    {
+      "kind": "definition",
+      "term": "Conditional probability",
+      "text": "The probability that the **conditioned event** $E$ occurs given that the **conditioning event** $F$ has occurred is the ratio of the joint cases $\\#EF$ to the possible cases $\\#F$:\n$$\\mathbb{P}(E|F)=\\frac{\\#EF}{\\#F}=\\frac{\\mathbb{P}(EF)}{\\mathbb{P}(F)}\\;\\Rightarrow\\;\\mathbb{P}(EF)=\\mathbb{P}(F)\\,\\mathbb{P}(E|F).$$\nThe last form (the **product rule**) is the multiplication along a branch of a tree diagram."
+    },
+    {
+      "kind": "definition",
+      "term": "Independent events",
+      "text": "$E$ and $F$ are **independent** iff their joint probability equals the product of their probabilities:\n$$\\mathbb{P}(EF)=\\mathbb{P}(E)\\,\\mathbb{P}(F)\\;\\Longleftrightarrow\\;\\mathbb{P}(E|F)=\\mathbb{P}(E).$$\nThen the occurrence of $F$ does **not** affect the probability of $E$ (and vice versa)."
+    },
+    {
+      "kind": "formula",
+      "title": "Total probability theorem",
+      "tex": "\\mathbb{P}(A)=\\sum_{i} \\mathbb{P}(B_i)\\cdot \\mathbb{P}(A|B_i)",
+      "tag": "4.3",
+      "caption": "If $\\{B_i\\}$ is a **complete partition** of $S$ (the $B_i$ are incompatible and exhaustive, $\\sum_i\\mathbb{P}(B_i)=1$), the total probability of $A$ is the sum over branches of (probability of the branch $B_i$) × (probability of $A$ given $B_i$). E.g. the total fault probability of a shop using three machine tools."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A shop uses machines $B_1, B_2, B_3$ a fraction $0.5, 0.3, 0.2$ of the time, with fault rates $\\mathbb{P}(A|B_1)=0.02$, $\\mathbb{P}(A|B_2)=0.04$, $\\mathbb{P}(A|B_3)=0.10$. The total probability of a fault is:",
+        "options": [
+          { "id": "A", "content": "$0.16$" },
+          { "id": "B", "content": "$0.042$" },
+          { "id": "C", "content": "$0.053$" },
+          { "id": "D", "content": "$0.020$" }
+        ],
+        "correct": "B",
+        "explanation": "By total probability, $\\mathbb{P}(A)=\\sum_i \\mathbb{P}(B_i)\\mathbb{P}(A|B_i)=0.5(0.02)+0.3(0.04)+0.2(0.10)=0.010+0.012+0.020=0.042$. **A** just sums the fault rates ($0.02+0.04+0.10$), ignoring the weights. **C** uses wrong weights. **D** takes only the first branch. The $B_i$ form a complete partition, so the weighted sum is correct.",
+        "theory": "Total probability: weight each conditional probability by the probability of its branch and sum, provided the branches form a complete partition.",
+        "source": "Lesson 4 (total probability theorem)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "5. Discrete distributions"
+    },
+    {
+      "kind": "prose",
+      "text": "A **random variable** $X:S\\to\\mathbb{R}$ assigns a real value to each outcome. For a **discrete** variable the **probability mass function** $f_X(x)=\\mathbb{P}[X=x_j]$ gives the probability of each mass point, with $f_X(x)\\ge0$ and $\\sum_j f_X(x_j)=1$. The main discrete distributions are Uniform, Bernoulli, **Binomial**, **Hypergeometric** and **Poisson**."
+    },
+    {
+      "kind": "formula",
+      "title": "Binomial distribution",
+      "tex": "f_X(x;n,p)=\\binom{n}{x}p^{x}(1-p)^{\\,n-x},\\qquad \\mathbb{E}[X]=np,\\quad \\mathrm{Var}[X]=npq",
+      "tag": "4.4",
+      "caption": "Number of **successes** in $n$ **independent** trials, each with success probability $p$ (sampling **with replacement**, or a large population). Excel: **BINOM.DIST(x; n; p; cumulative)** — `cumulative=FALSE` gives $\\mathbb{P}[X=x]$, `TRUE` gives $\\mathbb{P}[X\\le x]$. Here $q=1-p$."
+    },
+    {
+      "kind": "formula",
+      "title": "Hypergeometric distribution",
+      "tex": "f_X(x)=\\dfrac{\\dbinom{K}{x}\\dbinom{M-K}{n-x}}{\\dbinom{M}{n}},\\qquad \\mathbb{E}[X]=n\\,\\frac{K}{M}",
+      "tag": "4.5",
+      "caption": "Number of successes (defectives) when a sample of $n$ is drawn **without replacement** from a population of $M$ containing $K$ successes. Excel: **HYPGEOM.DIST(x; n; K; M; cumulative)**. If $M,K$ are large and $K/M=p$ stays constant, it is well approximated by the binomial."
+    },
+    {
+      "kind": "formula",
+      "title": "Poisson distribution",
+      "tex": "f_X(x)=\\dfrac{e^{-\\lambda}\\lambda^{x}}{x!},\\qquad \\mathbb{E}[X]=\\lambda,\\quad \\mathrm{Var}[X]=\\lambda",
+      "tag": "4.6",
+      "caption": "Counts of **rare** events; it approximates the binomial when $n\\to\\infty$ and $p\\to0$ with $\\lambda=np$ (rule of thumb $n\\ge100$, $p\\le0.05$). Excel: **POISSON.DIST(x; λ; cumulative)**. Note that for Poisson the mean equals the variance, both $=\\lambda$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "With or without replacement? At least / at most?",
+      "text": "Trials independent / large population / sampling **with** replacement → **binomial**. Finite batch, items **not** put back (probabilities change) → **hypergeometric**. Rare events / very small $p$, large $n$ → **Poisson**. For the wording: **exactly k** = point form (`cumulative=FALSE`); **at most k** = `cumulative=TRUE` at $k$; **at least k** = $1-\\mathbb{P}[X\\le k-1]$ (use the complement)."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: defective valves three ways",
+      "text": "5% of valves are defective. Probability of exactly **2** defectives in a batch of 100?\n\n**Binomial** ($n=100$, $p=0.05$, $x=2$):\n$$f_X=\\binom{100}{2}(0.05)^2(0.95)^{98}=0.081.$$\n**Poisson** approximation ($\\lambda=np=100\\times0.05=5$, $x=2$):\n$$f_X=\\frac{e^{-5}5^{2}}{2!}=0.084.$$\nThe two agree because $n\\ge100$ and $p\\le0.05$. If instead you drew from a **finite** batch without replacement, you would use the hypergeometric."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "From a finite batch of 800 units containing 40 defectives, you draw a sample of 150 **without replacement** and count the defectives. Which distribution is exact, and what is its Excel function?",
+        "options": [
+          { "id": "A", "content": "Binomial — BINOM.DIST" },
+          { "id": "B", "content": "Hypergeometric — HYPGEOM.DIST" },
+          { "id": "C", "content": "Poisson — POISSON.DIST" },
+          { "id": "D", "content": "Normal — NORM.DIST" }
+        ],
+        "correct": "B",
+        "explanation": "Drawing **without replacement** from a finite population (the proportion of defectives changes after each draw) is described **exactly** by the **hypergeometric** distribution, computed with **HYPGEOM.DIST(x; n; K; M; cumulative)**. **A** binomial assumes independent trials / replacement and is only an *approximation* here. **C** Poisson is for rare events / very small $p$. **D** Normal is continuous, not for counting discrete defectives.",
+        "theory": "Sampling without replacement from a finite batch ⇒ hypergeometric (exact); binomial is its large-population approximation when $K/M$ stays roughly constant.",
+        "source": "Lesson 5 part 1 (hypergeometric vs binomial)"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Rolling a fair 20-sided die (faces 1–20), the probability of getting a 3 is:",
+      "options": [
+        { "id": "A", "content": "$1/3$" },
+        { "id": "B", "content": "$3/20$" },
+        { "id": "C", "content": "$1/20$" },
+        { "id": "D", "content": "$1/6$" }
+      ],
+      "correct": "C",
+      "explanation": "Classical probability: one favourable outcome over twenty equally-likely outcomes, $\\mathbb{P}=\\#E/\\#S=1/20$. **A** and **B** misuse the numbers (the face value '3' is not the probability). **D** is the probability for a six-sided die, not a 20-sided one.",
+      "theory": "Classical probability for equally-likely outcomes: $\\mathbb{P}[E]=\\#E/\\#S$.",
+      "source": "Lesson 4 (classical definition, exercises)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Rolling a fair six-sided die, the probability of getting a 3 **or** a 5 is:",
+      "options": [
+        { "id": "A", "content": "$1/3$" },
+        { "id": "B", "content": "$1/6$" },
+        { "id": "C", "content": "$5/6$" },
+        { "id": "D", "content": "$1/36$" }
+      ],
+      "correct": "A",
+      "explanation": "'3' and '5' are **incompatible** events, so probabilities add: $1/6+1/6=2/6=1/3$. **B** is the probability of a single face. **C** would be the complement (not 3). **D** is for an intersection of two independent rolls, not this single roll.",
+      "theory": "For disjoint events the union probability is the sum: $\\mathbb{P}(E\\cup F)=\\mathbb{P}(E)+\\mathbb{P}(F)$.",
+      "source": "Lesson 4 (addition rule, exercises)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Rolling two fair dice, the probability that the sum is 8 is:",
+      "options": [
+        { "id": "A", "content": "$1/8$" },
+        { "id": "B", "content": "$5/36$" },
+        { "id": "C", "content": "$1/6$" },
+        { "id": "D", "content": "$8/36$" }
+      ],
+      "correct": "B",
+      "explanation": "There are $\\#S=36$ ordered outcomes; the pairs summing to 8 are $(2,6),(3,5),(4,4),(5,3),(6,2)$, so $\\#E=5$ and $\\mathbb{P}=5/36$. **A** ignores that not all sums are equally likely. **C** is the single-die value. **D** uses the sum value 8 as the count, which is wrong.",
+      "theory": "Build the sample space of ordered pairs (36 outcomes) and count favourable cases; the sum is NOT uniformly distributed.",
+      "source": "Lesson 4 (classical probability, two dice)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In a batch of 500 pieces, 4 have defect A and 3 have defect B, and 2 pieces have **both** defects. The probability that a single examined piece is defective (A or B) is:",
+      "options": [
+        { "id": "A", "content": "$7/500$" },
+        { "id": "B", "content": "$5/500$" },
+        { "id": "C", "content": "$2/500$" },
+        { "id": "D", "content": "$9/500$" }
+      ],
+      "correct": "B",
+      "explanation": "By inclusion–exclusion the number of defective pieces is $\\#A+\\#B-\\#AB=4+3-2=5$, so $\\mathbb{P}=5/500$. **A** double-counts the 2 pieces with both defects. **C** counts only the both-defect pieces. **D** adds instead of subtracting the overlap.",
+      "theory": "$\\mathbb{P}(A\\cup B)=\\mathbb{P}(A)+\\mathbb{P}(B)-\\mathbb{P}(AB)$; subtract the overlap so it is not counted twice.",
+      "source": "Lesson 4 (compound probability, Venn exercises)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In how many ways can you choose 2 objects out of 4 when the order does **not** matter?",
+      "options": [
+        { "id": "A", "content": "$24$" },
+        { "id": "B", "content": "$12$" },
+        { "id": "C", "content": "$2$" },
+        { "id": "D", "content": "$6$" }
+      ],
+      "correct": "D",
+      "explanation": "Order irrelevant ⇒ **combinations**: $C(4,2)=\\binom{4}{2}=4!/(2!\\,2!)=24/4=6$. **A** is $4!$ (all permutations of 4). **B** is the number of *ordered* selections $4\\cdot3$ (a permutation count). **C** is just $k$. With order ignored, $\\{a,b\\}=\\{b,a\\}$, halving (and more) the ordered count.",
+      "theory": "Order matters → permutations $n!$; order ignored → combinations $\\binom{n}{k}=n!/[k!(n-k)!]$.",
+      "source": "Lesson 4 (combinatorics: combinations)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Two fair dice are rolled twice... actually one fair die is rolled twice; the probability of getting a 5 on the first roll **and** a 5 on the second is:",
+      "options": [
+        { "id": "A", "content": "$1/6$" },
+        { "id": "B", "content": "$2/6$" },
+        { "id": "C", "content": "$1/12$" },
+        { "id": "D", "content": "$1/36$" }
+      ],
+      "correct": "D",
+      "explanation": "The rolls are **independent**, so the joint probability is the product: $\\mathbb{P}=\\tfrac16\\cdot\\tfrac16=\\tfrac1{36}$ (one path on the tree diagram). **A** is a single roll. **B** wrongly adds the probabilities. **C** halves incorrectly. For independent events, $\\mathbb{P}(EF)=\\mathbb{P}(E)\\mathbb{P}(F)$.",
+      "theory": "Independent events multiply along a tree branch: $\\mathbb{P}(EF)=\\mathbb{P}(E)\\mathbb{P}(F)$.",
+      "source": "Lesson 4 (tree diagram; independence)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A fair die is thrown 10 times. The probability of getting the '6' face **exactly 4 times** is closest to (binomial, $n=10$, $p=1/6$):",
+      "options": [
+        { "id": "A", "content": "$0.054$" },
+        { "id": "B", "content": "$0.40$" },
+        { "id": "C", "content": "$0.167$" },
+        { "id": "D", "content": "$0.011$" }
+      ],
+      "correct": "A",
+      "explanation": "$f_X(4)=\\binom{10}{4}(1/6)^4(5/6)^6=210\\times0.000772\\times0.3349\\approx0.054$. **B** confuses the expected count $np=10/6\\approx1.67$ region with a probability. **C** is just $p=1/6$. **D** drops the binomial coefficient $\\binom{10}{4}=210$. Trials are independent with replacement, so the binomial applies.",
+      "theory": "Independent repeated trials ⇒ binomial $f_X(x)=\\binom{n}{x}p^x(1-p)^{n-x}$; the coefficient $\\binom{n}{x}$ counts the arrangements of successes.",
+      "source": "Lesson 5 part 1 (binomial, example 2)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "10% of parts from a machine are defective. In a sample of 12 parts (binomial), the probability of **at least 2** defectives is best computed as:",
+      "options": [
+        { "id": "A", "content": "$\\mathbb{P}[X\\le 2]$" },
+        { "id": "B", "content": "$\\mathbb{P}[X=2]$" },
+        { "id": "C", "content": "$1-\\mathbb{P}[X\\le 1]$" },
+        { "id": "D", "content": "$1-\\mathbb{P}[X\\le 2]$" }
+      ],
+      "correct": "C",
+      "explanation": "'At least 2' = $\\mathbb{P}[X\\ge2]=1-\\mathbb{P}[X\\le1]$ (the complement of '0 or 1'). **A** is 'at most 2'. **B** is 'exactly 2'. **D** is 'at least 3'. With BINOM.DIST you compute $\\mathbb{P}[X\\le1]$ cumulatively and subtract from 1.",
+      "theory": "At least $k$ = $1-\\mathbb{P}[X\\le k-1]$; at most $k$ = cumulative at $k$; exactly $k$ = point form.",
+      "source": "Lesson 5 part 1 (binomial, example 4; at least/at most)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A batch of 30 books contains 6 with a binding defect. 10 books are inspected (without replacement). The probability that exactly 3 are defective is computed with:",
+      "options": [
+        { "id": "A", "content": "POISSON.DIST(3; 6; FALSE)" },
+        { "id": "B", "content": "BINOM.DIST(3; 10; 0.2; FALSE)" },
+        { "id": "C", "content": "HYPGEOM.DIST(3; 10; 6; 30; FALSE)" },
+        { "id": "D", "content": "NORM.DIST(3; 6; 30; FALSE)" }
+      ],
+      "correct": "C",
+      "explanation": "Sampling **without replacement** from a finite batch is hypergeometric: $x=3$ successes in a sample of $n=10$, with $K=6$ defectives in $M=30$, giving HYPGEOM.DIST(3; 10; 6; 30; FALSE) $=\\binom{6}{3}\\binom{24}{7}/\\binom{30}{10}\\approx0.23$. **B** binomial is only an approximation (overstated here since $n>M/10$). **A** Poisson is for rare events. **D** Normal is continuous, not for this count.",
+      "theory": "HYPGEOM.DIST(x; n; K; M; cumulative): exact for sampling without replacement; binomial approximates it only when $n\\le M/10$.",
+      "source": "Lesson 5 part 1 (hypergeometric, example 3)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "5% of valves are defective; consider a batch of 100. Using the **Poisson approximation** of the binomial, which parameter $\\lambda$ do you use, and roughly what is $\\mathbb{P}[X=2]$?",
+      "options": [
+        { "id": "A", "content": "$\\lambda=0.05$, giving $\\approx 0.001$" },
+        { "id": "B", "content": "$\\lambda=np=5$, giving $\\approx 0.084$" },
+        { "id": "C", "content": "$\\lambda=100$, giving $\\approx 0.5$" },
+        { "id": "D", "content": "$\\lambda=2$, giving $\\approx 0.27$" }
+      ],
+      "correct": "B",
+      "explanation": "The Poisson approximation of a binomial uses $\\lambda=np=100\\times0.05=5$; then $f_X(2)=e^{-5}5^2/2!\\approx0.084$, matching the exact binomial $0.081$. **A** uses $p$ instead of $np$. **C** uses $n$ as $\\lambda$. **D** uses the value $x=2$ as $\\lambda$. The approximation is valid because $n\\ge100$ and $p\\le0.05$.",
+      "theory": "Binomial → Poisson with $\\lambda=np$ when $n$ is large and $p$ small ($n\\ge100$, $p\\le0.05$); for Poisson mean = variance = $\\lambda$.",
+      "source": "Lesson 5 part 1 (Poisson approximation of binomial, example 1)"
+    }
+  ]
+}

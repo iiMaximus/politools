@@ -1,0 +1,477 @@
+[
+  {
+    "id": "da-stats",
+    "title": "Mean and standard deviation of a sample",
+    "prompt": "Every data-analysis pipeline starts here. A measurement column is given in **A2:A21** (20 surface-roughness readings, in µm). Compute the **count**, the **sample mean** $\\bar x$ and the **sample standard deviation** $s$.\n\nThese three numbers feed every later step (Chauvenet, $\\chi^2$, $t$-test, …), so get them right.",
+    "hint": "Use STDEV.S (the n−1 sample form), not STDEV.P.",
+    "given": {
+      "A1": "Roughness measurements [µm]",
+      "A2": 43, "A3": 42, "A4": 46, "A5": 44, "A6": 48,
+      "A7": 44, "A8": 48, "A9": 45, "A10": 45, "A11": 47,
+      "A12": 42, "A13": 46, "A14": 47, "A15": 41, "A16": 48,
+      "A17": 36, "A18": 46, "A19": 48, "A20": 47, "A21": 45,
+      "C1": "Number of data  n =",
+      "C2": "Sample mean  x̄ =",
+      "C3": "Sample st. dev.  s ="
+    },
+    "checks": [
+      { "cell": "D1", "label": "Count n", "expected": 20, "hintFormula": "=COUNT(A2:A21)", "teach": "COUNT returns how many numeric cells are in the range. Here $n=20$. Every $1/(2n)$ and degrees-of-freedom term downstream uses this." },
+      { "cell": "D2", "label": "Mean x̄", "expected": 44.9, "tol": 0.01, "hintFormula": "=AVERAGE(A2:A21)", "teach": "The sample mean $\\bar x=\\frac1n\\sum x_i = 44.90\\ \\mu m$. This is the best estimate of the true value once outliers are removed.", "unit": "µm" },
+      { "cell": "D3", "label": "St. dev. s", "expected": 3.01, "tol": 0.01, "hintFormula": "=STDEV.S(A2:A21)", "teach": "**STDEV.S** divides by $n-1$ (Bessel's correction) and estimates the population $\\sigma$ from a *sample*: $s=3.01\\ \\mu m$. STDEV.P (divide by $n$) is only for a full population and is the classic exam trap.", "unit": "µm" }
+    ],
+    "method": "$n=$ COUNT $=20$; $\\bar x=$ AVERAGE $=44.90\\,\\mu m$; $s=$ STDEV.S $=3.01\\,\\mu m$. Always use the *sample* standard deviation STDEV.S for experimental data."
+  },
+  {
+    "id": "da-chauvenet",
+    "title": "Outlier management — Chauvenet's criterion (exam capstone)",
+    "prompt": "**This is the 8-point Data-Analysis exam question.** The 20 roughness readings of the previous exercise are in **A2:A21**. Apply **Chauvenet's exclusion principle**.\n\nChauvenet says a single reading is suspect if the expected number of samples at least as extreme is below $\\tfrac12$, i.e. its tail probability is below $\\alpha=\\dfrac{1}{2n}$. Working two-sided, each tail gets $\\dfrac{1}{4n}$, so the **standardized exclusion factor** is\n$$z=\\Phi^{-1}\\!\\left(1-\\frac{1}{4n}\\right)=\\text{NORM.S.INV}(1-1/(4n)).$$\nThe exclusion limits are $\\bar x\\mp z\\,s$. Any reading outside $[x_L^{min},\\,x_L^{max}]$ is an outlier.",
+    "hint": "α = 1/(2n) = 0.025. The factor uses NORM.S.INV(1−1/(4n)) — a one-sided 1−1/(4n) quantile.",
+    "given": {
+      "A1": "Roughness measurements [µm]",
+      "A2": 43, "A3": 42, "A4": 46, "A5": 44, "A6": 48,
+      "A7": 44, "A8": 48, "A9": 45, "A10": 45, "A11": 47,
+      "A12": 42, "A13": 46, "A14": 47, "A15": 41, "A16": 48,
+      "A17": 36, "A18": 46, "A19": 48, "A20": 47, "A21": 45,
+      "C1": "n =",
+      "C2": "Mean  x̄ =",
+      "C3": "St. dev.  s =",
+      "C4": "Risk α = 1/(2n) =",
+      "C5": "Exclusion factor  z = NORM.S.INV(1−1/(4n)) =",
+      "C6": "Lower limit  xL min =",
+      "C7": "Upper limit  xL max =",
+      "C8": "Smallest reading  min =",
+      "C9": "Largest reading  max =",
+      "C10": "Any outlier?"
+    },
+    "checks": [
+      { "cell": "D1", "label": "n", "expected": 20, "hintFormula": "=COUNT(A2:A21)", "teach": "$n=20$ over the whole experiment (all four operators × five parts)." },
+      { "cell": "D2", "label": "Mean x̄", "expected": 44.9, "tol": 0.01, "hintFormula": "=AVERAGE(A2:A21)", "teach": "$\\bar x=44.90\\ \\mu m$.", "unit": "µm" },
+      { "cell": "D3", "label": "s", "expected": 3.01, "tol": 0.01, "hintFormula": "=STDEV.S(A2:A21)", "teach": "$s=3.01\\ \\mu m$ with STDEV.S. **Note:** the official Chauvenet limits use the *raw-sample* mean and st. dev. — before removing any point.", "unit": "µm" },
+      { "cell": "D4", "label": "Risk α", "expected": 0.025, "tol": 0.0005, "hintFormula": "=1/(2*D1)", "teach": "The per-datum risk of being wrongly excluded is $\\alpha=\\frac{1}{2n}=\\frac1{40}=0.025$. Report it as a probability (0.025), **not** as 2.5 %." },
+      { "cell": "D5", "label": "Exclusion factor z", "expected": 2.2414, "tol": 0.001, "hintFormula": "=NORM.S.INV(1-1/(4*D1))", "teach": "Two-sided, each tail carries $\\frac{1}{4n}=0.0125$, so the standardized cut is the $1-0.0125=0.9875$ quantile of the standard normal: $z=2.241$." },
+      { "cell": "D6", "label": "Lower limit xL min", "expected": 38.16, "tol": 0.01, "hintFormula": "=D2-D5*D3", "teach": "$x_L^{min}=\\bar x - z\\,s = 44.90 - 2.241\\cdot3.01 = 38.16\\ \\mu m$.", "unit": "µm" },
+      { "cell": "D7", "label": "Upper limit xL max", "expected": 51.64, "tol": 0.01, "hintFormula": "=D2+D5*D3", "teach": "$x_L^{max}=\\bar x + z\\,s = 51.64\\ \\mu m$. Equivalently $=\\text{NORM.INV}(1-1/(4n),\\bar x,s)$.", "unit": "µm" },
+      { "cell": "D8", "label": "min", "expected": 36, "hintFormula": "=MIN(A2:A21)", "teach": "The smallest reading is **36** µm (Operator 4, part 1)." },
+      { "cell": "D9", "label": "max", "expected": 48, "hintFormula": "=MAX(A2:A21)", "teach": "The largest reading is 48 µm, which sits comfortably inside the upper limit 51.64." },
+      { "cell": "D10", "label": "Outlier?", "expected": "Yes", "hintFormula": "=IF(OR(MIN(A2:A21)<D6,MAX(A2:A21)>D7),\"Yes\",\"No\")", "teach": "$36 < 38.16$, so **Yes**, there is an outlier — and its value is **36 µm**. It should be removed and the statistics recomputed on the remaining 19 data." }
+    ],
+    "method": "$n=20$, $\\bar x=44.90$, $s=3.01$. $\\alpha=1/(2n)=0.025$; tail $1/(4n)=0.0125$; $z=\\text{NORM.S.INV}(0.9875)=2.241$. Limits $44.90\\mp2.241\\cdot3.01 = [38.16,\\,51.64]\\,\\mu m$. The reading **36** falls below 38.16 → outlier detected (value 36)."
+  },
+  {
+    "id": "da-chauvenet50",
+    "title": "Chauvenet on a large dataset — the NORM.INV shortcut",
+    "prompt": "In the full lab the dataset has **n = 50** values with mean $\\bar x=4.50618$ mm and $s=0.0025677$ mm (already computed and given). Reproduce the Chauvenet exclusion limits the way the reference workbook does it: directly with **NORM.INV**, which already embeds the mean and st. dev.\n\nLimit $=\\text{NORM.INV}\\!\\left(p,\\bar x,s\\right)$ with $p=\\dfrac{1}{4n}$ for the lower and $p=1-\\dfrac{1}{4n}$ for the upper.",
+    "hint": "PxL = 1/(4n) = 1/200 = 0.005. NORM.INV(p, mean, s) gives the limit straight away.",
+    "given": {
+      "A1": "Chauvenet on the full 50-value set",
+      "A3": "Number of data  n =", "C3": 50,
+      "A4": "Mean  x̄ [mm] =", "C4": 4.506182340691378,
+      "A5": "St. dev.  s [mm] =", "C5": 0.0025677038317287195,
+      "A7": "Per-tail probability  PxL = 1/(4n) =",
+      "A8": "Lower limit  xL min [mm] =",
+      "A9": "Upper limit  xL max [mm] ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "PxL", "expected": 0.005, "tol": 0.0001, "hintFormula": "=1/(4*C3)", "teach": "With $n=50$, the single-tail probability is $\\frac{1}{4n}=0.005$. (The whole-experiment risk $\\frac{1}{2n}=0.01$ is split over the two tails.)" },
+      { "cell": "C8", "label": "Lower limit", "expected": 4.499568, "tol": 0.00001, "hintFormula": "=NORM.INV(C7,C4,C5)", "teach": "NORM.INV($0.005,\\bar x,s$) returns the value with 0.5 % of the normal mass below it: $4.49957$ mm. This equals $\\bar x - 2.576\\,s$.", "unit": "mm" },
+      { "cell": "C9", "label": "Upper limit", "expected": 4.512796, "tol": 0.00001, "hintFormula": "=NORM.INV(1-C7,C4,C5)", "teach": "NORM.INV($0.995,\\bar x,s$) = $4.51280$ mm $=\\bar x+2.576\\,s$. Using NORM.INV(p, mean, s) is equivalent to $\\bar x\\mp\\text{NORM.S.INV}(1-1/(4n))\\,s$ — pick whichever the exam wording suggests.", "unit": "mm" }
+    ],
+    "method": "$P_{xL}=1/(4n)=0.005$. $x_L^{min}=\\text{NORM.INV}(0.005,4.50618,0.0025677)=4.49957$; $x_L^{max}=\\text{NORM.INV}(0.995,\\dots)=4.51280$. None of the 50 readings lies outside, so no exclusion is needed here."
+  },
+  {
+    "id": "da-iqr",
+    "title": "Outlier management — IQR / box-plot rule",
+    "prompt": "The **box-plot (Tukey) rule** is a distribution-free alternative to Chauvenet. Using the same 20 roughness readings in **A2:A21**, compute the quartiles and the inner fences.\n\n$Q_1=\\text{QUARTILE}(range,1)$, $Q_3=\\text{QUARTILE}(range,3)$, $IQR=Q_3-Q_1$. The fences are $Q_1-1.5\\,IQR$ (lower) and $Q_3+1.5\\,IQR$ (upper); anything outside is flagged.",
+    "hint": "QUARTILE's second argument is the quartile number: 1 for Q1, 3 for Q3.",
+    "given": {
+      "A1": "Roughness measurements [µm]",
+      "A2": 43, "A3": 42, "A4": 46, "A5": 44, "A6": 48,
+      "A7": 44, "A8": 48, "A9": 45, "A10": 45, "A11": 47,
+      "A12": 42, "A13": 46, "A14": 47, "A15": 41, "A16": 48,
+      "A17": 36, "A18": 46, "A19": 48, "A20": 47, "A21": 45,
+      "C1": "First quartile  Q1 =",
+      "C2": "Third quartile  Q3 =",
+      "C3": "Interquartile range  IQR =",
+      "C4": "Lower fence  Q1 − 1.5·IQR =",
+      "C5": "Upper fence  Q3 + 1.5·IQR =",
+      "C6": "Any outlier?"
+    },
+    "checks": [
+      { "cell": "D1", "label": "Q1", "expected": 43.75, "tol": 0.01, "hintFormula": "=QUARTILE(A2:A21,1)", "teach": "$Q_1$ is the 25th percentile: a quarter of the data lie below it. Here $Q_1=43.75\\ \\mu m$.", "unit": "µm" },
+      { "cell": "D2", "label": "Q3", "expected": 47, "tol": 0.01, "hintFormula": "=QUARTILE(A2:A21,3)", "teach": "$Q_3$ is the 75th percentile, $=47\\ \\mu m$. The middle 50 % of the data live in $[Q_1,Q_3]$.", "unit": "µm" },
+      { "cell": "D3", "label": "IQR", "expected": 3.25, "tol": 0.01, "hintFormula": "=D2-D1", "teach": "$IQR=Q_3-Q_1=3.25\\ \\mu m$ — a robust spread measure that ignores the tails (so a single wild point cannot inflate it the way $s$ would).", "unit": "µm" },
+      { "cell": "D4", "label": "Lower fence", "expected": 38.875, "tol": 0.01, "hintFormula": "=D1-1.5*D3", "teach": "Lower inner fence $=Q_1-1.5\\,IQR=43.75-4.875=38.875\\ \\mu m$.", "unit": "µm" },
+      { "cell": "D5", "label": "Upper fence", "expected": 51.875, "tol": 0.01, "hintFormula": "=D2+1.5*D3", "teach": "Upper inner fence $=Q_3+1.5\\,IQR=51.875\\ \\mu m$.", "unit": "µm" },
+      { "cell": "D6", "label": "Outlier?", "expected": "Yes", "hintFormula": "=IF(OR(MIN(A2:A21)<D4,MAX(A2:A21)>D5),\"Yes\",\"No\")", "teach": "$36<38.875$, so the box-plot rule flags **36** too — both methods agree here. The $1.5\\,IQR$ multiplier corresponds to roughly $\\pm2.7\\sigma$ for a normal distribution." }
+    ],
+    "method": "$Q_1=43.75$, $Q_3=47$, $IQR=3.25$. Fences $43.75-4.875=38.875$ and $47+4.875=51.875$. The value 36 lies below 38.875 → flagged. Box-plot and Chauvenet both identify 36."
+  },
+  {
+    "id": "da-classes",
+    "title": "Frequency distribution — building the classes",
+    "prompt": "To test the shape of the distribution we group the data into classes. The reference workbook spans the **examined field** $\\bar x\\pm4s$ and uses **$\\sqrt{n}+4$** classes.\n\nFor the full lab set ($n=50$, $\\bar x=4.50618$ mm, $s=0.0025677$ mm), compute the field limits, the number of classes and the class width.",
+    "hint": "Number of classes = SQRT(n)+4. Class width = (max field − min field) / number of classes.",
+    "given": {
+      "A1": "Frequency-distribution set-up",
+      "A3": "n =", "C3": 50,
+      "A4": "Mean  x̄ [mm] =", "C4": 4.506182340691378,
+      "A5": "St. dev.  s [mm] =", "C5": 0.0025677038317287195,
+      "A7": "Min of examined field  x̄ − 4s =",
+      "A8": "Max of examined field  x̄ + 4s =",
+      "A9": "Number of classes  √n + 4 =",
+      "A10": "Class width ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "Field min", "expected": 4.495912, "tol": 0.00001, "hintFormula": "=C4-4*C5", "teach": "The field is taken $\\pm4s$ around the mean so that essentially all of a normal sample falls inside: $x_{min}=4.49591$ mm.", "unit": "mm" },
+      { "cell": "C8", "label": "Field max", "expected": 4.516453, "tol": 0.00001, "hintFormula": "=C4+4*C5", "teach": "$x_{max}=\\bar x+4s=4.51645$ mm.", "unit": "mm" },
+      { "cell": "C9", "label": "Number of classes", "expected": 11.071, "tol": 0.01, "hintFormula": "=SQRT(C3)+4", "teach": "The professor's empirical rule $\\sqrt{n}+4$ gives $\\approx11.07$, i.e. **11 classes** in practice. Too few classes hides structure; too many leaves empty bins that break $\\chi^2$." },
+      { "cell": "C10", "label": "Class width", "expected": 0.0018554, "tol": 0.0000001, "hintFormula": "=(C8-C7)/C9", "teach": "Width $=\\dfrac{x_{max}-x_{min}}{\\#classes}=0.0018554$ mm. Each class then runs from a lower bound to lower + width.", "unit": "mm" }
+    ],
+    "method": "Field $=[\\bar x-4s,\\ \\bar x+4s]=[4.49591,\\ 4.51645]$ mm. Classes $=\\sqrt{50}+4\\approx11.07$. Width $=(4.51645-4.49591)/11.07=0.0018554$ mm."
+  },
+  {
+    "id": "da-chi2",
+    "title": "χ² goodness-of-fit to a normal",
+    "prompt": "Test whether a sample of **n = 100** parts (mean 50, st. dev. 5) follows a **normal** distribution. The six class bounds are in **A2:B7** (from / to) and the **observed** counts $O_i$ in **C2:C7**.\n\nFor each class compute the **expected** count $E_i = n\\,[\\,\\Phi(to)-\\Phi(from)\\,]$ with $\\Phi=\\text{NORM.DIST}(\\cdot,\\bar x,s,1)$, then $\\dfrac{(O_i-E_i)^2}{E_i}$, sum to get $\\chi^2$, and compare with the critical value.",
+    "hint": "Cumulative NORM.DIST (last arg = 1) gives Φ. Expected = n·(Φ(to) − Φ(from)). dof = classes − 1 − (params estimated = 2).",
+    "given": {
+      "A1": "From", "B1": "To", "C1": "Observed O",
+      "A2": -1000, "B2": 45, "C2": 16,
+      "A3": 45, "B3": 47.5, "C3": 16,
+      "A4": 47.5, "B4": 50, "C4": 20,
+      "A5": 50, "B5": 52.5, "C5": 18,
+      "A6": 52.5, "B6": 55, "C6": 17,
+      "A7": 55, "B7": 1000, "C7": 13,
+      "E1": "n =", "F1": 100,
+      "E2": "Mean  x̄ =", "F2": 50,
+      "E3": "St. dev.  s =", "F3": 5,
+      "E5": "Experimental χ² =",
+      "E6": "Degrees of freedom =",
+      "E7": "Critical χ² (5%) =",
+      "E8": "Normality?",
+      "E9": "p-value ="
+    },
+    "checks": [
+      { "cell": "D2", "label": "Expected E (class 1)", "expected": 15.8655, "tol": 0.001, "hintFormula": "=$F$1*(NORM.DIST(B2,$F$2,$F$3,1)-NORM.DIST(A2,$F$2,$F$3,1))", "teach": "Expected = total $n$ times the normal probability of falling in the class: $100\\,[\\Phi(45)-\\Phi(-\\infty)]=15.87$. The cumulative flag (1) is essential — point density (0) would be wrong here." },
+      { "cell": "D3", "label": "Expected E (class 2)", "expected": 14.9882, "tol": 0.001, "hintFormula": "=$F$1*(NORM.DIST(B3,$F$2,$F$3,1)-NORM.DIST(A3,$F$2,$F$3,1))", "teach": "$100[\\Phi(47.5)-\\Phi(45)]=14.99$ expected parts in class 2." },
+      { "cell": "D4", "label": "Expected E (class 3)", "expected": 19.1462, "tol": 0.001, "hintFormula": "=$F$1*(NORM.DIST(B4,$F$2,$F$3,1)-NORM.DIST(A4,$F$2,$F$3,1))", "teach": "The central class around the mean carries the most mass: 19.15 expected." },
+      { "cell": "D5", "label": "Expected E (class 4)", "expected": 19.1462, "tol": 0.001, "hintFormula": "=$F$1*(NORM.DIST(B5,$F$2,$F$3,1)-NORM.DIST(A5,$F$2,$F$3,1))", "teach": "By symmetry class 4 mirrors class 3: 19.15." },
+      { "cell": "D6", "label": "Expected E (class 5)", "expected": 14.9882, "tol": 0.001, "hintFormula": "=$F$1*(NORM.DIST(B6,$F$2,$F$3,1)-NORM.DIST(A6,$F$2,$F$3,1))", "teach": "14.99, mirroring class 2." },
+      { "cell": "D7", "label": "Expected E (class 6)", "expected": 15.8655, "tol": 0.001, "hintFormula": "=$F$1*(NORM.DIST(B7,$F$2,$F$3,1)-NORM.DIST(A7,$F$2,$F$3,1))", "teach": "15.87 in the far-right open class, mirroring class 1." },
+      { "cell": "F5", "label": "Experimental χ²", "expected": 0.9637, "tol": 0.005, "hintFormula": "=SUM((C2-D2)^2/D2,(C3-D3)^2/D3,(C4-D4)^2/D4,(C5-D5)^2/D5,(C6-D6)^2/D6,(C7-D7)^2/D7)", "teach": "$\\chi^2=\\sum\\frac{(O_i-E_i)^2}{E_i}$ measures total mismatch. Small $\\chi^2=0.96$ means observed and expected counts are very close." },
+      { "cell": "F6", "label": "Degrees of freedom", "expected": 3, "hintFormula": "=6-1-2", "teach": "dof $=$ (number of classes) $-1-$ (parameters estimated from the data). We estimated **two** parameters ($\\bar x$ and $s$), so dof $=6-1-2=3$. Forgetting to subtract the estimated parameters is a classic mistake." },
+      { "cell": "F7", "label": "Critical χ²", "expected": 7.8147, "tol": 0.001, "hintFormula": "=CHISQ.INV.RT(0.05,F6)", "teach": "At a 5 % significance the right-tail critical value with 3 dof is 7.815. CHISQ.INV.RT(α, dof) returns it directly." },
+      { "cell": "F8", "label": "Normality decision", "expected": "Accept normal", "hintFormula": "=IF(F5>F7,\"Reject normal\",\"Accept normal\")", "teach": "$\\chi^2_{exp}=0.96 < 7.815$, so we **do not reject** normality — the data are consistent with a Gaussian. We reject only if $\\chi^2$ exceeds the critical value." },
+      { "cell": "F9", "label": "p-value", "expected": 0.81, "tol": 0.005, "hintFormula": "=CHISQ.DIST.RT(F5,F6)", "teach": "The p-value $=P(\\chi^2_3>0.96)=0.81$: an 81 % chance of seeing this much (or more) deviation by chance alone, far above 5 % — strong support for normality." }
+    ],
+    "method": "Expected counts $E_i=n[\\Phi(to)-\\Phi(from)]$. $\\chi^2=\\sum(O_i-E_i)^2/E_i=0.96$. dof $=6-1-2=3$, critical $=7.815$. $0.96<7.815$ → accept normality; p-value $=0.81$."
+  },
+  {
+    "id": "da-chi2bounds",
+    "title": "χ² acceptance band — two-sided test for systematic effects",
+    "prompt": "The reference workbook tests the frequency distribution **two-sided** at an 80 % confidence level with **8 degrees of freedom**, and accepts normality (no systematic effect) when the experimental $\\chi^2$ lies *between* a lower and an upper boundary.\n\nGiven the confidence level and dof, compute both $\\chi^2$ boundaries and decide for the workbook's experimental value $\\chi^2_{exp}=9.12$.",
+    "hint": "Two-sided: lower = CHISQ.INV((1−CL)/2, dof), upper = CHISQ.INV(1−(1−CL)/2, dof).",
+    "given": {
+      "A1": "Two-sided χ² band",
+      "A3": "Confidence level  CL =", "C3": 0.8,
+      "A4": "Degrees of freedom  ν =", "C4": 8,
+      "A5": "Experimental χ² =", "C5": 9.12,
+      "A7": "Lower boundary of χ² =",
+      "A8": "Upper boundary of χ² =",
+      "A9": "Within the band?"
+    },
+    "checks": [
+      { "cell": "C7", "label": "Lower boundary", "expected": 3.4895, "tol": 0.001, "hintFormula": "=CHISQ.INV((1-C3)/2,C4)", "teach": "With CL = 80 %, the total risk 20 % is split into 10 % per tail. The lower boundary is the 10 % quantile: CHISQ.INV(0.1, 8) = 3.49." },
+      { "cell": "C8", "label": "Upper boundary", "expected": 13.3616, "tol": 0.001, "hintFormula": "=CHISQ.INV(1-(1-C3)/2,C4)", "teach": "The upper boundary is the 90 % quantile: CHISQ.INV(0.9, 8) = 13.36. A χ² *too small* also matters here — it would mean the fit is suspiciously perfect (possible data tampering or wrong dof)." },
+      { "cell": "C9", "label": "Decision", "expected": "Within", "hintFormula": "=IF(AND(C5>C7,C5<C8),\"Within\",\"Outside\")", "teach": "$3.49 < 9.12 < 13.36$, so the experimental $\\chi^2$ is **inside** the band → the null hypothesis of a normal distribution is *not* rejected and no systematic effect is evidenced (accepting a 20 % risk of a first-kind error)." }
+    ],
+    "method": "Two-sided 80 % band with 8 dof: $[\\chi^2_{0.10},\\chi^2_{0.90}]=[3.49,\\,13.36]$. Experimental 9.12 is inside → normality accepted, no systematic effect."
+  },
+  {
+    "id": "da-npp",
+    "title": "Normal probability plot — plotting positions & quantiles",
+    "prompt": "A **normal probability plot (NPP)** checks normality graphically: sort the data, assign each a plotting position $p_i=\\dfrac{i-0.5}{n}$, and convert it to a theoretical standard-normal quantile $z_i=\\text{NORM.S.INV}(p_i)$. If the points $(z_i,\\;x_{(i)})$ fall on a straight line, the data are normal.\n\nThe **ordered** sample (10 values) is in **A2:A11**. Fill the rank $i$, $p_i$ and $z_i$ for the indicated rows, and the mean/st. dev.",
+    "hint": "Plotting position p = (i − 0.5)/n. The theoretical quantile is NORM.S.INV(p).",
+    "given": {
+      "A1": "Ordered data [µm]",
+      "A2": 40.2, "A3": 42.6, "A4": 44.1, "A5": 45.0, "A6": 45.8,
+      "A7": 46.5, "A8": 47.2, "A9": 48.0, "A10": 49.1, "A11": 51.4,
+      "B1": "rank i", "C1": "p = (i−0.5)/n", "D1": "z = NORM.S.INV(p)",
+      "F1": "n =", "F2": "mean =", "F3": "st. dev. ="
+    },
+    "checks": [
+      { "cell": "G1", "label": "n", "expected": 10, "hintFormula": "=COUNT(A2:A11)", "teach": "$n=10$ ordered values." },
+      { "cell": "G2", "label": "mean", "expected": 45.99, "tol": 0.01, "hintFormula": "=AVERAGE(A2:A11)", "teach": "The line fitted in an NPP has slope $\\approx s$ and intercept $\\approx\\bar x$; here $\\bar x=45.99$ µm.", "unit": "µm" },
+      { "cell": "G3", "label": "st. dev.", "expected": 3.237, "tol": 0.01, "hintFormula": "=STDEV.S(A2:A11)", "teach": "$s=3.24$ µm — the expected slope of the NPP line." },
+      { "cell": "C2", "label": "p for i=1", "expected": 0.05, "tol": 0.001, "hintFormula": "=(1-0.5)/$G$1", "teach": "The first (smallest) value gets $p=\\frac{1-0.5}{10}=0.05$. The $-0.5$ continuity correction keeps the extremes off $0$ and $1$ (where $z$ would be $\\pm\\infty$)." },
+      { "cell": "D2", "label": "z for i=1", "expected": -1.6449, "tol": 0.001, "hintFormula": "=NORM.S.INV(C2)", "teach": "$z_1=\\text{NORM.S.INV}(0.05)=-1.645$: the smallest reading is expected about 1.6 st. dev. below the mean." },
+      { "cell": "C6", "label": "p for i=5", "expected": 0.45, "tol": 0.001, "hintFormula": "=(5-0.5)/$G$1", "teach": "The 5th value: $p=\\frac{4.5}{10}=0.45$, just below the median." },
+      { "cell": "D6", "label": "z for i=5", "expected": -0.1257, "tol": 0.001, "hintFormula": "=NORM.S.INV(C6)", "teach": "$z=\\text{NORM.S.INV}(0.45)=-0.126$, near the centre of the plot." },
+      { "cell": "C11", "label": "p for i=10", "expected": 0.95, "tol": 0.001, "hintFormula": "=(10-0.5)/$G$1", "teach": "The largest value: $p=\\frac{9.5}{10}=0.95$." },
+      { "cell": "D11", "label": "z for i=10", "expected": 1.6449, "tol": 0.001, "hintFormula": "=NORM.S.INV(C11)", "teach": "$z_{10}=+1.645$. Because $p_i$ and $1-p_i$ are symmetric, the $z$ values are antisymmetric. Curvature of the $(z,x)$ points (an S-shape) would signal skew or heavy tails." }
+    ],
+    "method": "Plotting position $p_i=(i-0.5)/n$, quantile $z_i=\\text{NORM.S.INV}(p_i)$. Ends: $p_1=0.05\\to z=-1.645$; $p_{10}=0.95\\to z=+1.645$. A straight $(z_i,x_{(i)})$ scatter ⇒ normal, with slope $\\approx s$ and intercept $\\approx\\bar x$."
+  },
+  {
+    "id": "da-ttest",
+    "title": "Hypothesis test on a mean (one-sample t-test)",
+    "prompt": "After removing outliers we test whether the process mean equals a **nominal value** $\\mu_0$. The 20 roughness readings are in **A2:A21**; the nominal target is $\\mu_0=46$ µm (in **F1**).\n\nCompute the $t$-statistic $t=\\dfrac{\\bar x-\\mu_0}{s/\\sqrt n}$, the two-tailed critical value at 95 % confidence, the decision, and the p-value.",
+    "hint": "t = (x̄ − μ0)/(s/√n). Critical value = T.INV.2T(0.05, n−1). Reject if |t| > critical.",
+    "given": {
+      "A1": "Roughness [µm]",
+      "A2": 43, "A3": 42, "A4": 46, "A5": 44, "A6": 48,
+      "A7": 44, "A8": 48, "A9": 45, "A10": 45, "A11": 47,
+      "A12": 42, "A13": 46, "A14": 47, "A15": 41, "A16": 48,
+      "A17": 36, "A18": 46, "A19": 48, "A20": 47, "A21": 45,
+      "F1": 46,
+      "C1": "n =",
+      "C2": "Mean  x̄ =",
+      "C3": "St. dev.  s =",
+      "C4": "t statistic =",
+      "C5": "Critical t (95%, two-tail) =",
+      "C6": "Decision (H0: µ = 46) =",
+      "C7": "p-value ="
+    },
+    "checks": [
+      { "cell": "D1", "label": "n", "expected": 20, "hintFormula": "=COUNT(A2:A21)", "teach": "$n=20$." },
+      { "cell": "D2", "label": "Mean", "expected": 44.9, "tol": 0.01, "hintFormula": "=AVERAGE(A2:A21)", "teach": "$\\bar x=44.90$ µm.", "unit": "µm" },
+      { "cell": "D3", "label": "s", "expected": 3.01, "tol": 0.01, "hintFormula": "=STDEV.S(A2:A21)", "teach": "$s=3.01$ µm. The **standard error of the mean** is $s/\\sqrt n=3.01/\\sqrt{20}=0.673$ µm." },
+      { "cell": "D4", "label": "t statistic", "expected": -1.636, "tol": 0.01, "hintFormula": "=(D2-F1)/(D3/SQRT(D1))", "teach": "$t=\\dfrac{\\bar x-\\mu_0}{s/\\sqrt n}=\\dfrac{44.90-46}{0.673}=-1.636$. The sign says the sample mean is below the target; only the magnitude matters for a two-sided test." },
+      { "cell": "D5", "label": "Critical t", "expected": 2.093, "tol": 0.001, "hintFormula": "=T.INV.2T(0.05,D1-1)", "teach": "With $n-1=19$ dof, the two-tailed 95 % critical value is $\\pm2.093$. **T.INV.2T(0.05, 19)** already returns the positive bound." },
+      { "cell": "D6", "label": "Decision", "expected": "Do not reject H0", "hintFormula": "=IF(ABS(D4)>D5,\"Reject H0\",\"Do not reject H0\")", "teach": "$|{-1.636}|=1.636 < 2.093$, so we **do not reject** $H_0$: the data are consistent with $\\mu=46$ µm at the 95 % level. The difference $-1.1$ µm is within sampling noise." },
+      { "cell": "D7", "label": "p-value", "expected": 0.1183, "tol": 0.001, "hintFormula": "=T.DIST.2T(ABS(D4),D1-1)", "teach": "The two-tailed p-value $=P(|T_{19}|>1.636)=0.118$. Since $0.118>0.05$ we keep $H_0$ — consistent with the critical-value decision." }
+    ],
+    "method": "$t=(44.90-46)/(3.01/\\sqrt{20})=-1.636$; critical $T.INV.2T(0.05,19)=2.093$. $|t|<2.093$ and p $=0.118>0.05$ ⇒ do not reject $H_0:\\mu=46$ µm."
+  },
+  {
+    "id": "da-anova",
+    "title": "One-way ANOVA — F-test for an operator effect",
+    "prompt": "**ANOVA** asks whether the differences *between* operators are bigger than the random scatter *within* each operator. The five operator columns (10 measurements each) are in **D11:H20**.\n\nCompute the column means and within-column variances, then the between- and within-mean-squares, the variance ratio $F$, the critical $F$ at 80 % confidence and the decision.",
+    "hint": "MS_between = VAR.S(column means)·(rows per column). MS_within = AVERAGE of the column variances. F = MS_between/MS_within. Critical = F.INV.RT(0.2, df1, df2).",
+    "given": {
+      "A1": "ANOVA — one factor (operator)",
+      "C10": "Conf.", "A11": 0.8,
+      "D10": "Oper.1", "E10": "Oper.2", "F10": "Oper.3", "G10": "Oper.4", "H10": "Oper.5",
+      "D11": 4.5038, "E11": 4.504, "F11": 4.506, "G11": 4.5092, "H11": 4.5053,
+      "D12": 4.5051, "E12": 4.5025, "F12": 4.5041, "G12": 4.5104, "H12": 4.5076,
+      "D13": 4.5037, "E13": 4.5101, "F13": 4.5028, "G13": 4.511, "H13": 4.5113,
+      "D14": 4.506182340691377, "E14": 4.5025, "F14": 4.5049, "G14": 4.5087, "H14": 4.5112,
+      "D15": 4.5023, "E15": 4.5046, "F15": 4.5025, "G15": 4.5047, "H15": 4.5066,
+      "D16": 4.5063, "E16": 4.502, "F16": 4.503, "G16": 4.5076, "H16": 4.5065,
+      "D17": 4.508, "E17": 4.5046, "F17": 4.5073, "G17": 4.5056, "H17": 4.50603469387755,
+      "D18": 4.5058, "E18": 4.5085, "F18": 4.5065, "G18": 4.5113, "H18": 4.5064,
+      "D19": 4.5031, "E19": 4.5056, "F19": 4.5071, "G19": 4.5068, "H19": 4.5065,
+      "D20": 4.5084, "E20": 4.5037, "F20": 4.5064, "G20": 4.5093, "H20": 4.5057,
+      "C21": "Column means →",
+      "B26": "Cause", "C26": "dof", "E26": "Variance (MS)", "F26": "F ratio", "G26": "F crit",
+      "B27": "Examined factor (between)",
+      "B28": "Random errors (within)",
+      "B29": "Total"
+    },
+    "checks": [
+      { "cell": "D21", "label": "Mean Oper.1", "expected": 4.505268, "tol": 0.0001, "hintFormula": "=AVERAGE(D11:D20)", "teach": "Average of the 10 readings of Operator 1.", "unit": "mm" },
+      { "cell": "E21", "label": "Mean Oper.2", "expected": 4.50481, "tol": 0.0001, "hintFormula": "=AVERAGE(E11:E20)", "teach": "Operator 2 mean — the column means are the heart of the between-groups variation.", "unit": "mm" },
+      { "cell": "F21", "label": "Mean Oper.3", "expected": 4.50506, "tol": 0.0001, "hintFormula": "=AVERAGE(F11:F20)", "teach": "Operator 3 mean.", "unit": "mm" },
+      { "cell": "G21", "label": "Mean Oper.4", "expected": 4.50846, "tol": 0.0001, "hintFormula": "=AVERAGE(G11:G20)", "teach": "Operator 4 mean — visibly the highest, the chief suspect for a systematic effect.", "unit": "mm" },
+      { "cell": "H21", "label": "Mean Oper.5", "expected": 4.507313, "tol": 0.0001, "hintFormula": "=AVERAGE(H11:H20)", "teach": "Operator 5 mean.", "unit": "mm" },
+      { "cell": "C27", "label": "dof between", "expected": 4, "hintFormula": "=COUNT(D20:H20)-1", "teach": "Between-groups dof $=k-1=5-1=4$ (number of columns minus one)." },
+      { "cell": "C29", "label": "dof total", "expected": 49, "hintFormula": "=COUNT(D11:H20)-1", "teach": "Total dof $=N-1=50-1=49$." },
+      { "cell": "C28", "label": "dof within", "expected": 45, "hintFormula": "=C29-C27", "teach": "Within (error) dof $=N-k=49-4=45$, the leftover after the between term." },
+      { "cell": "E27", "label": "MS between", "expected": 0.000026114, "tol": 0.0000001, "hintFormula": "=VAR.S(D21:H21)*COUNT(D11:D20)", "teach": "Between-groups mean square $=$ (variance of the 5 column means) $\\times$ (rows per column). Multiplying by 10 rescales the spread of *means* up to the spread of *single* observations." },
+      { "cell": "E28", "label": "MS within", "expected": 0.0000048579, "tol": 0.0000001, "hintFormula": "=AVERAGE(VAR.S(D11:D20),VAR.S(E11:E20),VAR.S(F11:F20),VAR.S(G11:G20),VAR.S(H11:H20))", "teach": "Within-groups mean square $=$ the pooled (average) of the five column variances — the pure random-error variance." },
+      { "cell": "F27", "label": "F ratio", "expected": 5.3757, "tol": 0.01, "hintFormula": "=E27/E28", "teach": "$F=\\dfrac{MS_{between}}{MS_{within}}=5.38$. If operators had no effect, $F$ would hover around 1; a large $F$ means between-operator differences exceed the noise." },
+      { "cell": "G27", "label": "Critical F", "expected": 1.565, "tol": 0.005, "hintFormula": "=F.INV.RT(1-A11,C27,C28)", "teach": "At 80 % confidence the right-tail critical $F$ with (4, 45) dof is 1.565. (Equivalently F.INV(0.8, 4, 45).) The risk of a first-kind error is the deliberately high 20 %." },
+      { "cell": "F29", "label": "Decision", "expected": "Systematic", "hintFormula": "=IF(F27>G27,\"Systematic\",\"No effect\")", "teach": "$F=5.38 > 1.565$, so the variance ratio exceeds the critical value: with a 20 % risk the **operator differences are systematic**, not random. The process needs operator-procedure review." }
+    ],
+    "method": "Column means → between-MS $=\\text{VAR.S(means)}\\times10=2.611\\times10^{-5}$; within-MS $=$ avg column variance $=4.858\\times10^{-6}$. $F=5.38$, critical $F_{0.2}(4,45)=1.565$. $F>F_{crit}$ ⇒ systematic operator effect (risk 20 %)."
+  },
+  {
+    "id": "da-ftest-pvalue",
+    "title": "ANOVA decision via the p-value",
+    "prompt": "Same ANOVA outcome, read the other way. Given the variance ratio $F=5.376$ with $df_1=4$ (between) and $df_2=45$ (within), compute the **right-tail p-value** $P(F_{4,45}>5.376)$ and decide at a 20 % risk.",
+    "hint": "p = F.DIST.RT(F, df1, df2). Reject H0 if p < α (here α = 0.20).",
+    "given": {
+      "A1": "F-test p-value",
+      "A3": "F ratio =", "C3": 5.3756688259798135,
+      "A4": "df1 (between) =", "C4": 4,
+      "A5": "df2 (within) =", "C5": 45,
+      "A6": "Risk α =", "C6": 0.2,
+      "A8": "p-value =",
+      "A9": "Decision ="
+    },
+    "checks": [
+      { "cell": "C8", "label": "p-value", "expected": 0.00126, "tol": 0.0001, "hintFormula": "=F.DIST.RT(C3,C4,C5)", "teach": "$p=P(F_{4,45}>5.376)=0.00126$: only a 0.13 % chance of an $F$ this large if operators truly had no effect. F.DIST.RT gives the right-tail (upper) probability directly." },
+      { "cell": "C9", "label": "Decision", "expected": "Reject H0", "hintFormula": "=IF(C8<C6,\"Reject H0\",\"Do not reject H0\")", "teach": "$p=0.00126 < 0.20$, so we **reject** $H_0$ (no operator effect): the effect is systematic. The p-value and critical-value methods always agree — $p<\\alpha$ exactly when $F>F_{crit}$." }
+    ],
+    "method": "$p=\\text{F.DIST.RT}(5.376,4,45)=0.00126$. Since $p<\\alpha=0.20$, reject the null of equal operator means: the operator effect is systematic."
+  },
+  {
+    "id": "da-regression",
+    "title": "Linear regression — least-squares slope, intercept, prediction",
+    "prompt": "A calibration experiment relates the controlled variable $t$ (temperature, °C, in **A2:A7**) to the response $x$ (output, mV, in **B2:B7**). Fit the least-squares line $x=a+b\\,t$.\n\nThere is no SLOPE function here, so build it from sums: with $\\bar t,\\bar x$ the means,\n$$b=\\frac{\\sum (t_i-\\bar t)(x_i-\\bar x)}{\\sum (t_i-\\bar t)^2},\\qquad a=\\bar x-b\\,\\bar t.$$\nHelper columns are provided in **E** (cross-products) and **F** (squared deviations). Then predict $x$ at $t=25$ and the residual of the $t=20$ point.",
+    "hint": "Slope b = SUM(cross-products)/SUM(squared deviations). Intercept a = x̄ − b·t̄. Predicted x = a + b·t.",
+    "given": {
+      "A1": "t [°C]", "B1": "x [mV]",
+      "A2": 0, "B2": 0.0,
+      "A3": 10, "B3": 0.40,
+      "A4": 20, "B4": 0.80,
+      "A5": 30, "B5": 1.21,
+      "A6": 40, "B6": 1.61,
+      "A7": 50, "B7": 2.00,
+      "E1": "(t−t̄)(x−x̄)", "F1": "(t−t̄)²",
+      "D1": "n =",
+      "D2": "t̄ =",
+      "D3": "x̄ =",
+      "D4": "Σ cross =",
+      "D5": "Σ sq dev =",
+      "D6": "slope  b =",
+      "D7": "intercept  a =",
+      "D8": "predicted x(25) =",
+      "D9": "residual at t=20 ="
+    },
+    "checks": [
+      { "cell": "G1", "label": "n", "expected": 6, "hintFormula": "=COUNT(A2:A7)", "teach": "Six calibration points." },
+      { "cell": "G2", "label": "t̄", "expected": 25, "tol": 0.001, "hintFormula": "=AVERAGE(A2:A7)", "teach": "$\\bar t=25$ °C — the centroid the regression line must pass through." },
+      { "cell": "G3", "label": "x̄", "expected": 1.003333, "tol": 0.0001, "hintFormula": "=AVERAGE(B2:B7)", "teach": "$\\bar x=1.0033$ mV. The line always passes through $(\\bar t,\\bar x)$." },
+      { "cell": "E2", "label": "cross-product row 1", "expected": 25.083, "tol": 0.01, "hintFormula": "=(A2-$G$2)*(B2-$G$3)", "teach": "$(t_1-\\bar t)(x_1-\\bar x)=(0-25)(0-1.0033)=25.08$. Summing these over all rows gives the numerator of the slope." },
+      { "cell": "F2", "label": "squared deviation row 1", "expected": 625, "tol": 0.01, "hintFormula": "=(A2-$G$2)^2", "teach": "$(t_1-\\bar t)^2=625$. Their sum is the slope denominator and measures how spread out the inputs are." },
+      { "cell": "E3", "label": "cross-product row 2", "expected": 9.05, "tol": 0.01, "hintFormula": "=(A3-$G$2)*(B3-$G$3)", "teach": "Row 2: $(10-25)(0.40-1.0033)=9.05$." },
+      { "cell": "F3", "label": "squared deviation row 2", "expected": 225, "tol": 0.01, "hintFormula": "=(A3-$G$2)^2", "teach": "Row 2: $(10-25)^2=225$." },
+      { "cell": "E4", "label": "cross-product row 3", "expected": 1.0167, "tol": 0.01, "hintFormula": "=(A4-$G$2)*(B4-$G$3)", "teach": "Row 3: $(20-25)(0.80-1.0033)=1.017$." },
+      { "cell": "F4", "label": "squared deviation row 3", "expected": 25, "tol": 0.01, "hintFormula": "=(A4-$G$2)^2", "teach": "Row 3: $(20-25)^2=25$." },
+      { "cell": "E5", "label": "cross-product row 4", "expected": 1.0333, "tol": 0.01, "hintFormula": "=(A5-$G$2)*(B5-$G$3)", "teach": "Row 4: $(30-25)(1.21-1.0033)=1.033$." },
+      { "cell": "F5", "label": "squared deviation row 4", "expected": 25, "tol": 0.01, "hintFormula": "=(A5-$G$2)^2", "teach": "Row 4: $(30-25)^2=25$." },
+      { "cell": "E6", "label": "cross-product row 5", "expected": 9.1, "tol": 0.01, "hintFormula": "=(A6-$G$2)*(B6-$G$3)", "teach": "Row 5: $(40-25)(1.61-1.0033)=9.10$." },
+      { "cell": "F6", "label": "squared deviation row 5", "expected": 225, "tol": 0.01, "hintFormula": "=(A6-$G$2)^2", "teach": "Row 5: $(40-25)^2=225$." },
+      { "cell": "E7", "label": "cross-product row 6", "expected": 24.917, "tol": 0.01, "hintFormula": "=(A7-$G$2)*(B7-$G$3)", "teach": "Row 6: $(50-25)(2.00-1.0033)=24.92$." },
+      { "cell": "F7", "label": "squared deviation row 6", "expected": 625, "tol": 0.01, "hintFormula": "=(A7-$G$2)^2", "teach": "Row 6: $(50-25)^2=625$." },
+      { "cell": "G4", "label": "Σ cross", "expected": 70.2, "tol": 0.01, "hintFormula": "=SUM(E2:E7)", "teach": "$\\sum(t_i-\\bar t)(x_i-\\bar x)=70.2$ — the covariation of $t$ and $x$." },
+      { "cell": "G5", "label": "Σ sq dev", "expected": 1750, "tol": 0.01, "hintFormula": "=SUM(F2:F7)", "teach": "$\\sum(t_i-\\bar t)^2=1750$." },
+      { "cell": "G6", "label": "slope b", "expected": 0.040114, "tol": 0.00001, "hintFormula": "=G4/G5", "teach": "$b=\\dfrac{70.2}{1750}=0.04011$ mV/°C — the sensitivity of the instrument." },
+      { "cell": "G7", "label": "intercept a", "expected": 0.000476, "tol": 0.0001, "hintFormula": "=G3-G6*G2", "teach": "$a=\\bar x-b\\bar t=1.0033-0.04011\\cdot25=0.00048$ mV — essentially zero offset, as expected for a good sensor." },
+      { "cell": "G8", "label": "predicted x(25)", "expected": 1.003333, "tol": 0.0005, "hintFormula": "=G7+G6*25", "teach": "$\\hat x(25)=a+b\\cdot25=1.0033$ mV. At $t=\\bar t$ the prediction equals $\\bar x$ — a useful sanity check." },
+      { "cell": "G9", "label": "residual at t=20", "expected": -0.0023, "tol": 0.001, "hintFormula": "=B4-(G7+G6*20)", "teach": "Residual $=x_{obs}-\\hat x=0.80-(a+20b)=0.80-0.8023=-0.0023$ mV. Residuals should scatter randomly around 0 with no trend; a pattern means the linear model is inadequate." }
+    ],
+    "method": "$\\bar t=25,\\ \\bar x=1.0033$. $b=\\sum(t-\\bar t)(x-\\bar x)/\\sum(t-\\bar t)^2=70.2/1750=0.04011$; $a=\\bar x-b\\bar t=0.00048$. Prediction $\\hat x(25)=1.0033$; residual at $t=20$ is $0.80-0.8023=-0.0023$ mV."
+  },
+  {
+    "id": "da-es01-stats",
+    "title": "Es01 worked example — descriptive statistics of the raw data",
+    "prompt": "This is the **real lab dataset (Es01)**. Five operators each measured the same part **ten** times; the **50 raw readings** (in mm) are stacked in **A2:A51** (Operator 1 first, then 2, 3, 4, 5).\n\nBefore any cleaning, characterize the raw sample: the **count** $n$, the **mean** $\\bar x$, the **sample standard deviation** $s$ (STDEV.S), the **minimum**, **maximum** and the two **quartiles** $Q_1$, $Q_3$. These exact numbers are what the workbook's *Data* sheet reports and they feed the Chauvenet step next.",
+    "hint": "Use STDEV.S (the n−1 sample form). QUARTILE's second argument is 1 for Q1, 3 for Q3.",
+    "given": {
+      "A1": "Es01 raw measurements [mm] — 5 operators × 10",
+      "A2": 4.5038, "A3": 4.5051000000000005, "A4": 4.5037, "A5": 4.4988, "A6": 4.5023, "A7": 4.5062999999999995, "A8": 4.507999999999999, "A9": 4.505800000000001, "A10": 4.5031, "A11": 4.5084,
+      "A12": 4.504, "A13": 4.5025, "A14": 4.5101, "A15": 4.5025, "A16": 4.5046, "A17": 4.502000000000001, "A18": 4.5046, "A19": 4.5085, "A20": 4.505599999999999, "A21": 4.5037,
+      "A22": 4.506, "A23": 4.504099999999999, "A24": 4.502800000000001, "A25": 4.504899999999999, "A26": 4.5025, "A27": 4.503, "A28": 4.507300000000001, "A29": 4.506500000000001, "A30": 4.507099999999999, "A31": 4.506399999999999,
+      "A32": 4.5092, "A33": 4.510400000000001, "A34": 4.510999999999999, "A35": 4.508699999999999, "A36": 4.5047, "A37": 4.5076, "A38": 4.505599999999999, "A39": 4.5113, "A40": 4.5068, "A41": 4.5093,
+      "A42": 4.5053, "A43": 4.5076, "A44": 4.5113, "A45": 4.5112000000000005, "A46": 4.506600000000001, "A47": 4.506500000000001, "A48": 4.5139, "A49": 4.506399999999999, "A50": 4.506500000000001, "A51": 4.505699999999999,
+      "C1": "Number of data  n =",
+      "C2": "Mean  x̄ [mm] =",
+      "C3": "Sample st. dev.  s [mm] =",
+      "C4": "Minimum [mm] =",
+      "C5": "Maximum [mm] =",
+      "C6": "First quartile  Q1 [mm] =",
+      "C7": "Third quartile  Q3 [mm] ="
+    },
+    "checks": [
+      { "cell": "D1", "label": "Count n", "expected": 50, "hintFormula": "=COUNT(A2:A51)", "teach": "The whole experiment has $n=50$ data (5 operators $\\times$ 10 measurements). Every $1/(4n)$ and degrees-of-freedom term downstream uses this." },
+      { "cell": "D2", "label": "Mean x̄", "expected": 4.506192, "tol": 0.000001, "hintFormula": "=AVERAGE(A2:A51)", "teach": "$\\bar x=\\frac1n\\sum x_i = 4.506192\\ \\text{mm}$ — the *raw* mean, computed before any outlier is removed. This is the centre used to build the Chauvenet limits.", "unit": "mm" },
+      { "cell": "D3", "label": "St. dev. s", "expected": 0.0029866943025931734, "tol": 0.0000001, "hintFormula": "=STDEV.S(A2:A51)", "teach": "**STDEV.S** divides by $n-1$ and estimates $\\sigma$ from a sample: $s=0.0029867$ mm. The single most common slip is STDEV.P (divide by $n$), which under-states the spread.", "unit": "mm" },
+      { "cell": "D4", "label": "Minimum", "expected": 4.4988, "hintFormula": "=MIN(A2:A51)", "teach": "The smallest reading is **4.4988** mm (Operator 1, measurement 4) — a candidate low outlier.", "unit": "mm" },
+      { "cell": "D5", "label": "Maximum", "expected": 4.5139, "hintFormula": "=MAX(A2:A51)", "teach": "The largest reading is **4.5139** mm (Operator 5, measurement 7) — a candidate high outlier. Chauvenet will tell us which, if either, to discard.", "unit": "mm" },
+      { "cell": "D6", "label": "Q1", "expected": 4.504025, "tol": 0.000001, "hintFormula": "=QUARTILE(A2:A51,1)", "teach": "$Q_1=4.504025$ mm: a quarter of the data lie below it.", "unit": "mm" },
+      { "cell": "D7", "label": "Q3", "expected": 4.5079, "tol": 0.000001, "hintFormula": "=QUARTILE(A2:A51,3)", "teach": "$Q_3=4.5079$ mm: three quarters lie below it. The middle 50 % of the data live in $[Q_1,Q_3]$.", "unit": "mm" }
+    ],
+    "method": "On the raw 50 readings: $n=$ COUNT $=50$; $\\bar x=$ AVERAGE $=4.506192$ mm; $s=$ STDEV.S $=0.0029867$ mm; min $=4.4988$, max $=4.5139$; $Q_1=4.504025$, $Q_3=4.5079$ mm. These reproduce the workbook's *Data* sheet exactly."
+  },
+  {
+    "id": "da-es01-chauvenet",
+    "title": "Es01 worked example — Chauvenet outlier check on the raw data",
+    "prompt": "Run **Chauvenet's exclusion principle** on the same 50 raw readings (**A2:A51**), exactly as the workbook's *Escl.* sheet does it.\n\nThe per-tail probability is $P_{xL}=\\dfrac{1}{4n}$. The workbook builds the exclusion limits directly with **NORM.INV**, which already embeds the raw mean and st. dev.:\n$$x_L^{min}=\\text{NORM.INV}\\!\\left(\\tfrac{1}{4n},\\bar x,s\\right),\\qquad x_L^{max}=\\text{NORM.INV}\\!\\left(1-\\tfrac{1}{4n},\\bar x,s\\right).$$\nAny reading outside $[x_L^{min},x_L^{max}]$ is a measurement accident to be excluded.",
+    "hint": "PxL = 1/(4n) = 1/200 = 0.005. NORM.INV(p, mean, s) gives the limit straight away. Compare MIN and MAX against the limits.",
+    "given": {
+      "A1": "Es01 raw measurements [mm]",
+      "A2": 4.5038, "A3": 4.5051000000000005, "A4": 4.5037, "A5": 4.4988, "A6": 4.5023, "A7": 4.5062999999999995, "A8": 4.507999999999999, "A9": 4.505800000000001, "A10": 4.5031, "A11": 4.5084,
+      "A12": 4.504, "A13": 4.5025, "A14": 4.5101, "A15": 4.5025, "A16": 4.5046, "A17": 4.502000000000001, "A18": 4.5046, "A19": 4.5085, "A20": 4.505599999999999, "A21": 4.5037,
+      "A22": 4.506, "A23": 4.504099999999999, "A24": 4.502800000000001, "A25": 4.504899999999999, "A26": 4.5025, "A27": 4.503, "A28": 4.507300000000001, "A29": 4.506500000000001, "A30": 4.507099999999999, "A31": 4.506399999999999,
+      "A32": 4.5092, "A33": 4.510400000000001, "A34": 4.510999999999999, "A35": 4.508699999999999, "A36": 4.5047, "A37": 4.5076, "A38": 4.505599999999999, "A39": 4.5113, "A40": 4.5068, "A41": 4.5093,
+      "A42": 4.5053, "A43": 4.5076, "A44": 4.5113, "A45": 4.5112000000000005, "A46": 4.506600000000001, "A47": 4.506500000000001, "A48": 4.5139, "A49": 4.506399999999999, "A50": 4.506500000000001, "A51": 4.505699999999999,
+      "C1": "n =",
+      "C2": "Raw mean  x̄ [mm] =",
+      "C3": "Raw st. dev.  s [mm] =",
+      "C4": "Probability  PxL = 1/(4n) =",
+      "C5": "Lower limit  xL min [mm] =",
+      "C6": "Upper limit  xL max [mm] =",
+      "C7": "Smallest reading  min [mm] =",
+      "C8": "Largest reading  max [mm] =",
+      "C9": "Any outlier?",
+      "C10": "Outlier value [mm] ="
+    },
+    "checks": [
+      { "cell": "D1", "label": "n", "expected": 50, "hintFormula": "=COUNT(A2:A51)", "teach": "$n=50$ over the whole experiment (5 operators $\\times$ 10 measurements)." },
+      { "cell": "D2", "label": "Raw mean", "expected": 4.506192, "tol": 0.000001, "hintFormula": "=AVERAGE(A2:A51)", "teach": "The Chauvenet limits use the **raw** mean and st. dev., computed before removing anything: $\\bar x=4.506192$ mm.", "unit": "mm" },
+      { "cell": "D3", "label": "Raw st. dev.", "expected": 0.0029866943025931734, "tol": 0.0000001, "hintFormula": "=STDEV.S(A2:A51)", "teach": "$s=0.0029867$ mm (STDEV.S). Using STDEV.P here would shift both limits and is a marks-loser.", "unit": "mm" },
+      { "cell": "D4", "label": "PxL", "expected": 0.005, "tol": 0.00001, "hintFormula": "=1/(4*D1)", "teach": "Chauvenet's whole-experiment risk $\\frac{1}{2n}$ is split over the two tails, so each tail carries $P_{xL}=\\frac{1}{4n}=\\frac{1}{200}=0.005$. Report it as a probability, not a percentage." },
+      { "cell": "D5", "label": "Lower limit", "expected": 4.498498785294638, "tol": 0.000001, "hintFormula": "=NORM.INV(D4,D2,D3)", "teach": "NORM.INV($0.005,\\bar x,s$) returns the value with 0.5 % of the normal mass below it: $x_L^{min}=4.498499$ mm. Equivalently $\\bar x-z\\,s$ with $z=\\text{NORM.S.INV}(0.995)=2.576$.", "unit": "mm" },
+      { "cell": "D6", "label": "Upper limit", "expected": 4.513885214705361, "tol": 0.000001, "hintFormula": "=NORM.INV(1-D4,D2,D3)", "teach": "NORM.INV($0.995,\\bar x,s$) $=x_L^{max}=4.513885$ mm $=\\bar x+2.576\\,s$. Readings must lie inside $[4.498499,\\,4.513885]$.", "unit": "mm" },
+      { "cell": "D7", "label": "min", "expected": 4.4988, "hintFormula": "=MIN(A2:A51)", "teach": "The smallest reading 4.4988 mm is **above** the lower limit 4.498499 — only just — so it is **kept**.", "unit": "mm" },
+      { "cell": "D8", "label": "max", "expected": 4.5139, "hintFormula": "=MAX(A2:A51)", "teach": "The largest reading 4.5139 mm **exceeds** the upper limit 4.513885, so it is the suspect.", "unit": "mm" },
+      { "cell": "D9", "label": "Outlier?", "expected": "Yes", "hintFormula": "=IF(OR(MIN(A2:A51)<D5,MAX(A2:A51)>D6),\"Yes\",\"No\")", "teach": "$4.5139 > 4.513885$, so **Yes** — there is exactly one outlier (the maximum). Note the minimum 4.4988 is *not* excluded: Chauvenet is borderline and only the high tail crosses the limit, matching the workbook's *Escl.* sheet." },
+      { "cell": "D10", "label": "Outlier value", "expected": 4.5139, "hintFormula": "=IF(MAX(A2:A51)>D6,MAX(A2:A51),IF(MIN(A2:A51)<D5,MIN(A2:A51),0))", "teach": "The excluded value is the **maximum, 4.5139 mm** (Operator 5, measurement 7). It is removed and the statistics recomputed next.", "unit": "mm" }
+    ],
+    "method": "$n=50$, raw $\\bar x=4.506192$, $s=0.0029867$ mm. $P_{xL}=1/(4n)=0.005$; limits $\\text{NORM.INV}(0.005/0.995,\\bar x,s)=[4.498499,\\,4.513885]$ mm. The maximum $4.5139>4.513885$ → **one outlier, value 4.5139 mm**; the minimum 4.4988 stays inside the band. This reproduces the *Escl.* sheet decision."
+  },
+  {
+    "id": "da-es01-after",
+    "title": "Es01 worked example — recompute after outlier management",
+    "prompt": "Outlier management is done by **substitution**: the rejected reading 4.5139 mm is replaced by the mean of the surviving values, the workbook's standard fix. Column **A2:A51** now holds the **cleaned** Es01 set (both the high outlier 4.5139 and the borderline low 4.4988 have been replaced by the recomputed mean, exactly as the *after-outlier-management* workbook does it).\n\nRecompute $n$, the **cleaned mean** $\\bar x$ and the **cleaned st. dev.** $s$. These are the numbers every later stage (frequency distribution, $\\chi^2$, NPP, $t$-test) uses.",
+    "hint": "Same AVERAGE / STDEV.S as before, now on the cleaned column. The spread should shrink once the outlier is gone.",
+    "given": {
+      "A1": "Es01 cleaned measurements [mm] — after outlier management",
+      "A2": 4.5038, "A3": 4.5051000000000005, "A4": 4.5037, "A5": 4.506182340691377, "A6": 4.5023, "A7": 4.5062999999999995, "A8": 4.507999999999999, "A9": 4.505800000000001, "A10": 4.5031, "A11": 4.5084,
+      "A12": 4.504, "A13": 4.5025, "A14": 4.5101, "A15": 4.5025, "A16": 4.5046, "A17": 4.502000000000001, "A18": 4.5046, "A19": 4.5085, "A20": 4.505599999999999, "A21": 4.5037,
+      "A22": 4.506, "A23": 4.504099999999999, "A24": 4.502800000000001, "A25": 4.504899999999999, "A26": 4.5025, "A27": 4.503, "A28": 4.507300000000001, "A29": 4.506500000000001, "A30": 4.507099999999999, "A31": 4.506399999999999,
+      "A32": 4.5092, "A33": 4.510400000000001, "A34": 4.510999999999999, "A35": 4.508699999999999, "A36": 4.5047, "A37": 4.5076, "A38": 4.505599999999999, "A39": 4.5113, "A40": 4.5068, "A41": 4.5093,
+      "A42": 4.5053, "A43": 4.5076, "A44": 4.5113, "A45": 4.5112000000000005, "A46": 4.506600000000001, "A47": 4.506500000000001, "A48": 4.506034693877548, "A49": 4.506399999999999, "A50": 4.506500000000001, "A51": 4.505699999999999,
+      "C1": "Number of data  n =",
+      "C2": "Cleaned mean  x̄ [mm] =",
+      "C3": "Cleaned st. dev.  s [mm] =",
+      "C4": "Maximum [mm] =",
+      "C5": "Minimum [mm] ="
+    },
+    "checks": [
+      { "cell": "D1", "label": "n", "expected": 50, "hintFormula": "=COUNT(A2:A51)", "teach": "The substitution method keeps $n=50$: the suspect readings are replaced, not deleted, so the count is unchanged." },
+      { "cell": "D2", "label": "Cleaned mean", "expected": 4.506182340691378, "tol": 0.000001, "hintFormula": "=AVERAGE(A2:A51)", "teach": "The cleaned mean is $\\bar x=4.5061823$ mm — barely moved from the raw 4.506192, because the substituted values sit at the mean. This is the value used for the frequency distribution and $\\chi^2$.", "unit": "mm" },
+      { "cell": "D3", "label": "Cleaned st. dev.", "expected": 0.0025677038317287195, "tol": 0.0000001, "hintFormula": "=STDEV.S(A2:A51)", "teach": "The cleaned st. dev. drops to $s=0.0025677$ mm (from 0.0029867): removing the extreme reading **shrinks the spread**, exactly what outlier management should do. Compare with the workbook's *Data* sheet after cleaning.", "unit": "mm" },
+      { "cell": "D4", "label": "Maximum", "expected": 4.5113, "hintFormula": "=MAX(A2:A51)", "teach": "The new maximum is 4.5113 mm — the former outlier 4.5139 is gone, and 4.5113 sits comfortably inside the (recomputed) Chauvenet band, so a second pass excludes nothing.", "unit": "mm" },
+      { "cell": "D5", "label": "Minimum", "expected": 4.502000000000001, "tol": 0.000001, "hintFormula": "=MIN(A2:A51)", "teach": "The new minimum is 4.5020 mm. Both ends now lie inside the limits, so the cleaning is complete.", "unit": "mm" }
+    ],
+    "method": "On the cleaned column: $n=50$ (substitution, not deletion); $\\bar x=$ AVERAGE $=4.5061823$ mm; $s=$ STDEV.S $=0.0025677$ mm — down from 0.0029867. Max $=4.5113$, min $=4.5020$, both inside the band. These reproduce the *after-outlier-management* Data sheet and feed every later stage."
+  },
+  {
+    "id": "da-es01-classes",
+    "title": "Es01 worked example — frequency-distribution set-up",
+    "prompt": "With the cleaned statistics ($n=50$, $\\bar x=4.5061823$ mm, $s=0.0025677$ mm, all given), set up the frequency distribution the workbook's *Fr. Distr.* sheet uses to test normality.\n\nThe **examined field** spans $\\bar x\\pm4s$, the **number of classes** is $\\sqrt{n}+4$ (rounded to a whole number in practice), and the **class width** is the field length divided by the number of classes.",
+    "hint": "Field = mean ± 4·s. Number of classes = SQRT(n)+4 ≈ 11. Class width = (fieldMax − fieldMin) / 11.",
+    "given": {
+      "A1": "Es01 frequency-distribution set-up (cleaned data)",
+      "A3": "n =", "C3": 50,
+      "A4": "Cleaned mean  x̄ [mm] =", "C4": 4.506182340691378,
+      "A5": "Cleaned st. dev.  s [mm] =", "C5": 0.0025677038317287195,
+      "A7": "Min of examined field  x̄ − 4s [mm] =",
+      "A8": "Max of examined field  x̄ + 4s [mm] =",
+      "A9": "Number of classes  √n + 4 =",
+      "A10": "Number of classes (rounded) =",
+      "A11": "Class width [mm] ="
+    },
+    "checks": [
+      { "cell": "C7", "label": "Field min", "expected": 4.4959115253644635, "tol": 0.0000001, "hintFormula": "=C4-4*C5", "teach": "The field is taken $\\pm4s$ around the mean so essentially all of a normal sample falls inside: $x_{min}=\\bar x-4s=4.4959115$ mm.", "unit": "mm" },
+      { "cell": "C8", "label": "Field max", "expected": 4.516453156018293, "tol": 0.0000001, "hintFormula": "=C4+4*C5", "teach": "$x_{max}=\\bar x+4s=4.5164532$ mm. The field length is $8s$.", "unit": "mm" },
+      { "cell": "C9", "label": "Number of classes (raw)", "expected": 11.071067811865476, "tol": 0.0001, "hintFormula": "=SQRT(C3)+4", "teach": "The professor's empirical rule $\\sqrt{n}+4$ gives $\\sqrt{50}+4\\approx11.07$. Too few classes hides structure; too many leaves empty bins that break $\\chi^2$." },
+      { "cell": "C10", "label": "Number of classes (rounded)", "expected": 11, "hintFormula": "=ROUND(SQRT(C3)+4,0)", "teach": "Rounded to a whole number this is **11 classes**, exactly the workbook's choice for Es01." },
+      { "cell": "C11", "label": "Class width", "expected": 0.0018674209685299364, "tol": 0.0000001, "hintFormula": "=(C8-C7)/C10", "teach": "Width $=\\dfrac{x_{max}-x_{min}}{\\#classes}=\\dfrac{8s}{11}=0.0018674$ mm. Each class then runs from a lower bound to lower + width, and the observed counts are compared with $n[\\Phi(\\text{to})-\\Phi(\\text{from})]$ in the $\\chi^2$ test.", "unit": "mm" }
+    ],
+    "method": "Field $=[\\bar x-4s,\\ \\bar x+4s]=[4.4959115,\\ 4.5164532]$ mm. Classes $=\\sqrt{50}+4\\approx11.07\\to11$. Width $=(4.5164532-4.4959115)/11=0.0018674$ mm. These reproduce the *Fr. Distr.* sheet of the Es01 workbook."
+  }
+]

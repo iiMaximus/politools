@@ -1,0 +1,306 @@
+{
+  "title": "Type B Uncertainty: Standard Uncertainty from Prior Knowledge",
+  "summary": "The GUM splits every uncertainty contribution into two families by *how it is evaluated*: **Type A** (statistical analysis of repeated observations) and **Type B** (any other means — a certificate, a handbook value, a resolution, an interval from experience). Both end as a **standard uncertainty** $u$, an (equivalent) standard deviation. This lesson teaches how to turn a known variability interval $\\pm a$ into $u$: rectangular/uniform $u=a/\\sqrt3$, U-shaped/arcsine $u=a/\\sqrt2$, triangular $u=a/\\sqrt6$, and a quoted expanded value $u=U/k$; how to read a bias, a tolerance, or a resolution; and what degrees of freedom to assign a Type B contribution.",
+  "minutes": 35,
+  "objectives": [
+    "State the GUM definitions of Type A and Type B evaluation and explain that the classification refers to the *method*, not to whether the error is random or systematic.",
+    "Recognise that both Type A and Type B contributions are expressed as a standard uncertainty $u$ (an equivalent standard deviation).",
+    "Convert a known variability interval $\\pm a$ into a standard uncertainty with the right divisor: rectangular $a/\\sqrt3$, arcsine (U-shaped) $a/\\sqrt2$, triangular $a/\\sqrt6$.",
+    "Convert a quoted bias / tolerance / accuracy class to a half-width $a$ and then to $u^2=a^2/3$ (rectangular by default).",
+    "Treat an instrument resolution $r$ as a rectangular error of half-width $a=r/2$, giving $u=(r/2)/\\sqrt3$.",
+    "Convert a quoted *expanded* uncertainty back to a standard one with $u=U/k$, recovering $k$ from the Student-$t$ when only the confidence and the d.o.f. are given.",
+    "Assign conventional degrees of freedom to a Type B contribution (100 / 30 / 15 by reliability; recommended $\\infty$ by GUM)."
+  ],
+  "blocks": [
+    { "kind": "heading", "text": "1. Why a second way of evaluating uncertainty" },
+    {
+      "kind": "prose",
+      "text": "The statistical procedure of the previous lessons — take a **sample**, compute its **average** and **variance**, use them as estimates of the population — has two heavy limitations:\n\n- it needs a **large number** of experimental data to give adequate estimates;\n- the sample must be **representative**, i.e. it must contain information on *all* the factors that affect the result.\n\nThis makes a purely statistical approach **expensive** and **limited to experts**. To overcome this, the *Guide to the expression of uncertainty in measurement* (**GUM**) introduces a scheme based on **two different types of evaluation** of uncertainty."
+    },
+    {
+      "kind": "definition",
+      "term": "Type A evaluation",
+      "text": "An uncertainty contribution evaluated by the **statistical analysis of repeated observations**. You compute a sample standard deviation $s$; if the reported result is the **average** of $n$ readings, its standard uncertainty is $u=s/\\sqrt n$ with $\\nu=n-1$ degrees of freedom. (GUM: “those evaluated using statistical methods”.)"
+    },
+    {
+      "kind": "definition",
+      "term": "Type B evaluation",
+      "text": "An uncertainty contribution evaluated by **any other means**: prior knowledge in the technical-scientific literature, a calibration certificate, an instrument resolution, an accuracy class, a tolerance standard, or an interval estimated from experience. (GUM: “those evaluated by other methods”.) You *assume* a probability distribution over the variability interval and derive its equivalent variance."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Both end as a standard uncertainty u",
+      "text": "In **both** cases the aim is the **variance** (and hence the standard deviation) of the factor. Type A and Type B contributions are alike called **standard uncertainties**, symbol $u$. The whole point of Type B is to produce an **equivalent standard deviation** so that everything can later be combined with the same statistical machinery."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Type A/B is NOT random vs systematic",
+      "text": "The two types refer **only to the method used for the evaluation**, *not* to the object of the measurement and *not* to whether the error is random or systematic. (A systematic bias can be evaluated as Type A from a calibration, or as Type B from an accuracy class.) The link “random = Type A, systematic = Type B” is a common exam trap. The GUM only notes that random effects are *mostly* — not always — evaluated as Type A."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Neither type is automatically better",
+      "text": "GUM E.4.3: *evaluations based on repeated observations are not necessarily superior to those obtained by other means.* When the number of observations is limited, a Type B component may be **better known** than a Type A one. The same factor can be obtained either way: replicate the measurement and compute a variance (Type A), or take the value from previous experience (Type B)."
+    },
+    { "kind": "heading", "text": "2. Two everyday sources of a Type B variability" },
+    {
+      "kind": "prose",
+      "text": "Two cases recur so often that they deserve a rule of thumb.\n\n**(1) A number given without any stated variability.** If a value is quoted with no tolerance or uncertainty, assume it is *written correctly*: the **number of significant digits** is representative of the variability, which therefore affects only the **least significant digit**. For technical instruments it is reasonable to take a variability of **$\\pm 2$ units of the least significant digit**.\n\n**(2) A declared instrument bias.** The bias may come (a) from a **calibration certificate** giving the input–output characteristic and its uncertainty (then you *correct* the reading and the residual is Type A), or (b) only as a **declaration of conformity** to a standard or an **accuracy class** — then you know only a *variability interval* in which the bias can fall, and you must do a **Type B** evaluation."
+    },
+    {
+      "kind": "example",
+      "title": "Micrometer with a declaration of conformity",
+      "text": "A micrometer with a $25$ mm range, declared conforming to ISO 3611:2010, may have a **maximum error anywhere in $\\pm 4\\ \\mu$m**. This interval does **not** describe the actual spread of repeated readings — it describes the spread of the *characteristics of this type of instrument*. With no information on where inside $\\pm 4\\ \\mu$m the bias sits, you treat it as a Type B contribution with half-width $a=4\\ \\mu$m and a uniform distribution, so $u=a/\\sqrt3=4/\\sqrt3\\approx 2.31\\ \\mu$m."
+    },
+    { "kind": "heading", "text": "3. From an interval ±a to a standard uncertainty: three distributions" },
+    {
+      "kind": "prose",
+      "text": "Type B information almost always arrives as a **variability interval** $\\pm a$. We must turn it into an **equivalent variance** — the variance of the distribution of the factor inside that range. Because uncertainty is only known to a coarse approximation, only **three** shapes are used: **uniform (rectangular)**, **arcsine (U-shaped)** and **triangular**. Each gives a different divisor of the half-width $a$."
+    },
+    {
+      "kind": "definition",
+      "term": "Uniform (rectangular) distribution",
+      "text": "Adopted when **nothing is known** about the behaviour of the factor inside its range $\\pm a$ — every value is equally likely. This is the **default**, and the one used for **reading resolution**, **handbook/tabled coefficients**, and **accuracy classes**."
+    },
+    {
+      "kind": "formula",
+      "tex": "u^2=\\frac{a^2}{3}\\qquad\\Rightarrow\\qquad u=\\frac{a}{\\sqrt3}",
+      "tag": "9.1",
+      "caption": "Equivalent variance of a uniform distribution of half-width $a$. Derived from $\\sigma^2=\\int_{-a}^{a}(x-\\mu)^2\\frac{1}{2a}\\,dx=\\frac{a^2}{3}$ (with $\\mu=0$ at the centre)."
+    },
+    {
+      "kind": "definition",
+      "term": "Arcsine (U-shaped) distribution",
+      "text": "Adopted for factors of **sinusoidal type** that linger near their extremes — e.g. the natural day–night swing of an **unconditioned** temperature, vibrations, oscillations. Random sampling in time lands more often near the maximum/minimum than near the centre, so the probability density is **higher at the edges** (U-shaped). With $\\theta=a\\sin(2\\pi t/T)$ one finds $P(\\theta)=\\dfrac{1}{\\pi\\sqrt{a^2-\\theta^2}}$."
+    },
+    {
+      "kind": "formula",
+      "tex": "u^2=\\frac{a^2}{2}\\qquad\\Rightarrow\\qquad u=\\frac{a}{\\sqrt2}",
+      "tag": "9.2",
+      "caption": "Equivalent variance of the arcsine (U-shaped) distribution. The piling-up of probability at the extremes makes this variance **larger** than the rectangular one for the same $a$ (divisor $\\sqrt2$, not $\\sqrt3$). In an uncertainty table this corresponds to the divisor $k_a=2$."
+    },
+    {
+      "kind": "definition",
+      "term": "Triangular distribution",
+      "text": "A third option — **not recommended for inexpert users** — adopted when, while knowing little, it is reasonable to suppose the **central value is more likely** than the edges. The density is a symmetric triangle over $\\pm a$."
+    },
+    {
+      "kind": "formula",
+      "tex": "u^2=\\frac{a^2}{6}\\qquad\\Rightarrow\\qquad u=\\frac{a}{\\sqrt6}",
+      "tag": "9.3",
+      "caption": "Equivalent variance of the triangular distribution of half-width $a$. Because probability is concentrated in the centre, this is the **smallest** of the three variances for the same $a$ ($\\sqrt6>\\sqrt3>\\sqrt2$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The divisor table — memorise it",
+      "text": "For a Type B input with half-width $a$:\n- **Rectangular / uniform**: $u=a/\\sqrt3$  (divisor factor $k_a=3$ on the variance) — the default, and for resolution and tabled values.\n- **Arcsine / U-shaped**: $u=a/\\sqrt2$  ($k_a=2$) — sinusoidal, unconditioned-temperature effects.\n- **Triangular**: $u=a/\\sqrt6$  ($k_a=6$) — when the centre is more likely.\n\nLargest $u$ first: arcsine $>$ rectangular $>$ triangular, for the same $a$."
+    },
+    { "kind": "heading", "text": "4. Resolution: half a step, rectangular" },
+    {
+      "kind": "prose",
+      "text": "The reading **resolution** $r$ is the archetypal rectangular Type B contribution. Suppose an analogue scale outputs a natural number. If you read “1”, the true measurand may lie **anywhere between 0.5 and 1.5**, with no reason to prefer any value — a uniform distribution. The **half-width** of that interval is $a=r/2$."
+    },
+    {
+      "kind": "formula",
+      "tex": "a=\\frac{r}{2},\\qquad u_{res}=\\frac{r/2}{\\sqrt3}=\\frac{r}{2\\sqrt3}",
+      "tag": "9.4",
+      "caption": "Standard uncertainty from a resolution $r$. Mind the half-step: the variability spans one resolution step $r$, so the half-width is $r/2$ — not $r$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Std-dev vs variance vs expanded vs half-width",
+      "text": "Read the wording of each input carefully:\n- a **standard deviation** is *already* $u$ (no divisor);\n- a **variance** needs a square root, $u=\\sqrt V$;\n- an **expanded uncertainty** is divided by its coverage factor, $u=U/k$;\n- a **maximum spread / range / tolerance / resolution** is a half-width and takes a distribution divisor ($\\sqrt3$, $\\sqrt2$ or $\\sqrt6$).\nConfusing these four is the single most common way to lose marks."
+    },
+    { "kind": "heading", "text": "5. From a quoted expanded uncertainty back to a standard one" },
+    {
+      "kind": "prose",
+      "text": "Calibration certificates usually quote an **expanded uncertainty** $U$ (a confidence half-width), not a standard one. Since $U=k\\,u$, recovering the standard uncertainty needed for a budget is just a division:"
+    },
+    {
+      "kind": "formula",
+      "tex": "u=\\frac{U}{k},\\qquad k=t_{1-\\alpha/2,\\,\\nu}=\\text{T.INV}\\!\\left(1-\\tfrac{1-P}{2},\\ \\nu\\right)",
+      "tag": "9.5",
+      "caption": "Recover the standard uncertainty from an expanded one. If the certificate gives a confidence level $P$ and degrees of freedom $\\nu$, the factor is the Student-$t$ quantile. If it only says “$2\\sigma$” / 95% with many d.o.f., use $k=2$."
+    },
+    {
+      "kind": "example",
+      "title": "A certificate bias with few measurements",
+      "text": "A certificate gives a bias as **$U=3.7\\ \\mu$m at 95% confidence, obtained on 4 measurements**. With $n=4$, the degrees of freedom are $\\nu=n-1=3$, so the factor is the Student-$t$ quantile $k=t_{0.975,3}=$ T.INV$(0.975,3)=3.18$ — **not** the asymptotic $1.96$. Hence $u=3.7/3.18\\approx1.16\\ \\mu$m. Using $1.96$ here would understate the standard uncertainty."
+    },
+    { "kind": "heading", "text": "6. Degrees of freedom for a Type B contribution" },
+    {
+      "kind": "prose",
+      "text": "Degrees of freedom measure the **reliability** of an uncertainty contribution: a Type A average has $\\nu=n-1$; a regression slope has $\\nu=n-n_p$ (data minus fitted parameters). Type B values carry no sample size, yet we still need a $\\nu$ for them, because the combination step (Welch–Satterthwaite) needs one per contribution.\n\nType B contributions are usually very **robust**: the GUM nominally recommends $\\nu=\\infty$. In practice it is reasonable to use a **finite** value reflecting how consolidated the information is."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Conventional Type B degrees of freedom",
+      "text": "By convention assign to a Type B (variability-interval) contribution:\n- **$\\nu=100$** when the information is *extremely consolidated*;\n- **$\\nu=30$** when *consolidated*;\n- **$\\nu=15$** when it is *to be checked*.\n(GUM nominally suggests $\\infty$; ~100 is a common working value.) A higher $\\nu$ means a more trusted contribution."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "According to the GUM, what distinguishes a **Type A** from a **Type B** uncertainty contribution?",
+        "options": [
+          { "id": "A", "content": "Type A is for random errors, Type B is for systematic errors" },
+          { "id": "B", "content": "Type A is evaluated by statistical analysis of repeated observations; Type B by any other means" },
+          { "id": "C", "content": "Type A is always larger than Type B" },
+          { "id": "D", "content": "Type A applies to the instrument, Type B to the measurand" }
+        ],
+        "correct": "B",
+        "explanation": "The classification is purely about the **method of evaluation**: statistical (Type A) vs any other means such as certificates, resolution, handbooks, experience (Type B). **A** is the classic trap — the types are explicitly *not* tied to random/systematic (random effects are only *mostly* Type A). **C** is false: GUM E.4.3 says neither is automatically superior. **D** invents a distinction; both refer to the evaluation method, not the object.",
+        "theory": "Type A = statistical analysis of repeated observations; Type B = any other means. Both produce a standard uncertainty $u$.",
+        "tags": ["type-a", "type-b", "definitions"]
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "An instrument's **reading resolution** is $r$. What standard uncertainty does it contribute, and from which distribution?",
+      "options": [
+        { "id": "A", "content": "$u=r/\\sqrt3$ — rectangular over the full step $r$" },
+        { "id": "B", "content": "$u=(r/2)/\\sqrt3$ — rectangular over half-width $a=r/2$" },
+        { "id": "C", "content": "$u=r/\\sqrt6$ — triangular over the full step $r$" },
+        { "id": "D", "content": "$u=r$ — the resolution is itself the standard uncertainty" }
+      ],
+      "correct": "B",
+      "explanation": "A reading can fall anywhere within one resolution step, so the error is **rectangular** with **half-width $a=r/2$**, giving $u=a/\\sqrt3=(r/2)/\\sqrt3$. **A** uses the full step as the half-width and double-counts the spread. **C** picks the wrong divisor — triangular is for a peaked, not a flat, density. **D** treats a half-width as a standard deviation, far too large.",
+      "theory": "Resolution: rectangular, half-width $a=r/2$, so $u=r/(2\\sqrt3)$.",
+      "tags": ["type-b", "resolution"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Which divisor turns a **triangular** half-width $a$ into a standard uncertainty?",
+      "options": [
+        { "id": "A", "content": "$\\sqrt2$" },
+        { "id": "B", "content": "$2$" },
+        { "id": "C", "content": "$\\sqrt6$" },
+        { "id": "D", "content": "$\\sqrt3$" }
+      ],
+      "correct": "C",
+      "explanation": "A symmetric triangular distribution of half-width $a$ has variance $a^2/6$, so $u=a/\\sqrt6$. **D** ($\\sqrt3$) is the **rectangular** divisor — a flatter density spreads more probability to the edges, giving a larger $u$. **A** ($\\sqrt2$) is the **arcsine/U-shaped** divisor. **B** is the *variance* factor $k_a$ of the arcsine case, not a standard-uncertainty divisor.",
+      "theory": "Divisors of the half-width: rectangular $\\sqrt3$, arcsine $\\sqrt2$, triangular $\\sqrt6$.",
+      "tags": ["type-b", "divisor"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Measurements are taken at random times over many days in a room **without temperature control**, where the temperature swings sinusoidally by $\\pm a$. Which distribution and standard uncertainty apply to the temperature?",
+      "options": [
+        { "id": "A", "content": "Arcsine (U-shaped), $u=a/\\sqrt2$" },
+        { "id": "B", "content": "Rectangular, $u=a/\\sqrt3$" },
+        { "id": "C", "content": "Triangular, $u=a/\\sqrt6$" },
+        { "id": "D", "content": "Normal, $u=a/2$" }
+      ],
+      "correct": "A",
+      "explanation": "A sinusoidal swing lingers near its extremes, so random-in-time sampling is **more likely** to catch the maximum/minimum — a **U-shaped (arcsine)** density, $u=a/\\sqrt2$. **B** (rectangular) would apply in a *conditioned* room where the trend is roughly flat across the band. **C** (triangular) assumes the centre is most likely — the opposite of a sinusoid. **D** invents a normal model with the wrong divisor.",
+      "theory": "Unconditioned, sinusoidal day–night temperature → arcsine, $u^2=a^2/2$. Conditioned → rectangular, $u^2=a^2/3$.",
+      "tags": ["type-b", "arcsine"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A calibration certificate gives a bias as **expanded uncertainty $U=3.7\\ \\mu$m at 95% confidence, on 4 measurements**. How do you obtain the standard uncertainty for the budget?",
+      "options": [
+        { "id": "A", "content": "$u=3.7\\ \\mu\\text{m}/\\sqrt3$ (treat it as rectangular)" },
+        { "id": "B", "content": "$u=3.7\\ \\mu\\text{m}$ (it is already standard)" },
+        { "id": "C", "content": "$u=3.7\\ \\mu\\text{m}\\,/\\,t_{0.975,3}$ with $t=\\text{T.INV}(0.975,3)=3.18$" },
+        { "id": "D", "content": "$u=3.7\\ \\mu\\text{m}\\,/\\,1.96$" }
+      ],
+      "correct": "C",
+      "explanation": "An *expanded* uncertainty is divided by its coverage factor, $u=U/k$. With only $n=4$ measurements the d.o.f. are $\\nu=3$, so $k$ is the Student-$t$ quantile $t_{0.975,3}=3.18$. **A** wrongly treats a certificate's expanded value as a rectangular half-width. **B** forgets to remove the coverage. **D** uses $1.96$, valid only for infinite d.o.f.; with $\\nu=3$ it badly understates $k$ (and thus inflates $u$ would be wrong direction — it understates $u$).",
+      "theory": "Expanded → standard: $u=U/k$, with $k=t_{1-\\alpha/2,\\nu}$ from T.INV when the certificate states a confidence and d.o.f.",
+      "tags": ["type-b", "expanded", "coverage"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A micrometer declared conforming to a standard may have its maximum error **anywhere in $\\pm 4\\ \\mu$m**. No further information is available. The standard uncertainty of this bias is closest to:",
+      "options": [
+        { "id": "A", "content": "$4.00\\ \\mu$m" },
+        { "id": "B", "content": "$2.31\\ \\mu$m" },
+        { "id": "C", "content": "$2.83\\ \\mu$m" },
+        { "id": "D", "content": "$1.63\\ \\mu$m" }
+      ],
+      "correct": "B",
+      "explanation": "“Anywhere in $\\pm 4\\ \\mu$m” with nothing else known → **rectangular**, half-width $a=4\\ \\mu$m, so $u=a/\\sqrt3=4/1.732=2.31\\ \\mu$m. **A** treats the half-width as the standard uncertainty (no divisor). **C** uses the arcsine divisor $\\sqrt2$ ($4/\\sqrt2=2.83$), wrong unless the cause is sinusoidal. **D** uses the triangular divisor $\\sqrt6$ ($4/\\sqrt6=1.63$), only valid if the centre were more likely.",
+      "theory": "A declaration of conformity / accuracy class gives a variability interval → default rectangular, $u=a/\\sqrt3$.",
+      "tags": ["type-b", "rectangular", "bias"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A thermal-expansion coefficient is reported in a handbook as $\\alpha=25\\times10^{-6}\\ ^{\\circ}\\text{C}^{-1}$, with no stated tolerance. By the significant-digits convention, what variance $u^2(\\alpha)$ do you assign?",
+      "options": [
+        { "id": "A", "content": "$(2\\times10^{-6})^2/6$, taking $a=2\\times10^{-6}$, triangular" },
+        { "id": "B", "content": "$(1\\times10^{-6})^2/3$, taking $a=1\\times10^{-6}$" },
+        { "id": "C", "content": "$(2\\times10^{-6})^2/3$, taking $a=2\\times10^{-6}$, rectangular" },
+        { "id": "D", "content": "$0$, because no tolerance is given" }
+      ],
+      "correct": "C",
+      "explanation": "With no tolerance, assume the value is written correctly: variability is $\\pm2$ units of the **least significant digit**, i.e. $a=2\\times10^{-6}\\ ^{\\circ}\\text{C}^{-1}$, and a tabled value is taken **rectangular**, so $u^2=a^2/3=(2\\times10^{-6})^2/3=1.3\\times10^{-12}$. **A** uses the right $a$ but a triangular divisor. **B** uses 1 unit instead of 2 of the least significant digit. **D** wrongly assumes a noiseless value — a number always carries the variability of its last digit.",
+      "theory": "Number with no stated variability → $a=2$ units of the least significant digit, rectangular: $u^2=a^2/3$.",
+      "tags": ["type-b", "significant-digits", "handbook"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "For the same half-width $a$, rank the standard uncertainties produced by the rectangular (R), arcsine/U-shaped (U) and triangular (T) distributions, from largest to smallest.",
+      "options": [
+        { "id": "A", "content": "$u_T > u_R > u_U$" },
+        { "id": "B", "content": "$u_R > u_U > u_T$" },
+        { "id": "C", "content": "$u_U = u_R = u_T$" },
+        { "id": "D", "content": "$u_U > u_R > u_T$" }
+      ],
+      "correct": "D",
+      "explanation": "The variances are $a^2/2$ (U), $a^2/3$ (R), $a^2/6$ (T), so $u_U=a/\\sqrt2 > u_R=a/\\sqrt3 > u_T=a/\\sqrt6$. The U-shape piles probability at the extremes (largest spread); the triangle concentrates it at the centre (smallest). **A** and **B** scramble the order. **C** is false — the three divisors $\\sqrt2,\\sqrt3,\\sqrt6$ are different.",
+      "theory": "For fixed $a$: arcsine ($/\\sqrt2$) > rectangular ($/\\sqrt3$) > triangular ($/\\sqrt6$).",
+      "tags": ["type-b", "distributions", "ranking"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An input is described by a measured **standard deviation** $s=3\\ \\mu$m of a stability test. How does it enter the budget as a standard uncertainty?",
+      "options": [
+        { "id": "A", "content": "$u=3\\ \\mu$m — a standard deviation is already a standard uncertainty" },
+        { "id": "B", "content": "$u=3/\\sqrt3\\ \\mu$m — apply a rectangular divisor" },
+        { "id": "C", "content": "$u=\\sqrt3\\ \\mu$m — take the square root of $s$" },
+        { "id": "D", "content": "$u=3/2\\ \\mu$m — divide by the coverage factor 2" }
+      ],
+      "correct": "A",
+      "explanation": "A **standard deviation is itself a standard uncertainty** — no divisor, no square root, no coverage division: $u=s=3\\ \\mu$m (divisor 1). **B** wrongly applies a rectangular divisor meant for a half-width interval. **C** would take $\\sqrt{s}$, which is dimensionally nonsense here. **D** confuses $s$ with an expanded uncertainty (which would need $u=U/k$).",
+      "theory": "Standard deviation → $u=s$ (divisor 1); variance → $u=\\sqrt V$; expanded → $u=U/k$; half-width → $u=a/\\sqrt{k_a}$.",
+      "tags": ["type-b", "standard-deviation"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "A Type B contribution is judged **consolidated** (reliable, but not extremely so). What conventional number of degrees of freedom is assigned to it?",
+      "options": [
+        { "id": "A", "content": "$\\nu=15$" },
+        { "id": "B", "content": "$\\nu=100$" },
+        { "id": "C", "content": "$\\nu=1$" },
+        { "id": "D", "content": "$\\nu=30$" }
+      ],
+      "correct": "D",
+      "explanation": "The conventional Type B scale is $\\nu=100$ (extremely consolidated), $\\nu=30$ (consolidated), $\\nu=15$ (to be checked). “Consolidated” → **$\\nu=30$**. **A** ($15$) is for information *to be checked*. **B** ($100$) is for *extremely consolidated*. **C** ($1$) is far too low — Type B values are robust; GUM even nominally recommends $\\infty$.",
+      "theory": "Conventional Type B d.o.f.: 100 / 30 / 15 by reliability (extremely consolidated / consolidated / to be checked).",
+      "tags": ["type-b", "dof"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Which statement about Type A and Type B evaluations is **correct** according to the GUM?",
+      "options": [
+        { "id": "A", "content": "The same factor can be evaluated either as Type A (replicate and compute the variance) or as Type B (take it from previous experience)." },
+        { "id": "B", "content": "A Type B component can never be better known than a Type A one." },
+        { "id": "C", "content": "Type B evaluations are forbidden once any experimental data exist." },
+        { "id": "D", "content": "Type A and Type B contributions are combined by different formulas." }
+      ],
+      "correct": "A",
+      "explanation": "GUM stresses the *same factor* may be handled either way: replicate it for a Type A variance, or import it from experience as Type B. **B** contradicts E.4.3, which says a Type B component may be *better known* when observations are few. **C** is false — Type B is precisely useful in planning, before or alongside data. **D** is false: once each is a standard uncertainty $u$, both feed the **same** propagation-of-variance law.",
+      "theory": "Type A and Type B differ only in evaluation method; both yield $u$ and combine identically. Neither is automatically superior.",
+      "tags": ["type-a", "type-b", "concept"]
+    }
+  ]
+}

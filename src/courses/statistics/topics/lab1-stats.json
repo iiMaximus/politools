@@ -1,0 +1,146 @@
+{
+  "title": "Lab 1 · Statistics in Excel",
+  "summary": "The descriptive half of the first lab. You summarise a data sample with the standard estimators (AVERAGE, MEDIAN, MODE, VAR.S, STDEV.S, QUARTILE), read probabilities off the **Normal** distribution with NORM.DIST / NORM.INV, and build a **confidence interval for the mean** with the **Student t**. Every result is obtained by typing a real Excel formula and pressing *Check*.",
+  "minutes": 35,
+  "objectives": [
+    "Compute the full set of descriptive statistics of a sample, choosing sample (n−1) over population estimators.",
+    "Read 'less than', 'greater than' and interval probabilities from NORM.DIST with the cumulative flag set to TRUE.",
+    "Standardise a value to a z-score and use the standard normal NORM.S.DIST / NORM.S.INV.",
+    "Invert the normal with NORM.INV to find the value not exceeded with a given probability.",
+    "Build a confidence interval for the mean with the Student t: half-width t·s/√n using T.INV.2T.",
+    "Apply the same machinery to a type-II error (β) and a bilateral mean test."
+  ],
+  "blocks": [
+    { "kind": "heading", "text": "Function primer — descriptive statistics" },
+    { "kind": "prose", "text": "Before any inference, you summarise the sample. Each estimator is one Excel call over the data range. Learn the **sample vs population** distinction: in metrology your data are almost always a *sample* of a larger production, so you use the $n-1$ forms." },
+    { "kind": "definition", "term": "AVERAGE(range)", "text": "Arithmetic mean $\\bar{x}=\\frac{1}{n}\\sum x_i$ — the centre of mass of the data." },
+    { "kind": "definition", "term": "MEDIAN(range)", "text": "Middle value of the sorted data (mean of the two central values if $n$ is even). Robust to outliers; when median ≈ mean the sample is roughly symmetric." },
+    { "kind": "definition", "term": "MODE(range)  /  MODE.SNGL(range)", "text": "Most frequently occurring value. MODE.SNGL is the modern name; both return the same single mode." },
+    { "kind": "definition", "term": "VAR.S(range)  and  STDEV.S(range)", "text": "**Sample** variance $s^2=\\frac{1}{n-1}\\sum(x_i-\\bar{x})^2$ and its square root $s=\\sqrt{s^2}$. The $n-1$ divisor (Bessel's correction) is what distinguishes these from the population forms VAR.P / STDEV.P (which divide by $n$). Use the `.S` forms for a sample." },
+    { "kind": "definition", "term": "MIN, MAX, COUNT", "text": "Smallest value, largest value, and the number of numeric cells $n$. $\\text{MAX}-\\text{MIN}$ is the range; COUNT gives the sample size used everywhere downstream." },
+    { "kind": "definition", "term": "QUARTILE(range; q)", "text": "Quartile selected by the integer $q$: 0 = minimum, 1 = $Q_1$ (25th pct), 2 = median, 3 = $Q_3$ (75th pct), 4 = maximum. The interquartile range $Q_3-Q_1$ is a robust spread measure." },
+    { "kind": "callout", "tone": "trap", "title": "Sample or population?", "text": "VAR.S / STDEV.S divide by $n-1$; VAR.P / STDEV.P divide by $n$. The exam data are a **sample**, so the `.S` forms are correct. Picking `.P` is a silent error — the number looks plausible but is too small." },
+    { "kind": "sim", "simKey": "lab:stat-descriptive", "title": "Exercise 1 — descriptive statistics of a sample" },
+    { "kind": "heading", "text": "Function primer — the Normal distribution" },
+    { "kind": "prose", "text": "The normal (Gaussian) distribution models continuous measurements. Excel gives you a **direct** function (value → probability) and an **inverse** function (probability → value), in both a general and a standardised form." },
+    { "kind": "definition", "term": "NORM.DIST(x; m; s; cumulative)", "text": "For a normal with mean $m$ and standard deviation $s$:\n- **cumulative = 1 / TRUE** → the CDF $P(X\\le x)=F(x)$, the area to the **left** of $x$ (the S-shaped curve).\n- **cumulative = 0 / FALSE** → the density $f(x)$, the height of the bell curve at $x$.\nFor probabilities you almost always want the cumulative form (1)." },
+    { "kind": "definition", "term": "NORM.S.DIST(z; cumulative)", "text": "The **standard** normal ($m=0,\\,s=1$). It needs only the standardised value $z=\\dfrac{x-m}{s}$ and the cumulative flag. $\\text{NORM.S.DIST}(z;1)=\\text{NORM.DIST}(x;m;s;1)$ — the two are equivalent." },
+    { "kind": "definition", "term": "NORM.INV(P; m; s)  and  NORM.S.INV(P)", "text": "The **inverse** CDF: given a left-cumulative probability $P$ they return the value $x$ (resp. the $z$) with $P(X\\le x)=P$. There is no cumulative argument — the inverse always works on the cumulative probability. Link: $x=m+z\\,s$ where $z=\\text{NORM.S.INV}(P)$." },
+    { "kind": "formula", "tex": "P(a<X<b)=F(b)-F(a)=\\text{NORM.DIST}(b;m;s;1)-\\text{NORM.DIST}(a;m;s;1)", "caption": "An interval probability is the difference of two CDF values — subtract, never add." },
+    { "kind": "callout", "tone": "key", "title": "The three readings of a normal probability", "text": "- 'Less than $x$': $F(x)=\\text{NORM.DIST}(x;m;s;1)$.\n- 'Greater than $x$': $1-F(x)$ (Excel only gives the left tail).\n- 'Between $a$ and $b$': $F(b)-F(a)$.\nFor inverse problems: a **lower** boundary at risk $\\alpha$ is $\\text{NORM.INV}(\\alpha;m;s)$; an **upper** boundary at risk $\\alpha$ is $\\text{NORM.INV}(1-\\alpha;m;s)$." },
+    { "kind": "sim", "simKey": "lab:stat-normal-interval", "title": "Exercise 2 — probability in an interval (NORM.DIST)" },
+    { "kind": "sim", "simKey": "lab:stat-standardise", "title": "Exercise 3 — standardisation and the standard normal" },
+    { "kind": "sim", "simKey": "lab:stat-normal-inverse", "title": "Exercise 4 — inverse normal (NORM.INV / NORM.S.INV)" },
+    { "kind": "callout", "tone": "trap", "title": "Inverse boundary: pass the LEFT-cumulative probability", "text": "NORM.INV always takes the cumulative probability *to the left* of the value it returns. For an **upper** limit leaving a right-tail risk $\\alpha_s$, feed $1-\\alpha_s$, not $\\alpha_s$. Feeding the tail risk directly is the single most common exam slip on inverse problems." },
+    { "kind": "heading", "text": "Function primer — the Student t and confidence intervals" },
+    { "kind": "prose", "text": "When the population standard deviation $\\sigma$ is **unknown** and estimated from the sample, the sample mean follows a **Student t** distribution with $n-1$ degrees of freedom, not a normal. The t curve is bell-shaped but has heavier tails; as $n$ grows it approaches the normal." },
+    { "kind": "definition", "term": "T.DIST(t; ν; cumulative)", "text": "CDF of the t distribution with $\\nu$ degrees of freedom. With **cumulative = 1 / TRUE** it returns the left-tail $P(T\\le t)$; with **0 / FALSE** the density. Right tail = $1-\\text{T.DIST}(t;\\nu;1)$." },
+    { "kind": "definition", "term": "T.INV(P; ν)  and  T.INV.2T(α; ν)", "text": "$\\text{T.INV}(P;\\nu)$ is the inverse left-tail CDF (one-tailed): it returns the $t$ with $P(T\\le t)=P$. $\\text{T.INV.2T}(\\alpha;\\nu)$ returns the **two-tailed** critical value directly — the positive $t^*$ leaving total area $\\alpha$ in *both* tails, i.e. $t^*=\\text{T.INV}(1-\\alpha/2;\\nu)$." },
+    { "kind": "formula", "tex": "\\bar{x}\\ \\mp\\ t_{1-\\alpha/2,\\,n-1}\\,\\frac{s}{\\sqrt{n}},\\qquad t_{1-\\alpha/2,\\,n-1}=\\text{T.INV.2T}(\\alpha;\\,n-1)", "tag": "CI", "caption": "Confidence interval for the mean with σ unknown: half-width = critical t × standard error." },
+    { "kind": "callout", "tone": "info", "title": "Why /√n?", "text": "The data have spread $s$, but the **sample mean** is far less variable: its standard deviation is the standard error $s/\\sqrt{n}$. Averaging $n$ readings shrinks the uncertainty by $\\sqrt{n}$ — that is the factor inside every confidence interval and mean test." },
+    { "kind": "sim", "simKey": "lab:stat-confidence-mean", "title": "Exercise 5 — confidence interval for the mean (Student t)" },
+    { "kind": "heading", "text": "Putting it together: errors and tests" },
+    { "kind": "prose", "text": "The same two functions (NORM.INV for limits, NORM.DIST for probabilities) drive the real exam questions: the **risk of error of the second kind β**, a **bilateral mean test**, and an **equal-risk separation limit** between two distributions." },
+    { "kind": "sim", "simKey": "lab:stat-modification-beta", "title": "Exercise 6 — risk of error of the second kind β" },
+    { "kind": "sim", "simKey": "lab:stat-mean-test", "title": "Exercise 7 — bilateral test on a repaired machine" },
+    { "kind": "sim", "simKey": "lab:stat-separation-limit", "title": "Exercise 8 — equal-risk separation limit" },
+    { "kind": "callout", "tone": "warn", "title": "Variance vs standard deviation", "text": "NORM.DIST and NORM.INV take the **standard deviation** $s$, never the variance. When the data give you $\\sigma^2$ (as in the separation and β problems), pass $\\text{SQRT}(\\sigma^2)$. Plugging the variance straight in is a classic, hard-to-spot error." },
+    { "kind": "heading", "text": "Distributions for tests (reference)" },
+    { "kind": "prose", "text": "Two more distributions complete the toolkit: the **Student t** for inference on the mean (above) and the **Pearson χ²** / **Fisher F** for variance and variance-ratio tests. Explore their shapes and tails below, then practise the t exercise." },
+    { "kind": "sim", "simKey": "lab:stat-student-tails", "title": "Exercise 9 — Student t tails and inverse" },
+    { "kind": "sim", "simKey": "lab:stat-supply-mix", "title": "Exercise 10 — merged supplies (hypergeometric acceptance)" },
+    { "kind": "heading", "text": "More statistics exercises" },
+    { "kind": "prose", "text": "The rest of the lab works through every remaining exercise from the source sheets. **Acceptance sampling** is the recurring theme: you decide whether to accept a batch from a sample, choosing between the **binomial** (large batch), the **hypergeometric** (finite batch, no replacement) and the **Poisson** (rare-event) models. Then come the remaining **risk** and **distribution-function** exercises. Each is one interactive grid — type the formula, press *Check*." },
+    { "kind": "callout", "tone": "key", "title": "Which distribution for acceptance sampling?", "text": "- **Binomial** $\\text{BINOM.DIST}(k;n;p;1)$ — large batch (or sample $\\ll$ batch); draws treated as independent.\n- **Hypergeometric** $\\text{HYPGEOM.DIST}(k;n;C;M;1)$ — finite batch of $M$ with $C$ defectives, drawn **without replacement**; exact.\n- **Poisson** $\\text{POISSON.DIST}(k;\\lambda;1)$ with $\\lambda=np$ — approximation for large $n$, small $p$.\n'Accept if no more than $k$' is always the **cumulative** form (last flag = 1)." },
+    { "kind": "sim", "simKey": "lab:stat-distribution-mechanism", "title": "Exercise 11 — risk of failure of a multi-part mechanism (hypergeometric)" },
+    { "kind": "sim", "simKey": "lab:stat-accept-s01", "title": "Exercise 12 — risk of accepting a bad batch (binomial, S01)" },
+    { "kind": "sim", "simKey": "lab:stat-accept-s02", "title": "Exercise 13 — minimum sample size for a target risk (S02)" },
+    { "kind": "sim", "simKey": "lab:stat-accept-s03", "title": "Exercise 14 — acceptance from a finite batch (hypergeometric, S03)" },
+    { "kind": "sim", "simKey": "lab:stat-accept-s04", "title": "Exercise 15 — two-phase acceptance plan (S04)" },
+    { "kind": "sim", "simKey": "lab:stat-accept-s06", "title": "Exercise 16 — hypergeometric vs binomial acceptance (S06)" },
+    { "kind": "sim", "simKey": "lab:stat-accept-s07", "title": "Exercise 17 — two-phase plan with a re-test window (S07)" },
+    { "kind": "sim", "simKey": "lab:stat-beta-variance", "title": "Exercise 18 — risk of the second kind β from variances (S09)" },
+    { "kind": "sim", "simKey": "lab:stat-extra-mechanism", "title": "Exercise 19 — two-component mechanism: failure risk and inverse design" },
+    { "kind": "sim", "simKey": "lab:stat-extra-poisson", "title": "Exercise 20 — Poisson approximation of an acceptance plan" },
+    { "kind": "sim", "simKey": "lab:stat-extra-separation", "title": "Exercise 21 — separation limit with a rectangular error" },
+    { "kind": "callout", "tone": "tip", "title": "Pearson χ² and Fisher F", "text": "These two distributions read exactly like the Normal and Student t: cumulative = 1 gives the left tail, the right tail is $1-F$, an interval is $F(b)-F(a)$, and the inverse maps a left-cumulative probability back to a value. Both are **right-skewed** (positive support), so their lower and upper boundaries are not symmetric. F takes **two** degrees of freedom — numerator first, then denominator." },
+    { "kind": "sim", "simKey": "lab:stat-pearson", "title": "Exercise 22 — Pearson χ² tails and inverse" },
+    { "kind": "sim", "simKey": "lab:stat-fisher", "title": "Exercise 23 — Fisher F tails and inverse" },
+    { "kind": "sim", "simKey": "dist-normal", "title": "Explore — the Normal distribution", "caption": "Drag the mean and σ; watch the CDF that NORM.DIST returns." },
+    { "kind": "sim", "simKey": "dist-student", "title": "Explore — the Student t distribution", "caption": "Increase ν and watch the heavy tails converge to the normal." },
+    { "kind": "sim", "simKey": "dist-chisq", "title": "Explore — the Pearson χ² distribution", "caption": "Increase ν and watch the skew shrink toward a normal." },
+    { "kind": "sim", "simKey": "dist-fisher", "title": "Explore — the Fisher F distribution", "caption": "Vary the numerator and denominator d.o.f.; watch the right tail." }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "You measured a **sample** of 30 parts and want the typical spread of the readings. Which function should you use?",
+      "options": [
+        { "id": "A", "content": "STDEV.P (divides by n)" },
+        { "id": "B", "content": "STDEV.S (divides by n−1)" },
+        { "id": "C", "content": "VAR.P (divides by n)" },
+        { "id": "D", "content": "AVERAGE" }
+      ],
+      "correct": "B",
+      "explanation": "The 30 parts are a **sample** of a larger production, so the unbiased estimator divides by $n-1$: that is STDEV.S. A is wrong because STDEV.P (divide by $n$) is for a full population and underestimates the spread; C returns a variance (squared units) and also uses the population divisor; D returns the mean, not the spread.",
+      "theory": "Use the `.S` forms (VAR.S / STDEV.S, $n-1$) for samples and the `.P` forms ($n$) only when the data are the entire population.",
+      "tags": ["descriptive"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "For $X\\sim N(85,1.2)$ you want $P(X>86.2)$. Which formula is correct?",
+      "options": [
+        { "id": "A", "content": "=NORM.DIST(86.2;85;1.2;1)" },
+        { "id": "B", "content": "=NORM.DIST(86.2;85;1.2;0)" },
+        { "id": "C", "content": "=1-NORM.DIST(86.2;85;1.2;1)" },
+        { "id": "D", "content": "=NORM.INV(86.2;85;1.2)" }
+      ],
+      "correct": "C",
+      "explanation": "Excel's cumulative NORM.DIST returns the **left** tail $P(X\\le x)$, so the right tail is the complement $1-F(x)$ — option C. A gives $P(X\\le86.2)$, the wrong side; B with cumulative = 0 returns the **density** (a curve height, not a probability); D is the inverse function and expects a probability as its first argument, not a value.",
+      "theory": "Greater-than probabilities are $1-\\text{NORM.DIST}(x;m;s;1)$ because Excel only provides the left-tail CDF.",
+      "tags": ["normal", "cumulative-flag"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "What does the **last argument** of NORM.DIST(x; m; s; cumulative) control?",
+      "options": [
+        { "id": "A", "content": "Whether the result is a percentage or a fraction" },
+        { "id": "B", "content": "TRUE/1 → cumulative CDF $P(X\\le x)$; FALSE/0 → density $f(x)$" },
+        { "id": "C", "content": "The number of degrees of freedom" },
+        { "id": "D", "content": "Whether to use the left or the right tail" }
+      ],
+      "correct": "B",
+      "explanation": "The cumulative flag switches between the two outputs: 1/TRUE gives the cumulative distribution $P(X\\le x)$ (the S-curve), 0/FALSE gives the probability **density** $f(x)$ (the bell height). A is invented — Excel never rescales to a percentage. C confuses it with the t / χ² distributions, which take degrees of freedom as a separate argument. D is wrong: the function always returns the left side; you take the complement yourself for the right tail.",
+      "theory": "Across NORM.DIST, T.DIST, CHISQ.DIST and F.DIST the final logical argument means the same thing: 1 = cumulative CDF, 0 = density.",
+      "tags": ["normal", "cumulative-flag"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "You need the value $x$ **not exceeded with probability 0.95** for $X\\sim N(85,1.2)$. Which formula gives it?",
+      "options": [
+        { "id": "A", "content": "=1-NORM.INV(0.95;85;1.2)" },
+        { "id": "B", "content": "=NORM.DIST(0.95;85;1.2;1)" },
+        { "id": "C", "content": "=NORM.INV(0.05;85;1.2)" },
+        { "id": "D", "content": "=NORM.INV(0.95;85;1.2)" }
+      ],
+      "correct": "D",
+      "explanation": "'Not exceeded with probability 0.95' means $P(X\\le x)=0.95$, i.e. the 95th percentile — exactly $\\text{NORM.INV}(0.95;m;s)$, option D. A subtracts a value (not a probability) from 1, which is meaningless. B feeds a probability into the *direct* function as if it were a value of $x$. C returns the 5th percentile (the value exceeded with probability 0.95), the opposite boundary.",
+      "theory": "NORM.INV(P; m; s) maps a left-cumulative probability to a value; the 95th percentile is NORM.INV(0.95; m; s).",
+      "tags": ["normal", "inverse"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Building a 95 % confidence interval for the mean from $n=10$ readings with $\\sigma$ unknown, which critical value and half-width are correct?",
+      "options": [
+        { "id": "A", "content": "$t=$ T.INV.2T(0.05; 9), half-width $=t\\cdot s/\\sqrt{10}$" },
+        { "id": "B", "content": "$z=$ NORM.S.INV(0.95), half-width $=z\\cdot s/\\sqrt{10}$" },
+        { "id": "C", "content": "$t=$ T.INV.2T(0.05; 10), half-width $=t\\cdot s$" },
+        { "id": "D", "content": "$t=$ T.INV(0.05; 9), half-width $=t\\cdot s/\\sqrt{10}$" }
+      ],
+      "correct": "A",
+      "explanation": "With $\\sigma$ unknown you use the Student t with $\\nu=n-1=9$ degrees of freedom, and the two-tailed critical value is T.INV.2T(0.05; 9); the half-width is $t\\cdot s/\\sqrt{n}$ — option A. B uses the normal $z$, valid only when $\\sigma$ is known. C uses $\\nu=10$ (should be $n-1=9$) and omits the $/\\sqrt{n}$ standard-error factor. D uses T.INV(0.05; 9), which returns the **negative** one-tailed quantile leaving 5 % in the left tail, not the two-tailed critical value (that would be T.INV(0.975; 9)).",
+      "theory": "CI for the mean, σ unknown: $\\bar{x}\\mp t_{1-\\alpha/2,n-1}\\,s/\\sqrt{n}$ with $t_{1-\\alpha/2,n-1}=\\text{T.INV.2T}(\\alpha;n-1)$.",
+      "tags": ["student", "confidence-interval"]
+    }
+  ]
+}

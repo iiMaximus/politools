@@ -1,0 +1,351 @@
+{
+  "title": "Lab 3 · Evaluation of Measurement Uncertainty",
+  "summary": "The heaviest part of the exam (**12 pts**). You build a complete **GUM uncertainty budget** in the mock Excel: classify each input as **Type A** or **Type B**, turn it into a standard uncertainty with the right divisor ($\\sqrt3$, $\\sqrt6$ or $k$), propagate variances through the model with sensitivity coefficients $u^2(y)=\\sum c_j^2 u^2(x_j)$, find the effective degrees of freedom by **Welch–Satterthwaite**, read the coverage factor $k$ from **T.INV**, and report the expanded uncertainty $U=k\\,u(y)$. The capstone reproduces the professor's *Uncertainty Table* example number-for-number.",
+  "minutes": 45,
+  "objectives": [
+    "Classify each input quantity as Type A (statistics on data) or Type B (other knowledge).",
+    "Convert a Type B input to a standard uncertainty with the correct divisor: rectangular $\\sqrt3$, triangular $\\sqrt6$, normal-with-coverage $k$.",
+    "Compute a Type A standard uncertainty $s$ (and $s/\\sqrt n$ when an average is reported).",
+    "Find a sensitivity coefficient $c_j=\\partial y/\\partial x_j$ and the per-row contribution $u_j^2(y)=c_j^2 u^2(x_j)$.",
+    "Combine variances $u^2(y)=\\sum_j u_j^2(y)$ and take the square root once.",
+    "Get the effective d.o.f. with Welch–Satterthwaite (and remember to floor it).",
+    "Read $k$ from T.INV$(1-\\alpha/2,\\nu_y)$ for the stated confidence and report $U=k\\,u(y)$."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What the exam asks"
+    },
+    {
+      "kind": "prose",
+      "text": "You are given a measurand $y$ computed from several input quantities $x_j$ through a **mathematical model** $y=G(x_1,\\dots,x_m)$ (a length corrected for temperature, a force $F=kx$, a pressure from a piston-cylinder, …). Each input is known only with some uncertainty. Your job is to fill the **uncertainty table** (the *uncertainty budget*) and report the result as $y\\pm U$ at a stated confidence level. The marks are spread across every column of that table, so a tidy, complete budget is worth more than a fast guess."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Base units, always",
+      "text": "The sheet says it in red: **NEVER USE MULTIPLES OR SUBMULTIPLES OF THE MEASUREMENT UNITS.** Convert µm→m, mg→kg, mW→W, mm/m→pure strain *before* you start. A budget done in mixed units gives a numerically wrong $u(y)$ even if every formula is right."
+    },
+    {
+      "kind": "heading",
+      "text": "Type A vs Type B"
+    },
+    {
+      "kind": "definition",
+      "term": "Type A evaluation",
+      "text": "Uncertainty obtained by **statistical analysis of repeated observations**. You compute a sample standard deviation $s$ (STDEV.S, with $n-1$ divisor). If the reported result is the **average** of $n$ readings, the standard uncertainty of that mean is $u=s/\\sqrt n$; its degrees of freedom are $\\nu=n-1$. Repeatability quoted as a measured standard deviation and reproducibility quoted as a measured variance are Type A in spirit."
+    },
+    {
+      "kind": "definition",
+      "term": "Type B evaluation",
+      "text": "Uncertainty obtained by **any other means**: a calibration certificate, an instrument resolution, a handbook coefficient, an estimated interval. You assume a probability distribution for the error and divide its half-width / expanded value by the matching divisor to get the standard uncertainty."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The divisor table — memorise it",
+      "text": "Given a Type B input, the standard uncertainty is the half-width (or expanded value) divided by:\n- **Rectangular (uniform)**: $\\;u=a/\\sqrt3\\;$ — used for **resolution** ($a=r/2$) and handbook/tabled coefficients.\n- **Triangular**: $\\;u=a/\\sqrt6\\;$ — when the centre is more likely than the edges.\n- **Normal / Student with stated coverage**: $\\;u=U/k\\;$ — divide a certificate's *expanded* uncertainty by its coverage factor $k$ (recover $k$ from T.INV if only the confidence and d.o.f. are given).\n- **A measured standard deviation** is *already* $u$ — divisor $1$."
+    },
+    {
+      "kind": "formula",
+      "tex": "u^2(x_j)=\\frac{a_j^2}{k_d}\\cdot\\frac{n_d}{n_r}",
+      "tag": "B",
+      "caption": "Type B variance: half-width squared over the distribution factor $k_d$ ($3$ rectangular, $6$ triangular, $k^2$ normal). The $n_d/n_r$ factor folds in how many measurements the value was determined on ($n_d$) vs. how many the final result averages ($n_r$)."
+    },
+    {
+      "kind": "heading",
+      "text": "Standard uncertainty in Excel"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-rect",
+      "title": "Exercise 1 — rectangular (resolution), $a/\\sqrt3$"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-tri",
+      "title": "Exercise 2 — triangular, $a/\\sqrt6$"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-normal-cov",
+      "title": "Exercise 3 — normal with coverage, $U/k$ (T.INV)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-typeA-sample",
+      "title": "Exercise 4 — Type A from a sample, $s/\\sqrt n$"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-repeat-repro",
+      "title": "Exercise 5 — repeatability & reproducibility"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Standard deviation vs variance vs expanded",
+      "text": "Read the wording of every input carefully: a **standard deviation** is already $u$ (no divisor); a **variance** needs a square root ($u=\\sqrt V$); an **expanded uncertainty** needs dividing by its coverage factor ($u=U/k$); a **maximum spread / range / max difference** is a half-width and takes a distribution divisor. Mixing these up is the single most common way to lose marks here."
+    },
+    {
+      "kind": "heading",
+      "text": "Propagating to the output: sensitivity coefficients"
+    },
+    {
+      "kind": "prose",
+      "text": "Each standard uncertainty $u(x_j)$ must be translated into its effect on $y$. The **sensitivity coefficient** is the partial derivative of the model: $c_j=\\partial G/\\partial x_j$, evaluated at the nominal inputs. In the sheet it is computed numerically — perturb $x_j$ by a tiny $\\Delta x_j$, see how much $y$ moves, and take $c_j=\\Delta y_j/\\Delta x_j$ — but for a simple product or ratio you can write it down by hand: for $y=kx$, $c_k=x$ and $c_x=k$; for $y=\\prod x_i$, $c_j=y/x_j$."
+    },
+    {
+      "kind": "formula",
+      "tex": "u_j^2(y)=c_j^2\\,u^2(x_j),\\qquad u^2(y)=\\sum_{j} u_j^2(y)=\\sum_j c_j^2\\,u^2(x_j)",
+      "tag": "GUM",
+      "caption": "Law of propagation of variance (uncorrelated inputs). Each contribution is a sensitivity-squared times an input variance; the combined variance is their sum."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-sensitivity",
+      "title": "Exercise 6 — sensitivity $c_j=\\partial y/\\partial x_j$"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-contrib",
+      "title": "Exercise 7 — one budget row $u_j^2(y)=c_j^2 u^2(x_j)$"
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why we square the sensitivity",
+      "text": "Because variances add and a variance cannot be negative, only $c_j^2$ enters. A negative sensitivity (e.g. $c_\\alpha=-1.60$ in the canonical sheet) contributes exactly as much as a positive one of the same magnitude. The sign matters only when you discuss *correlation* or *which way* an input pushes the result — never in the budget sum."
+    },
+    {
+      "kind": "heading",
+      "text": "Effective degrees of freedom: Welch–Satterthwaite"
+    },
+    {
+      "kind": "prose",
+      "text": "The combined uncertainty $u(y)$ is a mix of contributions, each with its own degrees of freedom $\\nu_j$ (a Type A average has $\\nu=n-1$; a tabled rectangular value is conventionally given a large $\\nu$ such as 30 or 100; a regression slope has $\\nu=n-2$). To pick the right coverage factor we need a single **effective** number of degrees of freedom for $y$, given by the Welch–Satterthwaite formula."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\nu_y=\\left\\lfloor\\dfrac{u^4(y)}{\\displaystyle\\sum_j \\dfrac{u_j^4(y)}{\\nu_j}}\\right\\rfloor",
+      "tag": "W–S",
+      "caption": "Effective degrees of freedom. The numerator is the combined variance squared; each term in the denominator is a contribution's variance squared over its own d.o.f. Take the FLOOR (Excel INT)."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Floor it — never round up",
+      "text": "The sheet uses **=INT(...)**, i.e. the floor. The raw Welch–Satterthwaite value in the canonical example is $\\approx 15.7$ and becomes $\\nu_y=15$, not 16. Rounding up would inflate the d.o.f., shrink $k$, and understate $U$ — a conservative budget always rounds the d.o.f. **down**."
+    },
+    {
+      "kind": "heading",
+      "text": "Coverage factor and expanded uncertainty"
+    },
+    {
+      "kind": "definition",
+      "term": "Coverage factor k",
+      "text": "For finite degrees of freedom the coverage factor is a **Student-$t$ quantile**, not the asymptotic normal $1.96$. For a two-sided confidence level $P$ (risk $\\alpha=1-P$): $k=t_{1-\\alpha/2,\\,\\nu_y}=$ **T.INV$(1-(1-P)/2,\\ \\nu_y)$**. In Excel `T.INV(p, df)` is the *left-tailed* inverse, so you pass the two-sided upper probability $1-\\alpha/2$. (The legacy `TINV(α, df)` already does the two-sided split, so `TINV(1-P, ν)` gives the same number.)"
+    },
+    {
+      "kind": "formula",
+      "tex": "U(y)=k\\cdot u(y),\\qquad \\text{report}\\quad y\\pm U \\ \\text{at confidence } P",
+      "tag": "U",
+      "caption": "Expanded uncertainty: scale the combined standard uncertainty by the coverage factor. This is the half-width of the confidence interval reported with the result."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-student",
+      "title": "The Student-t distribution behind k",
+      "caption": "Smaller degrees of freedom → fatter tails → larger coverage factor $k$. As $\\nu\\to\\infty$ the t-quantile approaches the normal $z$ (e.g. $1.96$ at 95%)."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-combine-dof",
+      "title": "Exercise 8 — combine, Welch–Satterthwaite, expanded $U$"
+    },
+    {
+      "kind": "heading",
+      "text": "The capstone: a full uncertainty budget"
+    },
+    {
+      "kind": "prose",
+      "text": "Everything now comes together in the professor's *Uncertainty Table* example. A length $L_T=800.074$ mm is measured with a flexometer and corrected to $20^\\circ$C through $L_{20}=L_T[1+(\\alpha-\\beta)(20-T)]$. Six inputs enter the budget — instrument **bias** (Type B, expanded $3.7\\,\\mu$m at 95% on 4 measurements), reading **resolution** (Type B rectangular, $1\\,\\mu$m), **reproducibility** (variance $10.7\\,\\mu\\text{m}^2$ over 10 replications, averaged over 5), the workpiece and instrument **temperature coefficients** $\\alpha,\\beta$ (rectangular, from handbook/maker) and the **temperature** $T=22\\pm5^\\circ$C. The table below lays one row per contribution and walks you through $u^2(x_j)\\to u_j^2(y)\\to u^2(y)\\to\\nu_y\\to k\\to U$."
+    },
+    {
+      "kind": "example",
+      "title": "Result of the canonical budget",
+      "text": "$u^2(y)=1.3012\\times10^{-11}\\,\\text{m}^2$, so $u(y)=3.607\\,\\mu$m. Welch–Satterthwaite gives $\\nu_y=\\lfloor15.7\\rfloor=15$, hence $k=$T.INV$(0.975,15)=2.131$ and $U=k\\,u(y)=7.69\\,\\mu$m. The corrected length is reported as $L_{20}=800.0748\\ \\text{mm}\\pm7.7\\,\\mu$m at 95% confidence. The dominant contributions are the **bias** and the **reproducibility** — those are where you would spend money to improve the measurement."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-budget-capstone",
+      "title": "Exercise 9 — capstone: the full Uncertainty Table"
+    },
+    {
+      "kind": "heading",
+      "text": "Two more full worked examples"
+    },
+    {
+      "kind": "prose",
+      "text": "The same scheme handles any model. Two further exam examples, reproduced with the source's cached numbers: a **strain-gauge rosette** where the bias is a *relative* standard deviation of each strain, and a **mercury-thermometer waiting time** $t=-(C_m/k_t)\\ln(S_m/\\Delta T)$ where the bias is given as an expanded uncertainty on 7 degrees of freedom."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-strain-rosette",
+      "title": "Exercise 10 — strain rosette $\\varepsilon_1$ (relative bias)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-thermometer-t",
+      "title": "Exercise 11 — thermometer waiting time $t$"
+    },
+    {
+      "kind": "heading",
+      "text": "More worked uncertainty examples"
+    },
+    {
+      "kind": "prose",
+      "text": "Three further **complete budgets** from the exam set, each laid out as a table with one row per contribution and reproduced number-for-number from the professor's solution sheets. They drill the full GUM workflow on richer models: a thread diameter measured with three wires, a metrological pressure gauge, and a force generated by a calibrated mass in the local gravity field.\n- **Thread $d_2$** ($d_2=M-d(1+1/\\sin(a/2))+p/(2\\tan(a/2))$): watch the divisors — a *maximum spread* bias and a *half-range* pitch tolerance use different factors, and the pitch term ends up dominant.\n- **Pressure gauge** ($P=m\\,g(1-\\rho_a/\\rho_m)/(\\pi((d+D)/4)^2)$): certificate biases on $\\rho_m$ and $g$ must be turned into standard uncertainties with $s=U/k$ first; the **diameter reproducibility** dominates because the area sits squared in the denominator.\n- **Force from gravity** ($F=m(g_{ass}+\\Delta g+\\gamma h)$): mixes an expanded-uncertainty mass bias, a reproducibility given as a *variance*, and a **regression slope** $\\gamma$ with $\\nu=n-2$ degrees of freedom."
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-example1-01",
+      "title": "Exercise 12 — thread diameter $d_2$ by three wires (full budget)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-example2-02",
+      "title": "Exercise 13 — metrological pressure gauge $P$ (full budget)"
+    },
+    {
+      "kind": "sim",
+      "simKey": "lab:unc-example3",
+      "title": "Exercise 14 — force from a calibrated mass & local gravity (full budget)"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Exam checklist",
+      "text": "1. Convert every datum to **base units**. 2. For each input: Type A or B? which distribution? right divisor? 3. Build $u^2(x_j)$, including any $n_d/n_r$ factor. 4. Sensitivity $c_j$, then $u_j^2(y)=c_j^2 u^2(x_j)$. 5. $u^2(y)=\\sum u_j^2(y)$, then $u(y)=\\sqrt{\\,\\cdot\\,}$. 6. $\\nu_y$ by Welch–Satterthwaite, **floored**. 7. $k=$T.INV$(1-\\alpha/2,\\nu_y)$. 8. $U=k\\,u(y)$; report $y\\pm U$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "An instrument's **reading resolution** is $r$. What standard uncertainty does it contribute, and what is the underlying distribution?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$u=r/\\sqrt{3}$ — rectangular over the full step $r$"
+          },
+          {
+            "id": "B",
+            "content": "$u=(r/2)/\\sqrt{3}$ — rectangular over half-width $a=r/2$"
+          },
+          {
+            "id": "C",
+            "content": "$u=r/\\sqrt{6}$ — triangular over the full step $r$"
+          },
+          {
+            "id": "D",
+            "content": "$u=r$ — the resolution is itself the standard uncertainty"
+          }
+        ],
+        "correct": "B",
+        "explanation": "A reading can fall anywhere within one resolution step, so the error is **rectangular** with **half-width $a=r/2$**, giving $u=a/\\sqrt3=(r/2)/\\sqrt3$. **A** uses the full step as the half-width (double-counts). **C** picks the wrong divisor (triangular is for combined/peaked errors, not a flat resolution). **D** treats a half-width as a standard deviation — far too large.",
+        "theory": "Type B rectangular input: standard uncertainty = half-width $/\\sqrt3$. For a resolution the half-width is $r/2$.",
+        "tags": [
+          "uncertainty",
+          "type-b"
+        ]
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Five readings are repeated and the reported result is their **average**. The sample standard deviation is $s$. What is the standard uncertainty of the result, and which type is it?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$u=s$, Type A"
+        },
+        {
+          "id": "B",
+          "content": "$u=s/\\sqrt{5}$, Type A"
+        },
+        {
+          "id": "C",
+          "content": "$u=s/\\sqrt{3}$, Type B"
+        },
+        {
+          "id": "D",
+          "content": "$u=s\\sqrt{5}$, Type A"
+        }
+      ],
+      "correct": "B",
+      "explanation": "It is obtained statistically from data → **Type A**. Because the *average* is reported, its uncertainty is the standard deviation of the mean, $u=s/\\sqrt n=s/\\sqrt5$. **A** would be right only if a single reading (not the mean) were reported. **C** uses a Type B rectangular divisor — wrong, this input is statistical. **D** inflates instead of shrinking the uncertainty of the mean.",
+      "theory": "Type A for an average: $u=s/\\sqrt n$ with $\\nu=n-1$.",
+      "tags": [
+        "type-a"
+      ]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In the law of propagation $u^2(y)=\\sum_j c_j^2 u^2(x_j)$, one input has a **negative** sensitivity $c_j=-1.60$. How does it enter the combined variance?",
+      "options": [
+        {
+          "id": "A",
+          "content": "It contributes $c_j^2\\,u^2(x_j)>0$, exactly like a positive sensitivity of the same magnitude"
+        },
+        {
+          "id": "B",
+          "content": "It subtracts from the variance because $c_j<0$"
+        },
+        {
+          "id": "C",
+          "content": "It is dropped, since variances must be positive"
+        },
+        {
+          "id": "D",
+          "content": "Its sign flips the sign of $u(y)$"
+        }
+      ],
+      "correct": "A",
+      "explanation": "Only $c_j^2$ enters, so the sign disappears: a $-1.60$ sensitivity adds the same $c_j^2 u^2(x_j)$ as $+1.60$. **B** misreads the formula — there is no subtraction for uncorrelated inputs. **C** would discard a real contribution. **D** is meaningless: $u(y)=\\sqrt{u^2(y)}\\ge0$ always.",
+      "theory": "For uncorrelated inputs every contribution $c_j^2 u^2(x_j)$ is non-negative; the sign of $c_j$ is irrelevant to the sum.",
+      "tags": [
+        "propagation"
+      ]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A budget input is quoted as a **variance** $V=10.7\\,\\mu\\text{m}^2$, and the reported result is the **average of $n_r=5$** measurements. What variance does this input contribute to $u^2(x_j)$?",
+      "options": [
+        {
+          "id": "A",
+          "content": "$10.7\\,\\mu\\text{m}^2$ — use the variance directly"
+        },
+        {
+          "id": "B",
+          "content": "$\\sqrt{10.7}\\,\\mu\\text{m}$ — take the square root"
+        },
+        {
+          "id": "C",
+          "content": "$10.7/5=2.14\\,\\mu\\text{m}^2$ — divide the variance by $n_r$"
+        },
+        {
+          "id": "D",
+          "content": "$10.7\\times5=53.5\\,\\mu\\text{m}^2$ — multiply by $n_r$"
+        }
+      ],
+      "correct": "C",
+      "explanation": "The variance of an average of $n_r$ measurements is the single-measurement variance divided by $n_r$: $V/n_r=10.7/5=2.14\\,\\mu\\text{m}^2$ (matches UncTab $N40$). **A** ignores the averaging. **B** confuses a *standard deviation* with a *variance* (and a variance is what the column $u^2(x_j)$ holds). **D** multiplies instead of dividing — that would be the variance of a *sum*, not a mean.",
+      "theory": "Variance of the mean = variance / $n_r$. Keep variances (not std-devs) in the $u^2(x_j)$ column.",
+      "tags": [
+        "reproducibility",
+        "type-a"
+      ]
+    }
+  ]
+}

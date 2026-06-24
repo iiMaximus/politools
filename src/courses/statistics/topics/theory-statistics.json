@@ -1,0 +1,340 @@
+{
+  "title": "Beyond Determinism: Notes on Statistics",
+  "summary": "Lesson 5 (parts 1 & 2). Statistics is the **science of data**: from a finite **sample** we infer the properties of the underlying **population**. You will learn the role of **estimators** (sample mean and sample variance, and *why* we divide by $n-1$), the **Normal / Gaussian** distribution and its **standardisation** $Z=(X-\\mu)/\\sigma$, the **Central Limit Theorem** with the **standard error** $\\sigma/\\sqrt n$, **confidence intervals**, and the three sampling distributions the exam needs — **Student t**, **Pearson $\\chi^2$** and **Fisher F** — each illustrated with an interactive explorer.",
+  "minutes": 40,
+  "objectives": [
+    "Distinguish population (with parameters $\\mu, \\sigma^2$) from sample (size $n$), and define a statistic/estimator $T=t(X_1,\\dots,X_n)$ and its estimate.",
+    "Use the sample mean $\\bar X_n$ as a correct & efficient estimator of $\\mu$, and the sample variance $s_n^2=\\tfrac{1}{n-1}\\sum (X_i-\\bar X_n)^2$ as the correct estimator of $\\sigma^2$, and explain why the denominator is $n-1$.",
+    "Describe the Normal distribution $X\\sim N(\\mu,\\sigma^2)$, standardise with $Z=(X-\\mu)/\\sigma$, and read the 68/95/99.7 and $\\pm1.96\\sigma$ (95%) areas.",
+    "State the Central Limit Theorem and its consequence $\\bar X_n\\sim N(\\mu,\\sigma^2/n)$, with standard error $\\sigma/\\sqrt n$ ($n\\ge30$ for a good approximation).",
+    "Build a confidence interval for $\\mu$ with known variance ($z$) and unknown variance (Student $t$), and interpret it correctly.",
+    "Identify what each sampling distribution is for: Student $t$ (mean with unknown $\\sigma$), $\\chi^2$ (variance of a normal population), Fisher $F$ (ratio of two variances)."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Population, sample, and statistical inference"
+    },
+    {
+      "kind": "prose",
+      "text": "**Statistics** is the branch of mathematics that studies methods of **collecting, analysing and reporting data** to make decisions and solve problems — it is the **science of data**. We rarely have all the data of the whole **population**, so we take a finite **sample** $\\{x_1,\\dots,x_n\\}$ (sample size $n$) and **infer** the population's properties.\n\n- **Sampling**: drawing a sample from the population.\n- **Inference**: estimating the population parameters from the sample."
+    },
+    {
+      "kind": "definition",
+      "term": "Statistic and estimator",
+      "text": "A **statistic** $g(X_1,\\dots,X_n)$ is a function of the (i.i.d.) random variables of the sample that **does not contain any unknown parameter** — so it is itself a random variable. An **estimator** $T=t(X_1,\\dots,X_n)$ is a statistic used to estimate a parameter $\\theta$ (e.g. $\\mu$); a particular value $\\hat\\theta=t(x_1,\\dots,x_n)$ is an **estimate**. Note: $\\bar X_n-\\mu$ is **not** a statistic, because it contains the unknown $\\mu$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "What makes an estimator good?",
+      "text": "- **Correct (unbiased)**: $\\mathbb{E}[T]=\\theta$.\n- **Consistent**: $\\mathrm{Var}[T]\\to 0$ as $n\\to\\infty$.\n- **Efficient**: among correct estimators, the one with the **smallest variance** is the most efficient."
+    },
+    {
+      "kind": "heading",
+      "text": "2. The estimators: sample mean and sample variance"
+    },
+    {
+      "kind": "formula",
+      "title": "Sample mean (estimator of μ)",
+      "tex": "\\bar X_n=\\frac{1}{n}\\sum_{i=1}^{n} X_i,\\qquad \\mathbb{E}[\\bar X_n]=\\mu,\\qquad \\mathrm{Var}[\\bar X_n]=\\frac{\\sigma^2}{n}\\to 0",
+      "tag": "5.1",
+      "caption": "The sample mean is a **correct and efficient** estimator of the population expected value $\\mu$: it is unbiased ($\\mathbb{E}[\\bar X_n]=\\mu$) and consistent (its variance $\\sigma^2/n\\to0$)."
+    },
+    {
+      "kind": "formula",
+      "title": "Sample variance (estimator of σ²)",
+      "tex": "s_n^2=\\frac{1}{n-1}\\sum_{i=1}^{n}(X_i-\\bar X_n)^2,\\qquad \\mathbb{E}[s_n^2]=\\sigma^2",
+      "tag": "5.2",
+      "caption": "Dividing by **$n-1$** (not $n$) makes $s_n^2$ a **correct (unbiased)** estimator of the population variance $\\sigma^2$ (Excel **VAR.S**, not VAR.P)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Why $n-1$? (degrees of freedom)",
+      "text": "The deviations are taken from the **sample mean** $\\bar X_n$, which is itself computed from the same data. The $n$ deviations $X_i-\\bar X_n$ must sum to zero, so only **$n-1$ of them are free** — one degree of freedom is 'used up' estimating the mean. Dividing by $n$ would systematically **underestimate** $\\sigma^2$; dividing by $n-1$ corrects the bias exactly. (Note: $s_n$ is not a perfectly unbiased estimator of $\\sigma$, but the bias is negligible for $n>30$.)"
+    },
+    {
+      "kind": "heading",
+      "text": "3. The Normal (Gaussian) distribution and standardisation"
+    },
+    {
+      "kind": "prose",
+      "text": "In experimental applications the **Normal distribution** is crucial: it describes the **normal effect of chance**. When systematic errors and measurement accidents have been avoided, the main effect is due to many small random errors — and (Central Limit Theorem) data influenced by many small, independent random effects are approximately **normally distributed**. The bell shape emerges even from summing a few uniform variables (e.g. the sum of three dice)."
+    },
+    {
+      "kind": "formula",
+      "title": "Normal PDF",
+      "tex": "f(x)=\\frac{1}{\\sigma\\sqrt{2\\pi}}\\,e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2},\\qquad X\\sim N(\\mu,\\sigma^2)",
+      "tag": "5.3",
+      "caption": "$\\mu$ (mean) sets the **central position**; $\\sigma$ (standard deviation) sets the **width**. For the Normal, $x=\\mu$ is simultaneously the **mode**, the **median** and the mean, and the curve has inflection points at $x=\\mu\\pm\\sigma$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-normal",
+      "title": "Normal distribution explorer",
+      "caption": "Drag $\\mu$ to slide the bell along the axis and $\\sigma$ to widen/narrow it. Watch how the area under a fixed interval changes — and confirm the standard ratios on the next slide."
+    },
+    {
+      "kind": "formula",
+      "title": "Standardisation",
+      "tex": "Z=\\frac{X-\\mu}{\\sigma}\\sim N(0,1)",
+      "tag": "5.4",
+      "caption": "The standard normal $Z$ has mean 0 and standard deviation 1. Its CDF $F(z)$ has **no closed form**, so it is read from tables: for negative $z$, $F(-z)=1-F(z)$. A probability for $X$ becomes $\\mathbb{P}(a<X<b)=F(z_b)-F(z_a)$ with $z=(x-\\mu)/\\sigma$."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Memorise the standard areas",
+      "text": "Symmetric intervals around $\\mu$ contain: $\\mu\\pm\\sigma\\to68.3\\%$, $\\mu\\pm1.645\\sigma\\to90\\%$, $\\mu\\pm1.96\\sigma\\to95\\%$, $\\mu\\pm2\\sigma\\to95.45\\%$, $\\mu\\pm2.576\\sigma\\to99\\%$, $\\mu\\pm3\\sigma\\to99.73\\%$. In measurements the **uncertainty interval** conventionally uses $P=95\\%$, i.e. $\\pm1.96\\sigma$ (often approximated as $\\pm2\\sigma$)."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: a Normal probability via Z",
+      "text": "$X\\sim N(\\mu=25,\\sigma=3)$. Find $\\mathbb{P}(20<X<29)$.\n\nStandardise: $z_1=\\frac{20-25}{3}=-1.67$, $z_2=\\frac{29-25}{3}=1.33$.\nFrom the table $F(1.33)=0.9082$ and $F(-1.67)=1-F(1.67)=1-0.9525=0.0475$.\n$$\\mathbb{P}(20<X<29)=F(z_2)-F(z_1)=0.9082-0.0475=0.8607.$$"
+    },
+    {
+      "kind": "heading",
+      "text": "4. Central Limit Theorem and the standard error"
+    },
+    {
+      "kind": "formula",
+      "title": "Central Limit Theorem (consequence for the mean)",
+      "tex": "\\bar X_n=\\frac{1}{n}\\sum_{i=1}^{n} X_i\\;\\sim\\;N\\!\\left(\\mu,\\ \\frac{\\sigma^2}{n}\\right)",
+      "tag": "5.5",
+      "caption": "The superposition (sum) of many independent random variables is **Normal**, with **no restriction** on the distribution of the $X_i$; exact for $n\\to\\infty$, a good approximation for $n\\ge30$. So the sample mean is normally distributed with the same centre $\\mu$ but a **narrower** spread."
+    },
+    {
+      "kind": "definition",
+      "term": "Standard error of the mean",
+      "text": "The spread of the **sample mean** is $\\sqrt{\\mathrm{Var}[\\bar X_n]}=\\sigma/\\sqrt n$, the **standard error**. The population scatters with $\\sigma$, but the *average* of $n$ values scatters only with $\\sigma/\\sqrt n$: taking more data makes the estimate of $\\mu$ more precise — but only as $\\sqrt n$ (to halve the standard error you need 4× the data)."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Confidence intervals"
+    },
+    {
+      "kind": "prose",
+      "text": "A point estimate is not enough; we attach an **interval** that contains the true parameter with a stated **confidence level** $1-\\alpha$:\n$$\\mathbb{P}[L_L\\le\\theta\\le L_U]=1-\\alpha,$$\nwhere $\\alpha$ is the **risk of error of the first kind** (conventionally $\\alpha=5\\%$, so $P=95\\%$ in measurements)."
+    },
+    {
+      "kind": "formula",
+      "title": "Confidence interval for μ",
+      "tex": "\\text{known }\\sigma:\\ \\bar X_n\\pm z_{1-\\alpha/2}\\frac{\\sigma}{\\sqrt n}\\qquad\\quad \\text{unknown }\\sigma:\\ \\bar X_n\\pm t_{n-1,\\,1-\\alpha/2}\\frac{s}{\\sqrt n}",
+      "tag": "5.6",
+      "caption": "With the population $\\sigma$ **known** use the standard normal $z$ (e.g. $z_{0.975}=1.96$ for 95%). With $\\sigma$ **unknown** and estimated by $s$ use the **Student $t$** with $n-1$ degrees of freedom — wider, to account for the extra uncertainty of estimating $\\sigma$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "What a confidence interval really means",
+      "text": "It is **wrong** to say 'in 95% of cases $\\mu$ falls inside *this* interval' ($\\mu$ is fixed, the interval is random). The **correct** statement: over all possible samples of $n$, the set of intervals $\\bar X_n\\pm z_{1-\\alpha/2}\\,\\sigma/\\sqrt n$ would contain the unknown $\\mu$ in $(1-\\alpha)$ of cases."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "200 gearboxes (population normal, $\\sigma=3250$ km) have sample mean life $\\bar x=44500$ km. The half-width of the 95% confidence interval for the mean ($z_{0.975}=1.96$) is closest to:",
+        "options": [
+          { "id": "A", "content": "$\\approx 6370$ km" },
+          { "id": "B", "content": "$\\approx 450$ km" },
+          { "id": "C", "content": "$\\approx 3250$ km" },
+          { "id": "D", "content": "$\\approx 16$ km" }
+        ],
+        "correct": "B",
+        "explanation": "Half-width $=z_{0.975}\\,\\sigma/\\sqrt n=1.96\\times3250/\\sqrt{200}=1.96\\times229.8\\approx450$ km (so the interval is about $44050$–$44950$ km). **A** forgets to divide by $\\sqrt n$ ($1.96\\times3250\\approx6370$). **C** uses $\\sigma$ itself. **D** divides by $n$ instead of $\\sqrt n$. The standard error is $\\sigma/\\sqrt n$, not $\\sigma$ or $\\sigma/n$.",
+        "theory": "CI for $\\mu$ (known $\\sigma$): $\\bar x\\pm z_{1-\\alpha/2}\\,\\sigma/\\sqrt n$; the $\\sqrt n$ comes from the standard error of the mean.",
+        "source": "Lesson 5 part 2 (interval estimation of the expected value)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "6. The three sampling distributions"
+    },
+    {
+      "kind": "prose",
+      "text": "Three continuous distributions arise when we work with **samples** of a normal population, each answering a different inference question."
+    },
+    {
+      "kind": "definition",
+      "term": "Student t — the mean with unknown σ",
+      "text": "The **Student** distribution is bell-shaped like the Normal but, for **few data**, has heavier tails; its shape depends on the **degrees of freedom** $\\nu=n-1$. As $n$ grows it becomes **asymptotic to the Normal**. Use it to build the **confidence interval of the mean when $\\sigma$ is unknown** (estimated by $s$): $\\bar X_n\\pm t_{n-1,1-\\alpha/2}\\,s/\\sqrt n$. Example: $\\nu=4$ (i.e. $n=5$) at 95% gives $t=2.78$, noticeably larger than the normal $1.96$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-student",
+      "title": "Student t distribution explorer",
+      "caption": "Lower the degrees of freedom $\\nu$ to fatten the tails (more uncertainty with few data); raise $\\nu$ and watch the curve converge to the standard Normal."
+    },
+    {
+      "kind": "definition",
+      "term": "Pearson χ² — the variance of a normal population",
+      "text": "Pearson introduced the **$\\chi^2$** variable to describe the distribution of the variance estimator $s_n^2$ of a normal population. Since $(n-1)\\,s^2/\\sigma^2$ follows a $\\chi^2$ with $n-1$ degrees of freedom, the **confidence interval for $\\sigma^2$** is\n$$(n-1)\\frac{s^2}{\\chi^2_2}<\\sigma^2<(n-1)\\frac{s^2}{\\chi^2_1}.$$\nIt quantifies how much **random variability** affects the estimate of the variance — and shows why you need **many data** to pin $\\sigma$ down."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-chisq",
+      "title": "Chi-square distribution explorer",
+      "caption": "Change the degrees of freedom and see the right-skewed shape; it controls the confidence interval for the variance $\\sigma^2$ of a normal population."
+    },
+    {
+      "kind": "definition",
+      "term": "Fisher F — the ratio of two variances",
+      "text": "R. A. Fisher introduced **$F$** for the distribution of the **ratio of two sample variances**: $F_{n_1-1,\\,n_2-1}=\\dfrac{s_1^2/\\sigma_1^2}{s_2^2/\\sigma_2^2}$, with the numerator evaluated on $n_1-1$ and the denominator on $n_2-1$ degrees of freedom. Use it to build the **confidence interval of a variance ratio** and to **compare the variances of two samples** (its $F$ values depend on *two* degrees-of-freedom and the probability, so they need a whole table, not one column)."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-fisher",
+      "title": "Fisher F distribution explorer",
+      "caption": "Set the two degrees of freedom $(m,n)$ and watch the shape change; the F distribution governs comparisons of two variances (the variance ratio)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Which sampling distribution for which job?",
+      "text": "- **Student t** → confidence interval / test of the **mean** when $\\sigma$ is **unknown** ($\\nu=n-1$).\n- **Pearson $\\chi^2$** → confidence interval / test of the **variance** $\\sigma^2$ of one normal population ($\\nu=n-1$).\n- **Fisher F** → compare **two variances** (their ratio), with $(n_1-1,\\,n_2-1)$ degrees of freedom.\nWhen $\\sigma$ is **known**, the mean uses the standard normal $z$, not $t$."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Why is the sample variance computed with a denominator of $n-1$ rather than $n$?",
+      "options": [
+        { "id": "A", "content": "To make the calculation faster." },
+        { "id": "B", "content": "Because one degree of freedom is used estimating the mean, so $n-1$ makes $s_n^2$ an unbiased (correct) estimator of $\\sigma^2$." },
+        { "id": "C", "content": "Because $\\sigma$ is always smaller than $s$." },
+        { "id": "D", "content": "Because the population is infinite." }
+      ],
+      "correct": "B",
+      "explanation": "The deviations are taken from the sample mean, which is computed from the data; only $n-1$ deviations are free, so dividing by $n-1$ removes the bias and makes $\\mathbb{E}[s_n^2]=\\sigma^2$. **A** speed is irrelevant. **C** is a false ordering. **D** the correction is needed for any sample, not because the population is infinite.",
+      "theory": "Degrees of freedom: estimating $\\mu$ from the same data costs one df, so $s_n^2=\\tfrac{1}{n-1}\\sum(X_i-\\bar X_n)^2$ is the unbiased estimator of $\\sigma^2$ (Excel VAR.S).",
+      "source": "Lesson 5 part 2 (sample variance; estimator properties)"
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "The sample mean $\\bar X_n$ is described as a correct and efficient estimator of $\\mu$ because:",
+      "options": [
+        { "id": "A", "content": "$\\mathbb{E}[\\bar X_n]=\\mu$ (unbiased) and its variance $\\sigma^2/n\\to 0$ (consistent, minimal spread)" },
+        { "id": "B", "content": "it is always exactly equal to $\\mu$" },
+        { "id": "C", "content": "it ignores the variance of the data" },
+        { "id": "D", "content": "it requires the population to be normal" }
+      ],
+      "correct": "A",
+      "explanation": "Unbiasedness ($\\mathbb{E}[\\bar X_n]=\\mu$) makes it **correct**; the shrinking variance $\\sigma^2/n$ makes it **consistent** and, among unbiased estimators, **efficient**. **B** is false — an estimate varies from sample to sample. **C** is irrelevant. **D** the unbiasedness holds for any distribution with mean $\\mu$, normality is not required.",
+      "theory": "Correct: $\\mathbb{E}[T]=\\theta$. Consistent: $\\mathrm{Var}[T]\\to0$. Efficient: smallest variance among correct estimators.",
+      "source": "Lesson 5 part 2 (estimators' properties; sample average)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "For a Normal distribution, the interval $\\mu\\pm1.96\\sigma$ contains approximately what fraction of the values?",
+      "options": [
+        { "id": "A", "content": "68%" },
+        { "id": "B", "content": "90%" },
+        { "id": "C", "content": "95%" },
+        { "id": "D", "content": "99.7%" }
+      ],
+      "correct": "C",
+      "explanation": "$\\mu\\pm1.96\\sigma$ captures the central **95%** (the conventional measurement uncertainty level). **A** is $\\mu\\pm1\\sigma$ (68.3%). **B** is $\\mu\\pm1.645\\sigma$ (90%). **D** is $\\mu\\pm3\\sigma$ (99.73%). The familiar $\\pm2\\sigma$ gives 95.45%, close to but not exactly the 95% of $\\pm1.96\\sigma$.",
+      "theory": "Standard Normal areas: $\\pm1\\sigma$≈68%, $\\pm1.645\\sigma$=90%, $\\pm1.96\\sigma$=95%, $\\pm2\\sigma$≈95.45%, $\\pm2.576\\sigma$=99%, $\\pm3\\sigma$≈99.73%.",
+      "source": "Lesson 5 part 2 (Normal distribution areas)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "$X\\sim N(\\mu=50,\\sigma=4)$. The standardised value $Z$ corresponding to $x=58$ is:",
+      "options": [
+        { "id": "A", "content": "$2.0$" },
+        { "id": "B", "content": "$8.0$" },
+        { "id": "C", "content": "$0.5$" },
+        { "id": "D", "content": "$14.5$" }
+      ],
+      "correct": "A",
+      "explanation": "$Z=(x-\\mu)/\\sigma=(58-50)/4=8/4=2.0$. **B** is the numerator $x-\\mu$ without dividing by $\\sigma$. **C** inverts the ratio. **D** is meaningless. Standardising converts any normal value to the $N(0,1)$ scale so tables/areas apply.",
+      "theory": "Standardisation: $Z=(X-\\mu)/\\sigma\\sim N(0,1)$; then probabilities come from $F(z)$.",
+      "source": "Lesson 5 part 2 (standardisation, example 1)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The Central Limit Theorem implies that the sample mean of $n$ i.i.d. values with mean $\\mu$ and variance $\\sigma^2$ is approximately:",
+      "options": [
+        { "id": "A", "content": "$N(\\mu,\\ \\sigma^2)$" },
+        { "id": "B", "content": "$N(\\mu,\\ \\sigma^2/n)$" },
+        { "id": "C", "content": "$N(n\\mu,\\ n\\sigma^2)$" },
+        { "id": "D", "content": "uniform on $[\\mu-\\sigma,\\mu+\\sigma]$" }
+      ],
+      "correct": "B",
+      "explanation": "By the CLT consequence, $\\bar X_n\\sim N(\\mu,\\sigma^2/n)$: same centre, variance divided by $n$. **A** is the population, not the mean. **C** describes the *sum* $\\sum X_i\\sim N(n\\mu,n\\sigma^2)$, not the average. **D** the limiting shape is normal, not uniform — regardless of the original distribution.",
+      "theory": "CLT: $\\bar X_n\\sim N(\\mu,\\sigma^2/n)$ for $n\\ge30$, with standard error $\\sigma/\\sqrt n$; no restriction on the parent distribution.",
+      "source": "Lesson 5 part 2 (Central Limit Theorem - consequence)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A process has $\\sigma=12$. To estimate $\\mu$, you take $n=36$ measurements. The standard error of the sample mean is:",
+      "options": [
+        { "id": "A", "content": "$12$" },
+        { "id": "B", "content": "$2$" },
+        { "id": "C", "content": "$0.33$" },
+        { "id": "D", "content": "$72$" }
+      ],
+      "correct": "B",
+      "explanation": "Standard error $=\\sigma/\\sqrt n=12/\\sqrt{36}=12/6=2$. **A** uses $\\sigma$ itself (the population spread, not the mean's). **C** divides by $n=36$ instead of $\\sqrt n$. **D** multiplies. The mean of 36 values scatters 6× less than a single value.",
+      "theory": "Standard error of the mean = $\\sigma/\\sqrt n$; precision improves only as $\\sqrt n$.",
+      "source": "Lesson 5 part 2 (standard error; CLT)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "You build a confidence interval for the mean of a normal population, but $\\sigma$ is **unknown** and estimated from $n=5$ data. Which value scales the half-width $s/\\sqrt n$ at 95%?",
+      "options": [
+        { "id": "A", "content": "$z_{0.975}=1.96$ (standard normal)" },
+        { "id": "B", "content": "$\\chi^2_{4}$ (chi-square with 4 df)" },
+        { "id": "C", "content": "$F_{4,4}$ (Fisher F)" },
+        { "id": "D", "content": "$t_{4,\\,0.975}=2.78$ (Student t with 4 df)" }
+      ],
+      "correct": "D",
+      "explanation": "With $\\sigma$ unknown and estimated by $s$, the mean's interval uses the **Student $t$** with $\\nu=n-1=4$ df: $t_{4,0.975}=2.78$, larger than the normal $1.96$ to account for estimating $\\sigma$. **A** $z$ applies only when $\\sigma$ is *known*. **B** $\\chi^2$ is for the variance interval. **C** $F$ compares two variances. Few data ⇒ heavier $t$ tails ⇒ wider interval.",
+      "theory": "Mean, $\\sigma$ known → $z$; mean, $\\sigma$ unknown → Student $t$ ($\\nu=n-1$); variance → $\\chi^2$; two variances → $F$.",
+      "source": "Lesson 5 part 2 (interval estimation with unknown variance; Student distribution)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Which distribution would you use to build a confidence interval for the **variance** $\\sigma^2$ of a single normally-distributed population?",
+      "options": [
+        { "id": "A", "content": "Student t" },
+        { "id": "B", "content": "Standard normal Z" },
+        { "id": "C", "content": "Fisher F" },
+        { "id": "D", "content": "Pearson $\\chi^2$" }
+      ],
+      "correct": "D",
+      "explanation": "$(n-1)s^2/\\sigma^2$ follows a **$\\chi^2$** with $n-1$ df, which gives the confidence interval for $\\sigma^2$. **A** Student $t$ is for the *mean* with unknown $\\sigma$. **B** $Z$ is for the mean with known $\\sigma$. **C** Fisher $F$ compares *two* variances. The $\\chi^2$ describes the distribution of the variance estimator of a normal population.",
+      "theory": "$\\chi^2$ ↔ variance of one normal population; CI: $(n-1)s^2/\\chi^2_2<\\sigma^2<(n-1)s^2/\\chi^2_1$.",
+      "source": "Lesson 5 part 2 (Pearson's $\\chi^2$ distribution)"
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Two independent samples have sample variances $s_1^2$ and $s_2^2$. To test/compare their two variances (the variance ratio), you use:",
+      "options": [
+        { "id": "A", "content": "the Student t distribution" },
+        { "id": "B", "content": "the Poisson distribution" },
+        { "id": "C", "content": "the Fisher F distribution with $(n_1-1,\\,n_2-1)$ degrees of freedom" },
+        { "id": "D", "content": "the standard normal" }
+      ],
+      "correct": "C",
+      "explanation": "The ratio of two sample variances follows the **Fisher F** distribution with degrees of freedom $(n_1-1,\\,n_2-1)$. **A** Student $t$ handles a mean with unknown $\\sigma$. **B** Poisson is a discrete distribution for rare counts. **D** the normal is for a mean with known $\\sigma$. $F$ needs *two* df because two variances are involved.",
+      "theory": "Fisher $F_{n_1-1,n_2-1}=\\dfrac{s_1^2/\\sigma_1^2}{s_2^2/\\sigma_2^2}$ ↔ comparison of two variances (variance ratio).",
+      "source": "Lesson 5 part 2 (Fisher's F distribution)"
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A normal population is sampled with $n=5$ ($\\nu=4$), giving $s=3$. Using $\\chi^2_{1}=0.48$ (2.5%) and $\\chi^2_{2}=11.14$ (97.5%), the 95% confidence interval for $\\sigma^2$ is closest to:",
+      "options": [
+        { "id": "A", "content": "$3.2<\\sigma^2<75$" },
+        { "id": "B", "content": "$0.48<\\sigma^2<11.14$" },
+        { "id": "C", "content": "$1.8<\\sigma^2<8.7$" },
+        { "id": "D", "content": "$9<\\sigma^2<9$" }
+      ],
+      "correct": "A",
+      "explanation": "$\\sigma^2$ lies in $\\left((n-1)\\frac{s^2}{\\chi^2_2},\\ (n-1)\\frac{s^2}{\\chi^2_1}\\right)=\\left(4\\cdot\\frac{9}{11.14},\\ 4\\cdot\\frac{9}{0.48}\\right)=(3.2,\\ 75)$. **B** just quotes the $\\chi^2$ values. **C** is the interval for $\\sigma$ ($1.8<\\sigma<8.7$), not $\\sigma^2$. **D** ignores the spread entirely. The very wide interval shows how poorly few data constrain the variance.",
+      "theory": "CI for variance: $(n-1)s^2/\\chi^2_2<\\sigma^2<(n-1)s^2/\\chi^2_1$; with few df the interval is very wide.",
+      "source": "Lesson 5 part 2 (Pearson's $\\chi^2$ distribution, example)"
+    }
+  ]
+}

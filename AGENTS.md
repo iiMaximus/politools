@@ -223,6 +223,31 @@ per-module slide-coverage audit (`scripts/merge-audit.mjs`, tagged `audit-added`
 - To add more gap-fill cards from a new audit run, feed the workflow output to
   `node scripts/merge-audit.mjs <output-file>`.
 
+### Experimental Statistics & Mechanical Measurements (ESMM)
+
+This exam is hands-on Excel, so the course (`src/courses/statistics/`) ships an **in-browser
+spreadsheet**. Two pieces of shared infra power it:
+
+- **Formula engine** `src/lib/excel/` — a real tokenizer/parser/evaluator (`engine.ts`) over a stats
+  function table (`functions.ts`) backed by numerical special functions (`stats.ts`: NORM/T/CHISQ/F/
+  BINOM/HYPGEOM + inverses, no deps). Public API in `index.ts` (`createSheet`, `Sheet.get`,
+  `formatNumber`, `valuesMatch`).
+- **Mock-Excel UI** `src/components/excel/` — `ExcelGrid` (grid + formula bar, type real formulas,
+  live recalc) and `ExcelLab` (an exercise: seeded grid + Check + Reveal). A `LabExercise` is data.
+
+Content is authored as **JSON** (loaded via `loadTopic`, like thermo): `topics/*.json` are lessons
+(+ their `practice`/`exam`), `labs/*.json` are arrays of `LabExercise`. The `labs.tsx` registry maps
+each exercise to a `lab:<id>` simKey; lab lessons embed them as `sim` blocks. Distribution explorers
+use `dist-normal|student|chisq|fisher`.
+
+**Verification gates (run after editing the engine or any lab JSON):**
+- `npm run verify:excel` — replays 586 cells from the course's "Statistics functions.xlsx"
+  (`scripts/excel-fixtures.json`, regen with the python in that script's header) and asserts the
+  engine matches Excel's cached values. Hard gate for the engine.
+- `npm run verify:labs` — seeds every exercise's canonical `hintFormula`s and asserts each `check`
+  reproduces its `expected`. Hard gate for lab content (catches typos; guarantees "Check" goes green).
+- `npm run verify` runs both. Lab `expected` values must equal the solution `.xlsx` cached values.
+
 ---
 
 ## 9. Gotchas

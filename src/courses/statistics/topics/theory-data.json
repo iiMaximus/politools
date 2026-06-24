@@ -1,0 +1,397 @@
+{
+  "title": "Managing Experimental Data: Outliers, Distribution & Normality",
+  "summary": "Lecture 6. The first job of a metrologist facing a cloud of measurements is to **clean** it and **characterize** it. You will learn the descriptive statistics ($m_x$, $s_x$, quartiles, box-plot), how to spot a *measurement accident* with **Chauvenet's criterion** and the **IQR / box-plot** rule, how to build a **frequency distribution** and histogram, and how to decide whether the data are **normal** — rigorously with the **$\\chi^2$ goodness-of-fit test** and graphically with the **Normal Probability Plot (NPP)**. A non-normal distribution is the fingerprint of a hidden *systematic factor*.",
+  "minutes": 35,
+  "objectives": [
+    "Compute the position index $m_x$ and the dispersion index $s_x$ (sample standard deviation, STDEV.S) of a measurement set, and read its quartiles / box-plot.",
+    "Identify a measurement accident with Chauvenet's criterion: per-datum risk $\\alpha=1/(2n)$, limits $m\\mp z\\,s$ with $z=\\mathrm{NORM.S.INV}(1-1/(4n))$.",
+    "Apply the distribution-free IQR / box-plot rule with fences $Q_1-1.5\\,IQR$ and $Q_3+1.5\\,IQR$.",
+    "Build a frequency distribution: number of classes $n_c=\\sqrt{n}+4$, examined field $\\bar x\\pm4s$, class width = field / $n_c$, and the histogram of frequency densities.",
+    "Run a $\\chi^2$ goodness-of-fit test for normality: statistic $W=\\sum (f_a-f_t)^2/f_t$, degrees of freedom = categories $-3$, two-sided accept/reject band.",
+    "Read a Normal Probability Plot: plotting position $f_{rc,i}=(i-0.5)/n$, quantile $z_i$, linearity $\\Rightarrow$ normal; recognize hypernormal and hyponormal shapes."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Why we manage the data first"
+    },
+    {
+      "kind": "prose",
+      "text": "A measurement result is **biased** (owing to *systematic effects*), **hazy** (owing to *random effects*), and may contain **measurement accidents** (a misread, a vibration, a chip). The user of the *measurement complex* must extract from this *experimental cloud* a single **value** for the measurand and its **uncertainty**.\n\nThe purpose of the analysis of experimental results is therefore to identify a **position index** (where the data sit) and a **dispersion index** (how spread they are), *after* implementing statistical techniques that detect — and let us remove — **systematic effects** and **measurement accidents**."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The whole pipeline",
+      "text": "**1.** Compute $m_x$ and $s_x$ → **2.** detect & treat outliers (Chauvenet / IQR) → **3.** build the frequency distribution and test normality with $\\chi^2$ → **4.** confirm graphically with the NPP. The procedure is **iterative**: the reference normal uses $m$ and $s$, but these are themselves distorted by accidents/systematic effects, so removing the most marked effect and recomputing **improves the sensitivity** of every later comparison."
+    },
+    {
+      "kind": "heading",
+      "text": "2. Descriptive statistics: position and dispersion"
+    },
+    {
+      "kind": "formula",
+      "title": "Mean and sample standard deviation",
+      "tex": "m_x=\\frac{\\sum_{i=1}^{n} x_i}{n},\\qquad s_x=\\sqrt{\\frac{\\sum_{i=1}^{n}(x_i-m_x)^2}{n-1}}",
+      "tag": "6.1",
+      "caption": "$m_x$ is the **position index** (Excel AVERAGE), $s_x$ the **dispersion index**. Note the **$n-1$** at the denominator: a finite set is a *sample* of the underlying process, so we use STDEV.S, never STDEV.P (which divides by $n$ and underestimates the spread)."
+    },
+    {
+      "kind": "definition",
+      "term": "Quartiles and the box-plot",
+      "text": "The $i$-th **percentile** is the value below which $i$ percent of the observations fall. The three quartiles are $Q_1$ = 1st quartile = 25th percentile, $Q_2$ = median = 50th percentile, $Q_3$ = 3rd quartile = 75th percentile (Excel QUARTILE). A **box-plot** draws a box from $Q_1$ to $Q_3$ with the median inside, and whiskers to the min and max. Comparing the box-plots of several operators reveals at a glance whether some groups sit systematically higher than others."
+    },
+    {
+      "kind": "definition",
+      "term": "Interquartile range (IQR)",
+      "text": "$IQR=Q_3-Q_1$ is the width of the central 50% of the data. Because quartiles ignore the extreme tails, the IQR is a **robust** measure of spread — a single wild value cannot inflate it the way it inflates $s_x$."
+    },
+    {
+      "kind": "heading",
+      "text": "3. Exclusion principles — Chauvenet's criterion"
+    },
+    {
+      "kind": "prose",
+      "text": "An **outlier** is a datum affected significantly by *additional or different factors* than the bulk of the data. It may change the conclusions of an experiment — but it also often carries important information about the process. **Before** excluding anything, understand the possible cause and judge whether similar values may recur: the exclusion must not be decided on a *purely statistical* basis; **expert opinion is always required**."
+    },
+    {
+      "kind": "prose",
+      "text": "Chauvenet's method connects the probability of a measurement accident with the **number of tests** $n$. Chauvenet assigned a **conventional probability of 50%** to the event of having one outlier among $n$ tests. Modelling this with a binomial distribution:"
+    },
+    {
+      "kind": "formula",
+      "title": "Chauvenet's exclusion principle",
+      "tex": "\\mathcal P(1)=\\binom{n}{1}p\\,(1-p)^{n-1}\\approx n\\,p=50\\%\\;\\Rightarrow\\; p=\\frac{1}{2n}",
+      "tag": "6.2",
+      "caption": "$p$ is the probability of a measurement accident in a *single* test (supposed small). Setting the expected number of accidents to $\\tfrac12$ gives the per-datum risk $p=1/(2n)$."
+    },
+    {
+      "kind": "formula",
+      "title": "Exclusion limits (two-tailed)",
+      "tex": "\\mathcal P(x<x_{li})=\\mathcal P(x>x_{ls})=\\frac{p}{2}=\\frac{1}{4n}\\;\\Rightarrow\\; z=\\mathrm{NORM.S.INV}\\!\\left(1-\\frac{1}{4n}\\right),\\quad x_{li,ls}=m\\mp z\\,s",
+      "tag": "6.3",
+      "caption": "The risk $p$ is split symmetrically between the two tails ($1/4n$ each). Any datum falling outside $[\\,m-z\\,s,\\;m+z\\,s\\,]$ is judged an outlier. Equivalently the limits are $\\mathrm{NORM.INV}(\\tfrac{1}{4n};m;s)$ and $\\mathrm{NORM.INV}(1-\\tfrac{1}{4n};m;s)$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The risk shrinks as n grows",
+      "text": "Because $\\alpha=1/(2n)$ depends on $n$, the percentage of data legitimately belonging to the tails *increases* with the number of tests: the more data you have, the more extreme a point must be before it counts as an accident. Report $\\alpha$ as a **probability** (e.g. $n=20\\Rightarrow\\alpha=1/40=0.025$), **not** as a percentage, and always use $s$ from **STDEV.S**."
+    },
+    {
+      "kind": "definition",
+      "term": "What to do with an identified outlier",
+      "text": "Three options, in order of preference: (a) **repeat** the measurement and replace the outlier with the new (replacement) datum; (b) if it cannot be repeated and there is no replacement, simply **eliminate** it; (c) if a missing value cannot be tolerated, substitute it with the **average of the remaining data** — a trick that barely shifts the mean but may distort the variance and the distribution shape, so it is the last resort."
+    },
+    {
+      "kind": "heading",
+      "text": "4. The IQR / box-plot (Tukey) rule"
+    },
+    {
+      "kind": "formula",
+      "title": "Box-plot fences",
+      "tex": "\\text{lower fence}=Q_1-1.5\\,IQR,\\qquad \\text{upper fence}=Q_3+1.5\\,IQR",
+      "tag": "6.4",
+      "caption": "A distribution-free alternative to Chauvenet: any datum beyond these fences is flagged. For a normal distribution the $1.5\\,IQR$ fences sit at about $\\pm2.7\\sigma$. Being built on quartiles, the rule is **robust** — one extreme point cannot move the fences the way it moves $m$ and $s$."
+    },
+    {
+      "kind": "heading",
+      "text": "5. The frequency distribution and the histogram"
+    },
+    {
+      "kind": "prose",
+      "text": "We bin the data into **classes** (categories, bins) to see the shape of the distribution. There is no strict standard for the number of classes; the course uses:"
+    },
+    {
+      "kind": "formula",
+      "title": "Classes, examined field, class width",
+      "tex": "n_c=\\sqrt{n}+4,\\qquad \\min_f=\\bar x-4s,\\quad \\max_f=\\bar x+4s,\\qquad \\Delta x=\\frac{\\max_f-\\min_f}{n_c}",
+      "tag": "6.5",
+      "caption": "The **examined field** is widened to $\\bar x\\pm4s$ so it covers essentially all of the reference normal. Too many classes leaves the core riddled with empty bins; too few hides the shape. Pick a **starting value** that matches no datum and a width at the data resolution, to avoid ambiguity on class boundaries."
+    },
+    {
+      "kind": "definition",
+      "term": "Absolute / relative frequency, frequency density",
+      "text": "The **absolute frequency** $f_a$ is the count of data in a class. The **relative frequency** $f_r=f_a/n$ estimates the probability of that class; the $f_r$ sum to 1 and equal the **areas** of the histogram bars. The bar **heights** are the **frequency densities** $\\rho_f=f_r/\\Delta x$. Because the areas sum to one, the histogram is directly comparable with a probability density — specifically the **normal distribution** with parameters $m$ and $s$ (the sample estimates)."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Bar plot is not a distribution",
+      "text": "A **bar chart** whose heights are the *absolute* frequencies $f_a$ does **not** represent a probability distribution (its total area is $n\\Delta x$, not 1). Only the **histogram** of frequency *densities* $\\rho_f$ has unit area and can be overlaid on the normal curve."
+    },
+    {
+      "kind": "heading",
+      "text": "6. Normality tests — the chi-square goodness-of-fit"
+    },
+    {
+      "kind": "prose",
+      "text": "If the variations are due **only to random effects**, the expected distribution is **normal**. If the experimental distribution is **not** normal, we may assume the presence of **systematic factors**. Two tests check the hypothesis of normality: the **$\\chi^2$ test** (rigorous, numeric, lets us *reject* at a confidence level $P$) and the **Normal Probability Plot** (graphic; cannot reject rigorously, but shows the *cause* of non-normality)."
+    },
+    {
+      "kind": "formula",
+      "title": "The chi-square statistic",
+      "tex": "W=\\sum_{j=1}^{N}\\frac{(f_{a,j}-f_{t,j})^2}{f_{t,j}},\\qquad f_{t,j}=n\\,[\\,F_N(x_{U,j})-F_N(x_{L,j})\\,]",
+      "tag": "6.6",
+      "caption": "$f_a$ = observed (absolute) count in class $j$; $f_t$ = **theoretical** count predicted by the normal, obtained from the difference of the cumulative normal $F_N$ (Excel NORM.DIST(...;1)) at the class limits times $n$. $W$ has a Pearson $\\chi^2$ distribution with $N-3$ degrees of freedom."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Degrees of freedom = categories − 3",
+      "text": "$\\nu=(\\text{number of categories})-(\\text{imposed constraints})$. **Three** constraints are imposed when matching the normal to the histogram: equal **mean**, equal **standard deviation**, and equal **total area** (unitary). So $\\nu=N-3$. Forgetting the $-2$ for the two fitted parameters is the classic mistake — it changes the critical $\\chi^2$ and your conclusion."
+    },
+    {
+      "kind": "steps",
+      "title": "Running and reading the test",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Choose the confidence level $P$ by weighing the consequence of **rejecting a true** normality (a type-I error). Re-examining the method is cheap, so a high risk $\\alpha=15\\%$, i.e. $P=85\\%$, is acceptable."
+        },
+        {
+          "label": "2",
+          "text": "Compute $W$ from Eq. 6.6 and the degrees of freedom $\\nu=N-3$."
+        },
+        {
+          "label": "3",
+          "text": "The test is **two-sided (bilateral)**: get a *lower* and an *upper* $\\chi^2$ boundary for $P$. Accept normality (no detectable systematic effect) if $W$ falls **inside** the band; reject if it falls **outside**."
+        },
+        {
+          "label": "4",
+          "text": "Worked figures (length example): $N=11$ categories, $\\nu=8$, $P=85\\%$ give boundaries $3.14$ and $14.27$. Since $W=10.94$ lies inside, the hypothesis of normality is **not rejected** — though small disturbances may remain undetected."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why two-sided?",
+      "text": "We reject not only when $W$ is **too high** (distribution too different from normal) but also when $W$ is **too low** (distribution suspiciously *too similar* to a perfect normal). A near-perfect fit is desirable but very unlikely, and therefore suspected — it can signal a *filtered* dataset."
+    },
+    {
+      "kind": "heading",
+      "text": "7. Normality tests — the Normal Probability Plot (NPP)"
+    },
+    {
+      "kind": "prose",
+      "text": "The NPP deforms the ordinate scale so that the S-shaped cumulative normal becomes a **straight line**. If the data are normal, their points fall on that line; deviations reveal the *type* of non-normality."
+    },
+    {
+      "kind": "steps",
+      "title": "Building the NPP",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Sort the $n$ observations $x_i$ in **increasing order**."
+        },
+        {
+          "label": "2",
+          "text": "Assign each the cumulative plotting position $f_{rc,i}=\\dfrac{i-0.5}{n}$. The $-0.5$ is a continuity correction: it keeps the largest value off $f=1$ (where $z=+\\infty$)."
+        },
+        {
+          "label": "3",
+          "text": "Convert to the standard-normal quantile $z_i=\\mathrm{NORM.S.INV}(f_{rc,i})$, and the reference value $x_{Norm,i}=\\bar x+z_i\\,s$."
+        },
+        {
+          "label": "4",
+          "text": "Plot the experimental points $\\{x_i;z_i\\}$ against the reference line $\\{x_{Norm,i};z_i\\}$. A **rectilinear** trend (within a band sized by the random irregularities) means normality cannot be rejected; the slope of the line is $\\propto 1/s$ and it crosses $z=0$ at $\\bar x$."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "Reading the shape: hypernormal vs hyponormal",
+      "text": "- **Hypernormal**: the bell is *higher* in the centre and *lower* in the tails; the NPP has a steeper central slope and flattens in the tails. Metrologically it signals a **filtering** process — the operator personally discarded the data farthest from the expected value, distorting the distribution.\n- **Hyponormal**: the bell is *lower* in the centre and *heavier* in the tails (often bimodal: the NPP's two tails tend to straight lines). It points to **systematic differences** — *discontinuities* (different instruments, machines, operators) or *tendencies* (temperature change, wear, drift in time)."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "What a failed normality test tells you",
+      "text": "$\\chi^2$ and NPP **detect** a systematic factor but do not **identify** it. A hyponormal/bimodal shape hints at discontinuities or a drift — exactly the situation that the next lecture (linear regression) and ANOVA are built to pin down."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A set of $n=18$ readings is screened with Chauvenet's criterion. Which expression gives the standardized cut $z$ used for the exclusion limits $m\\mp z\\,s$?",
+        "options": [
+          { "id": "A", "content": "$z=\\mathrm{NORM.S.INV}\\!\\left(1-\\dfrac{1}{2n}\\right)$" },
+          { "id": "B", "content": "$z=\\mathrm{NORM.S.INV}\\!\\left(1-\\dfrac{1}{4n}\\right)$" },
+          { "id": "C", "content": "$z=\\mathrm{NORM.S.INV}\\!\\left(\\dfrac{1}{2n}\\right)$" },
+          { "id": "D", "content": "$z=1.5\\,(Q_3-Q_1)$" }
+        ],
+        "correct": "B",
+        "explanation": "The per-datum risk is $\\alpha=p=1/(2n)$, split symmetrically so each tail carries $1/(4n)$. The upper cut corresponds to cumulative probability $1-1/(4n)$, hence $z=\\mathrm{NORM.S.INV}(1-1/(4n))$. **A** uses the *total* two-sided risk $1/(2n)$ in one tail, cutting too close. **C** returns the negative lower-tail $z$ (and uses the un-halved risk). **D** is the IQR box-plot fence offset, a different rule entirely (and it is a distance, not a $z$).",
+        "theory": "Chauvenet: $\\alpha=1/(2n)$ total, $1/(4n)$ per tail, $z=\\mathrm{NORM.S.INV}(1-1/(4n))$, limits $m\\mp z\\,s$.",
+        "source": "Lecture 6 (exclusion principles, Chauvenet method)"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "Which Excel function gives the dispersion index $s_x$ that should be used for a finite set of experimental data?",
+      "options": [
+        { "id": "A", "content": "STDEV.P, which divides by $n$" },
+        { "id": "B", "content": "VAR.P, the population variance" },
+        { "id": "C", "content": "AVERAGE of the absolute deviations" },
+        { "id": "D", "content": "STDEV.S, which divides by $n-1$" }
+      ],
+      "correct": "D",
+      "explanation": "Experimental data are a **sample** of the underlying process, so the dispersion index uses Bessel's correction, dividing by $n-1$: **STDEV.S**. **A** (STDEV.P) divides by $n$ and is only correct for a complete population — it underestimates the spread and is the classic trap. **B** is a variance (squared, and the population form). **C** is the mean absolute deviation, a different statistic the course does not use here.",
+      "theory": "Sample statistics use $n-1$ degrees of freedom because one is spent estimating the mean; $s_x=\\sqrt{\\sum(x_i-m_x)^2/(n-1)}$.",
+      "tags": ["descriptive"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In Chauvenet's criterion the per-datum risk of wrongly excluding a value, and its split between the tails, are:",
+      "options": [
+        { "id": "A", "content": "$\\alpha=\\dfrac{1}{n}$, all in the upper tail" },
+        { "id": "B", "content": "$\\alpha=0.05$ regardless of $n$, split as $0.025$ per tail" },
+        { "id": "C", "content": "$\\alpha=\\dfrac{1}{2n}$, split as $\\dfrac{1}{4n}$ in each tail" },
+        { "id": "D", "content": "$\\alpha=\\dfrac{1}{4n}$, all in one tail" }
+      ],
+      "correct": "C",
+      "explanation": "Chauvenet sets the expected number of accidents in $n$ tests to $\\tfrac12$, giving $np\\approx\\tfrac12$, i.e. $\\alpha=p=\\tfrac{1}{2n}$; working two-sided each tail carries half, $\\tfrac{1}{4n}$. **A** doubles the risk and ignores the symmetric split. **B** is the fixed $5\\%$ of a generic hypothesis test, not Chauvenet's $n$-dependent value. **D** halves $\\alpha$ and forgets the two-sided split. For $n=20$: $\\alpha=1/40=0.025$, $1/80=0.0125$ per tail.",
+      "theory": "Chauvenet's risk shrinks with sample size: with more data, a point must be more extreme before it is judged an accident.",
+      "tags": ["chauvenet", "outliers"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A frequency distribution is built for $n=50$ data using the course rule. The number of classes $n_c$ is:",
+      "options": [
+        { "id": "A", "content": "$\\sqrt{50}\\approx 7$" },
+        { "id": "B", "content": "$\\sqrt{50}+4\\approx 11$" },
+        { "id": "C", "content": "$50/4 = 12.5\\approx 13$" },
+        { "id": "D", "content": "$\\log_2 50 + 1\\approx 7$" }
+      ],
+      "correct": "B",
+      "explanation": "The course uses $n_c=\\sqrt{n}+4=\\sqrt{50}+4\\approx 7.07+4=11.07\\to 11$ classes, with the examined field widened to $\\bar x\\pm4s$. **A** uses only $\\sqrt{n}$, the bare starting point before the $+4$ widening. **C** and **D** are different binning conventions not used here. The $+4$ extra classes ensure the field covers the significant range of the reference normal.",
+      "theory": "Class scheme: $n_c=\\sqrt{n}+4$ classes spanning the field $\\bar x\\pm4s$; class width $\\Delta x=(\\max_f-\\min_f)/n_c$.",
+      "tags": ["histogram", "frequency"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A $\\chi^2$ goodness-of-fit to a normal uses 11 categories; both the mean and the standard deviation were estimated from the data. The number of degrees of freedom is:",
+      "options": [
+        { "id": "A", "content": "11" },
+        { "id": "B", "content": "10" },
+        { "id": "C", "content": "$11-1-2 = 8$" },
+        { "id": "D", "content": "9" }
+      ],
+      "correct": "C",
+      "explanation": "Three constraints are imposed when matching the normal to the histogram — equal total area, equal mean, equal standard deviation — so $\\nu=N-3=11-3=8$. **A** forgets every subtraction. **B** subtracts only the $-1$ for the total-count constraint. **D** subtracts the $-1$ plus one parameter, forgetting that *both* $m$ and $s$ were fitted. Each fitted parameter removes one more degree of freedom.",
+      "theory": "For a normality $\\chi^2$ with mean and st. dev. estimated from the data, $\\nu=(\\text{categories})-3$.",
+      "tags": ["chi-square", "normality"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A two-sided $\\chi^2$ normality test at $P=85\\%$ gives boundaries $3.14$ and $14.27$ ($\\nu=8$). The experimental statistic is $W=10.94$. The conclusion is:",
+      "options": [
+        { "id": "A", "content": "Reject normality — $W$ is too large" },
+        { "id": "B", "content": "Do not reject normality — $W$ lies inside $[3.14,\\,14.27]$" },
+        { "id": "C", "content": "Reject normality — $W$ is too small (fit too perfect)" },
+        { "id": "D", "content": "The test is invalid; $\\chi^2$ cannot be applied two-sided" }
+      ],
+      "correct": "B",
+      "explanation": "Since $3.14<10.94<14.27$, $W$ falls inside the acceptance band, so the hypothesis of a normal distribution is **not rejected** (the test provides no evidence of a systematic effect). **A** and **C** misplace $W$ relative to the band. **D** is wrong: the course runs the $\\chi^2$ exactly two-sided — a $W$ far below the lower boundary would itself be suspicious (an unrealistically perfect fit).",
+      "theory": "A two-sided $\\chi^2$ band rejects both an implausibly bad fit ($W$ too high) and an implausibly perfect one ($W$ too low).",
+      "tags": ["chi-square"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "On a Normal Probability Plot, the $i$-th ordered value is given which plotting position before converting to a quantile?",
+      "options": [
+        { "id": "A", "content": "$f_{rc,i}=i/n$" },
+        { "id": "B", "content": "$f_{rc,i}=i$ (the raw rank)" },
+        { "id": "C", "content": "$f_{rc,i}=\\mathrm{NORM.DIST}(x_i)$" },
+        { "id": "D", "content": "$f_{rc,i}=(i-0.5)/n$, then $z_i=\\mathrm{NORM.S.INV}(f_{rc,i})$" }
+      ],
+      "correct": "D",
+      "explanation": "The plotting position is $f_{rc,i}=(i-0.5)/n$ and the theoretical quantile is $z_i=\\mathrm{NORM.S.INV}(f_{rc,i})$. **A** ($i/n$) sends the largest value to $f=1$, where $z=+\\infty$; the $-0.5$ continuity correction exists precisely to avoid that. **B** leaves the rank unscaled, so it is not a probability. **C** confuses the plotting position with the cumulative probability of the data value. Plotting $x_{(i)}$ against $z_i$ gives a straight line when the data are normal.",
+      "theory": "The $(i-0.5)/n$ correction keeps the extreme order statistics off the $0$/$1$ boundaries where the normal quantile diverges.",
+      "tags": ["npp", "normality"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "An operator's NPP is steeper than the reference line in the centre and flattens in the tails (a hypernormal shape). The most likely metrological cause is:",
+      "options": [
+        { "id": "A", "content": "The operator personally discarded the data farthest from the expected value (a filtering process)" },
+        { "id": "B", "content": "A linear drift in time during data collection" },
+        { "id": "C", "content": "Two different instruments were mixed (a discontinuity)" },
+        { "id": "D", "content": "Random noise only; the data are perfectly normal" }
+      ],
+      "correct": "A",
+      "explanation": "A **hypernormal** distribution has too few data in the tails (a bell higher in the centre, lower in the tails). Metrologically this points to a **filtering** process: the operator excluded, on personal judgment, the values deviating most from the expected one, artificially shrinking the tails. **B** and **C** describe *systematic* effects that produce the opposite, **hyponormal**, shape (heavier tails / bimodal). **D** contradicts the observed non-linearity of the NPP.",
+      "theory": "Hypernormal $\\Rightarrow$ depleted tails $\\Rightarrow$ filtering. Hyponormal $\\Rightarrow$ heavy tails $\\Rightarrow$ discontinuities or tendencies (drift).",
+      "tags": ["npp", "systematic"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Why does the course prefer the IQR / box-plot rule as a *robust* outlier check compared with using $m\\pm k\\,s$?",
+      "options": [
+        { "id": "A", "content": "Because $Q_1$ and $Q_3$ ignore the tails, so one extreme point cannot inflate the fences the way it inflates $s$" },
+        { "id": "B", "content": "Because the IQR fences are always wider, so nothing is ever excluded" },
+        { "id": "C", "content": "Because the IQR requires the data to be normal, unlike $m\\pm k\\,s$" },
+        { "id": "D", "content": "Because $Q_1-1.5\\,IQR$ equals $m-2.58\\,s$ exactly for any data" }
+      ],
+      "correct": "A",
+      "explanation": "The fences $Q_1-1.5\\,IQR$ and $Q_3+1.5\\,IQR$ are built from quartiles, which depend only on the central ordering and ignore the extreme tails — so a single wild value cannot move them much, whereas it strongly inflates $m$ and $s$. That is the meaning of **robust**. **B** is false (the rule does flag points). **C** is backwards: the IQR rule is *distribution-free*, needing no normality assumption. **D** is a coincidental relation only near normality ($1.5\\,IQR\\approx\\pm2.7\\sigma$), not an identity for arbitrary data.",
+      "theory": "Robust statistics resist the influence of outliers; quartile-based fences do, moment-based limits ($m,s$) do not.",
+      "tags": ["iqr", "outliers", "robust"]
+    }
+  ],
+  "exam": [
+    {
+      "title": "Chauvenet exclusion limits and outlier decision",
+      "meta": "Lecture 6 · outlier identification · numeric",
+      "difficulty": "medium",
+      "statement": "A set of $n=20$ length readings has sample mean $m=44.90\\ \\mu\\mathrm{m}$ and sample standard deviation $s=3.01\\ \\mu\\mathrm{m}$ (STDEV.S). Apply Chauvenet's criterion to decide whether the value $36\\ \\mu\\mathrm{m}$ is a measurement accident. Report (a) the per-datum risk $\\alpha$, (b) the standardized cut $z$, (c) the lower and upper exclusion limits, and (d) the Yes/No decision for $36\\ \\mu\\mathrm{m}$.",
+      "given": "$n=20$, $m=44.90$, $s=3.01\\ \\mu\\mathrm{m}$; candidate value $x=36\\ \\mu\\mathrm{m}$.",
+      "steps": [
+        {
+          "title": "Per-datum risk",
+          "content": "$\\alpha=\\dfrac{1}{2n}=\\dfrac{1}{40}=0.025$ (a probability, not 2.5 % reported as a percentage). Each tail carries $\\dfrac{1}{4n}=\\dfrac{1}{80}=0.0125$."
+        },
+        {
+          "title": "Standardized cut",
+          "content": "$z=\\mathrm{NORM.S.INV}\\!\\left(1-\\dfrac{1}{4n}\\right)=\\mathrm{NORM.S.INV}(0.9875)\\approx 2.24$."
+        },
+        {
+          "title": "Exclusion limits",
+          "content": "$x_{li}=m-z\\,s=44.90-2.24\\times3.01\\approx 44.90-6.74=38.16\\ \\mu\\mathrm{m}$;\n$x_{ls}=m+z\\,s=44.90+6.74=51.64\\ \\mu\\mathrm{m}$."
+        },
+        {
+          "title": "Decision",
+          "content": "$36\\ \\mu\\mathrm{m}<x_{li}=38.16\\ \\mu\\mathrm{m}$, so it lies in the lower tail beyond the limit: it **is** an outlier. Decision: **Yes**, the outlier value is $36$."
+        }
+      ],
+      "finalAnswer": "$\\alpha=0.025$; $z\\approx 2.24$; limits $38.16$ / $51.64\\ \\mu\\mathrm{m}$; outlier = **Yes**, value $36\\ \\mu\\mathrm{m}$.",
+      "tips": "Report $\\alpha$ as a probability (0.025), never a percentage, and always use STDEV.S for $s$. Compute the limits once from the *raw* sample; only after deciding do you recompute $m$ and $s$ on the survivors for downstream steps."
+    },
+    {
+      "title": "Chi-square normality test: statistic, dof and decision",
+      "meta": "Lecture 6 · normality test · numeric/conceptual",
+      "difficulty": "hard",
+      "statement": "A frequency distribution of $n=50$ data uses $N=11$ classes. The per-class contributions $(f_a-f_t)^2/f_t$ sum to $W=10.94$. The normal used to compute the theoretical counts has the sample mean and sample standard deviation. Test normality two-sided at confidence $P=85\\%$, given the $\\chi^2$ boundaries $3.14$ (lower) and $14.27$ (upper). (a) State the degrees of freedom. (b) Place $W$ relative to the band. (c) Give the conclusion and what it means physically.",
+      "given": "$N=11$ classes, $W=10.94$; mean and st. dev. fitted from data; $P=85\\%$ ($\\alpha=15\\%$); boundaries $\\chi^2_{low}=3.14$, $\\chi^2_{up}=14.27$.",
+      "steps": [
+        {
+          "title": "Degrees of freedom",
+          "content": "Three constraints are imposed (total area, mean, standard deviation), so $\\nu=N-3=11-3=8$."
+        },
+        {
+          "title": "Compare with the two-sided band",
+          "content": "The acceptance band at $P=85\\%$ is $[3.14,\\,14.27]$. Since $3.14<W=10.94<14.27$, the statistic falls **inside** the band."
+        },
+        {
+          "title": "Conclusion",
+          "content": "The null hypothesis (data are normal) is **not rejected** at $P=85\\%$. The test provides no evidence of a systematic effect or measurement accident large enough to deform the distribution — although disturbances too small to detect may still be present."
+        }
+      ],
+      "finalAnswer": "$\\nu=8$; $W=10.94$ lies inside $[3.14,\\,14.27]$; normality is **not rejected** at $P=85\\%$ — no detectable systematic distortion.",
+      "tips": "The most common errors: (1) using $\\nu=N-1$ instead of $N-3$ (you fitted both $m$ and $s$); (2) doing a one-sided test — the course rejects both too-large and too-small $W$. A $W$ below $3.14$ would mean a suspiciously perfect fit, not a good one."
+    }
+  ]
+}

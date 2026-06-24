@@ -1,0 +1,378 @@
+{
+  "title": "Hypothesis Testing & Introduction to ANOVA",
+  "summary": "Lecture 8. Normality tests *warn* that a systematic factor is present; to find out **which factor** causes it, we put the suspected factor under control and test it. You will learn the logic of a **hypothesis test** — null vs alternative, the significance level $\\alpha$, type-I/II errors, one- vs two-tailed, the test statistic and the critical value / p-value — the **t-test** on a mean and on two means, and then the **analysis of variance (ANOVA)**: comparing the *between-group* variance with the *within-group* variance through $F=MS_{between}/MS_{within}$ and deciding with the Fisher $F$-test.",
+  "minutes": 35,
+  "objectives": [
+    "State a null hypothesis $H_0$ (no systematic effect) and its alternative, and explain why we 'reject' or 'fail to reject' but never 'accept' $H_0$.",
+    "Define the significance level / risk of error $\\alpha$ and relate type-I and type-II errors to the consequences of a wrong decision.",
+    "Build the non-rejection (confidence) interval and decide one- vs two-tailed; reach the same decision via the test statistic, critical value, or p-value.",
+    "Run a z/t-test on a single mean and a t-test comparing two means (pairwise, non-overlapping confidence intervals).",
+    "Decompose total variability into between-group ($SS_B$) and within-group ($SS_W$) sums of squares for a single factor.",
+    "Compute the ANOVA variance ratio $F=s_B^2/s_W^2$ and decide with the upper Fisher limit $F_U$ (or the F p-value).",
+    "Explain what ANOVA can and cannot tell you (it flags the factor, not the element; it can miss a slow drift)."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "1. Why hypothesis testing"
+    },
+    {
+      "kind": "prose",
+      "text": "The $\\chi^2$ test and the NPP detect a *significant distortion* of the data distribution — a **warning** that systematic factors exist. To connect that warning to a **cause**, we put the **suspected factor under control**: divide the data into groups that are homogeneous with respect to that factor (e.g. one group per operator) and test whether the differences between groups are **systematic** or **just random**. Investigate only when there is concrete evidence of significance — chasing purely random differences is wasteful."
+    },
+    {
+      "kind": "heading",
+      "text": "2. Anatomy of a hypothesis test"
+    },
+    {
+      "kind": "definition",
+      "term": "Null hypothesis and alternative",
+      "text": "The **null hypothesis** $H_0$ is formulated in the **opposite direction** to the presence of the factor under control — i.e. *'there is no significant effect / no difference'*. The **alternative** is that the factor does have an effect. We test $H_0$ and decide whether the data give us reason to **reject** it."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "You never 'accept' the null",
+      "text": "A hypothesis test will **never accept** the hypothesis of non-significance. Either we **reject** $H_0$ (at the chosen risk), or we find **no reason to reject** it — which is not proof that the factor is absent, only that the data do not reveal it. 'Fail to reject' ≠ 'accept'."
+    },
+    {
+      "kind": "definition",
+      "term": "Risk of error α, type I and type II",
+      "text": "The **risk of the first kind** $\\alpha$ is the probability of **rejecting $H_0$ when it is true** (a false alarm). The confidence level is $P=1-\\alpha$. A **type-II error** is *failing to reject $H_0$ when it is false* (missing a real effect). Lowering $\\alpha$ guards against false alarms but raises the chance of missing real effects, so $\\alpha$ is chosen by weighing the **consequences** of each error."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Why α = 20% here",
+      "text": "In this course the operator/ANOVA tests use a deliberately **high** $\\alpha=20\\%$ ($P=80\\%$). Re-checking an operator's procedure is **cheap**, so a high first-kind risk (false alarm) is acceptable, and it **lowers the second-kind risk** of missing a genuine systematic effect. The right $\\alpha$ always follows from the cost of the two errors."
+    },
+    {
+      "kind": "steps",
+      "title": "The four steps of a hypothesis test",
+      "steps": [
+        {
+          "label": "a",
+          "text": "Represent the question analytically and decide how to **group** the data to isolate the suspected factor."
+        },
+        {
+          "label": "b",
+          "text": "Choose the **statistical distribution** assumed to describe the analyzed quantity (normal for a mean of many results, Student-$t$ for a small sample, Fisher-$F$ for a variance ratio)."
+        },
+        {
+          "label": "c",
+          "text": "Fix the acceptable **risk of the first kind $\\alpha$** from the consequences of a false alarm."
+        },
+        {
+          "label": "d",
+          "text": "Determine the **boundaries of the non-rejection zone** — once the distribution and confidence level are known, these are the limits of the relevant **confidence interval**. Reject $H_0$ if the test statistic falls outside."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "One-tailed vs two-tailed; statistic, critical value, p-value",
+      "text": "A test is **two-tailed** when a deviation in *either* direction matters (e.g. a mean different from target — split $\\alpha$ as $\\alpha/2$ per tail). It is **one-tailed** when only one direction is meaningful (e.g. an ANOVA variance ratio, which can only be inflated by a real effect). The decision can be read three equivalent ways: compare the **test statistic** with the **critical value**, check whether the statistic lies inside the **confidence interval**, or compare the **p-value** with $\\alpha$ (reject if p $<\\alpha$)."
+    },
+    {
+      "kind": "heading",
+      "text": "3. The hypothesis test for the mean"
+    },
+    {
+      "kind": "prose",
+      "text": "Question 1 — *are the operators homogeneous?* The reference distribution is the distribution of the **averages of $q$ results**: a normal with mean $m$ (the overall average) and standard deviation $s_m$, the standard deviation of an average of $q$ data, obtained from the standard deviation $s$ of all data."
+    },
+    {
+      "kind": "formula",
+      "title": "Standard deviation of the mean; z-test limits",
+      "tex": "s_m=\\frac{s}{\\sqrt{q}},\\qquad \\text{confidence limits}=m\\mp z\\,s_m,\\quad z=\\text{value at cumulative }1-\\tfrac{\\alpha}{2}",
+      "tag": "8.1",
+      "caption": "Each operator's average is compared with the band $m\\mp z\\,s_m$. Any operator average **outside** the band signals a systematic difference. With $m=8.0062$, $s_m=0.0009$ mm, $P=80\\%$ the limits are $8.0051$/$8.0073$ mm; operators 1, 2, 4, 5 fall outside, so the null of homogeneity is **rejected** at $\\alpha=20\\%$."
+    },
+    {
+      "kind": "formula",
+      "title": "Difference between two means",
+      "tex": "d=m_1-m_2,\\qquad s_d=\\sqrt{s_{m_1}^2+s_{m_2}^2}\\approx s\\sqrt{\\frac{2}{q}},\\qquad \\text{limits}=\\mp z\\,s_d",
+      "tag": "8.2",
+      "caption": "Question 2 — *are two operators' averages different?* The reference is a normal with **zero** mean (the null says the difference is not systematic) and standard deviation $s_d$. If the observed $d$ falls outside $[\\,-z\\,s_d,\\;+z\\,s_d\\,]$, the difference is systematic."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "z-test vs t-test (the logical bug)",
+      "text": "The **z-test** above uses the standard deviation $s$ of **all** the data — which is itself inflated by the very systematic effects we are hunting, so the test may **fail to detect** them. The fix is the **t-test**: compute a confidence interval for **each sample's average** using a **Student-$t$** distribution, then compare the intervals **pairwise** — if two intervals do **not overlap**, a systematic difference is flagged. With the t-test there is **no single common reference**."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-student",
+      "title": "Student-t distribution explorer",
+      "caption": "With small samples the $t$ distribution is fatter-tailed than the normal, so its critical values are larger. Lower the degrees of freedom and watch the tails thicken and the two-sided critical $t$ grow — this is why a small-sample mean test must use $t$, not $z$."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Design the experiment to separate effects",
+      "text": "A drift (from regression) and an operator effect can be **superimposed**, because operators took data in succession. You cannot disentangle them *after* the fact. Plan the data collection so the two components are independent — e.g. take readings **symmetrically about the centre** of the sequence. In mass metrology the **ABBA scheme** (standard A, item B, item B, standard A) cancels a linear drift by averaging."
+    },
+    {
+      "kind": "heading",
+      "text": "4. The hypothesis test for the variance"
+    },
+    {
+      "kind": "prose",
+      "text": "Differences may also appear in the **spread**. The dispersion homogeneity of samples is tested through Pearson's **$\\chi^2$**, which describes the distribution of the estimator $s^2$ of the variance $\\sigma^2$ of a normally distributed population. The sample variance is a correct estimator of the population variance."
+    },
+    {
+      "kind": "formula",
+      "title": "Pearson chi-square for a sample variance",
+      "tex": "\\nu_i=(q-1)\\frac{s_i^2}{\\sigma^2}=\\sum_{j=1}^{q}\\left(\\frac{x_{ij}-m_i}{\\sigma}\\right)^2\\sim\\chi^2_{(q-1)}",
+      "tag": "8.3",
+      "caption": "Each operator's $q$ readings have mean $m_i$ and variance $s_i^2$; the whole set has variance $\\sigma^2$. The confidence interval for $s_i^2$ at level $P$ ($\\alpha=1-P$) comes from this $\\chi^2_{(q-1)}$ distribution — used to check whether the operators' spreads are homogeneous."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-chisq",
+      "title": "Chi-square distribution explorer",
+      "caption": "The $\\chi^2$ distribution of a sample variance has $q-1$ degrees of freedom and is right-skewed. Vary the dof to see how the two-sided acceptance band for a variance widens for small samples — the basis of the variance homogeneity test."
+    },
+    {
+      "kind": "heading",
+      "text": "5. Analysis of Variance (ANOVA)"
+    },
+    {
+      "kind": "definition",
+      "term": "What ANOVA is",
+      "text": "**ANOVA** is a test based on the **ratio of two different estimates of the experimental variance**, arranged so the **denominator does not contain** the systematic effect of the factor under control, while the **numerator may** be inflated by it. Its **disadvantage**: it flags the *factor* responsible, not the *specific element* of the factor. Its **advantages**: it can handle **more than one factor at once**, and its reference (the within-group variance) is **not influenced** by the systematic factors being analyzed."
+    },
+    {
+      "kind": "formula",
+      "title": "Variance between groups",
+      "tex": "s_B^2=n\\,s_m^2=n\\,\\frac{\\sum_{j=1}^{k}(\\bar x_{\\bullet j}-\\bar x_{\\bullet\\bullet})^2}{k-1}=\\frac{SS_B}{k-1}",
+      "tag": "8.4",
+      "caption": "The **between-groups** variance measures how far the $k$ group means $\\bar x_{\\bullet j}$ scatter around the grand mean $\\bar x_{\\bullet\\bullet}$ ($n$ = readings per group). $SS_B$ is the *sum of squares between groups*; its degrees of freedom are $k-1$. It is **inflated** if the factor (operator) has a real effect."
+    },
+    {
+      "kind": "formula",
+      "title": "Variance within groups",
+      "tex": "s_W^2=\\frac{1}{k}\\sum_{j=1}^{k}\\frac{\\sum_{i=1}^{n}(x_{ij}-\\bar x_{\\bullet j})^2}{n-1}=\\frac{SS_W}{k(n-1)}",
+      "tag": "8.5",
+      "caption": "The **within-groups** variance averages the scatter of each datum about *its own* group mean. It captures **only random effects** — it does not see the between-group differences — so it is the clean reference. Degrees of freedom $k(n-1)$. The total decomposes as $SS_{TC}=SS_W+SS_B$."
+    },
+    {
+      "kind": "formula",
+      "title": "The Fisher F-test",
+      "tex": "F_{exp}=\\frac{s_B^2}{s_W^2}=\\frac{MS_{between}}{MS_{within}},\\qquad \\text{reject } H_0 \\text{ if } F_{exp}>F_U",
+      "tag": "8.6",
+      "caption": "If the factor has no effect, both variances estimate the same $\\sigma^2$ and $F\\approx1$. A real systematic effect inflates only the numerator, making $F>1$ — so the test is **one-tailed**: compare $F_{exp}$ only with the **upper** Fisher limit $F_U=$ F.INV.RT$(\\alpha;\\nu_1;\\nu_2)$, with $\\nu_1=k-1$ (between) and $\\nu_2=k(n-1)$ (within). Equivalently the p-value is F.DIST.RT$(F_{exp};\\nu_1;\\nu_2)$."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-fisher",
+      "title": "Fisher F distribution explorer",
+      "caption": "Set the numerator dof $\\nu_1=k-1$ and denominator dof $\\nu_2=k(n-1)$ to see the right-tail critical $F_U$. ANOVA rejects equal means only when $F_{exp}$ lands in that right tail — the variance ratio can only be *inflated* by a real effect, hence a one-sided comparison."
+    },
+    {
+      "kind": "example",
+      "title": "Worked: operator effect (single factor)",
+      "text": "Five operators ($k=5$), ten readings each ($n=10$, $N=50$). The ANOVA table gives $SS_B=1.32\\times10^{-4}$ on $\\nu_1=k-1=4$ dof $\\Rightarrow s_B^2=3.31\\times10^{-5}$; $SS_W=2.33\\times10^{-4}$ on $\\nu_2=k(n-1)=45$ dof $\\Rightarrow s_W^2=5.17\\times10^{-6}$.\n\n$$F_{exp}=\\frac{s_B^2}{s_W^2}=\\frac{3.31\\times10^{-5}}{5.17\\times10^{-6}}=6.4.$$\nThe upper Fisher limit at $\\alpha=20\\%$ is $F_U=1.6$. Since $F_{exp}=6.4>F_U=1.6$, the variance ratio is **outside** the interval: the differences between operator averages are **systematic** with a 20% risk of error."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Two factors at once",
+      "text": "Organize the data so rows and columns each carry a factor (e.g. **operator** across columns, **replication / sequence** down rows) and ANOVA tests both **simultaneously**: $SS_{TC}=SS_{Bc}+SS_{Br}+SS_W$, with a separate $F$ (and $F_U$) for columns and for rows. In the case study the operator factor came out systematic ($F=6.92>F_U$), while nothing could be concluded about the row (sequence) factor."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "ANOVA can miss a drift",
+      "text": "Regression found a clear drift, but ANOVA on the **rows** did not flag it. Why? ANOVA compares group means over **short intervals**, while a drift accumulates over the **whole** sequence — segmented into rows, the slow trend almost cancels. Always read statistical results **critically**: regression catches drifts, ANOVA catches group differences; you need both, and you must plan the experiment to keep the factors separable."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In a one-way ANOVA the variance ratio is $F_{exp}=6.4$ and the upper Fisher limit at the chosen confidence is $F_U=1.6$. The correct conclusion about the operators is:",
+        "options": [
+          { "id": "A", "content": "$F_{exp}>F_U$, so the differences between operators are systematic — reject equal means" },
+          { "id": "B", "content": "$F_{exp}>F_U$, so the operators are equivalent" },
+          { "id": "C", "content": "$F_{exp}<F_U$, so there is no operator effect" },
+          { "id": "D", "content": "No conclusion is possible without the regression slope" }
+        ],
+        "correct": "A",
+        "explanation": "$F=s_B^2/s_W^2=6.4$ far exceeds the upper limit $F_U=1.6$: the between-group variance dominates the random within-group variance, so the null of equal means is rejected — the operator effect is **systematic** (at the chosen risk). **B** has the right inequality but the wrong meaning. **C** reverses the inequality ($6.4>1.6$). **D** is irrelevant — ANOVA needs no regression. The test is one-sided: only the upper limit matters because a real effect can only inflate $F$.",
+        "theory": "ANOVA: reject equal means when $F_{exp}>F_U=\\mathrm{F.INV.RT}(\\alpha;\\nu_1;\\nu_2)$; the F-test is one-tailed.",
+        "source": "Lecture 8 (ANOVA, single factor under control)"
+      }
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "In a hypothesis test, the null hypothesis $H_0$ is formulated:",
+      "options": [
+        { "id": "A", "content": "in the same direction as the suspected factor (the factor is present)" },
+        { "id": "B", "content": "in the opposite direction to the factor under control (no significant effect / no difference)" },
+        { "id": "C", "content": "so that it can always be accepted" },
+        { "id": "D", "content": "only after the p-value is known" }
+      ],
+      "correct": "B",
+      "explanation": "$H_0$ is stated in the **opposite direction** to the presence of the factor: *'there is no significant effect.'* We then look for evidence to reject it. **A** describes the *alternative* hypothesis. **C** is wrong — a hypothesis test never *accepts* the null; it only fails to reject it. **D** is backwards: the hypothesis is set before computing any statistic or p-value.",
+      "theory": "The null is the 'no-effect' statement; testing seeks grounds to reject it, never to accept it.",
+      "tags": ["hypothesis", "null"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "The **risk of the first kind** $\\alpha$ in a hypothesis test is the probability of:",
+      "options": [
+        { "id": "A", "content": "failing to reject $H_0$ when it is false (missing a real effect)" },
+        { "id": "B", "content": "the data being non-normal" },
+        { "id": "C", "content": "rejecting $H_0$ when it is actually true (a false alarm)" },
+        { "id": "D", "content": "choosing the wrong statistical distribution" }
+      ],
+      "correct": "C",
+      "explanation": "The first-kind (type-I) error is **rejecting a true null** — flagging an effect that is not there — and its probability is $\\alpha$ (with $P=1-\\alpha$). **A** describes the *second-kind* (type-II) error. **B** and **D** are unrelated to the definition of $\\alpha$. Choosing $\\alpha$ trades off false alarms against missed effects.",
+      "theory": "Type I: reject true $H_0$, probability $\\alpha$. Type II: fail to reject false $H_0$. Lowering $\\alpha$ raises type-II risk.",
+      "tags": ["alpha", "errors"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Why does the course adopt a relatively high $\\alpha=20\\%$ for the operator/ANOVA tests?",
+      "options": [
+        { "id": "A", "content": "Because re-checking an operator's procedure is cheap, so a high false-alarm risk is acceptable and it lowers the chance of missing a real effect" },
+        { "id": "B", "content": "Because a high $\\alpha$ makes the test impossible to fail" },
+        { "id": "C", "content": "Because $\\alpha=20\\%$ is mandatory for all $\\chi^2$ tests" },
+        { "id": "D", "content": "Because it guarantees the data are normal" }
+      ],
+      "correct": "A",
+      "explanation": "$\\alpha$ is set from the **consequences** of the two errors. Re-examining an operator is inexpensive, so tolerating more false alarms (high $\\alpha$) is fine, and it **reduces the second-kind risk** of overlooking a genuine systematic effect. **B** misstates what $\\alpha$ does. **C** is false — confidence levels are chosen case by case (the normality $\\chi^2$ used $\\alpha=15\\%$). **D** confuses the significance level with a normality guarantee.",
+      "theory": "Choose $\\alpha$ by weighing the cost of a false alarm against the cost of missing an effect.",
+      "tags": ["alpha", "anova"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Comparing two operators' means, why is the **t-test** (pairwise non-overlapping confidence intervals) preferred over the **z-test**?",
+      "options": [
+        { "id": "A", "content": "Because the t distribution has thinner tails than the normal" },
+        { "id": "B", "content": "Because the t-test needs no degrees of freedom" },
+        { "id": "C", "content": "Because the z-test cannot be computed in Excel" },
+        { "id": "D", "content": "Because the z-test uses the standard deviation of all the data, which is inflated by the very systematic effects being sought, so it may fail to detect them" }
+      ],
+      "correct": "D",
+      "explanation": "The z-test's reference uses $s$ of **all** the data, which is itself blown up by the systematic effects under investigation — a logical bug that can hide those effects. The t-test instead builds a Student-$t$ confidence interval for **each** sample and compares them pairwise (non-overlap $\\Rightarrow$ systematic difference). **A** is false: the $t$ has *fatter* tails than the normal, especially for small samples. **B** is wrong — the $t$ depends on degrees of freedom. **C** is false (T.INV.2T etc. exist).",
+      "theory": "z-test common reference is contaminated by systematic effects; per-sample t-intervals avoid it. The $t$ is fatter-tailed for small $n$.",
+      "tags": ["t-test", "z-test"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In one-way ANOVA, which variance serves as the *clean reference* (the denominator of $F$), and why?",
+      "options": [
+        { "id": "A", "content": "The between-groups variance $s_B^2$, because it contains the factor effect" },
+        { "id": "B", "content": "The within-groups variance $s_W^2$, because it captures only random effects and not the between-group differences" },
+        { "id": "C", "content": "The total variance, because it is the largest" },
+        { "id": "D", "content": "Either one; the choice does not matter" }
+      ],
+      "correct": "B",
+      "explanation": "The **within-groups** variance averages each datum's scatter about *its own* group mean, so it sees only random noise and is **not influenced** by the factor under control — the ideal denominator. The **between-groups** variance $s_B^2$ goes in the **numerator** because it *is* inflated by a real factor effect. **A** swaps the roles. **C** would mix systematic and random parts. **D** is wrong — the whole design depends on a denominator free of the factor.",
+      "theory": "$F=s_B^2/s_W^2$: numerator may carry the effect, denominator (within) carries only random variation.",
+      "tags": ["anova", "variance"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "For a single-factor ANOVA with $k$ groups and $n$ readings per group, the degrees of freedom of the between-groups and within-groups variances are:",
+      "options": [
+        { "id": "A", "content": "$n-1$ (between) and $k-1$ (within)" },
+        { "id": "B", "content": "$k$ (between) and $kn$ (within)" },
+        { "id": "C", "content": "$k-1$ (between) and $k(n-1)$ (within)" },
+        { "id": "D", "content": "$kn-1$ (between) and $1$ (within)" }
+      ],
+      "correct": "C",
+      "explanation": "Between-groups compares $k$ group means about the grand mean: $\\nu_1=k-1$. Within-groups pools $k$ estimates each on $n-1$ dof: $\\nu_2=k(n-1)$. They sum to the total $kn-1$. For $k=5$, $n=10$: $\\nu_1=4$, $\\nu_2=45$ — exactly the case-study table. **A** swaps and mislabels them. **B** forgets the $-1$ corrections. **D** is the total-vs-nothing split, not the ANOVA decomposition.",
+      "theory": "Single-factor ANOVA dof: between $k-1$, within $k(n-1)$, total $kn-1$; use $\\nu_1,\\nu_2$ in $F_U=\\mathrm{F.INV.RT}(\\alpha;\\nu_1;\\nu_2)$.",
+      "tags": ["anova", "dof"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Why is the ANOVA F-test **one-tailed** (only the upper Fisher limit $F_U$ matters)?",
+      "options": [
+        { "id": "A", "content": "Because $F$ can be negative, so only the upper side is defined" },
+        { "id": "B", "content": "Because the lower Fisher limit is always zero" },
+        { "id": "C", "content": "Because the normality test is also one-tailed" },
+        { "id": "D", "content": "Because a real systematic effect can only inflate the numerator, making $F>1$; a small $F$ never indicates an effect" }
+      ],
+      "correct": "D",
+      "explanation": "If the factor has no effect, $s_B^2$ and $s_W^2$ both estimate $\\sigma^2$ and $F\\approx1$; a genuine effect inflates **only the numerator** $s_B^2$, pushing $F$ above 1. So evidence of an effect lives entirely in the **upper tail**, and we compare $F_{exp}$ only with $F_U$. **A** is false — $F$ is a ratio of variances, never negative. **B** is irrelevant to the decision. **C** is wrong: the normality $\\chi^2$ is two-sided.",
+      "theory": "The variance ratio is polarized: the systematic effect makes the expected ratio $>1$, so the test is upper-tailed.",
+      "tags": ["anova", "f-test", "one-tailed"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "Regression clearly revealed a drift in the data, yet the two-factor ANOVA did not flag the row (sequence) factor. The best explanation is:",
+      "options": [
+        { "id": "A", "content": "ANOVA compares group means over short intervals, so a slow drift accumulating over the whole sequence is segmented and largely cancels" },
+        { "id": "B", "content": "ANOVA is simply wrong and should be ignored" },
+        { "id": "C", "content": "The drift was actually a random effect" },
+        { "id": "D", "content": "Regression and ANOVA must always agree, so one result is a calculation error" }
+      ],
+      "correct": "A",
+      "explanation": "A drift builds up across the **entire** sequence, but ANOVA looks at differences between rows over **much shorter** intervals, so the slow trend is split into pieces that nearly cancel — ANOVA does not see it. Regression, which fits the whole sequence, does. **B** is wrong — both methods are valid for what they measure. **C** contradicts the regression evidence of a systematic trend. **D** is false: the two tools answer different questions (drift vs group differences) and need not agree.",
+      "theory": "Regression detects continuous drifts; ANOVA detects between-group differences. Read each result critically — they are complementary.",
+      "tags": ["anova", "regression", "drift"]
+    }
+  ],
+  "exam": [
+    {
+      "title": "One-way ANOVA: build the F-test and decide",
+      "meta": "Lecture 8 · ANOVA single factor · numeric",
+      "difficulty": "hard",
+      "statement": "Five operators ($k=5$) each take $n=10$ readings ($N=50$). The sums of squares are $SS_B=1.32\\times10^{-4}$ (between operators) and $SS_W=2.33\\times10^{-4}$ (within). At $\\alpha=20\\%$ the upper Fisher limit is $F_U=1.6$. (a) Give the degrees of freedom. (b) Compute $s_B^2$, $s_W^2$ and $F_{exp}$. (c) Decide whether the operator differences are systematic, and state the risk.",
+      "given": "$k=5$, $n=10$; $SS_B=1.32\\times10^{-4}$, $SS_W=2.33\\times10^{-4}$; $\\alpha=20\\%$, $F_U=1.6$.",
+      "steps": [
+        {
+          "title": "Degrees of freedom",
+          "content": "Between: $\\nu_1=k-1=4$. Within: $\\nu_2=k(n-1)=5\\times9=45$. (Total $kn-1=49$.)"
+        },
+        {
+          "title": "Variances",
+          "content": "$s_B^2=\\dfrac{SS_B}{k-1}=\\dfrac{1.32\\times10^{-4}}{4}=3.31\\times10^{-5}$;\n$s_W^2=\\dfrac{SS_W}{k(n-1)}=\\dfrac{2.33\\times10^{-4}}{45}=5.17\\times10^{-6}$."
+        },
+        {
+          "title": "Variance ratio",
+          "content": "$F_{exp}=\\dfrac{s_B^2}{s_W^2}=\\dfrac{3.31\\times10^{-5}}{5.17\\times10^{-6}}=6.4$."
+        },
+        {
+          "title": "Decision (one-tailed)",
+          "content": "Compare only with the upper limit: $F_{exp}=6.4>F_U=1.6$, so $F_{exp}$ is outside the confidence interval. **Reject** the null of equal means: the differences between operator averages are **systematic** with a risk of error of $20\\%$. Equivalently the p-value F.DIST.RT$(6.4;4;45)\\ll0.20$."
+        }
+      ],
+      "finalAnswer": "$\\nu_1=4$, $\\nu_2=45$; $s_B^2=3.31\\times10^{-5}$, $s_W^2=5.17\\times10^{-6}$, $F_{exp}=6.4>F_U=1.6$ $\\Rightarrow$ operator differences are **systematic** at $\\alpha=20\\%$.",
+      "tips": "The within-groups variance is the clean reference (denominator). The F-test is one-tailed — compare with $F_U=$ F.INV.RT$(\\alpha;\\nu_1;\\nu_2)$ only. Keep $\\nu_1=k-1$ and $\\nu_2=k(n-1)$ straight; swapping them changes $F_U$."
+    },
+    {
+      "title": "Hypothesis test on a mean (z-test band)",
+      "meta": "Lecture 8 · test for the mean · numeric/conceptual",
+      "difficulty": "medium",
+      "statement": "Five operators each report the average of $q=10$ readings. The overall average is $m=8.0062$ mm and the standard deviation of an operator's average is $s_m=0.0009$ mm. Test, at confidence $P=80\\%$ (so $z\\approx1.28$ for $1-\\alpha/2=0.90$), whether the operators are homogeneous, given the operator averages $m_1=8.0048$, $m_2=8.0047$, $m_3=8.0051$, $m_4=8.0085$, $m_5=8.0079$ mm. (a) Build the confidence band. (b) Identify which operators fall outside. (c) State the conclusion and one caveat of this z-test.",
+      "given": "$m=8.0062$, $s_m=0.0009$ mm, $P=80\\%$, $z\\approx1.28$; operator averages as listed.",
+      "steps": [
+        {
+          "title": "Confidence band",
+          "content": "Limits $m\\mp z\\,s_m=8.0062\\mp1.28\\times0.0009=8.0062\\mp0.00115$, i.e. about $[\\,8.0051,\\;8.0073\\,]$ mm (matching the course table)."
+        },
+        {
+          "title": "Place each operator",
+          "content": "$m_1=8.0048$ (below), $m_2=8.0047$ (below), $m_3=8.0051$ (on the lower edge), $m_4=8.0085$ (above), $m_5=8.0079$ (above). Operators 1, 2, 4 and 5 fall **outside** the band."
+        },
+        {
+          "title": "Conclusion",
+          "content": "Because four of the five averages lie outside the non-rejection band, the null hypothesis that the operators are homogeneous is **rejected** at a risk of error of $20\\%$: the differences among the operator means are **systematic**."
+        },
+        {
+          "title": "Caveat (the logical bug)",
+          "content": "The band uses $s_m=s/\\sqrt{q}$ built from the standard deviation of **all** the data, which is itself inflated by the systematic effects we are testing for. A cleaner approach is the **t-test**: per-operator Student-$t$ confidence intervals compared pairwise (non-overlap $\\Rightarrow$ systematic difference)."
+        }
+      ],
+      "finalAnswer": "Band $\\approx[8.0051,\\,8.0073]$ mm; operators 1, 2, 4, 5 outside $\\Rightarrow$ reject homogeneity at $\\alpha=20\\%$ (systematic differences). Caveat: the z-test reference is contaminated by the systematic effects — use the t-test to overcome it.",
+      "tips": "$z\\approx1.28$ corresponds to $1-\\alpha/2=0.90$ for a two-sided $80\\%$ test (not $1.96$, which is $95\\%$). Mention the contaminated-reference bug and the t-test fix — examiners reward it."
+    }
+  ]
+}
