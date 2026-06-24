@@ -3,14 +3,15 @@ import { Tex, TexBlock } from "../lib/math";
 
 /* ------------------------------------------------------------------ *
  * RichText — renders authored strings with light markup:
- *   $inline math$, $$block math$$, **bold**, "- " bullet lines,
+ *   $inline math$, $$block math$$, **bold**, *italic*, "- " bullet lines,
  *   blank-line paragraphs.
  * Used so data-authored content (lessons/MCQs/exams) can carry math.
  * ------------------------------------------------------------------ */
 
 function renderInline(text: string, keyBase: string): ReactNode[] {
-  // split on $...$ inline math and **bold**
-  const parts = text.split(/(\$[^$]+\$|\*\*[^*]+\*\*)/g);
+  // split on $...$ inline math, **bold**, then *italic* (bold matched first
+  // so its asterisks aren't mistaken for two italics)
+  const parts = text.split(/(\$[^$]+\$|\*\*[^*]+\*\*|\*[^*\s][^*]*\*)/g);
   return parts.map((p, i) => {
     const key = `${keyBase}-${i}`;
     if (p.startsWith("$") && p.endsWith("$") && p.length > 1) {
@@ -19,6 +20,10 @@ function renderInline(text: string, keyBase: string): ReactNode[] {
     if (p.startsWith("**") && p.endsWith("**") && p.length > 3) {
       // recurse so math ($...$) inside bold still renders
       return <strong key={key}>{renderInline(p.slice(2, -2), key)}</strong>;
+    }
+    if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
+      // single-asterisk italic; recurse so math/bold inside still renders
+      return <em key={key}>{renderInline(p.slice(1, -1), key)}</em>;
     }
     return <Fragment key={key}>{p}</Fragment>;
   });
