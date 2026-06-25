@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
@@ -8,6 +8,7 @@ import { Kicker, Pill } from "../components/ui";
 import { Block } from "../components/LessonBlocks";
 import { rtInline } from "../components/RichText";
 import { markLesson, useCourseProgress } from "../lib/progress";
+import { cn } from "../lib/cn";
 import { NotFound } from "./NotFound";
 
 function useScrollProgress() {
@@ -30,113 +31,183 @@ export function LessonPage() {
   const course = getCourse(courseId);
   const progress = useCourseProgress(courseId);
   const scroll = useScrollProgress();
+  const [focusMode, setFocusMode] = useState(false);
+  const [activeTocId, setActiveTocId] = useState<string | null>(null);
+
+  const idx = course?.lessons.findIndex((l) => l.id === lessonId) ?? -1;
+  const lesson = idx >= 0 ? course?.lessons[idx] : undefined;
+
+  const toc = useMemo(
+    () => {
+      if (!lesson) return [];
+      return lesson.blocks
+        .map((b, i) => (b.kind === "heading" ? { text: b.text, id: b.id ?? `h-${i}` } : null))
+        .filter(Boolean) as { text: string; id: string }[];
+    },
+    [lesson]
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setActiveTocId(null);
   }, [lessonId]);
 
-  if (!course) return <NotFound />;
-  const idx = course.lessons.findIndex((l) => l.id === lessonId);
-  const lesson = course.lessons[idx];
-  if (!lesson) return <NotFound />;
+  useEffect(() => {
+    if (!toc.length) return;
+
+    let frame = 0;
+    const updateActiveSection = () => {
+      cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const threshold = focusMode ? 80 : 130;
+        const current =
+          toc.reduce((active, item) => {
+            const el = document.getElementById(item.id);
+            if (!el) return active;
+            return el.getBoundingClientRect().top <= threshold ? item.id : active;
+          }, toc[0]?.id ?? null) ?? null;
+        setActiveTocId(current);
+      });
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+    };
+  }, [focusMode, toc]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFocusMode(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const scrollToSection = useCallback((id: string) => {
+    document.getElementById(id)?.scrollIntoView({ block: "start", behavior: "smooth" });
+    setActiveTocId(id);
+  }, []);
+
+  if (!course || !lesson) return <NotFound />;
 
   const next = course.lessons[idx + 1];
   const completed = progress.lessons[lesson.id]?.completed;
-
-  const toc = useMemo(
-    () =>
-      lesson.blocks
-        .map((b, i) => (b.kind === "heading" ? { text: b.text, id: b.id ?? `h-${i}` } : null))
-        .filter(Boolean) as { text: string; id: string }[],
-    [lesson]
-  );
+  const activeToc = activeTocId ?? toc[0]?.id;
 
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
       {/* reading progress */}
-      <div className="fixed inset-x-0 top-0 z-50 h-1">
-        <div
-          className="h-full"
-          style={{ width: `${scroll * 100}%`, background: "linear-gradient(90deg,var(--accent),var(--accent-2))" }}
-        />
-      </div>
+      {!focusMode && (
+        <div className="fixed inset-x-0 top-0 z-50 h-1">
+          <div
+            className="h-full"
+            style={{ width: `${scroll * 100}%`, background: "linear-gradient(90deg,var(--accent),var(--accent-2))" }}
+          />
+        </div>
+      )}
 
-      <TopBar
-        crumbs={[
-          { label: course.meta.short, to: `/c/${courseId}` },
-          { label: "Learn", to: `/c/${courseId}` },
-          { label: lesson.title },
-        ]}
-      >
-        <Link to={`/c/${courseId}/practice`} className="btn btn-ghost !py-2 !text-sm">
-          <Icon name="Dumbbell" size={15} /> Practice
-        </Link>
-      </TopBar>
+      {focusMode ? (
+        <button
+          type="button"
+          onClick={() => setFocusMode(false)}
+          className="btn btn-ghost fixed right-4 top-4 z-50 !h-11 !w-11 !p-0 shadow-sm"
+          aria-label="Exit focus mode"
+          title="Exit focus mode"
+        >
+          <Icon name="Minimize2" size={18} />
+        </button>
+      ) : (
+        <TopBar
+          crumbs={[
+            { label: course.meta.short, to: `/c/${courseId}` },
+            { label: "Learn", to: `/c/${courseId}` },
+            { label: lesson.title },
+          ]}
+        >
+          <button type="button" onClick={() => setFocusMode(true)} className="btn btn-ghost !py-2 !text-sm">
+            <Icon name="Maximize2" size={15} /> Focus
+          </button>
+          <Link to={`/c/${courseId}/practice`} className="btn btn-ghost !py-2 !text-sm">
+            <Icon name="Dumbbell" size={15} /> Practice
+          </Link>
+        </TopBar>
+      )}
 
-      <Page>
-        <div className="grid gap-8 lg:grid-cols-[1fr_220px]">
+      <Page className={focusMode ? "!max-w-4xl py-8 sm:py-10" : undefined}>
+        <div className={cn("grid gap-8", !focusMode && "lg:grid-cols-[1fr_220px]")}>
           <article className="min-w-0">
-            <Kicker>Lesson {idx + 1}</Kicker>
-            <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{rtInline(lesson.title)}</h1>
-            <p className="mt-2 text-lg text-[var(--color-muted)]">{rtInline(lesson.summary)}</p>
+            {!focusMode && (
+              <>
+                <Kicker>Lesson {idx + 1}</Kicker>
+                <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{rtInline(lesson.title)}</h1>
+                <p className="mt-2 text-lg text-[var(--color-muted)]">{rtInline(lesson.summary)}</p>
 
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <Pill tone="neutral">
-                <Icon name="Clock" size={13} /> {lesson.minutes} min
-              </Pill>
-              {completed && (
-                <Pill tone="good">
-                  <Icon name="Check" size={13} /> Completed
-                </Pill>
-              )}
-            </div>
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <Pill tone="neutral">
+                    <Icon name="Clock" size={13} /> {lesson.minutes} min
+                  </Pill>
+                  {completed && (
+                    <Pill tone="good">
+                      <Icon name="Check" size={13} /> Completed
+                    </Pill>
+                  )}
+                </div>
 
-            {/* objectives */}
-            <div className="surface mt-6 p-5">
-              <div className="mb-2 flex items-center gap-2 text-sm font-bold">
-                <Icon name="Target" size={16} style={{ color: "var(--accent)" }} />
-                By the end you can
-              </div>
-              <ul className="grid gap-1.5">
-                {lesson.objectives.map((o, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-muted)]">
-                    <Icon name="Check" size={15} className="mt-0.5 shrink-0 text-[var(--accent)]" />
-                    <span>{rtInline(o)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                {/* objectives */}
+                <div className="surface mt-6 p-5">
+                  <div className="mb-2 flex items-center gap-2 text-sm font-bold">
+                    <Icon name="Target" size={16} style={{ color: "var(--accent)" }} />
+                    By the end you can
+                  </div>
+                  <ul className="grid gap-1.5">
+                    {lesson.objectives.map((o, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-muted)]">
+                        <Icon name="Check" size={15} className="mt-0.5 shrink-0 text-[var(--accent)]" />
+                        <span>{rtInline(o)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
 
             {/* body */}
-            <div className="mt-8">
+            <div className={focusMode ? "mt-0" : "mt-8"}>
               {lesson.blocks.map((b, i) => (
                 <Block key={i} block={b.kind === "heading" ? { ...b, id: b.id ?? `h-${i}` } : b} />
               ))}
             </div>
 
             {/* footer */}
-            <div className="mt-12 flex flex-col gap-3 border-t border-[var(--color-line)] pt-6 sm:flex-row sm:items-center">
-              <button
-                onClick={() => markLesson(courseId, lesson.id, !completed)}
-                className={completed ? "btn btn-ghost" : "btn btn-primary"}
-              >
-                <Icon name={completed ? "RotateCcw" : "CheckCheck"} size={16} />
-                {completed ? "Mark as not done" : "Mark lesson complete"}
-              </button>
-              {next ? (
-                <Link to={`/c/${courseId}/learn/${next.id}`} className="btn btn-ghost sm:ml-auto">
-                  Next: {next.title} <Icon name="ArrowRight" size={16} />
-                </Link>
-              ) : (
-                <Link to={`/c/${courseId}/practice`} className="btn btn-ghost sm:ml-auto">
-                  Practice this course <Icon name="ArrowRight" size={16} />
-                </Link>
-              )}
-            </div>
+            {!focusMode && (
+              <div className="mt-12 flex flex-col gap-3 border-t border-[var(--color-line)] pt-6 sm:flex-row sm:items-center">
+                <button
+                  onClick={() => markLesson(courseId, lesson.id, !completed)}
+                  className={completed ? "btn btn-ghost" : "btn btn-primary"}
+                >
+                  <Icon name={completed ? "RotateCcw" : "CheckCheck"} size={16} />
+                  {completed ? "Mark as not done" : "Mark lesson complete"}
+                </button>
+                {next ? (
+                  <Link to={`/c/${courseId}/learn/${next.id}`} className="btn btn-ghost sm:ml-auto">
+                    Next: {next.title} <Icon name="ArrowRight" size={16} />
+                  </Link>
+                ) : (
+                  <Link to={`/c/${courseId}/practice`} className="btn btn-ghost sm:ml-auto">
+                    Practice this course <Icon name="ArrowRight" size={16} />
+                  </Link>
+                )}
+              </div>
+            )}
           </article>
 
           {/* TOC */}
-          {toc.length > 0 && (
+          {!focusMode && toc.length > 0 && (
             <aside className="hidden lg:block">
               <div className="sticky top-24">
                 <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-faint)]">
@@ -144,13 +215,20 @@ export function LessonPage() {
                 </div>
                 <nav className="space-y-1 border-l border-[var(--color-line)]">
                   {toc.map((t) => (
-                    <a
+                    <button
                       key={t.id}
-                      href={`#${t.id}`}
-                      className="block border-l-2 border-transparent py-1 pl-3 text-sm text-[var(--color-muted)] transition hover:border-[var(--accent)] hover:text-[var(--color-ink)]"
+                      type="button"
+                      onClick={() => scrollToSection(t.id)}
+                      aria-current={activeToc === t.id ? "location" : undefined}
+                      className={cn(
+                        "block w-full border-l-2 py-1 pl-3 text-left text-sm transition",
+                        activeToc === t.id
+                          ? "border-[var(--accent)] font-semibold text-[var(--color-ink)]"
+                          : "border-transparent text-[var(--color-muted)] hover:border-[var(--accent)] hover:text-[var(--color-ink)]"
+                      )}
                     >
                       {rtInline(t.text)}
-                    </a>
+                    </button>
                   ))}
                 </nav>
               </div>
