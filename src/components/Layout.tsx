@@ -6,7 +6,7 @@ import { cn } from "../lib/cn";
 
 export function Brand({ compact }: { compact?: boolean }) {
   return (
-    <Link to="/" className="group flex items-center gap-2.5">
+    <Link to="/" className="group flex shrink-0 items-center gap-2.5">
       <span
         className="grid h-9 w-9 place-items-center rounded-xl text-[#06080f]"
         style={{ background: "linear-gradient(180deg, var(--accent), var(--accent-2))" }}
@@ -14,7 +14,7 @@ export function Brand({ compact }: { compact?: boolean }) {
         <Icon name="GraduationCap" size={20} />
       </span>
       {!compact && (
-        <span className="leading-tight">
+        <span className="hidden leading-tight sm:block">
           <span className="block text-sm font-extrabold tracking-tight">Polito Tools</span>
           <span className="block text-[10px] uppercase tracking-[0.18em] text-[var(--color-faint)]">
             Mechanical Eng · PoliTo
@@ -33,8 +33,8 @@ export function TopBar({
   crumbs?: { label: string; to?: string }[];
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-line)] glass">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-[var(--color-line)] glass pt-[env(safe-area-inset-top)]">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:gap-4 sm:px-6">
         <Brand />
         {crumbs && crumbs.length > 0 && (
           <nav className="hidden items-center gap-1.5 text-sm text-[var(--color-faint)] md:flex">
@@ -52,7 +52,7 @@ export function TopBar({
             ))}
           </nav>
         )}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           {children}
           <ThemeToggle />
         </div>

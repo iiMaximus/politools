@@ -55,8 +55,23 @@ function hydrate(d: RawLab): LabExercise {
   };
 }
 
+/**
+ * lab1-prob authored its method hint as a trailing paragraph of the prompt
+ * (e.g. "Complement of 'all three good': …"), which gives the approach away
+ * up front. Move that paragraph into the `hint` field so it lives behind the
+ * "Show hint" button like every other lab. Only fires when there's no explicit
+ * hint and the prompt has a second paragraph — so multi-paragraph prompts that
+ * carry essential data (e.g. lab3) are never touched.
+ */
+function splitTrailingHint(d: RawLab): RawLab {
+  if (d.hint) return d;
+  const i = d.prompt.indexOf("\n\n");
+  if (i < 0) return d;
+  return { ...d, prompt: d.prompt.slice(0, i), hint: d.prompt.slice(i + 2) };
+}
+
 export const ALL_LABS: RawLab[] = [
-  ...(lab1prob as unknown as RawLab[]),
+  ...(lab1prob as unknown as RawLab[]).map(splitTrailingHint),
   ...(lab1stats as unknown as RawLab[]),
   ...(lab2 as unknown as RawLab[]),
   ...(lab3 as unknown as RawLab[]),

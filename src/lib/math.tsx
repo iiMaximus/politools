@@ -11,7 +11,7 @@ export function Tex({ children }: { children: string }) {
       }),
     [children]
   );
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+  return <span className="katex-inline" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 /** Display (block) math. */

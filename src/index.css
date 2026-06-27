@@ -92,11 +92,16 @@
 
 html {
   scroll-behavior: smooth;
+  /* Mobile backstop: never let one wide child (inline KaTeX, a long token, the
+     Excel grid) make the whole page scroll sideways. `clip` — not `hidden` —
+     so it doesn't create a scroll container that breaks the sticky TopBar. */
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: clip;
   font-family: var(--font-sans);
   color: var(--color-ink);
   background: var(--app-bg);
@@ -166,6 +171,8 @@ body {
     font-weight: 600;
     border-radius: 0.75rem;
     padding: 0.625rem 1.1rem;
+    /* Keep a tappable height even when callers shrink padding with !py-2. */
+    min-height: 2.5rem;
     transition: transform 0.12s ease, filter 0.12s ease, background 0.12s ease;
     cursor: pointer;
     user-select: none;
@@ -194,6 +201,7 @@ body {
     color: var(--prose);
     font-size: 1.05rem;
     line-height: 1.78;
+    overflow-wrap: break-word;
   }
   .prose-lesson p {
     margin: 0 0 1rem;
@@ -214,6 +222,8 @@ body {
     border: 1px solid var(--color-line);
     border-radius: 0.4rem;
     padding: 0.1rem 0.35rem;
+    /* long identifiers / paths must wrap rather than force page overflow */
+    overflow-wrap: anywhere;
   }
 }
 
@@ -224,4 +234,88 @@ body {
 }
 .katex {
   font-size: 1.04em;
+}
+
+/* ------------------------------------------------------------------ *
+ * Excel lab — "correct" feedback flourish (statistics course).
+ * A cell that checks out flashes a strong green + a fading inset ring,
+ * then settles to the resting --good-bg. No transform → no layout shift.
+ * ------------------------------------------------------------------ */
+@keyframes excelCorrectPop {
+  0% {
+    background-color: color-mix(in oklab, var(--good) 50%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--good) 65%, transparent);
+  }
+  55% {
+    background-color: color-mix(in oklab, var(--good) 26%, transparent);
+  }
+  100% {
+    background-color: var(--good-bg);
+    box-shadow: inset 0 0 0 0 transparent;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .excel-cell-correct {
+    animation: excelCorrectPop 0.55s ease-out;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Sliders (SimKit) — give the thumb a finger-sized hit zone on touch
+ * while keeping the visible track slim. Styling all sims at once; native
+ * accent-color can't enlarge the thumb, so we take over the appearance.
+ * ------------------------------------------------------------------ */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2.25rem; /* tall transparent hit area for thumbs */
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-line);
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-line);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px; /* center the 20px thumb on the 6px track */
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-surface);
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* Inline KaTeX must not push page width on a phone — let it scroll/shrink. */
+.katex-inline {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: middle;
+}
+
+/* Horizontal scroll strips (e.g. the course nav on phones) without a gutter. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

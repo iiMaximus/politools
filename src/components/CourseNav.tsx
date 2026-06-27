@@ -9,16 +9,16 @@ export function CourseNav({ courseId, due }: { courseId: string; due?: number })
   const tabs = [
     { id: "overview", label: "Overview", icon: "LayoutDashboard", to: base, match: pathname === base || pathname.includes("/learn/") },
     { id: "practice", label: "Practice", icon: "Dumbbell", to: `${base}/practice`, match: pathname.includes("/practice") },
-    { id: "exams", label: "Exam problems", icon: "FileText", to: `${base}/exams`, match: pathname.includes("/exams") },
+    { id: "exams", label: "Exams", icon: "FileText", to: `${base}/exams`, match: pathname.includes("/exams") },
   ];
   return (
-    <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-1.5">
+    <div className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-1.5">
       {tabs.map((t) => (
         <Link
           key={t.id}
           to={t.to}
           className={cn(
-            "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition",
+            "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition",
             t.match ? "text-white" : "text-[var(--color-muted)] hover:text-[var(--color-ink)]"
           )}
           style={t.match ? { background: "linear-gradient(180deg, var(--accent), var(--accent-2))" } : undefined}

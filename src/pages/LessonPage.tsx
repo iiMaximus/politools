@@ -130,10 +130,10 @@ export function LessonPage() {
           ]}
         >
           <button type="button" onClick={() => setFocusMode(true)} className="btn btn-ghost !py-2 !text-sm">
-            <Icon name="Maximize2" size={15} /> Focus
+            <Icon name="Maximize2" size={15} /> <span className="hidden sm:inline">Focus</span>
           </button>
           <Link to={`/c/${courseId}/practice`} className="btn btn-ghost !py-2 !text-sm">
-            <Icon name="Dumbbell" size={15} /> Practice
+            <Icon name="Dumbbell" size={15} /> <span className="hidden sm:inline">Practice</span>
           </Link>
         </TopBar>
       )}
