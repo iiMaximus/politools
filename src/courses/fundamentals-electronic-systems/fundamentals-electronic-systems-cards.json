@@ -1,0 +1,990 @@
+[
+  {
+    "id": "fees-20240206-q01",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "Consider the inductor in the figure. Select the only wrong answer.",
+    "options": [
+      {
+        "id": "A",
+        "content": "i(t) can be a triangular wave"
+      },
+      {
+        "id": "B",
+        "content": "i(t) can be discontinuous"
+      },
+      {
+        "id": "C",
+        "content": "v(t) can be discontinuous"
+      },
+      {
+        "id": "D",
+        "content": "v(t) can be a triangular wave"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is the wrong statement selected in the source. For an ideal inductor, $v(t)=L\\,di(t)/dt$, so a finite voltage cannot create an instantaneous jump in current. A triangular current is possible because it corresponds to piecewise constant voltage. The voltage itself can be discontinuous, and a triangular voltage would make the current piecewise parabolic rather than impossible.",
+    "theory": "Inductor current is the state variable and is continuous unless an impulse voltage is applied. The voltage is proportional to the derivative of current, so voltage shapes determine the slope of i(t), not an allowed jump in i(t).",
+    "source": "01JWDMN_20240206_eng.pdf, Quiz 1",
+    "tags": [
+      "inductor",
+      "state variable",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240206-q02",
+    "module": "Past exams",
+    "topic": "AC power",
+    "difficulty": "easy",
+    "prompt": "Consider the real P and reactive Q powers absorbed by the two-terminal component in the figure. Select the correct answer.",
+    "options": [
+      {
+        "id": "A",
+        "content": "P > 0, Q > 0"
+      },
+      {
+        "id": "B",
+        "content": "P > 0, Q < 0"
+      },
+      {
+        "id": "C",
+        "content": "P < 0, Q > 0"
+      },
+      {
+        "id": "D",
+        "content": "P < 0, Q < 0"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The resistor branch absorbs positive real power, so P > 0. The capacitor branch has negative reactive power under the passive convention, so Q < 0. A uses the sign of an inductor, while C and D incorrectly make the passive resistor branch generate real power.",
+    "theory": "With passive sign convention, resistors absorb real power P > 0. Inductive reactance absorbs positive reactive power, while capacitive reactance absorbs negative reactive power.",
+    "source": "01JWDMN_20240206_eng.pdf, Quiz 2",
+    "tags": [
+      "power sign",
+      "capacitor",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240206-q03",
+    "module": "Past exams",
+    "topic": "Three-phase circuits",
+    "difficulty": "easy",
+    "prompt": "In a symmetric and balanced three-phase circuit, select the correct statement.",
+    "options": [
+      {
+        "id": "A",
+        "content": "V_line = 3E_phase"
+      },
+      {
+        "id": "B",
+        "content": "Z_delta = √3 Z_star"
+      },
+      {
+        "id": "C",
+        "content": "I_phase = √3 I_line"
+      },
+      {
+        "id": "D",
+        "content": "S = √3 V I"
+      }
+    ],
+    "correct": "D",
+    "explanation": "D is correct in the source. In a balanced three-phase circuit, total apparent power can be written from line quantities as S = √3 V I. A uses 3 instead of the line-to-phase √3 relation. B uses √3 instead of the delta-star impedance factor 3. C reverses the usual current relation for a delta branch.",
+    "theory": "Balanced three-phase power is compact when expressed with line voltage and line current: S = √3 V_line I_line. Always check whether V and I are phase quantities or line quantities before choosing a formula.",
+    "source": "01JWDMN_20240206_eng.pdf, Quiz 3",
+    "tags": [
+      "three-phase",
+      "apparent power",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240206-q04",
+    "module": "Past exams",
+    "topic": "DC circuits",
+    "difficulty": "medium",
+    "prompt": "In the circuit of the figure, select the correct answer.",
+    "options": [
+      {
+        "id": "A",
+        "content": "I = 0"
+      },
+      {
+        "id": "B",
+        "content": "V = 0"
+      },
+      {
+        "id": "C",
+        "content": "V = E"
+      },
+      {
+        "id": "D",
+        "content": "I = 2E/R"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The two equal branches impose equal and opposite source contributions between the output terminals, so the terminal voltage cancels to V = 0. A is not required because branch currents can still circulate. C keeps only one generator, and D doubles the current without respecting the opposing source polarities.",
+    "theory": "For DC source-resistor networks, write the branch source polarities before applying equivalent resistance intuition. Equal magnitudes with opposite terminal effects can cancel the measured voltage even when currents are not zero.",
+    "source": "01JWDMN_20240206_eng.pdf, Quiz 4",
+    "tags": [
+      "DC circuit",
+      "source polarity",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240223-q01",
+    "module": "Past exams",
+    "topic": "DC circuits",
+    "difficulty": "medium",
+    "prompt": "In the DC circuit of the figure, find the correct value of I3.",
+    "options": [
+      {
+        "id": "A",
+        "content": "I3 = (E1 - E2)/((R2 || R1) + R3)"
+      },
+      {
+        "id": "B",
+        "content": "I3 = 0 if E3 + E1 = E2"
+      },
+      {
+        "id": "C",
+        "content": "I3 = E1 R3/(R1 + R3)"
+      },
+      {
+        "id": "D",
+        "content": "I3 = E3/R3"
+      }
+    ],
+    "correct": "D",
+    "explanation": "D is correct. The right-side ideal voltage source fixes the node voltage across R3 to E3, so the current in R3 is I3 = E3/R3 with the indicated direction. A and B incorrectly mix unrelated source branches into the fixed R3 voltage. C is dimensionally and topologically wrong for the shown circuit.",
+    "theory": "An ideal voltage source in parallel with a branch fixes the voltage across that branch. Once the branch voltage is known, the resistor current follows directly from Ohm's law.",
+    "source": "01JWDMN_20240223_eng.pdf, Quiz 1",
+    "tags": [
+      "DC circuit",
+      "ideal voltage source",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240223-q02",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "easy",
+    "prompt": "Given the AC network in the figure, find the correct value of the magnitude of the current I.",
+    "options": [
+      {
+        "id": "A",
+        "content": "I = E/(R + X)"
+      },
+      {
+        "id": "B",
+        "content": "I = E/(R || X)"
+      },
+      {
+        "id": "C",
+        "content": "I = E/√(R² + X²)"
+      },
+      {
+        "id": "D",
+        "content": "I = E X/(R + X)"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A series resistance and reactance have impedance magnitude |Z| = √(R² + X²), therefore the current magnitude is E/|Z|. A adds magnitudes as if both terms were real, B treats a series circuit as parallel, and D has the wrong units and topology.",
+    "theory": "In sinusoidal steady state, series impedances add as complex numbers. The current magnitude is the source voltage magnitude divided by the magnitude of the total impedance.",
+    "source": "01JWDMN_20240223_eng.pdf, Quiz 2",
+    "tags": [
+      "series impedance",
+      "phasors",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240223-q03",
+    "module": "Past exams",
+    "topic": "Three-phase circuits",
+    "difficulty": "medium",
+    "prompt": "In a symmetric and balanced three-phase circuit, find the only correct answer.",
+    "options": [
+      {
+        "id": "A",
+        "content": "P = 3V²/R"
+      },
+      {
+        "id": "B",
+        "content": "S = V²/√(R² + X²)"
+      },
+      {
+        "id": "C",
+        "content": "Q = V²/X"
+      },
+      {
+        "id": "D",
+        "content": "S = 3V²/√(R² + X²)"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct for the line voltage convention used in the figure. Each phase sees V/√3, the phase current is (V/√3)/√(R² + X²), and total apparent power is √3VI = V²/√(R² + X²). D would be correct only if V were the phase voltage. A and C ignore the reactive part or use incomplete power expressions.",
+    "theory": "Balanced three-phase formulas depend on whether V is a line voltage or phase voltage. If V is line-line, phase voltage is V/√3, and the total apparent power is √3 times line voltage times line current.",
+    "source": "01JWDMN_20240223_eng.pdf, Quiz 3",
+    "tags": [
+      "three-phase",
+      "line voltage",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240223-q04",
+    "module": "Past exams",
+    "topic": "Waveforms and RMS",
+    "difficulty": "easy",
+    "prompt": "Given the periodic waveform in the figure, find the true statement.",
+    "options": [
+      {
+        "id": "A",
+        "content": "the period is 5 ms"
+      },
+      {
+        "id": "B",
+        "content": "the average value is zero"
+      },
+      {
+        "id": "C",
+        "content": "the rms value is 5/√2"
+      },
+      {
+        "id": "D",
+        "content": "the average value is 2.5"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. The positive interval lasts 4 ms and the negative interval lasts 1 ms, so the waveform repeats every 5 ms. The average is not zero because the positive area and negative area do not cancel. The rms value must account for both the 5-unit and 10-unit levels over their respective durations.",
+    "theory": "For rectangular periodic waveforms, the period is the time for one full repeated pattern. Average value comes from signed area over the period, while rms comes from the square-root of the average squared value.",
+    "source": "01JWDMN_20240223_eng.pdf, Quiz 4",
+    "tags": [
+      "periodic waveform",
+      "average",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20231125-t1-q01",
+    "module": "Past exams",
+    "topic": "Power balance",
+    "difficulty": "easy",
+    "prompt": "In an electric circuit, select the correct statement.",
+    "options": [
+      {
+        "id": "A",
+        "content": "the sum of the absorbed powers equals to the sum of the generated powers"
+      },
+      {
+        "id": "B",
+        "content": "all components generate positive power"
+      },
+      {
+        "id": "C",
+        "content": "all components absorbs positive power"
+      },
+      {
+        "id": "D",
+        "content": "none of the other options is correct"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. Conservation of energy requires total generated power and total absorbed power to balance in a circuit. B and C incorrectly assign the same role to every component. D is false because A states the power balance law.",
+    "theory": "The algebraic sum of powers in a circuit is zero when signs are assigned consistently. Equivalently, generated power equals absorbed power.",
+    "source": "20231125_01JWDMN_turno1_eng.pdf, Quiz 1",
+    "tags": [
+      "power balance",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20231125-t1-q02",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "The voltage waveform at a capacitor's terminals is reported in the figure. For t in the range (t1, t2), the current through the capacitor:",
+    "options": [
+      {
+        "id": "A",
+        "content": "is constant and positive"
+      },
+      {
+        "id": "B",
+        "content": "is constant and negative"
+      },
+      {
+        "id": "C",
+        "content": "goes to infinity"
+      },
+      {
+        "id": "D",
+        "content": "is zero"
+      }
+    ],
+    "correct": "D",
+    "explanation": "D is correct. Between t1 and t2 the capacitor voltage is flat, so dv/dt = 0 and i = C dv/dt = 0. A and B would require a nonzero slope. C would require an ideal voltage jump, not a constant segment.",
+    "theory": "Capacitor current is proportional to the derivative of capacitor voltage. A constant voltage interval means zero current through an ideal capacitor.",
+    "source": "20231125_01JWDMN_turno1_eng.pdf, Quiz 2",
+    "tags": [
+      "capacitor",
+      "waveform derivative",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20231125-t1-q03",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "medium",
+    "prompt": "The two-terminal component in the figure works in AC with frequency f. The impedance is Z = 10e^{jπ/3}. It is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "V lags by π/3 with respect to I"
+      },
+      {
+        "id": "B",
+        "content": "the phase of I is π/3"
+      },
+      {
+        "id": "C",
+        "content": "I lags by π/3 with respect to V"
+      },
+      {
+        "id": "D",
+        "content": "the phase of V is π/3"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. With Z = V/I = 10e^{jπ/3}, the voltage leads the current by π/3, so the current lags the voltage by π/3. A reverses the lag direction. B and D assign an absolute phase that cannot be known from impedance alone.",
+    "theory": "The angle of an impedance is the phase of voltage relative to current. Positive impedance angle means inductive behavior: current lags voltage.",
+    "source": "20231125_01JWDMN_turno1_eng.pdf, Quiz 3",
+    "tags": [
+      "impedance angle",
+      "phasors",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20231125-t2-q01",
+    "module": "Past exams",
+    "topic": "Power conventions",
+    "difficulty": "easy",
+    "prompt": "In a circuit, a current generator is studied according to the active sign convention. Considering this generator, it is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the voltage at its terminals is zero"
+      },
+      {
+        "id": "B",
+        "content": "it generates always positive power"
+      },
+      {
+        "id": "C",
+        "content": "it can generate positive or negative power"
+      },
+      {
+        "id": "D",
+        "content": "the voltage at its terminals is negative"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A current source fixes current, but the circuit determines the terminal voltage, so its power can be positive or negative depending on the operating point and sign convention. A and D invent voltage constraints. B overstates the generator role.",
+    "theory": "Independent generators can either deliver or absorb power depending on the current-voltage product with the chosen sign convention. The source type fixes one electrical variable, not the sign of power in every circuit.",
+    "source": "20231125_01JWDMN_turno2_eng.pdf, Quiz 1",
+    "tags": [
+      "current source",
+      "active sign convention",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20231125-t2-q02",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "The voltage across an inductor, studied with passive sign convention, has the waveform reported in the figure. For t in the range (t1, t2), the current through the inductor:",
+    "options": [
+      {
+        "id": "A",
+        "content": "is constant and positive"
+      },
+      {
+        "id": "B",
+        "content": "linearly increases"
+      },
+      {
+        "id": "C",
+        "content": "is constant and negative"
+      },
+      {
+        "id": "D",
+        "content": "linearly decreases"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. Between t1 and t2 the inductor voltage is constant and positive, so di/dt = v/L is a positive constant and current increases linearly. A and C would require zero voltage. D has the wrong sign for the shown voltage.",
+    "theory": "For an inductor, voltage is proportional to the derivative of current. A constant positive voltage creates a straight-line increasing current.",
+    "source": "20231125_01JWDMN_turno2_eng.pdf, Quiz 2",
+    "tags": [
+      "inductor",
+      "waveform derivative",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20231125-t2-q03",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "medium",
+    "prompt": "The two-terminal component in the figure works in AC with frequency f. The impedance is Z = 15e^{jπ/4}. It is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "it absorbs positive reactive power"
+      },
+      {
+        "id": "B",
+        "content": "it absorbs zero active power"
+      },
+      {
+        "id": "C",
+        "content": "it is ohmic-capacitive"
+      },
+      {
+        "id": "D",
+        "content": "none of the other answers is correct"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. A positive impedance angle, π/4, indicates inductive behavior, so the component absorbs positive reactive power. B is false because the real part of the impedance is positive, so active power is not zero. C has the wrong sign of reactive part, and D is false because A is valid.",
+    "theory": "In passive sign convention, positive impedance phase means voltage leads current and reactive power is positive. Negative phase is capacitive and corresponds to negative reactive power.",
+    "source": "20231125_01JWDMN_turno2_eng.pdf, Quiz 3",
+    "tags": [
+      "impedance angle",
+      "reactive power",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240429-q01",
+    "module": "Past exams",
+    "topic": "DC circuits",
+    "difficulty": "medium",
+    "prompt": "Given the DC circuit in the figure, with E > 0 and A > 0, it is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the voltage generator supplies positive power and this power is absorbed by the current generator"
+      },
+      {
+        "id": "B",
+        "content": "both generators supplies positive power"
+      },
+      {
+        "id": "C",
+        "content": "none of the other answers is correct"
+      },
+      {
+        "id": "D",
+        "content": "the current generator supplies positive power and this power is absorbed by the voltage generator"
+      }
+    ],
+    "correct": "D",
+    "explanation": "D is correct. With the indicated polarities, the current source delivers power into the loop and the voltage source absorbs it. A reverses the roles. B violates power balance for a two-generator ideal loop in this condition. C is false because D matches the marked solution.",
+    "theory": "Generator labels do not by themselves decide power direction. Use voltage polarity, current direction, and the chosen sign convention to determine whether a source supplies or absorbs power.",
+    "source": "20240429_01JWDMN_eng.pdf, Quiz 1",
+    "tags": [
+      "source power",
+      "sign convention",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240429-q02",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "In a first-order circuit with constant generators, select the correct statement.",
+    "options": [
+      {
+        "id": "A",
+        "content": "all voltages and currents are continuous"
+      },
+      {
+        "id": "B",
+        "content": "Kirchhoff's laws cannot be applied"
+      },
+      {
+        "id": "C",
+        "content": "there is only one state variable"
+      },
+      {
+        "id": "D",
+        "content": "the state variable is zero at the end of the transient"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A first-order circuit has one independent energy-storage state variable, usually one capacitor voltage or one inductor current after equivalent reductions. A is too broad because only state variables have continuity constraints. B is false because Kirchhoff's laws still apply. D invents a final value that depends on the circuit.",
+    "theory": "The order of a linear circuit is the number of independent state variables. First-order transient responses have one time constant and one independent stored-energy variable.",
+    "source": "20240429_01JWDMN_eng.pdf, Quiz 2",
+    "tags": [
+      "first-order circuit",
+      "state variable",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240429-q03",
+    "module": "Past exams",
+    "topic": "Three-phase circuits",
+    "difficulty": "medium",
+    "prompt": "Consider the balanced three-phase load in the figure. The reactive power absorbed by the load is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Q = √3 V I cos(φ)"
+      },
+      {
+        "id": "B",
+        "content": "Q = 3 X I²"
+      },
+      {
+        "id": "C",
+        "content": "Q = 3 V²/X"
+      },
+      {
+        "id": "D",
+        "content": "Q = 3 E²/X"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. Each phase contains reactance X carrying current I, so phase reactive power is X I² and total load reactive power is 3 X I². A is active power form with cos(φ), not reactive power. C and D use incomplete voltage-over-reactance forms that do not match the series R-X branch current.",
+    "theory": "For a balanced three-phase load, total power is three times per-phase power. A series reactance in each branch absorbs Q_phase = X I_phase².",
+    "source": "20240429_01JWDMN_eng.pdf, Quiz 3",
+    "tags": [
+      "three-phase",
+      "reactive power",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240429-q04",
+    "module": "Past exams",
+    "topic": "Waveforms and RMS",
+    "difficulty": "medium",
+    "prompt": "Given the voltage waveform v(t) in the figure, find the correct statement knowing that one square corresponds to 5 V vertically and 5 ms horizontally.",
+    "options": [
+      {
+        "id": "A",
+        "content": "the frequency is 20 Hz"
+      },
+      {
+        "id": "B",
+        "content": "the rms value is 15 V"
+      },
+      {
+        "id": "C",
+        "content": "the frequency is 50 Hz"
+      },
+      {
+        "id": "D",
+        "content": "the period is 25 ms"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. The sinusoid spans 10 horizontal squares per period, and each square is 5 ms, so T = 50 ms and f = 1/T = 20 Hz. C and D correspond to the wrong period reading. B would require the peak value to be 15√2 V, which the plotted waveform does not show.",
+    "theory": "Frequency is the inverse of period. On gridded waveforms, count one complete cycle and multiply by the horizontal scale before evaluating f = 1/T.",
+    "source": "20240429_01JWDMN_eng.pdf, Quiz 4",
+    "tags": [
+      "period",
+      "frequency",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240905-q01",
+    "module": "Past exams",
+    "topic": "Circuit equations",
+    "difficulty": "easy",
+    "prompt": "Consider the node in the figure, where the current i1(t) is constant (DC) and the current i2(t) is sinusoidal (AC). Select the correct statement.",
+    "options": [
+      {
+        "id": "A",
+        "content": "i3(t) is sinusoidal (AC)"
+      },
+      {
+        "id": "B",
+        "content": "such combination of currents is not possible in a circuit"
+      },
+      {
+        "id": "C",
+        "content": "i3(t) is constant (DC)"
+      },
+      {
+        "id": "D",
+        "content": "i3(t) is sinusoidal with DC bias"
+      }
+    ],
+    "correct": "D",
+    "explanation": "D is correct. Kirchhoff's current law adds the constant current and the sinusoidal current algebraically at the node, producing a sinusoid shifted by a DC offset. A omits the DC component. C omits the AC component. B is false because mixed DC and AC components are perfectly possible.",
+    "theory": "KCL applies instant by instant. A signal can contain a DC component plus an AC component, often described as a sinusoid with DC bias.",
+    "source": "Exam05092024_eng.pdf, question 1",
+    "tags": [
+      "KCL",
+      "DC bias",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240905-q02",
+    "module": "Past exams",
+    "topic": "DC circuits",
+    "difficulty": "easy",
+    "prompt": "Consider the current generator in the DC circuit of the figure. Select the correct statement.",
+    "options": [
+      {
+        "id": "A",
+        "content": "it always generates negative power PA < 0"
+      },
+      {
+        "id": "B",
+        "content": "it can generate positive or negative power, according to the values of the circuit parameters"
+      },
+      {
+        "id": "C",
+        "content": "the generated power PA is independent of R1"
+      },
+      {
+        "id": "D",
+        "content": "it always generates positive power PA > 0"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. A current generator imposes current, while the surrounding circuit determines its terminal voltage. Depending on the parameter values and sign convention, the product of voltage and current can make the source absorb or deliver power. A and D are absolute statements, and C ignores the network that sets the voltage.",
+    "theory": "The power of an ideal current source is not fixed by the source symbol. Compute it from the actual terminal voltage and current with the sign convention stated in the problem.",
+    "source": "Exam05092024_eng.pdf, question 2",
+    "tags": [
+      "current source",
+      "source power",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240905-q03",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "medium",
+    "prompt": "Consider the component represented in the figure, working in AC. Let VL = VL e^{jφL} and VC = VC e^{jφC} be the voltages across the inductor and capacitor, respectively. The two voltages are:",
+    "options": [
+      {
+        "id": "A",
+        "content": "in phase, φL = φC"
+      },
+      {
+        "id": "B",
+        "content": "out-of-phase by φL - φC = π"
+      },
+      {
+        "id": "C",
+        "content": "out-of-phase by φL - φC = π/2"
+      },
+      {
+        "id": "D",
+        "content": "out-of-phase, with the phase shift φL - φC depending on the current I"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The same current flows through the series capacitor and inductor. Inductor voltage leads current by π/2, while capacitor voltage lags current by π/2, so their voltage phase difference is π. A and C give the wrong fixed phase relation, and D incorrectly makes the phase shift depend on current magnitude.",
+    "theory": "For ideal reactive elements in sinusoidal steady state, vL is +90 degrees from current and vC is -90 degrees from current. In a series branch, the current reference is common, so the two voltages are opposite in phase.",
+    "source": "Exam05092024_eng.pdf, question 3",
+    "tags": [
+      "phasors",
+      "inductor",
+      "capacitor",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20240905-q04",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "medium",
+    "prompt": "The voltage v(t) and current i(t) waveforms of an impedance studied according to the passive sign convention are reported in the figure. It is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the impedance is an inductor"
+      },
+      {
+        "id": "B",
+        "content": "the impedance is ohmic-capacitive"
+      },
+      {
+        "id": "C",
+        "content": "the impedance is a capacitor"
+      },
+      {
+        "id": "D",
+        "content": "the impedance is ohmic-inductive"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The current leads the voltage, which indicates capacitive behavior, but the phase shift is not exactly 90 degrees, so there is also a resistive component. A and D describe lagging current. C would require an ideal capacitor with a quarter-period phase shift.",
+    "theory": "In passive convention, inductive loads have current lagging voltage and capacitive loads have current leading voltage. A phase shift smaller than 90 degrees indicates an ohmic plus reactive impedance rather than a pure element.",
+    "source": "Exam05092024_eng.pdf, question 4",
+    "tags": [
+      "waveform phase",
+      "impedance type",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20230907-q01",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "The waveform of the voltage across an inductor is reported in the figure. Regarding the current through the inductor, it is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the current is piece-wise linear"
+      },
+      {
+        "id": "B",
+        "content": "the current is zero ∀t"
+      },
+      {
+        "id": "C",
+        "content": "with the given data, the current is undefined"
+      },
+      {
+        "id": "D",
+        "content": "the current is a square wave"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. The inductor voltage is piecewise constant, so di/dt is piecewise constant and the current is piecewise linear. B would require zero voltage and initial current zero. C ignores the differential law. D confuses the voltage waveform with the current waveform.",
+    "theory": "For an inductor, the current slope is vL/L. A square voltage creates straight-line current ramps with different slopes in each interval.",
+    "source": "Exam07Sep2023eng.pdf, question 1",
+    "tags": [
+      "inductor",
+      "waveform derivative",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-20230907-q02",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "easy",
+    "prompt": "Consider the parallel connection of an inductor and a capacitor. Considering the behavior at the A-B terminals, it is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "in AC the reactance XAB is always positive"
+      },
+      {
+        "id": "B",
+        "content": "in DC the component acts as an equivalent open circuit"
+      },
+      {
+        "id": "C",
+        "content": "in DC the component acts as an equivalent short circuit"
+      },
+      {
+        "id": "D",
+        "content": "in AC the reactance XAB is always negative"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. At DC, the inductor behaves as a short circuit and the capacitor as an open circuit, so their parallel combination is a short circuit. B ignores the inductor branch. A and D are too absolute for AC because the equivalent reactance depends on frequency and resonance behavior.",
+    "theory": "At steady DC, ideal inductors are shorts and ideal capacitors are opens. In parallel, a short branch dominates the terminal behavior.",
+    "source": "Exam07Sep2023eng.pdf, question 2",
+    "tags": [
+      "DC equivalent",
+      "LC parallel",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-sim1-q01",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "The waveform of the voltage across an inductor is reported in the figure. Regarding the current through the inductor, it is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the current is piece-wise linear"
+      },
+      {
+        "id": "B",
+        "content": "the current is zero ∀t"
+      },
+      {
+        "id": "C",
+        "content": "with the given data, the current is undefined"
+      },
+      {
+        "id": "D",
+        "content": "the current is a square wave"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. The simulation solution repeats the September 7th inductor MCQ: square or piecewise-constant voltage across an inductor gives piecewise-constant slope of current, therefore piecewise-linear current.",
+    "theory": "The inductor law is vL = L di/dt. Current is obtained by integrating voltage, so a stepped voltage does not produce a stepped current.",
+    "source": "Exam_simulation1_solution.pdf, question 1",
+    "tags": [
+      "inductor",
+      "waveform derivative",
+      "simulation",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-sim1-q02",
+    "module": "Past exams",
+    "topic": "AC phasors and impedance",
+    "difficulty": "easy",
+    "prompt": "Consider the parallel connection of an inductor and a capacitor. Considering the behavior at the A-B terminals, it is possible to state that:",
+    "options": [
+      {
+        "id": "A",
+        "content": "in AC the reactance XAB is always positive"
+      },
+      {
+        "id": "B",
+        "content": "in DC the component acts as an equivalent open circuit"
+      },
+      {
+        "id": "C",
+        "content": "in DC the component acts as an equivalent short circuit"
+      },
+      {
+        "id": "D",
+        "content": "in AC the reactance XAB is always negative"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. The simulation solution repeats the September 7th LC-terminal MCQ. In DC, the inductor branch is a short and the capacitor branch is open, so the parallel pair is a short at the terminals.",
+    "theory": "DC equivalents are frequency-limit models: ideal L -> short, ideal C -> open. A single short branch in parallel fixes the equivalent terminal behavior.",
+    "source": "Exam_simulation1_solution.pdf, question 2",
+    "tags": [
+      "DC equivalent",
+      "LC parallel",
+      "simulation",
+      "past-exam"
+    ]
+  },
+  {
+    "id": "fees-sim2-theory1",
+    "module": "Past exams",
+    "topic": "AC power",
+    "difficulty": "medium",
+    "prompt": "In sinusoidal steady state, the instantaneous power absorbed by an impedance:",
+    "options": [
+      {
+        "id": "A",
+        "content": "is sinusoidal with the same frequency of the voltage"
+      },
+      {
+        "id": "B",
+        "content": "is periodic, with frequency twice the voltage frequency"
+      },
+      {
+        "id": "C",
+        "content": "has zero mean value"
+      },
+      {
+        "id": "D",
+        "content": "is always negative in a capacitor"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The product v(t)i(t) contains a constant average term plus an oscillating term at twice the sinusoidal frequency. A misses the frequency doubling. C is true only for purely reactive average power, not a general impedance. D is false because capacitor instantaneous power alternates sign.",
+    "theory": "In sinusoidal steady state, instantaneous power has average active power plus a double-frequency oscillating component. Reactive elements exchange energy with the source, so instantaneous power can change sign.",
+    "source": "Exam_simulation2_text.pdf, Theory 1",
+    "tags": [
+      "instantaneous power",
+      "AC power",
+      "simulation"
+    ]
+  },
+  {
+    "id": "fees-sim2-theory2",
+    "module": "Past exams",
+    "topic": "Capacitors, inductors and transients",
+    "difficulty": "easy",
+    "prompt": "Select the correct answer referred to an RC circuit in transient conditions.",
+    "options": [
+      {
+        "id": "A",
+        "content": "in any time instant, final current in the resistor is zero"
+      },
+      {
+        "id": "B",
+        "content": "the energy stored in the capacitor is always positive"
+      },
+      {
+        "id": "C",
+        "content": "the initial voltage in the capacitor is always larger than the final one"
+      },
+      {
+        "id": "D",
+        "content": "the current through the capacitor is the state variable"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B is the source answer. More precisely, capacitor energy is wC = 1/2 C vC², so it is never negative and is positive whenever the capacitor voltage is nonzero. A is not generally true for every final condition. C depends on whether the capacitor is charging or discharging. D is false because capacitor voltage, not current, is the state variable.",
+    "theory": "In an RC transient, the capacitor voltage is the state variable and is continuous. Stored energy depends on the square of voltage, so it cannot be negative.",
+    "source": "Exam_simulation2_text.pdf, Theory 2",
+    "tags": [
+      "RC transient",
+      "capacitor energy",
+      "simulation"
+    ]
+  },
+  {
+    "id": "fees-sim2-theory3",
+    "module": "Past exams",
+    "topic": "DC circuits",
+    "difficulty": "medium",
+    "prompt": "A DC circuit is made of a current generator and an odd number of resistors. Select the only correct answer.",
+    "options": [
+      {
+        "id": "A",
+        "content": "the current generator may absorb positive electric power"
+      },
+      {
+        "id": "B",
+        "content": "the current generator supplies positive electric power"
+      },
+      {
+        "id": "C",
+        "content": "at least one resistor must absorb zero power"
+      },
+      {
+        "id": "D",
+        "content": "at least one resistor supplies positive electric power"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. Depending on the circuit connection and reference directions, a current generator may absorb positive power. B is too absolute. C has no basis in having an odd number of resistors. D is false because ideal resistors under passive convention absorb or dissipate power, they do not supply it.",
+    "theory": "Resistors dissipate nonnegative power. Sources can either supply or absorb power depending on terminal voltage, current direction, and sign convention.",
+    "source": "Exam_simulation2_text.pdf, Theory 3",
+    "tags": [
+      "current source",
+      "power sign",
+      "simulation"
+    ]
+  }
+]

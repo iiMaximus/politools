@@ -75,11 +75,11 @@ const practice = (cards as unknown as Course["practice"]).map((card) => {
 const electronicSystems: Course = {
   meta: {
     id: "electronic-systems",
-    title: "Fundamentals of Electronic Systems",
+    title: "Electronic Systems",
     short: "Electronic Systems",
-    tagline: "Past-exam MCQs from 2021-2026, grouped by recurring exam topic.",
+    tagline: "Electronics, op-amps and digital MCQs from 2021-2026.",
     description:
-      "A practice-first Polito course built from solved Fundamentals of Electronic Systems past exams. Drill the recurring MCQ patterns: op-amp models, logic families, registers, ADC conditioning, filters, frequency response and interface traps.",
+      "A practice-first Polito course for the Electronic Systems side of the split. Drill the recurring MCQ patterns from the solved electronics past exams: op-amp models, logic families, registers, ADC conditioning, filters, frequency response and interface traps.",
     accent: "#0f9f8f",
     accent2: "#2f8cff",
     icon: "CircuitBoard",
