@@ -2397,7 +2397,7 @@
     "module": "Past exams",
     "topic": "Filters and frequency response",
     "difficulty": "medium",
-    "prompt": "What is the operation performed by this circuit? R1 R2 R3 Vo I1 V2 R C Vo Vi",
+    "prompt": "What is the operation performed by this circuit?",
     "options": [
       {
         "id": "A",
@@ -2463,7 +2463,7 @@
     "module": "Past exams",
     "topic": "Filters and frequency response",
     "difficulty": "medium",
-    "prompt": "Operations with OAs What is the operation performed by this circuit? R1 R2 R3 V2 C R Vo Vi V1 R5 R4 C2 C1",
+    "prompt": "What is the operation performed by this circuit?",
     "options": [
       {
         "id": "A",

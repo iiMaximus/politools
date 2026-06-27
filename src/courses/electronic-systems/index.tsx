@@ -1,5 +1,37 @@
 import type { Course } from "../../types";
 import cards from "./electronic-systems-cards.json";
+import differentiatorCircuit from "./assets/differentiator-circuit-2025-05-27.png";
+import integratorCircuit from "./assets/integrator-circuit-2025-01-15.png";
+
+const practice = (cards as unknown as Course["practice"]).map((card) => {
+  if (card.id === "fes-29test15jan2025-q02") {
+    return {
+      ...card,
+      prompt: "What is the operation performed by this circuit?",
+      visual: {
+        type: "image" as const,
+        src: integratorCircuit,
+        alt: "Operational amplifier circuit with input resistor R and feedback capacitor C.",
+        caption: "Source circuit for 29test15Jan2025, question 2.",
+      },
+    };
+  }
+
+  if (card.id === "fes-30test27may2025-q02") {
+    return {
+      ...card,
+      prompt: "What is the operation performed by this circuit?",
+      visual: {
+        type: "image" as const,
+        src: differentiatorCircuit,
+        alt: "Operational amplifier circuit with input capacitor C and feedback resistor R.",
+        caption: "Source circuit for 30test27May2025, question 2.",
+      },
+    };
+  }
+
+  return card;
+});
 
 const electronicSystems: Course = {
   meta: {
@@ -150,7 +182,7 @@ const electronicSystems: Course = {
     },
   ],
 
-  practice: cards as unknown as Course["practice"],
+  practice,
 
   exam: [],
 };

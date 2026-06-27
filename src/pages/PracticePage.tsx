@@ -324,6 +324,22 @@ function QuestionCard({
 
       <div className="prose-lesson mb-5 !text-[1.08rem] font-medium !text-[var(--color-ink)]">{rt(q.prompt)}</div>
 
+      {q.visual?.type === "image" && (
+        <figure className="mb-5 rounded-xl border border-[var(--color-line)] bg-white p-3">
+          <img
+            src={q.visual.src}
+            alt={q.visual.alt}
+            loading="lazy"
+            className="mx-auto max-h-[340px] w-full max-w-xl object-contain"
+          />
+          {q.visual.caption && (
+            <figcaption className="mt-2 text-center text-xs text-[var(--color-muted)]">
+              {rtInline(q.visual.caption)}
+            </figcaption>
+          )}
+        </figure>
+      )}
+
       <div className="grid gap-2.5">
         {options.map((o) => {
           const isCorrect = o.id === q.correct;

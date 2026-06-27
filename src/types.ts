@@ -78,6 +78,13 @@ export interface Option {
   content: ReactNode;
 }
 
+export interface QuestionVisual {
+  type: "image";
+  src: string;
+  alt: string;
+  caption?: ReactNode;
+}
+
 export interface Question {
   id: string;
   /** the lecture this card belongs to — powers practice-by-lecture */
@@ -91,6 +98,8 @@ export interface Question {
   correct: string;
   /** why the right answer is right and the others wrong */
   explanation: ReactNode;
+  /** optional source figure needed to answer the card */
+  visual?: QuestionVisual;
   /** generalized theory so the student can solve variants */
   theory?: ReactNode;
   source?: string;
