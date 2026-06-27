@@ -12,7 +12,7 @@
       },
       {
         "id": "B",
-        "content": "vOUT = 10vIN 5"
+        "content": "vOUT = 10vIN - 5"
       },
       {
         "id": "C",
@@ -169,7 +169,7 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "hard",
-    "prompt": "Consider the differential amplifier below. The input resistance at port 2 is R3 R2 R4 R1 Vo V2 V1",
+    "prompt": "Consider the differential amplifier below. The input resistance at port 2 is",
     "options": [
       {
         "id": "A",
@@ -202,7 +202,7 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "hard",
-    "prompt": "Inthecircuitbelow, thesecondoperationalamplifierhasaninputoffsetvoltageof1mV.Assuming R2 = R3 = 2kohm, R1 = R4 = 1kohm, RL = 4kohm, the offset of the output voltage vo is R1 R2 R3 R4 RL I1 I2 Vo A1 A2",
+    "prompt": "In the circuit below, the second operational amplifier has an input offset voltage of 1 mV. Assuming R2 = R3 = 2 kΩ, R1 = R4 = 1 kΩ, and RL = 4 kΩ, the offset of the output voltage vo is",
     "options": [
       {
         "id": "A",
@@ -235,7 +235,7 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "Consider an acquisition front end with an anti-aliasing filter that has 0dB attenuation in the pass band and an increasing attenuation of 40dB/dec above the corner frequency. The signal to be converted has a bandwith B = 1kHz. Assuming that the out-of-band noise may be considered negligible if it is attenuated by at least 40dB, the minimum sampling frequency is",
+    "prompt": "Consider an acquisition front end with an anti-aliasing filter that has 0dB attenuation in the pass band and an increasing attenuation of 40dB/dec above the corner frequency. The signal to be converted has a bandwidth B = 1kHz. Assuming that the out-of-band noise may be considered negligible if it is attenuated by at least 40dB, the minimum sampling frequency is",
     "options": [
       {
         "id": "A",
@@ -251,7 +251,7 @@
       },
       {
         "id": "D",
-        "content": "20kHz v2 vo A1 A2 R6 R1 R2 R3 R5 R4 C R7 R1 = 100 kohm R2 = 100 kohm R3 = 1 kohm R4 = 9 kohm R5 = 9 kohm R6 = 17 kohm R7 = 10 kohm C = 10 nF"
+        "content": "20kHz"
       }
     ],
     "correct": "D",
@@ -268,7 +268,7 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "hard",
-    "prompt": "Consider the amplifier below. Evaluate the minimum and the maximum value of the input signal Vi that can be properly amplified, assuming that the output swing of the operational amplifier is(-6 V, 10 V). R1 = 2Ω, R2 = 10Ω, R3 = 10Ω, R4 = 20Ω, R5 = 20Ω. Problem 1. Evaluate the minimum and the maximum value of the input signal Vi that can be prope that the output swing of the operational amplifier is (-12 V, 10 V). R1 = 1 kW, R2 = R3 = 2 kW, R4 = 8 R5 R1 R2 R3 R4 Vo Vi",
+    "prompt": "Consider the amplifier below. Evaluate the minimum and the maximum value of the input signal Vi that can be properly amplified, assuming that the output swing of the operational amplifier is (-6 V, 10 V). R1 = 2 Ω, R2 = 10 Ω, R3 = 10 Ω, R4 = 20 Ω, R5 = 20 Ω.",
     "options": [
       {
         "id": "A",
@@ -301,7 +301,7 @@
     "module": "Past exams",
     "topic": "Logic families and inverters",
     "difficulty": "medium",
-    "prompt": "A R/SW pMOS inverter with RPD = 900Ω, and RON = 100Ω, drives a capacitive load C = 10pF. The time constants for the transitions H - L and L - H are Problem 1. RPD C VDD Vo Vi",
+    "prompt": "A R/SW pMOS inverter with RPD = 900 Ω, and RON = 100 Ω, drives a capacitive load C = 10 pF. The time constants for the transitions H - L and L - H are",
     "options": [
       {
         "id": "A",
@@ -334,7 +334,7 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "Consider an acquisition front end with an anti-aliasing filter that has 0dB attenuation in the pass band and an increasing attenuation of 20dB/dec above the corner frequency. The signal to be converted has a bandwith B = 100Hz. Assuming that the out-of-band noise may be considered negligible if it is attenuated by at least 40dB, the minimum sampling frequency is",
+    "prompt": "Consider an acquisition front end with an anti-aliasing filter that has 0dB attenuation in the pass band and an increasing attenuation of 20dB/dec above the corner frequency. The signal to be converted has a bandwidth B = 100Hz. Assuming that the out-of-band noise may be considered negligible if it is attenuated by at least 40dB, the minimum sampling frequency is",
     "options": [
       {
         "id": "A",
@@ -433,7 +433,7 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "hard",
-    "prompt": "Consider the differential amplifier below. The input resistance at port 1 is R3 R2 R4 R1 Vo V2 V1",
+    "prompt": "Consider the differential amplifier below. The input resistance at port 1 is",
     "options": [
       {
         "id": "A",
@@ -466,7 +466,7 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "hard",
-    "prompt": "Consider the amplifier below. The operational amplifier has a finite differential gain Ad = 100, and R1 = 50Ω, R2 = 200Ω, R3 = 50Ω, R4 = 100Ω. The gain is Problem 5. Compute Vo(V1) in DC, assuming that the OA has a finite differential gain R1 R2 R4 Vo Vi R3",
+    "prompt": "Consider the amplifier below. The operational amplifier has a finite differential gain Ad = 100, and R1 = 50 Ω, R2 = 200 Ω, R3 = 50 Ω, R4 = 100 Ω. The gain is",
     "options": [
       {
         "id": "A",
@@ -499,7 +499,7 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "hard",
-    "prompt": "In the circuit below, both operational amplifiers have an input offset voltage of 4mV. Assuming R1 = R2 = 2kΩ, and R3 = R4 = R5 = 10kΩ, the offset of the output voltage vo is Problem 7. Compute the offset of the output voltage Vo, assuming that both operation 4 mV. R1 =R2 = R3 = 100 kW, R4 = R5 = 50 kW. R1 R2 R3 Vo V1 I2 R4 R5",
+    "prompt": "In the circuit below, both operational amplifiers have an input offset voltage of 4 mV. Assuming R1 = R2 = 2 kΩ, and R3 = R4 = R5 = 10 kΩ, the offset of the output voltage vo is",
     "options": [
       {
         "id": "A",
@@ -515,7 +515,7 @@
       },
       {
         "id": "D",
-        "content": "4mV kΩ, R7 = 200 kΩ, R8 = 24 kΩ, R9 = 50 kΩ, C1 = 10 nF, C2 = 12 nF. R2 C1 R1 R7 R9 R3 R5 R4 R6 R8 C2 V1 V2 Vo A1 A2"
+        "content": "4mV"
       }
     ],
     "correct": "C",
@@ -1365,7 +1365,7 @@
       },
       {
         "id": "D",
-        "content": "should have a cutof frequency equal to twice the bandwith of the signal"
+        "content": "should have a cutoff frequency equal to twice the bandwidth of the signal"
       }
     ],
     "correct": "A",
@@ -1588,7 +1588,7 @@
       },
       {
         "id": "B",
-        "content": "Diferential amplifier"
+        "content": "Differential amplifier"
       },
       {
         "id": "C",
@@ -1943,11 +1943,11 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "medium",
-    "prompt": "Diferential amplifier The CMRR of a diferential amplifier is",
+    "prompt": "Differential amplifier The CMRR of a differential amplifier is",
     "options": [
       {
         "id": "A",
-        "content": "the ratio between the diferential gain and the common mode gain"
+        "content": "the ratio between the differential gain and the common mode gain"
       },
       {
         "id": "B",
@@ -1955,7 +1955,7 @@
       },
       {
         "id": "C",
-        "content": "the ratio between the common gain and the diferential mode gain"
+        "content": "the ratio between the common gain and the differential mode gain"
       },
       {
         "id": "D",
@@ -2186,7 +2186,7 @@
       },
       {
         "id": "D",
-        "content": "the nMOS is approximately a short circuit between source a drain"
+        "content": "the nMOS is approximately a short circuit between source and drain"
       }
     ],
     "correct": "B",
@@ -2430,7 +2430,7 @@
     "module": "Past exams",
     "topic": "Logic families and inverters",
     "difficulty": "medium",
-    "prompt": "pMOS transistor A pMOS is in the cutof region when",
+    "prompt": "pMOS transistor A pMOS is in the cutoff region when",
     "options": [
       {
         "id": "A",
@@ -2512,7 +2512,7 @@
       },
       {
         "id": "D",
-        "content": "the pMOS is approximately a short circuit between source a drain"
+        "content": "the pMOS is approximately a short circuit between source and drain"
       }
     ],
     "correct": "D",
@@ -2723,15 +2723,15 @@
     "module": "Past exams",
     "topic": "Operational amplifiers and interfaces",
     "difficulty": "medium",
-    "prompt": "Diferential amplifier The CMRR of a diferential amplifier is",
+    "prompt": "Differential amplifier The CMRR of a differential amplifier is",
     "options": [
       {
         "id": "A",
-        "content": "the ratio between the common gain and the diferential mode gain"
+        "content": "the ratio between the common gain and the differential mode gain"
       },
       {
         "id": "B",
-        "content": "the ratio between the diferential gain and the common mode gain"
+        "content": "the ratio between the differential gain and the common mode gain"
       },
       {
         "id": "C",
@@ -3082,7 +3082,7 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "Quantization error bound For a uniform N-bit A/D conveter with input swing S, the quantization error satisfies:",
+    "prompt": "Quantization error bound For a uniform N-bit A/D converter with input swing S, the quantization error satisfies:",
     "options": [
       {
         "id": "A",

@@ -1,36 +1,75 @@
-import type { Course } from "../../types";
+import type { Course, QuestionVisual } from "../../types";
 import cards from "./electronic-systems-cards.json";
+import differentialAmplifierPort2 from "./assets/differential-amplifier-port2-2021-01-15.png";
+import offsetAmplifierChainJan15 from "./assets/offset-amplifier-chain-2021-01-15.png";
 import differentiatorCircuit from "./assets/differentiator-circuit-2025-05-27.png";
+import differentialAmplifierPort1 from "./assets/differential-amplifier-port1-2021-01-30.png";
+import finiteGainAmplifier from "./assets/finite-gain-amplifier-2021-01-30.png";
 import integratorCircuit from "./assets/integrator-circuit-2025-01-15.png";
+import offsetAmplifierChainJan30 from "./assets/offset-amplifier-chain-2021-01-30.png";
+import opampSwingCircuit from "./assets/opamp-swing-circuit-2021-01-30.png";
+import pmosRswLoad from "./assets/pmos-rsw-load-2021-01-30.png";
+
+const VISUALS: Record<string, QuestionVisual> = {
+  "fes-01test15jan2021-q06": {
+    type: "image",
+    src: differentialAmplifierPort2,
+    alt: "Differential amplifier with inputs V1 and V2, resistors R1 through R4, and output Vo.",
+    caption: "Source circuit for 01test15Jan2021, question 6.",
+  },
+  "fes-01test15jan2021-q07": {
+    type: "image",
+    src: offsetAmplifierChainJan15,
+    alt: "Two operational-amplifier chain with current sources I1 and I2, resistors R1 through R4, load RL, and output Vo.",
+    caption: "Source circuit for 01test15Jan2021, question 7.",
+  },
+  "fes-02test30jan2021-q01": {
+    type: "image",
+    src: opampSwingCircuit,
+    alt: "Operational-amplifier circuit with input Vi, resistors R1 through R5, and output Vo.",
+    caption: "Source circuit for 02test30Jan2021, question 1.",
+  },
+  "fes-02test30jan2021-q02": {
+    type: "image",
+    src: pmosRswLoad,
+    alt: "R/SW pMOS inverter driving a resistor-capacitor load.",
+    caption: "Source circuit for 02test30Jan2021, question 2.",
+  },
+  "fes-02test30jan2021-q06": {
+    type: "image",
+    src: differentialAmplifierPort1,
+    alt: "Differential amplifier with inputs V1 and V2, resistors R1 through R4, and output Vo.",
+    caption: "Source circuit for 02test30Jan2021, question 6.",
+  },
+  "fes-02test30jan2021-q07": {
+    type: "image",
+    src: finiteGainAmplifier,
+    alt: "Operational-amplifier circuit with finite differential gain, input Vi, resistors R1 through R4, and output Vo.",
+    caption: "Source circuit for 02test30Jan2021, question 7.",
+  },
+  "fes-02test30jan2021-q08": {
+    type: "image",
+    src: offsetAmplifierChainJan30,
+    alt: "Two operational-amplifier offset circuit with source V1, current source I2, resistors R1 through R5, and output Vo.",
+    caption: "Source circuit for 02test30Jan2021, question 8.",
+  },
+  "fes-29test15jan2025-q02": {
+    type: "image",
+    src: integratorCircuit,
+    alt: "Operational amplifier circuit with input resistor R and feedback capacitor C.",
+    caption: "Source circuit for 29test15Jan2025, question 2.",
+  },
+  "fes-30test27may2025-q02": {
+    type: "image",
+    src: differentiatorCircuit,
+    alt: "Operational amplifier circuit with input capacitor C and feedback resistor R.",
+    caption: "Source circuit for 30test27May2025, question 2.",
+  },
+};
 
 const practice = (cards as unknown as Course["practice"]).map((card) => {
-  if (card.id === "fes-29test15jan2025-q02") {
-    return {
-      ...card,
-      prompt: "What is the operation performed by this circuit?",
-      visual: {
-        type: "image" as const,
-        src: integratorCircuit,
-        alt: "Operational amplifier circuit with input resistor R and feedback capacitor C.",
-        caption: "Source circuit for 29test15Jan2025, question 2.",
-      },
-    };
-  }
-
-  if (card.id === "fes-30test27may2025-q02") {
-    return {
-      ...card,
-      prompt: "What is the operation performed by this circuit?",
-      visual: {
-        type: "image" as const,
-        src: differentiatorCircuit,
-        alt: "Operational amplifier circuit with input capacitor C and feedback resistor R.",
-        caption: "Source circuit for 30test27May2025, question 2.",
-      },
-    };
-  }
-
-  return card;
+  const visual = VISUALS[card.id];
+  return visual ? { ...card, visual } : card;
 });
 
 const electronicSystems: Course = {
