@@ -45,23 +45,44 @@ const FUNCTION_HELP: FunctionHelp[] = [
   { name: "T.INV", args: ["probability", "deg_freedom"], description: "Inverse Student t CDF." },
   { name: "T.INV.2T", args: ["probability", "deg_freedom"], description: "Two-tailed Student t critical value." },
   { name: "T.DIST", args: ["x", "deg_freedom", "cumulative"], description: "Student t density or CDF." },
+  { name: "T.DIST.RT", args: ["x", "deg_freedom"], description: "Right-tail Student t probability." },
   { name: "T.DIST.2T", args: ["x", "deg_freedom"], description: "Two-tailed Student t probability." },
+  { name: "CHISQ.DIST", args: ["x", "deg_freedom", "cumulative"], description: "Chi-square density or cumulative probability." },
+  { name: "CHISQ.DIST.RT", args: ["x", "deg_freedom"], description: "Right-tail chi-square probability." },
   { name: "CHISQ.INV", args: ["probability", "deg_freedom"], description: "Inverse chi-square CDF." },
   { name: "CHISQ.INV.RT", args: ["probability", "deg_freedom"], description: "Inverse right-tail chi-square." },
+  { name: "F.DIST", args: ["x", "deg_freedom1", "deg_freedom2", "cumulative"], description: "Fisher F density or CDF." },
+  { name: "F.DIST.RT", args: ["x", "deg_freedom1", "deg_freedom2"], description: "Right-tail Fisher F probability." },
   { name: "F.INV", args: ["probability", "deg_freedom1", "deg_freedom2"], description: "Inverse Fisher F CDF." },
   { name: "F.INV.RT", args: ["probability", "deg_freedom1", "deg_freedom2"], description: "Inverse right-tail Fisher F." },
   { name: "BINOM.DIST", args: ["number_s", "trials", "probability_s", "cumulative"], description: "Binomial probability." },
   { name: "HYPGEOM.DIST", args: ["sample_s", "number_sample", "population_s", "number_pop", "cumulative"], description: "Hypergeometric probability." },
   { name: "POISSON.DIST", args: ["x", "mean", "cumulative"], description: "Poisson probability." },
   { name: "SQRT", args: ["number"], description: "Square root." },
+  { name: "POWER", args: ["number", "power"], description: "Raises a number to a power." },
+  { name: "LN", args: ["number"], description: "Natural logarithm." },
   { name: "ABS", args: ["number"], description: "Absolute value." },
   { name: "ROUND", args: ["number", "num_digits"], description: "Rounds to a fixed number of digits." },
+  { name: "ROUNDDOWN", args: ["number", "num_digits"], description: "Rounds toward zero to a fixed number of digits." },
   { name: "INT", args: ["number"], description: "Rounds down to an integer." },
   { name: "IF", args: ["logical_test", "value_if_true", "[value_if_false]"], description: "Returns one value if true and another if false." },
+  { name: "AND", args: ["logical1", "[logical2]", "..."], description: "TRUE only if all arguments are true." },
+  { name: "OR", args: ["logical1", "[logical2]", "..."], description: "TRUE if any argument is true." },
 ];
 
 const HELP_BY_NAME = new Map(FUNCTION_HELP.map((fn) => [fn.name, fn]));
-const COMMON_FUNCTIONS = ["AVERAGE", "STDEV.S", "VAR.S", "SUM", "COUNT", "NORM.DIST", "NORM.INV", "T.INV.2T"];
+const COMMON_FUNCTIONS = [
+  "AVERAGE",
+  "STDEV.S",
+  "VAR.S",
+  "SUM",
+  "COUNT",
+  "NORM.DIST",
+  "CHISQ.DIST",
+  "CHISQ.DIST.RT",
+  "T.INV.2T",
+  "F.DIST.RT",
+];
 
 /** Is a raw string a label (non-numeric text, not a formula)? */
 function isLabel(raw: string): boolean {
@@ -173,7 +194,7 @@ function getFormulaAssist(formula: string, caret: number): FormulaAssist {
     ? (prefix.text
         ? FUNCTION_HELP.filter((fn) => fn.name.startsWith(prefix.text))
         : COMMON_FUNCTIONS.map((name) => HELP_BY_NAME.get(name)).filter(Boolean) as FunctionHelp[])
-      .slice(0, 8)
+      .slice(0, 10)
     : [];
   return { prefix, suggestions, activeCall };
 }
