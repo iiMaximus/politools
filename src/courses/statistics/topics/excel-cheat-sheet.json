@@ -1,0 +1,259 @@
+{
+  "title": "Excel exam cheat sheet",
+  "summary": "A compact last-night page for the ESMM spreadsheet parts: the exact Excel functions, formula patterns, decision rules, and exam traps for Probability & Statistics, Data Analysis, and Measurement Uncertainty. Use this as the final checklist before opening the real lab workbooks.",
+  "minutes": 22,
+  "objectives": [
+    "Know which Excel function to use for every exam distribution and test.",
+    "Run the Data Analysis pipeline without forgetting a recomputation or a degrees-of-freedom correction.",
+    "Build a GUM uncertainty budget row by row in base SI units.",
+    "Avoid the format traps that lose marks: percentages vs probabilities, STDEV.S vs STDEV.P, degrees vs radians, and non-floored degrees of freedom."
+  ],
+  "blocks": [
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Tomorrow's order of attack",
+      "text": "**1. Copy the exam material from Y: to D:.** Work locally, save often. **2. Read every blank's required format before computing.** Probability can be requested as `0.617` or as `61.7 %`; do not mix them. **3. Convert units first.** The uncertainty budget wants base units: m, kg, W, rad, not mm, mg, mW, degrees. **4. Use formulas, not hand typing.** If a later cell depends on a previous answer, reference the previous cell. **5. Before submission, scan the decision cells:** outlier Yes/No, accept/reject normality, systematic effect Yes/No, final expanded uncertainty."
+    },
+    {
+      "kind": "heading",
+      "text": "Excel syntax and formatting"
+    },
+    {
+      "kind": "definition",
+      "term": "Separators",
+      "text": "Italian Excel normally uses semicolons: `=NORM.DIST(x;mean;s;1)`. If your Excel uses commas, the same formula is `=NORM.DIST(x,mean,s,1)`. Decimal commas/points depend on the machine locale; the logic is identical."
+    },
+    {
+      "kind": "definition",
+      "term": "Absolute references",
+      "text": "Use `$` when copying a formula down a table: `$F$1` fixes both row and column, `F$1` fixes only row, `$F1` fixes only column. In class/frequency tables this prevents the mean, standard deviation, total n, and degrees of freedom from drifting."
+    },
+    {
+      "kind": "definition",
+      "term": "Booleans and IF",
+      "text": "`TRUE` and `1` are equivalent; `FALSE` and `0` are equivalent. Use `=IF(condition;value_if_true;value_if_false)`, `=AND(...)`, `=OR(...)`. Example: `=IF(F5>F7;\"Reject normal\";\"Accept normal\")`."
+    },
+    {
+      "kind": "definition",
+      "term": "Core arithmetic",
+      "text": "`=SQRT(x)`, `=POWER(x;2)` or `=x^2`, `=ABS(x)`, `=SUM(range)`, `=AVERAGE(range)`, `=COUNT(range)`, `=MIN(range)`, `=MAX(range)`, `=RADIANS(deg)`, `=LN(x)`, `=ROUND(x;digits)`, `=INT(x)`."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Format traps that cost free points",
+      "text": "A risk/probability is usually a number between 0 and 1 unless the box explicitly says percent. `2.5 %` and `0.025` are the same mathematically but **not** the same answer format. For scientific notation, use forms like `1.23E-4`. For uncertainty, never leave mixed units in the table."
+    },
+    {
+      "kind": "heading",
+      "text": "Probability and Statistics formulas"
+    },
+    {
+      "kind": "definition",
+      "term": "Classical probability",
+      "text": "`P(E)=favourable outcomes / possible outcomes`. For complements use `P(at least one)=1-P(none)`. For unions use `P(A or B)=P(A)+P(B)-P(A and B)`."
+    },
+    {
+      "kind": "definition",
+      "term": "Binomial: independent trials / replacement / huge population",
+      "text": "`=BINOM.DIST(k;n;p;0)` gives exactly k successes. `=BINOM.DIST(k;n;p;1)` gives at most k successes. Use it for repeated independent trials with constant probability p. Example: accept a batch if no more than k defects in n tests from a very large production."
+    },
+    {
+      "kind": "definition",
+      "term": "Hypergeometric: finite batch without replacement",
+      "text": "`=HYPGEOM.DIST(k;n;C;M;0)` gives exactly k defectives in a sample of n, from population M containing C defectives. `...;1` gives at most k. This is the exam's acceptance-sampling function. Argument order: **successes in sample; sample size; successes in population; population size; cumulative**."
+    },
+    {
+      "kind": "definition",
+      "term": "Poisson approximation",
+      "text": "`=POISSON.DIST(k;lambda;0)` for exactly k, `=POISSON.DIST(k;lambda;1)` for at most k. Use only when the exercise explicitly wants the Poisson approximation or the event is rare with large n. Usually `lambda=n*p`."
+    },
+    {
+      "kind": "definition",
+      "term": "Normal probabilities",
+      "text": "`=NORM.DIST(x;m;s;1)` returns `P(X <= x)`. `=1-NORM.DIST(x;m;s;1)` returns the right tail. `=NORM.DIST(b;m;s;1)-NORM.DIST(a;m;s;1)` returns `P(a < X < b)`. `=NORM.S.DIST(z;1)` is the standard-normal version after `z=(x-m)/s`."
+    },
+    {
+      "kind": "definition",
+      "term": "Normal inverse",
+      "text": "`=NORM.INV(p;m;s)` returns the value x whose left-tail probability is p. `=NORM.S.INV(p)` returns the z-score. For a symmetric confidence band with confidence P: lower `=NORM.INV((1-P)/2;m;s)`, upper `=NORM.INV(1-(1-P)/2;m;s)`."
+    },
+    {
+      "kind": "definition",
+      "term": "Student t",
+      "text": "`=T.DIST(t;nu;1)` gives the left tail. Right tail is `=1-T.DIST(t;nu;1)`. `=T.DIST.2T(ABS(t);nu)` gives a two-tailed p-value. `=T.INV(p;nu)` gives a left-tail t. `=T.INV.2T(alpha;nu)` gives the positive two-sided critical value."
+    },
+    {
+      "kind": "definition",
+      "term": "Chi-square and Fisher",
+      "text": "Chi-square: `=CHISQ.DIST(x;nu;1)`, `=CHISQ.DIST.RT(x;nu)`, `=CHISQ.INV(p;nu)`, `=CHISQ.INV.RT(alpha;nu)`. Fisher: `=F.DIST(x;nu1;nu2;1)`, `=F.DIST.RT(F;nu1;nu2)`, `=F.INV(p;nu1;nu2)`, `=F.INV.RT(alpha;nu1;nu2)`."
+    },
+    {
+      "kind": "example",
+      "title": "Two-phase acceptance sampling pattern",
+      "text": "For phase A with population `M`, defectives `C`, sample `nA`, accept if `X <= n1`: `PA = HYPGEOM.DIST(n1;nA;C;M;1)`. If phase B happens only for `X=j`, multiply the phase-A exact probability by the conditional phase-B probability after removing A: `HYPGEOM.DIST(j;nA;C;M;0) * HYPGEOM.DIST(0;nB;C-j;M-nA;0)`. Sum the allowed j values, then total acceptance = accept in A + accept after B."
+    },
+    {
+      "kind": "heading",
+      "text": "Data Analysis workflow"
+    },
+    {
+      "kind": "steps",
+      "title": "Pipeline to follow in order",
+      "steps": [
+        {
+          "label": "1. Descriptive statistics",
+          "text": "`n=COUNT(range)`, `xbar=AVERAGE(range)`, `s=STDEV.S(range)`, `variance=VAR.S(range)`, `min=MIN(range)`, `max=MAX(range)`. Use **STDEV.S**, not STDEV.P."
+        },
+        {
+          "label": "2. Outlier management",
+          "text": "Chauvenet or IQR. If a value is removed/replaced, recompute `n`, `xbar`, and `s` before all later tests."
+        },
+        {
+          "label": "3. Frequency distribution",
+          "text": "Use cleaned `xbar` and `s`. Examined field is usually `xbar ± 4*s`; number of classes is usually `ROUND(SQRT(n)+4;0)`; class width is `(field_max-field_min)/classes`."
+        },
+        {
+          "label": "4. Normality",
+          "text": "Run chi-square and/or NPP. If normality is rejected, that is evidence of a systematic effect or wrong model."
+        },
+        {
+          "label": "5. Hypotheses / ANOVA / regression",
+          "text": "Use t-tests for means, F-tests for variances/ANOVA, regression for a drift. Interpret the final decision, not just the statistic."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "Chauvenet outlier test",
+      "text": "`alpha = 1/(2*n)`. Because it is two-sided, each tail gets `1/(4*n)`. Standard factor: `z=NORM.S.INV(1-1/(4*n))`. Limits: `lower=xbar-z*s`, `upper=xbar+z*s`. Equivalent direct limits: `NORM.INV(1/(4*n);xbar;s)` and `NORM.INV(1-1/(4*n);xbar;s)`. Outlier if `MIN(range)<lower` or `MAX(range)>upper`."
+    },
+    {
+      "kind": "definition",
+      "term": "IQR / box-plot outlier test",
+      "text": "`Q1=QUARTILE(range;1)`, `Q3=QUARTILE(range;3)`, `IQR=Q3-Q1`. Lower fence `Q1-1.5*IQR`, upper fence `Q3+1.5*IQR`. Anything outside is flagged."
+    },
+    {
+      "kind": "definition",
+      "term": "Chi-square normality test",
+      "text": "For each class: `E_i = n*(NORM.DIST(to_i;xbar;s;1)-NORM.DIST(from_i;xbar;s;1))`. Contribution: `(O_i-E_i)^2/E_i`. Statistic: `chi2=SUM(contributions)`. Degrees of freedom: `nu = number_of_classes - 1 - 2` when `xbar` and `s` are estimated from the sample. Right-tail critical: `CHISQ.INV.RT(alpha;nu)`. Two-sided band: lower `CHISQ.INV((1-CL)/2;nu)`, upper `CHISQ.INV(1-(1-CL)/2;nu)`."
+    },
+    {
+      "kind": "definition",
+      "term": "Normal probability plot",
+      "text": "Sort data ascending. For rank i among n values: `p_i=(i-0.5)/n`, `z_i=NORM.S.INV(p_i)`. Plot ordered value `x_(i)` versus `z_i`. Straight line = normal; S-shape/heavy tails = suspicious. Approximate line slope is `s`, intercept is `xbar`."
+    },
+    {
+      "kind": "definition",
+      "term": "One-sample t-test on a mean",
+      "text": "`t=(xbar-mu0)/(s/SQRT(n))`, `nu=n-1`. Critical two-sided value: `T.INV.2T(alpha;nu)`. Reject `H0` if `ABS(t)>critical`. p-value: `T.DIST.2T(ABS(t);nu)`."
+    },
+    {
+      "kind": "definition",
+      "term": "One-way ANOVA",
+      "text": "Let k columns/operators and m readings per column. Column means: `AVERAGE(each column)`. Column variances: `VAR.S(each column)`. `MS_between = VAR.S(column_means)*m`. `MS_within = AVERAGE(column_variances)`. `F = MS_between/MS_within`. Degrees of freedom: `nu1=k-1`, `nu2=k*(m-1)` or `N-k`. Critical: `F.INV.RT(alpha;nu1;nu2)`. Systematic operator effect if `F > Fcrit`."
+    },
+    {
+      "kind": "definition",
+      "term": "Least-squares regression without SLOPE",
+      "text": "For controlled variable t and response x: `tbar=AVERAGE(t_range)`, `xbar=AVERAGE(x_range)`. Helper column cross-product: `(t_i-tbar)*(x_i-xbar)`. Helper column square: `(t_i-tbar)^2`. Slope `b=SUM(cross_products)/SUM(squares)`. Intercept `a=xbar-b*tbar`. Prediction: `xhat=a+b*t`. Residual: `x_i-xhat_i`."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Lab 2 traps",
+      "text": "Do not use STDEV.P. Do not report Chauvenet's `alpha` as percent if the blank expects a probability. Do not use `1-1/(2n)` inside NORM.S.INV; the quantile uses `1-1/(4n)`. Do not forget the `-2` in chi-square degrees of freedom when mean and standard deviation came from the same data. In ANOVA, compare F only with the **upper** Fisher critical value."
+    },
+    {
+      "kind": "heading",
+      "text": "Uncertainty budget workflow"
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "title": "Base units first",
+      "text": "Before entering the budget: `mm -> m`, `um -> m`, `mg -> kg`, `mW -> W`, `degrees -> radians`, `mm/m strain -> multiply by 1E-6`. If the table mixes units, the final `u(y)` can be wrong even when every Excel formula looks beautiful."
+    },
+    {
+      "kind": "steps",
+      "title": "GUM table recipe",
+      "steps": [
+        {
+          "label": "1. Write the model",
+          "text": "Identify `y=G(x1,x2,...)`, the nominal output, and every input quantity that has uncertainty."
+        },
+        {
+          "label": "2. For each input, compute input variance",
+          "text": "Type A or Type B, right distribution, right divisor, and right multiplicity factor. Generic table formula: `u2x = B^2 / divisor * nd / nr`, where `B` is the standard deviation or half-width stated by the row, `divisor` is 1, 2, 3, 6, or `k^2` depending on how B is defined."
+        },
+        {
+          "label": "3. Compute sensitivity",
+          "text": "`c_j = partial derivative dy/dx_j`. If the sheet gives numerical sensitivity, use it. If not, use simple derivatives: product `y=a*b` gives `c_a=b`, `c_b=a`; ratio `y=a/b` gives `c_a=1/b`, `c_b=-a/b^2`."
+        },
+        {
+          "label": "4. Propagate each row",
+          "text": "`u_j^2(y)=c_j^2*u^2(x_j)`. The sign of `c_j` disappears because it is squared."
+        },
+        {
+          "label": "5. Combine",
+          "text": "`u2y=SUM(row contributions)`, then `uy=SQRT(u2y)`. Take the square root once, at the end."
+        },
+        {
+          "label": "6. Effective degrees of freedom",
+          "text": "`nu_y=INT(u2y^2 / SUM(row_contribution^2 / nu_j))`. Always **floor** with INT, never round up."
+        },
+        {
+          "label": "7. Expanded uncertainty",
+          "text": "For confidence P, `alpha=1-P`, `k=T.INV(1-alpha/2;nu_y)`, `U=k*uy`. Report `y ± U` with the confidence level."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "Type A inputs",
+      "text": "From repeated data. Use `STDEV.S(range)` for the sample standard deviation and `nu=n-1`. If the final result is an average of `nr` repeated readings, variance divides by `nr`. If the quoted standard deviation came from a mean of `nd` readings and you need the single-value variance, multiply by `nd`."
+    },
+    {
+      "kind": "definition",
+      "term": "Type B distributions",
+      "text": "Already standard: divisor `1`. Rectangular half-width `a`: variance `a^2/3`, standard `a/SQRT(3)`. Triangular half-width `a`: variance `a^2/6`. U-shaped/arcsine half-width `a`: variance `a^2/2`. Resolution step `d`: usually half-width `a=d/2`, so variance `d^2/12`. Expanded uncertainty `U` with coverage `k`: standard `s=U/k`, variance `(U/k)^2`."
+    },
+    {
+      "kind": "definition",
+      "term": "Coverage factor k",
+      "text": "If degrees of freedom are finite, use Student t: `k=T.INV(1-(1-P)/2;nu_y)`. Common large-dof approximations: 90% -> 1.645, 95% -> 1.96 (often reported as 2), 98% -> 2.33, 99% -> 2.58. Finite dof makes k larger."
+    },
+    {
+      "kind": "definition",
+      "term": "Welch-Satterthwaite",
+      "text": "`nu_y = INT( u2y^2 / SUM( contribution_j^2 / nu_j ) )`, where each `contribution_j` is `u_j^2(y)`, not `u_j(y)`. If one contribution dominates, `nu_y` will be close to that row's degrees of freedom."
+    },
+    {
+      "kind": "definition",
+      "term": "Dominant contribution",
+      "text": "To say which input matters most, compare `u_j^2(y)` rows or their weights `u_j^2(y)/u^2(y)`. The largest row is the cheapest target for improving the measurement."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Uncertainty traps",
+      "text": "Do not root every row and add standard uncertainties; **variances add**. Do not keep degrees in trigonometric/sensitivity formulas; use radians. Do not forget `nd/nr`. Do not round `nu_y` up. Do not use normal `1.96` when the exam gives finite degrees of freedom and asks for Student `t`. Do not count repeatability if the exercise says it is already included in reproducibility."
+    },
+    {
+      "kind": "heading",
+      "text": "Final 10-minute checklist"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "What to rehearse tonight",
+      "text": "**High value:** Chauvenet, chi-square expected counts, NPP plotting positions, t-test, ANOVA, regression slope/intercept, hypergeometric two-phase sampling, and one full uncertainty budget. **Low value:** rereading all lectures. If you can reproduce the formulas above and solve the site capstones without hints, the remaining work is mostly speed and workbook familiarity."
+    },
+    {
+      "kind": "example",
+      "title": "Mechanical measurements reminder",
+      "text": "The fourth exam part is not Excel. It is a short mechanical-measurements true/false or multiple-choice block. Do one fast pass through the Mechanical Measurements page after the spreadsheet practice: instrument blocks, measuring chains, sensitivity/resolution, length measurement errors, mass/force basics, hardness tests, and the professor's wording traps."
+    }
+  ]
+}
