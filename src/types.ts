@@ -24,7 +24,7 @@ export interface CourseMeta {
   accent2: string;
   /** lucide icon name rendered via the Icon component */
   icon: string;
-  year: 2 | 3;
+  year: 1 | 2 | 3;
   semester: 1 | 2;
   /** ECTS credits, optional */
   credits?: number;

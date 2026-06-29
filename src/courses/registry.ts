@@ -6,6 +6,7 @@ import cybersecurity from "./cybersecurity";
 import statistics from "./statistics";
 import electronicSystems from "./electronic-systems";
 import fundamentalsElectronicSystems from "./fundamentals-electronic-systems";
+import linearAlgebra from "./linear-algebra";
 
 /**
  * Central course registry. Adding a course = build its folder (meta + lessons +
@@ -17,6 +18,7 @@ const COURSES: Course[] = [
   mechanics,
   cybersecurity,
   statistics,
+  linearAlgebra,
   fundamentalsElectronicSystems,
   electronicSystems,
 ];

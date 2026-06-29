@@ -1,0 +1,210 @@
+[
+  {
+    "id": "lag-exam-001",
+    "title": "Parameter endomorphism from the May 2026 simulation",
+    "meta": "May 29, 2026 simulation - written exercise",
+    "difficulty": "hard",
+    "topic": "Written exam open questions",
+    "statement": "Consider the endomorphism `F_alpha:R^3 -> R^3` with matrix `A_alpha=[[1,2,alpha],[0,2,0],[alpha,2,1]]`. Find when `dim ker F_alpha` is minimized, when `(1,2,3)^T` belongs to `Im F_alpha`, and whether `F_1` is diagonalizable.",
+    "given": "`det(A_alpha)=2(1-alpha^2)` from the official solution.",
+    "steps": [
+      {
+        "title": "Minimize the kernel",
+        "content": "By rank-nullity, `dim ker F_alpha = 3-rank(A_alpha)`. The kernel is minimized when the rank is maximal, i.e. when `det(A_alpha) != 0`. Since `det(A_alpha)=2(1-alpha^2)`, this occurs for `alpha != +-1`, and the minimum kernel dimension is 0."
+      },
+      {
+        "title": "Check image membership",
+        "content": "For `alpha != +-1`, the map is an isomorphism, so `(1,2,3)^T` is automatically in the image. Only `alpha=1` and `alpha=-1` need testing. For `alpha=1`, the equations force `x+2y+z=1` and `x+2y+z=3`, contradiction. For `alpha=-1`, the system is consistent."
+      },
+      {
+        "title": "Diagonalizability of `F_1`",
+        "content": "For `alpha=1`, the characteristic polynomial is `-lambda(2-lambda)^2`. The eigenvalue 2 has algebraic multiplicity 2, but `rank(A_1-2I)=2`, so its eigenspace has dimension 1. Therefore the geometric multiplicity is too small."
+      }
+    ],
+    "finalAnswer": "`dim ker F_alpha` is minimized for `alpha != +-1`; `(1,2,3)^T` belongs to `Im F_alpha` for all `alpha != 1`; `F_1` is not diagonalizable.",
+    "tips": "The fast exam move is: handle all invertible parameter values first, then manually check only the singular values."
+  },
+  {
+    "id": "lag-exam-002",
+    "title": "Row-operation linear map on 2 by 2 matrices",
+    "meta": "June 2025 A1 - open exercise",
+    "difficulty": "medium",
+    "topic": "Written exam open questions",
+    "statement": "Let `V=R^{2,2}`. For a matrix with rows `R1,R2`, define `f(A)=B` whose rows are both `R1+R2`. Compute a basis of the skew-symmetric subspace, `Ker f`, `Im f`, and the eigenspaces of `f`.",
+    "given": "Write `A=[[a,b],[c,d]]`, so `f(A)=[[a+c,b+d],[a+c,b+d]]`.",
+    "steps": [
+      {
+        "title": "Skew-symmetric subspace",
+        "content": "The condition `A=-A^T` gives `a=0`, `d=0`, and `c=-b`. A basis is `{[[0,1],[-1,0]]}`."
+      },
+      {
+        "title": "Kernel",
+        "content": "`f(A)=0` means `R1+R2=0`, so `R2=-R1`. A basis is `{[[1,0],[-1,0]], [[0,1],[0,-1]]}`."
+      },
+      {
+        "title": "Image",
+        "content": "Every image has two equal rows: `[[u,v],[u,v]]`. A basis is `{[[1,0],[1,0]], [[0,1],[0,1]]}`."
+      },
+      {
+        "title": "Eigenvalues",
+        "content": "The kernel is the eigenspace for eigenvalue 0. If the two rows are equal, say `(R,R)`, then `f(A)=(2R,2R)=2A`, so the equal-row subspace is the eigenspace for eigenvalue 2."
+      }
+    ],
+    "finalAnswer": "Skew basis `{[[0,1],[-1,0]]}`; `Ker f` basis `{[[1,0],[-1,0]], [[0,1],[0,-1]]}`; `Im f` basis `{[[1,0],[1,0]], [[0,1],[0,1]]}`; eigenvalues 0 and 2 with those two-dimensional eigenspaces.",
+    "tips": "Use rows as vectors. This avoids building a 4 by 4 matrix unless the professor explicitly asks for it."
+  },
+  {
+    "id": "lag-exam-003",
+    "title": "Polynomial evaluation map from July 2025",
+    "meta": "July 2025 X1 - open exercise",
+    "difficulty": "medium",
+    "topic": "Written exam open questions",
+    "statement": "Let `V=R_2[x]` and `F:V->V` be `F(p(x))=p(-1)x`. Also let `W={v in R^3 : v dot (1,1,0)=0}`. Compute `dim W`, a basis of `W`, bases of `Ker F` and `Im F`, and the eigenvalues/eigenspaces of `F`.",
+    "given": "A general polynomial is `p(x)=a x^2 + b x + c`, and `p(-1)=a-b+c`.",
+    "steps": [
+      {
+        "title": "Subspace `W`",
+        "content": "`v=(u,v,w)` belongs to `W` when `u+v=0`. Thus `dim W=2`, with basis for example `{(1,-1,0),(0,0,1)}`."
+      },
+      {
+        "title": "Kernel",
+        "content": "`F(p)=0` means `p(-1)=0`, so `p` is divisible by `x+1`. A convenient basis of the kernel in `R_2[x]` is `{x+1, x^2-1}`."
+      },
+      {
+        "title": "Image",
+        "content": "Every output is a scalar multiple of `x`, and `x` is reached by choosing `p(-1)=1`. Therefore `Im F=span{x}`."
+      },
+      {
+        "title": "Eigenvalues",
+        "content": "The kernel is the eigenspace for eigenvalue 0. Since `F(x)=p(-1)x=-x`, the polynomial `x` is an eigenvector with eigenvalue -1. These dimensions add to 3."
+      }
+    ],
+    "finalAnswer": "`dim W=2`, basis `{(1,-1,0),(0,0,1)}`; `Ker F=span{x+1,x^2-1}`; `Im F=span{x}`; eigenspaces `E_0=Ker F` and `E_{-1}=span{x}`.",
+    "tips": "For evaluation maps, first compute the scalar `p(value)`. The output is usually a fixed vector or polynomial times that scalar."
+  },
+  {
+    "id": "lag-exam-004",
+    "title": "Build and edit a tridiagonal MATLAB matrix",
+    "meta": "MATLAB Session 0 - exam-style coding",
+    "difficulty": "easy",
+    "topic": "MATLAB open questions",
+    "statement": "Use MATLAB to define a `10 x 10` tridiagonal matrix `B` with main diagonal entries 5, subdiagonal entries -1, and superdiagonal entries 3. Then set the elements at rows 5 and 8, columns 6 and 9, equal to 2.",
+    "given": "Use `diag`, `ones`, and indexed assignment.",
+    "steps": [
+      {
+        "title": "Main diagonal",
+        "content": "`D = diag(5*ones(10,1));` creates the main diagonal."
+      },
+      {
+        "title": "Shifted diagonals",
+        "content": "`CS = diag(3*ones(9,1),1);` creates the superdiagonal and `CI = diag(-1*ones(9,1),-1);` creates the subdiagonal."
+      },
+      {
+        "title": "Assemble and edit",
+        "content": "Set `B = D + CS + CI;` and then `B([5 8],[6 9]) = 2;`."
+      }
+    ],
+    "finalAnswer": "`D=diag(5*ones(10,1)); CS=diag(3*ones(9,1),1); CI=diag(-ones(9,1),-1); B=D+CS+CI; B([5 8],[6 9])=2;`",
+    "tips": "The offset in `diag(v,k)` is positive above the main diagonal and negative below it."
+  },
+  {
+    "id": "lag-exam-005",
+    "title": "Cancellation in a finite-difference derivative",
+    "meta": "MATLAB Session 1 - numerical arithmetic",
+    "difficulty": "medium",
+    "topic": "MATLAB open questions",
+    "statement": "Approximate `cos(x)` at `x=pi/4` using `(sin(x+h)-sin(x))/h` with `h=2^(-k)`, `k=1,...,50`. Explain the error behavior and give the stable reformulation used in the solutions.",
+    "given": "Use the identity `sin(a)-sin(b)=2*cos((a+b)/2)*sin((a-b)/2)`.",
+    "steps": [
+      {
+        "title": "Direct formula",
+        "content": "Set `k=1:50`, `h=2.^(-k)`, `r=(sin(x+h)-sin(x))./h`, and compare with `cos(x)` by relative error."
+      },
+      {
+        "title": "Why the error grows",
+        "content": "For tiny `h`, `sin(x+h)` and `sin(x)` are nearly equal, so their subtraction loses significant digits before division by `h`."
+      },
+      {
+        "title": "Stable formula",
+        "content": "Use `r2 = 2*sin(h/2).*cos(x+h/2)./h`, which avoids subtracting nearly equal sine values."
+      }
+    ],
+    "finalAnswer": "The direct formula first improves and then deteriorates because of cancellation; the stable expression is `2*sin(h/2).*cos(x+h/2)./h`.",
+    "tips": "The professor's trap is thinking smaller `h` always improves finite differences. In floating point, truncation and rounding/cancellation compete."
+  },
+  {
+    "id": "lag-exam-006",
+    "title": "Solve many systems sharing the same matrix",
+    "meta": "MATLAB Session 2 - linear systems",
+    "difficulty": "medium",
+    "topic": "MATLAB open questions",
+    "statement": "A sequence of 30 systems shares the same `100 x 100` matrix `A`. The first right-hand side is chosen so `x_1=ones(n,1)`, and each next right-hand side is the previous solution. Describe the efficient MATLAB strategy and why it is faster than solving each system from scratch.",
+    "given": "The source solution uses `[L,U,P]=lu(A)` and `tic/toc` to compare timings.",
+    "steps": [
+      {
+        "title": "Factor once",
+        "content": "Compute `[L,U,P]=lu(A)` one time. This is the expensive part."
+      },
+      {
+        "title": "Solve each right-hand side",
+        "content": "For a right-hand side `b_i`, solve `L*y=P*b_i`, then `U*x_i=y`. Generate the next right-hand side from `x_i` as required."
+      },
+      {
+        "title": "Compare with backslash",
+        "content": "Repeated `A\\b` is correct but may refactor `A` repeatedly. Reusing factors reduces arithmetic work for large `n` and many right-hand sides."
+      }
+    ],
+    "finalAnswer": "Use one LU factorization and repeated triangular solves: `[L,U,P]=lu(A); y=L\\(P*b); x=U\\y;` for each right-hand side.",
+    "tips": "Do not compute `inv(A)` for this. The exam wants factorization reuse."
+  },
+  {
+    "id": "lag-exam-007",
+    "title": "Least-squares parabola for sampled data",
+    "meta": "MATLAB Session 2 - least squares",
+    "difficulty": "medium",
+    "topic": "MATLAB open questions",
+    "statement": "For 15 equally spaced points `x_i` in `[0,pi]` and `y_i=x_i cos(x_i)`, determine the coefficients of the parabola `y=c1*x^2+c2*x+c3` that approximates the data in the least-squares sense.",
+    "given": "Use a Vandermonde-like design matrix with columns `x.^2`, `x`, and ones.",
+    "steps": [
+      {
+        "title": "Build the data",
+        "content": "`x = linspace(0,pi,15); y = x.*cos(x);` Remember the dot in `.*`."
+      },
+      {
+        "title": "Build the least-squares matrix",
+        "content": "Use `A = [x.^2' x' ones(15,1)];`. Each row represents one equation `c1*x_i^2+c2*x_i+c3 approx y_i`."
+      },
+      {
+        "title": "Solve and plot",
+        "content": "Compute `c = A\\y';`, evaluate `p=c(1)*xx.^2+c(2)*xx+c(3)` on a fine grid, then plot the data and the parabola."
+      }
+    ],
+    "finalAnswer": "`c = [x.^2' x' ones(15,1)]\\y'` gives the least-squares coefficients.",
+    "tips": "The most common MATLAB mistakes here are forgetting transposes and forgetting element-wise powers."
+  },
+  {
+    "id": "lag-exam-008",
+    "title": "Power and inverse power method diagnosis",
+    "meta": "MATLAB Session 3 - eigenvalues",
+    "difficulty": "hard",
+    "topic": "MATLAB open questions",
+    "statement": "Explain what the power method and inverse power method with shift are doing in Session 3, and diagnose the three standard outcomes: fast convergence, slow convergence, and failure.",
+    "given": "The solution comments compare ratios such as `|lambda_2|/|lambda_1|=1/2` and `1.9/2=0.95`, and discuss the shift `p=0.5`.",
+    "steps": [
+      {
+        "title": "Power method",
+        "content": "Normalize the initial vector, repeatedly compute `w_star=A*w`, estimate the eigenvalue with the Rayleigh coefficient `w'*w_star`, and normalize again. It targets the eigenvalue of largest modulus."
+      },
+      {
+        "title": "Convergence speed",
+        "content": "If the dominant eigenvalue is unique, the speed depends on `|lambda_2|/|lambda_1|`. A ratio 1/2 converges quickly; a ratio 0.95 converges slowly."
+      },
+      {
+        "title": "Failure cases",
+        "content": "The method can fail when there is no unique dominant eigenvalue, for example complex conjugates `i` and `-i` with equal modulus. Inverse power with shift fails if `A-pI` is singular, and can fail/oscillate when the shift is equidistant from two eigenvalues."
+      }
+    ],
+    "finalAnswer": "Power iteration targets the dominant eigenvalue; inverse shifted iteration targets the eigenvalue closest to `p`. Convergence depends on spectral separation and fails when the needed dominant/nearest eigenvalue is not effectively unique or when `A-pI` is singular.",
+    "tips": "Always compare with `eig` or `eigs` in MATLAB when asked to justify numerical behavior."
+  }
+]

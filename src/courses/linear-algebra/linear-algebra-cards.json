@@ -1,0 +1,974 @@
+[
+  {
+    "id": "lag-matlab-001",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "In MATLAB, what is the effect of putting a semicolon at the end of an expression?",
+    "options": [
+      { "id": "A", "content": "It clears the variable from the workspace." },
+      { "id": "B", "content": "It executes the expression but suppresses printing the result on screen." },
+      { "id": "C", "content": "It changes the arithmetic precision of the computation." },
+      { "id": "D", "content": "It continues the expression on the next line." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: the semicolon suppresses command-window output, which keeps scripts readable. A is `clear`, not semicolon. C is false because the computation is unchanged. D describes `...`, the line-continuation operator.",
+    "theory": "In MATLAB, output display and numerical computation are separate. A semicolon changes display only.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/matlab_handbook.pdf, Table 1",
+    "tags": ["MATLAB", "syntax"]
+  },
+  {
+    "id": "lag-matlab-002",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "The command `format long` in MATLAB is used for which purpose?",
+    "options": [
+      { "id": "A", "content": "It switches MATLAB from double precision to arbitrary precision." },
+      { "id": "B", "content": "It increases the number of mantissa bits used in arithmetic." },
+      { "id": "C", "content": "It changes how many digits of numerical results are displayed." },
+      { "id": "D", "content": "It reduces rounding error in stored variables." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct: `format long` changes the display format. A and B are wrong because MATLAB still uses its usual double precision arithmetic. D is wrong because already stored values are not recomputed or made more accurate.",
+    "theory": "`format`, `format short e`, `format long e`, and `format rat` affect printed representation, not the underlying floating-point calculation.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, quiz 8; matlab_handbook.pdf, Table 3",
+    "tags": ["MATLAB", "format", "official-quiz"]
+  },
+  {
+    "id": "lag-matlab-003",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "Which MATLAB expression creates the column vector with entries 1, 2, 3?",
+    "options": [
+      { "id": "A", "content": "`[1; 2; 3]`" },
+      { "id": "B", "content": "`[1, 2, 3]`" },
+      { "id": "C", "content": "`(1; 2; 3)`" },
+      { "id": "D", "content": "`<1; 2; 3>`" }
+    ],
+    "correct": "A",
+    "explanation": "A is correct: square brackets define arrays, and semicolons separate rows, so the result has three rows and one column. B is a row vector. C and D are not MATLAB matrix-construction syntax.",
+    "theory": "In MATLAB arrays are written in square brackets. Spaces or commas add columns; semicolons add rows.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/Matlab_Intro.pdf, vector/matrix syntax slides",
+    "tags": ["MATLAB", "vectors"]
+  },
+  {
+    "id": "lag-matlab-004",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "Let `x = [1:-0.1:0]`. What does `y = x(end:-1:1)` do?",
+    "options": [
+      { "id": "A", "content": "It deletes the last entry of `x`." },
+      { "id": "B", "content": "It extracts only the first and last entries of `x`." },
+      { "id": "C", "content": "It sorts `x` in ascending order." },
+      { "id": "D", "content": "It creates `y` by reversing the order of the components of `x`." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct: `end:-1:1` is the index list from the last position down to the first. A is wrong because nothing is deleted. B would require `[1 end]`. C is wrong because this is explicit indexing, not sorting.",
+    "theory": "`end` denotes the last valid index. A colon expression `a:h:b` generates indices with step `h`, so a negative step reverses direction.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, exercise 1d; session0_solutions_2025.m",
+    "tags": ["MATLAB", "indexing"]
+  },
+  {
+    "id": "lag-matlab-005",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "medium",
+    "prompt": "With `x = [1:-0.1:0]`, what is the effect of `x([1:2:7 10]) = zeros(1,5)`?",
+    "options": [
+      { "id": "A", "content": "It creates a 1 by 5 zero vector called `x`." },
+      { "id": "B", "content": "It sets entries 1, 3, 5, 7 and 10 of `x` equal to zero." },
+      { "id": "C", "content": "It sets all entries from 1 to 10 equal to zero." },
+      { "id": "D", "content": "It deletes entries 1, 3, 5, 7 and 10 from `x`." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: `[1:2:7 10]` builds the index vector `[1 3 5 7 10]`, and `zeros(1,5)` supplies five zero values. A is wrong because `x` already exists and only selected entries are assigned. C ignores the step 2. D would use assignment to `[]`, not zeros.",
+    "theory": "Indexed assignment `x(r)=z` changes only the components whose indices are listed in `r`, and the right-hand side must have compatible length.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, exercise 1b; session0_solutions_2025.m",
+    "tags": ["MATLAB", "indexing"]
+  },
+  {
+    "id": "lag-matlab-006",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "For a matrix `A`, what does `A(1:2,4)` extract?",
+    "options": [
+      { "id": "A", "content": "Rows 1 through 4 and column 2." },
+      { "id": "B", "content": "The first two columns of row 4." },
+      { "id": "C", "content": "The entries in rows 1 and 2 of column 4." },
+      { "id": "D", "content": "All rows and columns 1, 2 and 4." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct: the first index selects rows and the second index selects columns. A swaps row and column meaning. B swaps the dimensions and uses row 4. D would require `A(:,[1 2 4])`.",
+    "theory": "MATLAB matrix indexing is `A(rows, columns)`. The colon `:` alone means all indices in that dimension.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, exercise 2b",
+    "tags": ["MATLAB", "matrices"]
+  },
+  {
+    "id": "lag-matlab-007",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "medium",
+    "prompt": "What matrix is built by `diag(5*ones(10,1)) + diag(3*ones(9,1),1) + diag(-ones(9,1),-1)`?",
+    "options": [
+      { "id": "A", "content": "A 10 by 10 tridiagonal matrix with main diagonal 5, superdiagonal 3, and subdiagonal -1." },
+      { "id": "B", "content": "A 9 by 9 diagonal matrix with entries 5, 3 and -1." },
+      { "id": "C", "content": "A 10 by 10 full matrix whose every entry is 7." },
+      { "id": "D", "content": "A diagonal matrix with only one nonzero diagonal." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct: `diag(v)` puts `v` on the main diagonal, `diag(v,1)` on the diagonal above, and `diag(v,-1)` on the diagonal below. B has the wrong size and ignores the offsets. C is wrong because only three diagonals are nonzero. D ignores the shifted diagonals.",
+    "theory": "`diag` is a central MATLAB command for assembling banded matrices without loops.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, exercise 4; session0_solutions_2025.m",
+    "tags": ["MATLAB", "diag", "tridiagonal"]
+  },
+  {
+    "id": "lag-matlab-008",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "medium",
+    "prompt": "In MATLAB, why is `x.^2` used instead of `x^2` when `x` is a vector and we want to square each component?",
+    "options": [
+      { "id": "A", "content": "`.^` computes the matrix inverse." },
+      { "id": "B", "content": "`.^` sorts the vector before squaring it." },
+      { "id": "C", "content": "`^` and `.^` are exactly the same for vectors." },
+      { "id": "D", "content": "`.^` performs element-wise power, while `^` is matrix power and is defined for square matrices." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct: the dot means element-wise operation. A is `inv(A)` or `A^(-1)` for square matrices. B is unrelated. C is false and often causes MATLAB errors in plotting exercises.",
+    "theory": "Vectorized plotting usually needs element-wise operators: `.*`, `./`, and `.^`.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/matlab_handbook.pdf, Table 10; Session_0 exercise 6",
+    "tags": ["MATLAB", "element-wise"]
+  },
+  {
+    "id": "lag-matlab-009",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "What does `linspace(a,b,n)` generate?",
+    "options": [
+      { "id": "A", "content": "A logarithmically spaced vector from 10^a to 10^b." },
+      { "id": "B", "content": "A vector from `a` to `b` using step exactly `n`." },
+      { "id": "C", "content": "A row vector of `n` equally spaced points from `a` to `b`, including the endpoints." },
+      { "id": "D", "content": "A random vector with values between `a` and `b`." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A describes `logspace`. B confuses number of points with step size. D describes random generation, not `linspace`.",
+    "theory": "For plotting a function on an interval, `linspace` gives a controlled number of evaluation points.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/matlab_handbook.pdf, Table 6",
+    "tags": ["MATLAB", "vectors", "plotting"]
+  },
+  {
+    "id": "lag-matlab-010",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "Which MATLAB plotting command uses logarithmic scale on both axes?",
+    "options": [
+      { "id": "A", "content": "`semilogx`" },
+      { "id": "B", "content": "`loglog`" },
+      { "id": "C", "content": "`plot`" },
+      { "id": "D", "content": "`subplot`" }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: `loglog` puts both axes on logarithmic scale. A only logs the x-axis. C uses the usual linear axes. D splits a figure into subplots.",
+    "theory": "In the numerical sessions, log plots are used to see orders of magnitude in errors and function behavior.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, exercise 7; matlab_handbook.pdf, graphics section",
+    "tags": ["MATLAB", "plotting"]
+  },
+  {
+    "id": "lag-matlab-011",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "medium",
+    "prompt": "Which statement correctly distinguishes a MATLAB script from a MATLAB function file?",
+    "options": [
+      { "id": "A", "content": "A function has input/output parameters and local variables; a script runs commands in the workspace." },
+      { "id": "B", "content": "A script must start with the keyword `function`." },
+      { "id": "C", "content": "A function cannot be called from another function." },
+      { "id": "D", "content": "A script automatically erases all variables when it finishes." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. B describes a function, not a script. C is false because functions can call other functions. D is false because script variables remain in the workspace.",
+    "theory": "For exam code, use scripts for one-off command sequences and functions for reusable algorithms such as `elleu`, power iteration, or Taylor approximation.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/matlab_handbook.pdf, MATLAB programs section",
+    "tags": ["MATLAB", "m-files"]
+  },
+  {
+    "id": "lag-matlab-012",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "easy",
+    "prompt": "What are `tic` and `toc` used for in the MATLAB linear-systems sessions?",
+    "options": [
+      { "id": "A", "content": "To compute the determinant of a matrix." },
+      { "id": "B", "content": "To toggle exact symbolic arithmetic." },
+      { "id": "C", "content": "To clear the command window and workspace." },
+      { "id": "D", "content": "To measure the elapsed execution time of an instruction block." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct: `tic` starts a timer and `toc` reports elapsed time. A is `det`. B is not what these commands do. C combines `clc` and `clear`, not `tic/toc`.",
+    "theory": "Timing is part of the exam logic: compare one factorization reused many times against repeatedly calling the backslash operator.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, exercise 3; matlab_handbook.pdf, programming section",
+    "tags": ["MATLAB", "timing"]
+  },
+  {
+    "id": "lag-matlab-013",
+    "module": "MATLAB part",
+    "topic": "MATLAB sprint",
+    "difficulty": "medium",
+    "prompt": "What is the exam-safe interpretation of MATLAB's backslash operator in `x = A\\b`?",
+    "options": [
+      { "id": "A", "content": "It always computes `inv(A)` first and multiplies by `b`." },
+      { "id": "B", "content": "It solves `Ax=b`; for rectangular systems it returns the least-squares solution when appropriate." },
+      { "id": "C", "content": "It performs element-wise division of `A` by `b`." },
+      { "id": "D", "content": "It computes the determinant of `A`." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. A is the bad numerical habit: MATLAB uses suitable factorizations rather than explicitly forming the inverse. C describes `./`, not backslash. D is `det(A)`.",
+    "theory": "For linear systems use `A\\b`, LU/Cholesky/QR factors, or `pinv` when the question specifically asks for least squares with minimum norm.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/matlab_handbook.pdf, Table 16; Session_2 exercises",
+    "tags": ["MATLAB", "linear systems"]
+  },
+  {
+    "id": "lag-nla-014",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "easy",
+    "prompt": "In the course notation, a floating-point representation `a = (-1)^s p N^q` is normalized when which condition holds?",
+    "options": [
+      { "id": "A", "content": "`N^(-1) <= p < 1`" },
+      { "id": "B", "content": "`0 <= p <= N`" },
+      { "id": "C", "content": "`p` must be an integer." },
+      { "id": "D", "content": "`q` must be zero." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct and matches the lecture definition. B is too broad and does not make the representation unique. C is wrong because the mantissa is not generally an integer. D is wrong because the exponent carries scale information.",
+    "theory": "Normalization makes the mantissa and exponent uniquely determined, which is the starting point for rounding-error analysis.",
+    "source": "course_material/Algebra/Material/FESTA/2026_nla1_arithmetic.pdf, normalization definition",
+    "tags": ["floating point", "normalization"]
+  },
+  {
+    "id": "lag-nla-015",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "medium",
+    "prompt": "For rounding in base `N` with `t` mantissa digits, which expression is used in the sessions as the rounding-error upper bound?",
+    "options": [
+      { "id": "A", "content": "`N^t`" },
+      { "id": "B", "content": "`N^(-t)` exactly, without the factor 1/2." },
+      { "id": "C", "content": "`0.5*N^(1-t)`" },
+      { "id": "D", "content": "`t/N`" }
+    ],
+    "correct": "C",
+    "explanation": "C is correct for rounding to nearest in the notation used by the exercise solution. A grows with precision and is impossible as an error bound. B misses the usual half-unit factor and exponent convention. D is not the floating-point rounding model.",
+    "theory": "The bound is combined with condition-number amplification to estimate how many mantissa digits are needed.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_1/session1_solutions_2025.m, exercise_1_2_QUIZ",
+    "tags": ["floating point", "rounding"]
+  },
+  {
+    "id": "lag-nla-016",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "medium",
+    "prompt": "Why does the direct computation of `(1-cos(x))/x^2` become unreliable for very small `x`?",
+    "options": [
+      { "id": "A", "content": "Because `cos(x)` is undefined near zero." },
+      { "id": "B", "content": "Because subtracting two nearly equal numbers causes cancellation." },
+      { "id": "C", "content": "Because MATLAB cannot square small numbers." },
+      { "id": "D", "content": "Because the mathematical limit does not exist." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: for small `x`, `cos(x)` is close to 1, so `1-cos(x)` loses significant digits. A and C are false. D is false: the exact limit is 1/2.",
+    "theory": "Cancellation error occurs when significant digits disappear in subtraction; algebraic reformulation can preserve accuracy.",
+    "source": "course_material/Algebra/Material/FESTA/2026_nla1_arithmetic.pdf, special-limit example; Session_1 exercise 3",
+    "tags": ["cancellation", "limits"]
+  },
+  {
+    "id": "lag-nla-017",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "medium",
+    "prompt": "For approximating `cos(x)` by `(sin(x+h)-sin(x))/h`, which reformulation is used to reduce cancellation?",
+    "options": [
+      { "id": "A", "content": "`sin(x+h)/h - sin(x)/h`, because splitting the fraction removes all error." },
+      { "id": "B", "content": "`h*(sin(x+h)-sin(x))`, because multiplication is always safer than division." },
+      { "id": "C", "content": "`cos(x+h)`, because it is the exact derivative at `x`." },
+      { "id": "D", "content": "`2*sin(h/2)*cos(x+h/2)/h`, using the prosthaphaeresis identity." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct and is the reformulation in the solution file. A is algebraically the same unstable subtraction. B changes the value. C evaluates the derivative at a shifted point and does not address the quotient.",
+    "theory": "A stable formula avoids subtracting nearly equal quantities before division by a tiny number.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_1/exercise_session1_new.pdf, exercise 1; session1_solutions_2025.m",
+    "tags": ["cancellation", "finite differences"]
+  },
+  {
+    "id": "lag-nla-018",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "medium",
+    "prompt": "If a problem has condition number `K`, what does the inequality `relative output error <= K * relative input error` express?",
+    "options": [
+      { "id": "A", "content": "The problem can amplify data errors by roughly a factor up to `K`." },
+      { "id": "B", "content": "The algorithm always returns the exact answer when `K` is large." },
+      { "id": "C", "content": "The input error is independent of the output error for all problems." },
+      { "id": "D", "content": "`K` is the number of loops in the program." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct: conditioning measures sensitivity of the mathematical problem. B reverses the meaning. C ignores the inequality. D confuses numerical conditioning with code structure.",
+    "theory": "A well-conditioned problem has small amplification; an ill-conditioned problem may lose many digits even with a correct algorithm.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_1/exercise_session1_new.pdf, quiz 2",
+    "tags": ["conditioning", "error"]
+  },
+  {
+    "id": "lag-nla-019",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "medium",
+    "prompt": "Why does the solution file compute `(121!)^2/150! + (122!)^2/150!` using products in the denominator rather than factorials directly?",
+    "options": [
+      { "id": "A", "content": "Because factorials are symbolic objects in MATLAB." },
+      { "id": "B", "content": "Because products are always exact in floating point." },
+      { "id": "C", "content": "Because direct factorials can overflow, while cancelling common factors keeps the intermediate numbers representable." },
+      { "id": "D", "content": "Because `factorial` is not a MATLAB function." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct: the expression is algebraically reformulated to avoid huge intermediate values. A and D are false. B is too strong; products still round, but the reformulation prevents overflow.",
+    "theory": "Numerical reformulation is not cosmetic: equivalent exact formulas can behave very differently in finite arithmetic.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_1/exercise_session1_new.pdf, additional quiz 4; session1_solutions_2025.m",
+    "tags": ["overflow", "reformulation"]
+  },
+  {
+    "id": "lag-nla-020",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "easy",
+    "prompt": "Official quiz: using the MATLAB documentation, what does `format long` do?",
+    "options": [
+      { "id": "A", "content": "Improves the accuracy of MATLAB computations." },
+      { "id": "B", "content": "Carries out double precision computations." },
+      { "id": "C", "content": "Changes the display of numerical results." },
+      { "id": "D", "content": "Increases the number of mantissa bits of the arithmetic used." }
+    ],
+    "correct": "C",
+    "explanation": "C is the official answer. A and D are the trap: display precision is not arithmetic precision. B is wrong because MATLAB already uses double precision for ordinary numeric arrays unless told otherwise.",
+    "theory": "Never infer numerical accuracy from the number of digits printed on screen.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf, quiz 8",
+    "tags": ["official-quiz", "format"]
+  },
+  {
+    "id": "lag-nla-021",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "hard",
+    "prompt": "Official quiz: in base `N=10`, a problem has condition number `K=2*10^9` and relative output error `10^-5`. What is the maximum mantissa digit count `t` consistent with the solution calculation?",
+    "options": [
+      { "id": "A", "content": "14" },
+      { "id": "B", "content": "15" },
+      { "id": "C", "content": "13" },
+      { "id": "D", "content": "16" }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The solution computes `E_min = 10^-5/(2*10^9)=5*10^-15`; with rounding bound `0.5*10^(1-t)`, the derived limit is `t <= -log10(2*E_min)+1 = 15`. A, C and D are off by one or more powers of ten.",
+    "theory": "This is a condition-number plus rounding-bound exercise: output accuracy requirement is pulled back through `K` to a required input/rounding accuracy.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_1/exercise_session1_new.pdf, quiz 2; session1_solutions_2025.m",
+    "tags": ["official-quiz", "conditioning", "rounding"]
+  },
+  {
+    "id": "lag-nla-022",
+    "module": "Numerical Linear Algebra",
+    "topic": "Numerical arithmetic",
+    "difficulty": "hard",
+    "prompt": "Official quiz: approximately what is `((121!)^2 + (122!)^2)/150!`?",
+    "options": [
+      { "id": "A", "content": "`1.71e+143`" },
+      { "id": "B", "content": "`5.32e+201`" },
+      { "id": "C", "content": "`2.18e+175`" },
+      { "id": "D", "content": "`9.21e+132`" }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. The stable computation rewrites the two terms by cancelling the large factorial denominator before evaluation. B, C and D are plausible-looking scientific notation traps but do not match the reformulated computation.",
+    "theory": "When factorials are enormous, simplify ratios before numerical evaluation to avoid overflow and meaningless intermediate values.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_1/exercise_session1_new.pdf, additional quiz 4; session1_solutions_2025.m",
+    "tags": ["official-quiz", "overflow"]
+  },
+  {
+    "id": "lag-linsys-023",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "What factorization is returned by MATLAB's `lu(A)` in the course linear-systems sessions?",
+    "options": [
+      { "id": "A", "content": "`A = Q*R`, with `Q` orthogonal." },
+      { "id": "B", "content": "`A = R'*R`, with `R` upper triangular." },
+      { "id": "C", "content": "`A = U*S*V'`, the singular value decomposition." },
+      { "id": "D", "content": "`P*A = L*U`, Gaussian factorization with partial pivoting." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct. A is QR, B is Cholesky-style notation, and C is SVD. The key exam word is pivoting: the permutation `P` records row exchanges.",
+    "theory": "Partial pivoting improves stability by selecting safer pivots during Gaussian elimination.",
+    "source": "course_material/Algebra/Material/FESTA/2026_nla2_linear_systems.pdf; Session_2 exercise 1",
+    "tags": ["LU", "pivoting"]
+  },
+  {
+    "id": "lag-linsys-024",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "In Session 2 exercise 1, the system with `a_ij=max(i,j)` is solved once with a no-swap `elleu` factorization and once with MATLAB `lu`. Which conclusion is expected?",
+    "options": [
+      { "id": "A", "content": "The no-pivot and pivoted solutions must have exactly the same relative error." },
+      { "id": "B", "content": "The pivoted `PA=LU` solution is more accurate." },
+      { "id": "C", "content": "The no-pivot solution is always more accurate because it avoids row swaps." },
+      { "id": "D", "content": "Neither method can solve the system because the exact solution is all ones." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct and matches the solution comments. A is false in finite arithmetic. C reverses the stability lesson. D is wrong because the right-hand side is chosen so the exact solution is known and usable for error checking.",
+    "theory": "Pivoting is not just algebraic decoration; it can reduce error growth in Gaussian elimination.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, exercise 1; session3_solutions_first_part.m, exercise_3_1",
+    "tags": ["LU", "pivoting", "relative error"]
+  },
+  {
+    "id": "lag-linsys-025",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "If thirty linear systems share the same square matrix `A` but have different right-hand sides, what is the efficient strategy tested in Session 2?",
+    "options": [
+      { "id": "A", "content": "Compute `[L,U,P]=lu(A)` once, then reuse the factors for the triangular solves." },
+      { "id": "B", "content": "Compute `inv(A)` thirty times." },
+      { "id": "C", "content": "Use `det(A)` to solve each system." },
+      { "id": "D", "content": "Rebuild `A` randomly for each right-hand side." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct: the expensive factorization is done once, then each new right-hand side only needs forward/back substitution. B is slower and less stable. C does not solve systems. D changes the problem.",
+    "theory": "Separate factorization cost from solve cost. Reusing factors is a recurring MATLAB exam pattern.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, exercise 3; session3_solutions_first_part.m, exercise_3_3",
+    "tags": ["LU", "efficiency", "tic toc"]
+  },
+  {
+    "id": "lag-linsys-026",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "When is Cholesky factorization the intended tool in the course exercises?",
+    "options": [
+      { "id": "A", "content": "For every rectangular matrix." },
+      { "id": "B", "content": "Only for matrices with determinant zero." },
+      { "id": "C", "content": "For symmetric positive-definite matrices, such as `A = B'*B` when `B` is nonsingular." },
+      { "id": "D", "content": "Only for matrices whose entries are all positive." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A belongs more naturally to QR/least squares. B is false because Cholesky needs nonsingularity through positive definiteness. D is a common trap: positive entries do not imply positive definiteness.",
+    "theory": "If `A` is symmetric positive definite, MATLAB `chol(A)` gives `R` with `A=R'*R`.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, exercise 4; matlab_handbook.pdf, Table 16",
+    "tags": ["Cholesky", "positive definite"]
+  },
+  {
+    "id": "lag-linsys-027",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "For an overdetermined full-rank least-squares problem `Ax ~= b`, how is the QR factorization used?",
+    "options": [
+      { "id": "A", "content": "Solve `Qx = R'b`." },
+      { "id": "B", "content": "Compute `x = det(A)/det(b)`." },
+      { "id": "C", "content": "Use only the diagonal of `A` and ignore the rest." },
+      { "id": "D", "content": "Write `A=QR`, then solve `R_tilde x = c_1` where `c = Q'*b`." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct and matches the Session 2 solution. A has the wrong triangular system. B is not meaningful for rectangular matrices. C discards essential data.",
+    "theory": "QR converts least squares into a triangular solve after projecting the data with the orthogonal matrix `Q`.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, exercise 6; session3_solutions_first_part.m, exercise_3_6",
+    "tags": ["QR", "least squares"]
+  },
+  {
+    "id": "lag-linsys-028",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "easy",
+    "prompt": "Which MATLAB expression computes the relative error in infinity norm between an approximate solution `x` and the exact all-ones vector?",
+    "options": [
+      { "id": "A", "content": "`norm(x-ones(n,1),1)` only, with no denominator." },
+      { "id": "B", "content": "`norm(ones(n,1)-x,inf)/norm(ones(n,1),inf)`" },
+      { "id": "C", "content": "`det(A-x)`" },
+      { "id": "D", "content": "`sum(A,2)`" }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: relative error is absolute error norm divided by exact-solution norm, using `inf` for infinity norm. A is not relative and uses a different norm. C and D are unrelated.",
+    "theory": "The sessions often choose `b=sum(A,2)` so that the exact solution is the all-ones vector, making error measurement direct.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, exercise 1; session3_solutions_first_part.m",
+    "tags": ["relative error", "norm"]
+  },
+  {
+    "id": "lag-linsys-029",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "In the Hilbert-matrix additional exercise, why does the relative error grow as `n` increases?",
+    "options": [
+      { "id": "A", "content": "Hilbert matrices become increasingly ill-conditioned." },
+      { "id": "B", "content": "`hilb(n)` creates random matrices." },
+      { "id": "C", "content": "The exact solution is not known." },
+      { "id": "D", "content": "The backslash operator cannot solve square systems." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct: the Hilbert matrix is a standard ill-conditioned example. B is false; the entries are deterministic. C is false because `b` is chosen so the exact solution is all ones. D is false.",
+    "theory": "Even stable algorithms can return poor answers for badly conditioned problems because input and rounding errors are strongly amplified.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, additional exercise 1",
+    "tags": ["Hilbert", "conditioning"]
+  },
+  {
+    "id": "lag-linsys-030",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "easy",
+    "prompt": "What does `cond(A,inf)` compute?",
+    "options": [
+      { "id": "A", "content": "The determinant of `A` rounded to infinity digits." },
+      { "id": "B", "content": "The number of nonzero rows of `A`." },
+      { "id": "C", "content": "The conditioning number of `A` in the infinity norm." },
+      { "id": "D", "content": "The infinity norm of the right-hand side `b`." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A confuses `cond` with `det`. B is `rank`-related. D would be `norm(b,inf)`.",
+    "theory": "Matrix conditioning in a chosen norm is roughly `||A|| * ||A^{-1}||` and measures sensitivity of solving `Ax=b`.",
+    "source": "course_material/Algebra/Material/CASCAVITA/MatlabIntro&Installation/matlab_handbook.pdf, Table 16; FESTA linear systems notes",
+    "tags": ["cond", "norms"]
+  },
+  {
+    "id": "lag-linsys-031",
+    "module": "Numerical Linear Algebra",
+    "topic": "Linear systems in MATLAB",
+    "difficulty": "medium",
+    "prompt": "For a rank-deficient least-squares problem, which statement is exam-safe?",
+    "options": [
+      { "id": "A", "content": "There is never a least-squares solution." },
+      { "id": "B", "content": "Every least-squares solution has a different residual norm." },
+      { "id": "C", "content": "`rank(A)` must equal the number of columns for infinitely many solutions." },
+      { "id": "D", "content": "There may be infinitely many least-squares solutions with the same residual norm; `pinv` gives the minimum-norm one." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct. A is false: least-squares minimizers exist. B is false because all minimizers share the minimal residual norm. C is backwards: rank deficiency is what creates non-uniqueness. `pinv` selects the minimum Euclidean norm solution.",
+    "theory": "Distinguish the residual norm from the norm of the solution vector. Rank deficiency affects uniqueness of the minimizer.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf, quiz 9; Session_3 exercise 5",
+    "tags": ["least squares", "pinv", "rank"]
+  },
+  {
+    "id": "lag-eig-032",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "easy",
+    "prompt": "What does MATLAB return with `[X,D] = eig(A)`?",
+    "options": [
+      { "id": "A", "content": "`X` is diagonal and `D` contains eigenvectors in its rows." },
+      { "id": "B", "content": "`D` is diagonal with eigenvalues, and the columns of `X` are corresponding eigenvectors." },
+      { "id": "C", "content": "`X` is the inverse of `A`, and `D` is the determinant." },
+      { "id": "D", "content": "`D` is always the identity matrix." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct and matches the lecture note. A reverses the roles. C confuses eigendecomposition with inverse/determinant. D is false except in special cases.",
+    "theory": "The identity is `A*X = X*D`, with eigenvectors as columns of `X`.",
+    "source": "course_material/Algebra/Material/FESTA/2026_nla3_eigenvalues_singular_values.pdf, MATLAB commands for eigenvalues",
+    "tags": ["eig", "eigenvectors"]
+  },
+  {
+    "id": "lag-eig-033",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "medium",
+    "prompt": "In the power method, what mainly controls the convergence speed when there is a unique dominant eigenvalue?",
+    "options": [
+      { "id": "A", "content": "The determinant of `A` alone." },
+      { "id": "B", "content": "The number of zeros in the starting vector only." },
+      { "id": "C", "content": "The ratio `|lambda_2|/|lambda_1|` between the subdominant and dominant eigenvalue moduli." },
+      { "id": "D", "content": "The color used in the MATLAB plot." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct: a ratio close to 1 means slow convergence; a smaller ratio gives faster convergence. A is not enough information. B matters only if the initial vector misses the dominant direction. D is irrelevant.",
+    "theory": "Power iteration repeatedly amplifies the dominant eigendirection relative to the others.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_3/exercise_session3.pdf, exercise 1; session3_solutions_first_part.m",
+    "tags": ["power method", "convergence"]
+  },
+  {
+    "id": "lag-eig-034",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "medium",
+    "prompt": "Why does the power method fail for the matrix in Session 3 with dominant eigenvalues `i` and `-i`?",
+    "options": [
+      { "id": "A", "content": "Because MATLAB cannot compute complex eigenvalues." },
+      { "id": "B", "content": "Because the matrix is not square." },
+      { "id": "C", "content": "Because the starting vector is normalized." },
+      { "id": "D", "content": "Because there are two complex conjugate eigenvalues with maximum modulus, so no single dominant direction is selected." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct and follows the solution comment. A is false: `eig` computes complex eigenvalues. B is false for the exercise matrix. C is part of the algorithm, not the failure reason.",
+    "theory": "The basic power method needs a unique eigenvalue of largest modulus and a starting vector with a component in its eigendirection.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_3/exercise_session3.pdf, exercise 1; session3_solutions_first_part.m",
+    "tags": ["power method", "complex eigenvalues"]
+  },
+  {
+    "id": "lag-eig-035",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "medium",
+    "prompt": "What eigenvalue does the inverse power method with shift `p` try to find?",
+    "options": [
+      { "id": "A", "content": "The eigenvalue of `A` closest to `p`, provided `A-pI` is invertible and the closest eigenvalue is effectively unique." },
+      { "id": "B", "content": "Always the eigenvalue with largest absolute value." },
+      { "id": "C", "content": "Always zero, regardless of `p`." },
+      { "id": "D", "content": "The determinant of `A-pI`." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. B describes the ordinary power method. C is false. D is only a singularity test, not the target eigenvalue.",
+    "theory": "The shifted inverse method applies power iteration to `(A-pI)^(-1)`, whose largest eigenvalue corresponds to the eigenvalue of `A` nearest `p`.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_3/exercise_session3.pdf, exercise 2; myinvers.m",
+    "tags": ["inverse power", "shift"]
+  },
+  {
+    "id": "lag-eig-036",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "medium",
+    "prompt": "In the basic QR eigenvalue method exercise, what stopping criterion is assigned?",
+    "options": [
+      { "id": "A", "content": "`det(A)==0`" },
+      { "id": "B", "content": "`norm(tril(A,-1),inf) <= tol`" },
+      { "id": "C", "content": "`rank(A)==1`" },
+      { "id": "D", "content": "`sum(A,2)==0`" }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: the lower triangular part below the diagonal should become small as the iteration approaches upper triangular/quasi-triangular form. A, C and D are not the QR stopping test in the exercise.",
+    "theory": "QR iteration reveals eigenvalue information by driving subdiagonal entries toward zero or small 2 by 2 blocks.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_3/exercise_session3.pdf, exercise 3",
+    "tags": ["QR method", "eigenvalues"]
+  },
+  {
+    "id": "lag-eig-037",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "easy",
+    "prompt": "How are singular values of a matrix `A` related to `A'*A`?",
+    "options": [
+      { "id": "A", "content": "They are the diagonal entries of `A`." },
+      { "id": "B", "content": "They are the reciprocals of the row sums." },
+      { "id": "C", "content": "They are the square roots of the eigenvalues of `A'*A`." },
+      { "id": "D", "content": "They are always all equal to 1." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. A is false except in special diagonal cases. B is unrelated. D is true only for special orthogonal/unitary matrices, not in general.",
+    "theory": "The 2-norm condition number is `sigma_max/sigma_min` for nonsingular square matrices.",
+    "source": "course_material/Algebra/LAG/LAG Notes.pdf, SVD section; FESTA eigenvalues and SVD notes",
+    "tags": ["SVD", "singular values"]
+  },
+  {
+    "id": "lag-eig-038",
+    "module": "Numerical Linear Algebra",
+    "topic": "Eigenvalues and SVD in MATLAB",
+    "difficulty": "easy",
+    "prompt": "Official quiz: if the singular values of `A` are `10, 3, 1, 1/2`, what is the condition number of `A` in 2-norm?",
+    "options": [
+      { "id": "A", "content": "5" },
+      { "id": "B", "content": "10" },
+      { "id": "C", "content": "15" },
+      { "id": "D", "content": "20" }
+    ],
+    "correct": "D",
+    "explanation": "D is correct because `K_2(A)=sigma_max/sigma_min=10/(1/2)=20`. A divides by 2 instead of 1/2. B uses only the largest singular value. C has no condition-number basis here.",
+    "theory": "For SVD-based conditioning, always compare largest and smallest nonzero singular values.",
+    "source": "course_material/Algebra/Material/CASCAVITA/Session_3/exercise_session3.pdf, quiz 6",
+    "tags": ["official-quiz", "SVD", "conditioning"]
+  },
+  {
+    "id": "lag-written-039",
+    "module": "Written exam MCQs",
+    "topic": "Geometry and quadratic forms",
+    "difficulty": "medium",
+    "prompt": "May 29, 2026 simulation: Let `L=x+2y-z`, `M=2x-y+z`, and `Q=L^2+M^2`. Which statement about `Q` is true?",
+    "options": [
+      { "id": "A", "content": "`Q` is positive definite." },
+      { "id": "B", "content": "`Q` is indefinite." },
+      { "id": "C", "content": "`Q` is negative definite." },
+      { "id": "D", "content": "`Q` is either positive semidefinite or negative semidefinite." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct because `Q` is a sum of squares, so `Q>=0` for every vector; it is therefore positive semidefinite or positive definite, and option D is the only true umbrella statement. A is too strong because `L=M=0` has nonzero solutions, for example `(1,-3,-5)`. B and C are impossible for a nonnegative sum of squares.",
+    "theory": "A quadratic form is positive semidefinite when it is always nonnegative but can vanish on nonzero vectors.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 1",
+    "tags": ["past exam", "quadratic forms"]
+  },
+  {
+    "id": "lag-written-040",
+    "module": "Written exam MCQs",
+    "topic": "Geometry and quadratic forms",
+    "difficulty": "hard",
+    "prompt": "May 29, 2026 simulation: suppose a conic contains a real line passing through the origin. Which equation could define it?",
+    "options": [
+      { "id": "A", "content": "`2x^2 + 2x + y^2 - x + y = 0`" },
+      { "id": "B", "content": "`x^2 + 4xy + y^2 - x + y = 0`" },
+      { "id": "C", "content": "`x(x+y)+1 = 0`" },
+      { "id": "D", "content": "`x^2 + xy - 6y^2 + x - 2y = 0`" }
+    ],
+    "correct": "D",
+    "explanation": "D is correct because it factors as `(x-2y)(x+3y+1)=0`, so it contains the line `x-2y=0` through the origin. A and B have nonzero complete conic determinants in the official solution, so they are nondegenerate. C does not pass through the origin because its constant term gives value 1 at `(0,0)`.",
+    "theory": "A conic containing a line is degenerate. If the line passes through the origin, the conic equation must also be satisfied at the origin.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 2",
+    "tags": ["past exam", "conics"]
+  },
+  {
+    "id": "lag-written-041",
+    "module": "Written exam MCQs",
+    "topic": "Geometry and quadratic forms",
+    "difficulty": "medium",
+    "prompt": "May 29, 2026 simulation: the conic `x^2 + 2xy - y^2 = 36` is:",
+    "options": [
+      { "id": "A", "content": "a circle." },
+      { "id": "B", "content": "a hyperbola." },
+      { "id": "C", "content": "an ellipse." },
+      { "id": "D", "content": "a parabola." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct. The quadratic part has associated matrix `[[1,1],[1,-1]]`, whose determinant is `-2<0`, so the conic is of hyperbolic type. A is false because of the nonzero `xy` term and unequal quadratic structure. C would require definite quadratic part. D would correspond to a degenerate quadratic-part determinant.",
+    "theory": "For a central conic, the sign of the determinant of the quadratic-part matrix distinguishes hyperbolic type when it is negative.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 3",
+    "tags": ["past exam", "conics"]
+  },
+  {
+    "id": "lag-written-042",
+    "module": "Written exam MCQs",
+    "topic": "Geometry and quadratic forms",
+    "difficulty": "hard",
+    "prompt": "May 29, 2026 simulation: for a quadratic form `Q(x,y,z)`, which implication is correct?",
+    "options": [
+      { "id": "A", "content": "If `Q` is positive definite, then `Q+2x^2-3y^2` is indefinite." },
+      { "id": "B", "content": "If `Q` is negative definite, then `Q-(3x+y-2z)^2` is negative definite." },
+      { "id": "C", "content": "If `Q+9x^2` is positive definite, then `Q` is positive definite." },
+      { "id": "D", "content": "If `Q-2x^2` is negative definite, then `Q` is negative definite." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: a negative definite form is strictly negative on nonzero vectors, and subtracting a square adds a nonpositive term, so it remains strictly negative. A is false, for example with `Q=x^2+4y^2+z^2`. C is false with `Q=-x^2+y^2+z^2`. D is false with `Q=x^2-y^2-z^2`.",
+    "theory": "Adding a square makes a form more positive; subtracting a square makes it more negative. Definite implications must hold for all nonzero vectors, so counterexamples kill them.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 4",
+    "tags": ["past exam", "quadratic forms", "trap"]
+  },
+  {
+    "id": "lag-written-043",
+    "module": "Written exam MCQs",
+    "topic": "Geometry and quadratic forms",
+    "difficulty": "medium",
+    "prompt": "Classroom MCQ: in `R^3`, solve the vector equation `x_vec x i_vec + x_vec x j_vec + x_vec x k_vec = 0_vec`. What is the solution set?",
+    "options": [
+      { "id": "A", "content": "The equation has no solutions." },
+      { "id": "B", "content": "The equation has exactly one solution." },
+      { "id": "C", "content": "The solution set is a line." },
+      { "id": "D", "content": "The solution set is a plane." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. Writing `x_vec=(a,b,c)`, the cross-product equation reduces to `a=b=c`, so the solutions are `(t,t,t)`, a one-dimensional line. A is wrong because zero and all `(t,t,t)` solve it. B is wrong because there are infinitely many solutions. D is too large: the solution has one parameter, not two.",
+    "theory": "For vector-product equations, expand in the standard basis and compare the `i`, `j`, `k` components.",
+    "source": "course_material/Algebra/Material/CARLINI/classroom/MCQ.pdf, handwritten MCQ reconstructed from rendered page",
+    "tags": ["classroom MCQ", "cross product"]
+  },
+  {
+    "id": "lag-written-044",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "easy",
+    "prompt": "June 2025 A1 Q1: If `u` and `v` are distinct vectors such that `Au=0` and `Av=0`, what is necessarily true?",
+    "options": [
+      { "id": "A", "content": "`2u+3v` is a solution of `Ax=0`." },
+      { "id": "B", "content": "The determinant of `A` is zero." },
+      { "id": "C", "content": "`A` is invertible." },
+      { "id": "D", "content": "`Ax=0` has finitely many solutions." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct because the solution set of a homogeneous linear system is a vector space, closed under linear combinations. B may not even be meaningful unless `A` is square and is not the option the exam makes unavoidable. C contradicts the existence of nontrivial kernel cases. D is false for homogeneous solution spaces with a nonzero direction.",
+    "theory": "Kernels are subspaces: if `u` and `v` are in `Ker A`, then every linear combination is also in `Ker A`.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q1 and answer key",
+    "tags": ["past exam", "kernel"]
+  },
+  {
+    "id": "lag-written-045",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "June 2025 A1 Q2: Let `A` and `B` be `n x n` matrices. If `rank(A)=rank(B)`, what is necessarily true?",
+    "options": [
+      { "id": "A", "content": "`Col A = Col B`." },
+      { "id": "B", "content": "`Ax=0` has a unique solution if and only if `Bx=0` has a unique solution." },
+      { "id": "C", "content": "`A` and `B` are row-equivalent." },
+      { "id": "D", "content": "`A` and `B` have the same number of nonzero columns." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: for `n x n` matrices, the homogeneous system has the unique zero solution exactly when the rank is `n`; equal ranks make this true or false for both. A is false because equal dimension does not mean equal column space. C is stronger than equal rank. D is unrelated to rank.",
+    "theory": "For square matrices, full rank, invertibility, zero kernel, and unique homogeneous solution are equivalent.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q2 and answer key",
+    "tags": ["past exam", "rank"]
+  },
+  {
+    "id": "lag-written-046",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "June 2025 A1 Q3: For `a in R`, consider the conic `C_a: (x+y+a)^2=1`. What is necessarily true?",
+    "options": [
+      { "id": "A", "content": "For at least one value of `a`, `C_a` has no real points." },
+      { "id": "B", "content": "For all values of `a`, `C_a` is a degenerate parabola." },
+      { "id": "C", "content": "For infinitely many values of `a`, `C_a` is an ellipse." },
+      { "id": "D", "content": "For exactly two values of `a`, `C_a` is a hyperbola." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct in the exam's conic classification language: `(x+y+a)^2=1` factors into the two parallel real lines `x+y+a=1` and `x+y+a=-1`, a degenerate conic of parabolic type. A is false because the lines are real for every `a`. C and D are false because the equation is always reducible into lines.",
+    "theory": "When a conic equation factors into lines, it is degenerate; repeated/parallel-line structures are common MCQ traps.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q3 and answer key",
+    "tags": ["past exam", "conics"]
+  },
+  {
+    "id": "lag-written-047",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "June 2025 A1 Q4: Let `v1,v2,v3` be linearly independent in `R^5` and `V=span(v1,v2,v3)`. Which statement is correct?",
+    "options": [
+      { "id": "A", "content": "For some `u,v` in `V`, the set `{v1,v2,v3,u,v}` is a basis of `R^5`." },
+      { "id": "B", "content": "There exists exactly one basis of `R^5` containing `v1,v2,v3`." },
+      { "id": "C", "content": "There does not exist `v` in `V` such that `{v1,v2,v3,v}` is linearly independent." },
+      { "id": "D", "content": "There does not exist `v` in `R^5` such that `{v1,v2,v3,v}` is linearly independent." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct because every vector in `V` is already a linear combination of `v1,v2,v3`; adding it creates dependence. A is false for the same reason. B is false because many different extensions to bases of `R^5` exist. D is false because vectors outside the span can extend the independent set.",
+    "theory": "An independent set can be extended to a basis by adding vectors outside its span; adding vectors from its own span cannot increase dimension.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q4 and answer key",
+    "tags": ["past exam", "basis", "span"]
+  },
+  {
+    "id": "lag-written-048",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "June 2025 A1 Q5: Let `A=(a_ij)` be the `3 x 3` matrix with `a_ij=1` if `i+j` is even and `a_ij=0` if `i+j` is odd. Which statement is correct for `(sqrt(2)/2)A`?",
+    "options": [
+      { "id": "A", "content": "The matrix is diagonalizable." },
+      { "id": "B", "content": "The matrix is orthogonal." },
+      { "id": "C", "content": "The matrix is invertible." },
+      { "id": "D", "content": "The matrix is the matrix of a rotation in space." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct because `A` is symmetric, so it is diagonalizable, and scaling preserves diagonalizability. B is false because the scaled columns are not an orthonormal basis. C is false because `A` has dependent rows/columns and determinant zero. D is false because a rotation matrix would be orthogonal with determinant 1.",
+    "theory": "Real symmetric matrices are diagonalizable; orthogonal/rotation properties are much stricter.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q5 and answer key",
+    "tags": ["past exam", "diagonalization", "symmetric matrices"]
+  },
+  {
+    "id": "lag-written-049",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "easy",
+    "prompt": "June 2025 A1 Q6: Let `F:R^2 -> R^2` satisfy `F(e1)=e1+e2` and `F(e2)=e1+e2`. What is necessarily true?",
+    "options": [
+      { "id": "A", "content": "`F` is not surjective." },
+      { "id": "B", "content": "`1` is an eigenvalue of `F`." },
+      { "id": "C", "content": "There is no basis of `R^2` made by eigenvectors of `F`." },
+      { "id": "D", "content": "`ker F = {(0,0)}`." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct because both basis vectors have the same image, so the image is the line spanned by `e1+e2`, not all of `R^2`. B is false: the matrix has eigenvalues 0 and 2. C is false because the matrix is diagonalizable with eigenvectors for 0 and 2. D is false because `e1-e2` is in the kernel.",
+    "theory": "The matrix has columns equal to the images of basis vectors; equal columns immediately imply rank 1.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q6 and answer key",
+    "tags": ["past exam", "linear maps"]
+  },
+  {
+    "id": "lag-written-050",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "June 2025 A1 Q7: Consider the family of lines `s_t: x=y=t z + 2t`. What is correct about `s_a` and `s_0`?",
+    "options": [
+      { "id": "A", "content": "There exists `a` such that `s_a` and `s_0` are skew lines." },
+      { "id": "B", "content": "For all `a`, `s_a` and `s_0` are parallel lines." },
+      { "id": "C", "content": "For all `a`, `s_a` and `s_0` are coplanar." },
+      { "id": "D", "content": "For all `a`, `s_a` and `s_0` are orthogonal." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. For `a=0` they are the same line. For `a` nonzero, `s_a` intersects `s_0` at `(0,0,-2)`, so the two lines are coplanar. A is false because intersecting lines are not skew. B is false when `a` is nonzero. D is false as a universal statement.",
+    "theory": "In 3D geometry MCQs, test skew/parallel/coplanar by writing direction vectors and checking intersection.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q7 and answer key",
+    "tags": ["past exam", "lines", "geometry"]
+  },
+  {
+    "id": "lag-written-051",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "June 2025 A1 Q8: Let `q(x,y,z)=(x+y+z)^2+(x+y-z)^2` and let `A` be its associated symmetric matrix. Which statement is correct?",
+    "options": [
+      { "id": "A", "content": "`q` is positive definite." },
+      { "id": "B", "content": "The sum of the eigenvalues of `A` is positive." },
+      { "id": "C", "content": "The product of the eigenvalues of `A` is positive." },
+      { "id": "D", "content": "`q` is indefinite." }
+    ],
+    "correct": "B",
+    "explanation": "B is correct: `q=2(x+y)^2+2z^2`, so the associated matrix has positive trace. A is false because `q` vanishes on nonzero vectors such as `(1,-1,0)`. C is false because one eigenvalue is zero, so the product is zero. D is false because the form is never negative.",
+    "theory": "A sum of squares is semidefinite unless the squared linear forms kill only the zero vector.",
+    "source": "course_material/Algebra/LAG/exams/2.pdf, June 2025 A1 Q8 and answer key",
+    "tags": ["past exam", "quadratic forms", "eigenvalues"]
+  },
+  {
+    "id": "lag-open-052",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "medium",
+    "prompt": "May 29, 2026 simulation, Exercise 5: for `A_alpha = [[1,2,alpha],[0,2,0],[alpha,2,1]]`, when is `dim ker(F_alpha)` minimized?",
+    "options": [
+      { "id": "A", "content": "Only for `alpha=1`." },
+      { "id": "B", "content": "Only for `alpha=-1`." },
+      { "id": "C", "content": "For every real `alpha`." },
+      { "id": "D", "content": "For `alpha != 1` and `alpha != -1`." }
+    ],
+    "correct": "D",
+    "explanation": "D is correct because `det(A_alpha)=2(1-alpha^2)`. The kernel dimension is minimized when rank is maximal, i.e. when the determinant is nonzero. A and B are exactly singular cases. C ignores the two determinant zeros.",
+    "theory": "Use rank-nullity: for an endomorphism of `R^3`, minimizing kernel dimension means maximizing rank.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 5",
+    "tags": ["past exam", "parameter", "kernel"]
+  },
+  {
+    "id": "lag-open-053",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "hard",
+    "prompt": "May 29, 2026 simulation, Exercise 5: for which `alpha` does `(1,2,3)^T` belong to `Im(F_alpha)`?",
+    "options": [
+      { "id": "A", "content": "Only for `alpha=1`." },
+      { "id": "B", "content": "Only for `alpha=-1`." },
+      { "id": "C", "content": "For all real `alpha` except `alpha=1`." },
+      { "id": "D", "content": "For no real `alpha`." }
+    ],
+    "correct": "C",
+    "explanation": "C is correct. If `alpha != +-1`, the map is an isomorphism, so every vector is in the image. The singular cases must be checked: `alpha=1` gives contradictory equations, while `alpha=-1` is consistent. A, B and D each miss part of this case split.",
+    "theory": "For parameter-image questions, first remove all invertible cases, then test only the singular parameter values.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 5",
+    "tags": ["past exam", "image", "parameter"]
+  },
+  {
+    "id": "lag-open-054",
+    "module": "Written exam MCQs",
+    "topic": "Written MCQs",
+    "difficulty": "hard",
+    "prompt": "May 29, 2026 simulation, Exercise 5: is `F_1` diagonalizable?",
+    "options": [
+      { "id": "A", "content": "No, because the eigenspace for eigenvalue 2 has dimension 1 while its algebraic multiplicity is 2." },
+      { "id": "B", "content": "Yes, because every `3 x 3` matrix with real entries is diagonalizable." },
+      { "id": "C", "content": "Yes, because eigenvalue 0 appears." },
+      { "id": "D", "content": "No, because it has no real eigenvalues." }
+    ],
+    "correct": "A",
+    "explanation": "A is correct. The characteristic polynomial is `-lambda(2-lambda)^2`; for `lambda=2`, `rank(A_1-2I)=2`, so the eigenspace dimension is `3-2=1`, less than the algebraic multiplicity 2. B is false generally. C is not enough for diagonalizability. D is false because the eigenvalues are real.",
+    "theory": "A repeated eigenvalue is safe only when its geometric multiplicity equals its algebraic multiplicity.",
+    "source": "course_material/Algebra/Material/RUATTA/LAG_exam_simulation_29_mag_26_solutions.pdf, Exercise 5",
+    "tags": ["past exam", "diagonalization"]
+  }
+]
