@@ -1,0 +1,2012 @@
+[
+  {
+    "id": "lag-sprint-overview",
+    "lecture": "Exam sprint",
+    "title": "Linear Algebra exam sprint overview",
+    "summary": "A real map of what is now imported: theory notes, official MCQs, MATLAB drills, and source exercises.",
+    "minutes": 12,
+    "objectives": [
+      "Know where to start with three days left.",
+      "Understand the difference between official MCQ drilling and source exercise drilling.",
+      "Use the written bank to cover every parseable practice exercise."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This rebuilt course imports 33 source lessons after this overview, 354 practice cards, and 241 written problems. The goal is not passive reading: each source exercise appears as a written problem, and each exercise also gets a first-move practice card so you can drill what to do before spending ten minutes calculating."
+      },
+      {
+        "kind": "steps",
+        "title": "Three-day order",
+        "steps": [
+          {
+            "label": "Day 1",
+            "content": "MATLAB command practice and numerical linear algebra: syntax, indexing, plots, backslash, LU/Cholesky/QR, residuals, eigenvalues and SVD."
+          },
+          {
+            "label": "Day 2",
+            "content": "Official LAG MCQs: do the exact past variants, read the explanation, and repeat all misses in Due Review."
+          },
+          {
+            "label": "Day 3",
+            "content": "Written bank: pick the weak topics, solve on paper, reveal the source solution/method, and mark solved only when your final form matches the request."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "key",
+        "title": "What was imported",
+        "text": "Carlini exercises: 127. Ruatta solved practice exercises: 68. Cascavita MATLAB items: 37. Official MCQ cards: 68. Scanned/no-text notebooks are not treated as answered source questions because their text cannot be verified cleanly."
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "How not to waste the sprint",
+        "text": "Do not only read the notes. For this exam, recognition comes from seeing the same structures repeatedly: rank versus determinant, image versus kernel, semidefinite versus definite, and MATLAB display versus numerical precision."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-01",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 1 - Geometric vectors in the plane and in the space",
+    "summary": "Vectors and products: the core theory from Carlini note 1, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Vectors and products.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 1-2: Geometric vectors."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG1enV3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 1 - Geometric vectors in the plane and in the space\nL1.1 Applied vectors and free vectors. The typical treasure map gives information to you\nusing applied vectors. From the oak three walk 30 steps est and then walk 40 steps north.\nSo, in the first part of our treasure hunt, we start from a point O and then we move along\nthe west-est direction, in the verse towards est, walking a distance of magnitude 30 steps.\nThis task can be encoded by an arrow -> (vector) starting at the point O (application point).\nThis is an example of an applied vector.\nIn Physics applied vectors are widely used. Think of a force applied to body, of the speed of\na point, and so on.\nIn Mathematics we want to separate the information encoded in applied vectors in two\npieces: application point + vector.\n->-\nDefinition. A free vector v is completely determined by\n->-\n(i) the direction of the line containing v ,\n->-\n(ii) the verse following which we move along the line according to v ,\n->- ->-\n(iii) the magnitude (or length) of v denoted as || v ||.\nDefinition. An applied vector is a free vector with an application point.\nNote that for each free vector there are infinitely applied vectors, one for each possible ap-\nplication point. This means that different applied vectors can correspond to the same free\nvector.\nExercise. When is it the case that different applied vectors correspond to the same free vector?\nExample. A common way to produce applied vectors is to take two points, say A and B . Then\n---> ------> --->\nwe write AB , or (B - A), to represent the applied vector going from A to B . Notice that BA\n--->\nas the same direction and magnitude of AB but opposite verse.\n-->\nExercise. What kind of vector is AA?\nThere are different ways to visualize the set of free vectors of the plane; one is the following.\nFix a point O and apply all free vectors to this point. Then, the free vectors of magnitude R\nare in bijection with the points of the circumference of center O and radius R .\nExercise. How can we visualize free vectors in three dimensional space?\nL1.2 Operation with vectors. Natural numbers arose naturally to count objects, and for a\nlong while there was no place for the number zero (no objects). However, if we want not\nonly to count, but also to perform operations, zero is of crucial importance.\n->-\nDefinition. The zero vector 0 is the only vector of null magnitude. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build displacement vectors, then use norms, scalar products, vector products, or mixed products."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not confuse points with vectors. Always subtract points before taking norms, dot products or cross products."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 1-2: Geometric vectors` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-02",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 2 - More operations with vectors: scalar product,",
+    "summary": "Vectors and products: the core theory from Carlini note 2, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Vectors and products.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 1-2: Geometric vectors."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG2enV3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 2 - More operations with vectors: scalar product,\nvector product and mixed product\nIt is clear that assigning, and sharing, vectors using direction verse and magnitude is not the\nbest possible way. Of course using component is much more efficient and feasible. However,\nthe component presentation of vectors hides the geometry. For example, we can ask: what\nis the length of a vector? how can we measure the angle between two given vectors? In\nthis section we introduce very important operations with vectors which will also provide\nanswers to these questions.\nL2.1 Dot Product/Scalar product. We first consider angles.\nDefinition. Consider vectors u and w . The angle between the vectors u and w is the\n--> --> --> -->\nsmallest angle that the first vector, u , spans while rotating onto the second vector, w .\n--> -->\nWe now see how to use the angle between two vectors.\nDefinition. The scalar product, or dot product, of the vectors u and w is\n--> -->\nu w = u w cos(alpha),\n--> --> --> -->\ndot || || || ||\nwhere alpha is the angle between u and w .\n--> -->\nExample. Consider the unit vectors -->i , -->j and -->k . We want to compute -->i -->i . In order to do\ndot\nthis, recall that -->i thus -->i = 1. Moreover, -->i forms the zero angle with itself. Hence we have\n|| ||\n-->i -->i = -->i -->i cos(alpha) = 1.\ndot || || || ||\nSimilarly we can compute\npi\n-->j -->k = -->j -->k cos( ) = 0.\ndot || || || || 2\nExercise. Compute the dot product of all possible pairs chosen among the unit vectors -->i , -->j\nand -->k . Does the result depend upon the order in which we choose the vectors?\nThe dot product is strictly related with projections.\nProposition. Let u and w be non-zero vectors, then\n--> -->\nw\n-->\n( u w )\n--> dot --> w 2\n-->\n|| ||\nis the orthogonal projection of u along the direction of w .\n--> -->\nProof. The proof follows by standard trigonometry, noticing that the scalar\nu w\n--> -->\ndot = u cos(alpha)\n-->\nw || ||\n-->\n|| ||\nis the length of the orthogonal projection. QED\nHere are the fundamental properties of the dot product\nProposition. Consider vectors\n-->\nu ,\n-->\nw ,\n-->\nz and a scalar a R. Then the following hold:\nin\n1\n(i) (Linearity 1) (a u ) w = a( u w ).\n--> --> --> -->\ndot dot\n(ii) (Linearity 2) ( u + w ) z = u z + w z .\n--> --> --> --> --> --> -->\ndot dot dot\n(iii) (Symmetry) u w = w u .\n--> --> --> -->\ndot dot\n(iv) (Positivity) u u = u 2 0.\n--> --> --> ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build displacement vectors, then use norms, scalar products, vector products, or mixed products."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not confuse points with vectors. Always subtract points before taking norms, dot products or cross products."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 1-2: Geometric vectors` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-03",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 3 - Planes and lines.",
+    "summary": "Lines and planes: the core theory from Carlini note 3, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Lines and planes.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 3-4: Planes and lines."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG3enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 3 - Planes and lines.\nA plane is the locus of points determined by a single linear equation, and it can be param-\neterized using two free variables. We begin with the second point of view. Similarly a line\nis determined by two linear equations, that is by a linear system of equations, and it can be\nparameterized using one free variable.\n->- ->- ->- ->- ->- ->- ->-\nWarningSince the unit vectors i , j and k are fixed, the expression v = v i +v j +v k\nx y z\n->-\nis redundant. Thus, with a slight abuse of notation, we will sometimes also write v =\n(v , v , v ). The latter is less formal but more convenient when computing. We have to be\nx y z\nvery careful though and remember: never mix up points and vectors!\n->-\nWarningVectors are usually denoted as v but the notation v , that is v in boldface, is also\nquite common.\nL3.1 The equation of a plane. What is a plane exactly? It is a flat 2-dimensional surface.\nAs a first example, consider the plane consisting of all points of height z = 1. To describe\nall points P (x, y, z) belonging to this plane we can proceed as follows. The position vector\n->- --->\nv = OP satisfies the equation\n->- ->- ->- ->-\nv = s p + t q + v .\n0\n(1)\nwhere ->- p = ->- i , ->- q = ->- j . Since s, t are free to vary in R they are called free variables or free\n->- ->- ->-\nparameters, while the vector v is fixed and chosen to be v = k . If we write vectors using\n0 0\ncomponents as column vectors and we set x = s, y = t, we obtain the following expression\n       \nx 1 0 0\n y  = x 0  + y 1  +  0 .\n(2)\nz 0 0 1\nWe may call either version in (1) or in (2) a parametric equation of the plane.\nSetting s = 0 = t in (1) gives us a particular point (0, 0, 1) on the plane with position vector\n->- ->-\nv . The whole plane is described by adding to v linear combinations of two fixed vectors\n0 0\n->- ->-\np , q that are parallel to the plane.\n->- ->- ->-\nA general plane will have the form (1) for arbitrary choices of v , p , q , provided the last\n0\ntwo are not proportional. But a more common description is provided by the following\nProposition.\nProposition. A plane is the set of points (x, y, z) satisfying a linear equation equation\nax + by + cz = d, (3)\nwhere a, b, c, d in R with a, b, c not all zero.\nProof. Write (3) in vector form as\n->- ->-\nv dot n = d, (4)\n1\n->- ->- ->-\nwhere n stands for the vector of components (a, b, c), and choose a solution v = v . ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Convert lines and planes to direction/normal vectors, then solve incidence, parallelism, orthogonality, or distance conditions."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "For lines in space, non-parallel does not automatically mean intersecting. Check coplanarity."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 3-4: Planes and lines` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-04",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 4 - More on planes and lines.",
+    "summary": "Lines and planes: the core theory from Carlini note 4, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Lines and planes.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 3-4: Planes and lines."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG4enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 4 - More on planes and lines.\nIn this lecture we investigate how lines and planes relate to each other. We will also see how\nto deal with symmetry and projection with respect to planes and lines.\nL4.1 Parallelism and orthogonality. We presented a plane as the set of solution of one linear\nequation\npi : ax + by + cz = d\n->- ->- ->- ->-\nand we introduced the normal vector of the plane n = a i + b j + c k . In contrast with\nthis situation, a line r in three space is the solution set of a linear system having two linearly\nindependent equations,\n\na x + b y + c z = d\nr : 1 1 1 1 ;\na x + b y + c z = d\n2 2 2 2\nthinking that a line in three space is presented by one equation is one of the worst thing you\ncan do in this class! A parametric equation of this line can be derived using the direction\n->- --> -->\nvector p = n x n , thus\n1 2\n->- ->- ->-\nv = v + t p ;\n0\n->-\nas t varies the position vector v describes the lines r .\nBy the geometric meaning of the normal vector and the direction vector, it is easy to see that\n--> -->\n(i) The planes alpha, beta are parallel if and only if n n .\nalpha beta\n--> -->\n(ii) The planes alpha, beta are orthogonal if and only if n  n .\nalpha beta\n--> ->-\n(iii) The plane alpha and the line r are parallel if and only if n  v .\nalpha r\n--> ->-\n(iii) The plane alpha and the line r are orthogonal if and only if n v .\nalpha r\n->- ->-\n(iv) The lines r, s are parallel if and only if v v .\nr s\n->- ->-\n(v) The lines r, s are orthogonal if and only if v  v .\nr s\nL4.2 Intersection of planes and lines. As lines and planes are defined as solution sets of\nlinear equations, in order to intersect them it is enough to solve a (larger) linear system of\nequation. For the time being, we will solve these systems of equations by hands, but a more\nsystematic way of studying them will be soon introduced.\nThe intersection of two planes alpha and beta is computed by solving a 2 x 3 linear system of\n-->\nequations, that is a system with 2 equations in 3 unknowns. If the normal vectors n and\nalpha\n-->\nn are proportional, then the planes are either parallel, and we will find no solution, or they\nbeta\ncoincide, and we will find infinitely many solutions depending on two parameters. If the\nnormal vectors are not parallel then alpha intersection beta is a line.\nThe intersection of a plane alpha and a line r is obtained by solving a 3 x 3 linear system of ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Convert lines and planes to direction/normal vectors, then solve incidence, parallelism, orthogonality, or distance conditions."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "For lines in space, non-parallel does not automatically mean intersecting. Check coplanarity."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 3-4: Planes and lines` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-05",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 5 - Matrix addition and multiplication",
+    "summary": "Matrices, determinants and rank: the core theory from Carlini note 5, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Matrices, determinants and rank.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 5-6: Matrices and determinants."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG5en.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 5 - Matrix addition and multiplication\nL5.1 Matrices and their entries. A matrix is a rectangular array of numbers. Examples:\n \n  0 0 0 0 1\n1\n 1 0 0 0 0 \n1 2 3  0    1 2\n   0 1 0 0 0 \n0 6 9  0    1 4\n 0 0 1 0 0 \n0\n0 0 0 1 0\nThe individual numbers are called the entries, elements, or components of the matrix. If the\nmatrix has m rows and n columns, we say that it has size m by n or m x n. The above\nexamples have respective sizes 2 x 3, 4 x 1, 5 x 5, 2 x 2. If m = n (as in the last two cases) the\nmatrix is obviously square.\nThe set of matrices of size m x n whose entries are real numbers is denoted by Rm,n ; the\nfirst superscript is always the number of rows. Sometimes we use symbols to represent\nunspecified numbers, so the statement\n\na b\nin R2,2\nc d\nis tantamount to saying that a, b, c, d are real numbers.\nFor matrices with more than about 4 entries, it is convenient to use subscripts to label the\nentries. Given a matrix A, we typically denote by a the entry in the ith row and j th\nij\ncolumn (lower case to emphasize that the entry is a number).\nExample. In this notation, the generic 3 x 4 matrix is\n \na a a a\n11 12 13 14\n a 21 a 22 a 23 a 24 .\na a a a\n31 32 33 34\nMathematicians like to deal in generalities and will even write a matrix as A = (a ) without\nij\nspecifying its size.\nDefinition. The transpose of a matrix A is the matrix, indicated tA or A , is obtained by\ninterchanging its rows and columns.\nFor example\n T  \n0 0 0 0 1 0 1 0 0 0\n \n1  1 0 0 0 0   0 0 1 0 0 \n(1, 2, -7) =  2 ,   0 1 0 0 0   =   0 0 0 1 0  \n   \n-7  0 0 1 0 0   0 0 0 0 1 \n0 0 0 1 0 1 0 0 0 0\nIf A in Rm,n then A in Rn,m . In subscript notation, we have\n(A ) = a .\nij ji\nNotice that (A ) = A, so the operation of taking the transpose is self-inverse.\n1\nL5.2 Vectors. Of special importance are matrices that have only one row or column; they are\ncalled row and column vectors. In writing a row vector with digits, it is useful to use commas\nto separate the entries. For example, both the matrices\n \n1\nA = (1, 2, -7) in R1,3, B =  2  in R3,1\n-7\ncan be used to represent the point in space with Cartesian coordinates x = 1, y = 2, z = -7.\n(Sometimes commas are used to distinguish between matrices and row vectors, but it is\nsimpler to regard them as the same object.)\nOne can switch between row and column vectors by observing that A = B or B = A . For ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Use determinant, inverse, transpose, trace, product, or rank identities before doing long computations."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Equal rank does not imply equal column spaces unless the ambient spaces and actual columns match."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 5-6: Matrices and determinants` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-06",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 6 - Square matrices: determinants and inverses",
+    "summary": "Matrices, determinants and rank: the core theory from Carlini note 6, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Matrices, determinants and rank.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 5-6: Matrices and determinants."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG6enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 6 - Square matrices: determinants and inverses\n(Part I)\nThe study of square matrices is particularly rich, since ones of the same size can be mul-\ntiplied together repeatedly. This realization will lead us to construct inverse matrices and\ndefine a number called the determinant of a square matrix.\nL6.1 Identity matrices. Recall that a matrix is said to be square if it has the same number of\nrows and columns. So A in Rm,n is square iff m = n.\nDefinition. A square matrix is diagonal if the only entries a that are nonzero are those for\nij\nwhich i = j . These form the diagonal  from top left to bottom right. The n x n matrix A\nfor which\n\n1, i = j\na =\nij 0, i = j\nis called the identity matrix of order n, and is denoted I .\nn\nIt is easy to verify the\nProposition. If A in Rm,n then I A = A = AI .\nm n\nHere is an example:\n \n1 0 0\n1 0 a a a a a a a a a\n11 12 13 = 11 12 13 = 11 12 13  0 1 0 \n0 1 a a a a a a a a a\n21 22 23 21 22 23 21 22 23 0 0 1\nIf A, B in Rn,n then both AB and BA are defined and have size n x n. In general they are\nunequal, so matrix multiplication is not commutative.\n\n0 1\nExercise. Try A = and B = A .\n0 0\nEven more surprisingly AB could be the zero matrix even if both A and B are not the zero\nmatrix.\n\n1 1 1 -1\nExercise. Compute AB and BA for A = and B = .\n2 2 1 1-\nThus, matrix multiplication is radically different from the multiplication of real numbers.\nWe must be extremely careful when dealing with matrix multiplication!\nL6.2 Powers of matrices. We can raise a square matrix to any positive power. For example\nA2 simply means AA, and\nA3 = AAA = A2A = AA2.\nAn important property of powers of a given matrix is that they commute with one another,\ni.e. the order of multiplication does not matter (unlike for general pairs of matrices):\nAmAn = AmAn, m, n in N. (1)\n1\nBy convention, for a matrix A in Rn,n , we set A0 = I . We can try to define negative powers\nn\nusing the inverse of a matrix, though this does not always exist. The situation for n = 2 is\ndescribed by the\n\na b\nLemma. Let A = . Then there exists B in R2,2 for which AB = I iff ad - bc = 0. In\nc d 2\nthis case, the same matrix B satisfies BA = I .\n2\nProof. The recipe is well known:\n1 d -b\nB = . (2)\nad - bc -c a\nProvided ad - bc = 0 this matrix satisfies both the required equations. If ad - bc = 0 then\n\nd -b\nA = 0 (3)\n-c a ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Use determinant, inverse, transpose, trace, product, or rank identities before doing long computations."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Equal rank does not imply equal column spaces unless the ambient spaces and actual columns match."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 5-6: Matrices and determinants` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-07",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 7 - Linear systems of equations",
+    "summary": "Linear systems and row reduction: the core theory from Carlini note 7, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Linear systems and row reduction.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 7-8: Linear systems and rows."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG7en.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 7 - Linear systems of equations\nIn this lecture, we shall introduce linear systems, interpret them in terms of matrices and\nvectors, and define linear combinations of vectors.\nL7.1 Introduction. Here is an example of a so-called linear system:\n\nx + x + 2x + 3x = 3\n 1 2 3 4\n5x + 8x + 13x + 21x = 7 (1)\n1 2 3 4\n 34x + 55x + 89x + 144x = 4\n1 2 3 4\nThis one consists of 3 equations in 4 unknowns. The problem is to determine all possible val-\nues of these unknowns x , x , x , x that solve all 3 equations simultaneously. Each equa-\n1 2 3 4\ntion might be expected to impose a single constraint, and since there are fewer equations\nthan unknowns we might guess that it is not possible to specify the unknowns uniquely.\nHowever, without checking the numbers on the right, it is conceivable that the 3 equations\nare inconsistent and that there are no solutions.\nThe situation is best illustrated with pairs of equations, each in 2 unknowns. Consider the\nfour separate systems\n\nx + 2y = 0 x + 2y = 7\n(a) (b)\n3x + 4y = 0 3x + 4y = 8\n(2)\n\nx + 2y = 0 x + 2y = 7\n(c) (d)\n2x + 4y = 0 2x + 4y = 8\nThose on the left are called homogeneous because the numbers on the right are all zero,\nwhereas (b) and (d) are inhomogeneous or nonhomogeneous. Any homogeneous system al-\nways has at least one solution, namely the one in which all the unknowns are assigned the\nvalue 0; this is called the trivial solution.\nIt is easy to check that in cases (a) and (b) the two equations are independent and that there\nis a unique solution of the system. For (a), it is the trivial solution x = 0 = y ; for (b) it is\nx = -6, y = 13/2, or expressed more neatly (x, y) = (-6, 13 ).\n2\nIn (c) it is obvious that the second equation is completely redundant; it is merely twice the\nfirst. In this case, we can assign any value to (say) y and then declare that x = -2y ; we\nsay that y is a free variable and that the general solution depends on one free parameter. In a\nsense, the system (c) is underdetermined.\nIn (d), the two equations are incompatible; the first would imply that 2x + 4y = 14 and\nwe get 14 = 8. This means that there is no solution; the system is called inconsistent. By\ncontrast, homogeneous equations are always consistent.\nTo sum up, we can have no solutions, a unique solution (one and only one value for each\nunknown) or infinitely many solutions. We shall see that the same is true for a linear system ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build the coefficient and augmented matrices and row-reduce; compare ranks and pivots."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "A zero determinant only applies to square matrices. Rank conditions are the general test."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 7-8: Linear systems and rows` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-08",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 8 - Row equivalence",
+    "summary": "Linear systems and row reduction: the core theory from Carlini note 8, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Linear systems and row reduction.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 7-8: Linear systems and rows."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG8enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 8 - Row equivalence\nFor simplicity, we shall first study homogeneous systems of equations. The secret is to config-\nure the rows of the coefficient matrix A so as to (more or less) read off the solutions.\nL8.1 Row operations. Consider a homogeneous linear system in matrix form\nAx = 0, with A in Rm,n, x in Rn,1.\nIn this case, each equation is completely determined by the corresponding row of A, and\nwe can encode the equations by the m rows\n\nr\n 1\n\n r\n2\ndot\n\n\n r\nm\nof A. In this notation, with m = 4, the scheme\n\nr\n 1\n\n r - 2r\n2 1\nr\n 3\n\n 3r\n4\nrepresents an equivalent system of equations; we have merely subtracted twice the first\nfrom the second and multiplied the last by 3. These changes will not affect the values of\nany solution (x , . . . , x ). We are also at liberty to change the order in which we list the\n1 n\nequations.\nOur aim is to use such changes to simplify the system.\nDefinition. Let A be a matrix of size m x n. An elementary row operation (ERO) is one of\nthe following ways in which a new matrix of the same size is formed from A:\n(i) add to a given row a multiple of a different row,\n(ii) multiply a given row by a nonzero constant,\n(iii) swap or interchange two rows.\nIn symbols, we can denote the operations that we have just described by\n(i) r -> r + ar , i = j ,\ni i j\n(ii) r -> cr , c = 0,\ni i\n(iii) r  r .\ni j\nIn practice, it is often convenient to take a to be negative; in particular (i) includes the act of\nsubtracting one row from another: r -> r - r (but it is essential that i = j otherwise we\ni i j\nwould effectively have eliminated one of the equations).\nEROs will play an essential role in the development of our course. Thus, we want to stress\nthe deep link between them and matrix theory, and in particular with matrix multiplication:\nwhenever we perform an ERO on a matrix A of size m x n we are actually computing the\nmatrix product EA where E is a matrix of size m x m called elementary matrix.\nExercise. Let A be a matrix of size 2 x n. Prove that each one of the elementary operations\nabove is equivalent to the matrix multiplication EA where E is one of the following elementary\n1\nmatrices:\n\n1 a 1 0\n(i) or ,\n0 1 a 1\n\na 0 1 0\n(ii) or ,\n0 1 0 a\n\n0 1\n(iii) .\n1 0\nIn general, elementary matrices are constructed applying the corresponding ERO to the\nidentity matrix of the proper size.\nDefinition. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build the coefficient and augmented matrices and row-reduce; compare ranks and pivots."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "A zero determinant only applies to square matrices. Rank conditions are the general test."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 7-8: Linear systems and rows` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-09",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 9 - Reduced matrices and their rank",
+    "summary": "Linear systems and row reduction: the core theory from Carlini note 9, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Linear systems and row reduction.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 9-10: Rank, inverse and determinant."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG9enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 9 - Reduced matrices and their rank\nSolving a linear system by applying suitable EROs is called Gaussian elimination. In this\nlecture we shall describe it more carefully, and present some variations. First we need to\nknow exactly what type of matrices we want to achieve by operating on the rows.\nL9.1 Echelon forms. The idea is to convert a matrix into a steplike sequence of rows like an\narrangement of toy soldiers ready for battle. We shall make this precise using the\nDefinition. An entry of a matrix is called a marker if it is the first nonzero entry of a row\n(starting from the left).\nConsider the condition\n(M1) there is at most (meaning not more than) one marker in each column.\nThis is important for two reasons. First, because it turns out that the equations defined by\nthe rows of a matrix satisfying (M1) are independent in a sense that we shall make precise\nin a moment. Second, because of the following result that becomes self-evident in the light\nof further practice:\nProposition. Given any matrix A, one may apply a sequence of EROs of type (i) so as to\nobtain a matrix B satisfying (M1).\nIn solving the system, the order of the rows is immaterial. It is common practice to tidy up\nby applying EROs of type (iii) to permute the rows so that\n(M2) moving down the rows from the top, the markers move from left to right, and\n(M3) all the null rows are at the bottom.\nIt is a consequence of (M1) and (M2) that all the entries (in the same column) underneath a\ngiven marker are zero.\nDefinition. A matrix satisfying (M1)-(M3) is called step-reduced.\nWarning. This is sometimes referred to as row echelon form, but is a stronger notion than\nreduced in the sense of the Greco-Valabrega text. We prefer to work with step-reduced\nmatrices as they are easy to spot visually: the main null part has an approximately triangular\nform, and the markers represent corner soldiers.\nOnce a matrix is step-reduced, its markers take on a greater significance and are also called\npivots; often we shall box them. We shall call a column marked if it contains a marker, and\notherwise unmarked. It is sometimes convenient to suppose in addition that\n(M4) each marker equals 1.\nThis can be quickly achieved using EROs of type (ii), but may have the adverse effect of\nintroducing fractions elsewhere. A more stringent condition is that ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build the coefficient and augmented matrices and row-reduce; compare ranks and pivots."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "A zero determinant only applies to square matrices. Rank conditions are the general test."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 9-10: Rank, inverse and determinant` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-10",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 10 - Solving a general system",
+    "summary": "Linear systems and row reduction: the core theory from Carlini note 10, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Linear systems and row reduction.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 9-10: Rank, inverse and determinant."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG10enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 10 - Solving a general system\nHaving introduced the rank of an arbitrary matrix, we are in a position to formulate the\ncelebrated results of E. Rouche (1832-1910) and A. Capelli (1855-1910) concerning solutions\nof a (generally inhomogeneous) linear system of equations. From now on, we denote the rank\nof a matrix M by r(M ) .\nL10.1 The augmented matrix. Let us return to the inhomogeneous system in matrix form\nAx = b, A R m,n, x R n,1, b R m,1.\nin in in\nWe associate with this the so-called augmented matrix\na a b\n11 1n 1\ndot dot\n(A b) = ! dot dot dot . (1)\n|\ndot dot dot\n\" a a b %\n\" m1 dot dot mn m %\n# &\nThe vertical bar reminds us that the last column is special, but in applying row operations\nit should be ignored so that b is just treated as an extra column added to A. We solve the\nsystem by applying EROs to (1) so that it becomes a step-reduced matrix\n(A  b  ). (2)\n|\nWarning: in doing this it is essential to apply each ERO to the whole row, including b ; thus\ni\nthe last column will usually change unless it was already null.\nNote that if (2) is step-reduced, so is the left-hand matrix A . By definition then,\n\nr(A) = r(A ), r(A b) = r(A b ),\n  \n| |\nwhere we are relying on the previous Theorem. Furthermore,\nr(A  ) ! r(A  b  ) ! r(A  ) + 1,\n|\nand we consider the two possibilities in turn. First, we record the\nLemma. The m rows of a matrix A R m,n are LI if and only if r(A) = m. In particular,\nin\nsince r(A) ! n, no set of LI vectors in R n has more than n elements.\nProof (of only if). Suppose by contradiction that the rows of A are LI but that r(A) < m.\nThus A B , B step-reduced with the last row equal zero. Since each row of B is a LC of\n\nrows of A we get a contradiction. QED\nThink of LI rows as incompressible: when the matrix is reduced they are not diminished\nin number.\nExercise. (i) The columns of a matrix A are LI iff the matrix equation Ax = 0 admits only the\ntrivial solution x = 0 R m,1 .\nin\n(ii) The rows of a matrix are LI iff the equation xA = 0 only has the trivial solution x = 0 R 1,n .\nin\n(iii) The rows of a matrix are LI iff the equation A x = 0 only has the trivial solution x = 0\n\nin\nR n,1 .\n1\nL10.2 Inconsistent systems. Given a linear system, the student-friendly situation is that in\nwhich there are no solutions, as one does not have to waste time finding them!\nProposition. (RC1) If r(A) < r(A b) , the system has no solutions.\n| ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build the coefficient and augmented matrices and row-reduce; compare ranks and pivots."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "A zero determinant only applies to square matrices. Rank conditions are the general test."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 9-10: Rank, inverse and determinant` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-11",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 11 - Rank, inverse, and determinant (part II)",
+    "summary": "Subspaces, bases and dimension: the core theory from Carlini note 11, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Subspaces, bases and dimension.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 11-12: Subspaces of R^n."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG11en_v3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 11 - Rank, inverse, and determinant (part II)\nWe will see how the rank of a matrix relates to the existence of the inverse. Then we will see\nhow to define, and compute, the determinant of any square matrix. Finally, we will prove\nthe famous result: A is invertible iff det(A) = 0 (that is A is non-singular).\nL11.1 Rank and inverse. Using row reduction to super-reduce the matrix (A|I ) we com-\nn\nputed the inverse of the n x n matrix A in the case the inverse exists. What happens when\nwe row reduce (A|I ) if A is not invertible? In this case we cannot super-reduce the matrix\nn\nand it turns out that the all situation is better explained using the notion of rank\nTheorem. If A is a n x n matrix, then A is invertible iff r(A) = n.\nProof. If A is invertible we know that we can super-reduce (A|I ) and obtain (I |A-1).\nn n\nIn particular, we can super-reduce A and obtain I . Thus, we have that that A  I and\nn n\nhence r(A) = r(I ) = n. Conversely, if r(A) = n we can row reduce A and obtain a n x n\nn\nrow reduced matrix A . Note that all the diagonal elements of A must be special element\nso that they must be non-zero while all the elements below the diagonal must be zero. We\ncan now use the non-zero diagonal elements to super-reduce A and obtain I . Thus we\nn\ncan super-reduce (A|I ) and obtain (I |A-1). Hence A is invertible.\nn n\nIn the previous argument we met matrices of a special kind, called triangular matrices. A\nsquare matrix T = (t ) is called upper triangular if t = 0 whenever i > j ; the matrix is\nij ij\ncalled lower triangular if t = 0 whenever i < j . Note that upper/lower refers to the only\nij\npossibly non-zero elements.\nA special case of triangular matrix is the one of diagonal matrices which are both upper and\nlower triangular. Namely, D = (d ) is a diagonal matrix if d = 0 whenever i = j .\nij ij\nExercise. Find conditions on the entries of diagonal matrix such that it is invertible. Can you\neasily find the inverse when it exists?\nExercise. Find conditions on the entries of triangular matrix such that it is invertible.\nL11.2 Computing determinants. We know how to compute the determinant of a 2 x 2 matrix\nand this is the key to define/compute the determinant of any matrix. Here is a recursive\ndefinition of determinant.\nDefinition. Let A = (a ) be a n x n matrix and denote by A the (n - 1) x (n - 1) submatrix\nij ij ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Translate the subspace condition into linear equations or generators, row-reduce, then read basis and dimension."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Vectors already inside a span cannot extend that span to a larger independent set."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 11-12: Subspaces of R^n` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-12",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 12 - Subspaces of R",
+    "summary": "Subspaces, bases and dimension: the core theory from Carlini note 12, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Subspaces, bases and dimension.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 11-12: Subspaces of R^n."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG12enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "n\nNotes 12 - Subspaces of R\nWe can understand the theory of matrices better using the concept of subspace.\nL12.1 Closure. We continue to use R n to denote either the set R 1,n of row vectors, or the set\nof column vectors R n,1 . The definitions in this lecture apply equally to both cases, though\nat times it is best to specify one or the other.\nDefinition. A subspace of R n is a nonempty subset V that is closed under addition and\nmultiplication by a constant, meaning that these operations do not allow one to escape from\nthe subset V (like a room with closed doors!).\nThus, V is a subspace iff\n(S1) u, v V u + v V ,\nin => in\n(S2) a R, v V av V .\nin in => in\nThe word space conveys the fact that, with these operations, the subset V acquires a struc-\nture of its own without the need to refer to R n . It is an immediate consequence that any\nsubspace must contain the null vector. For if v V then\nin\n0 = v + ( 1)v V.\n- in\nMoreover, the singleton set 0 consisting of only the null vector is always a subspace. It\n{ }\nis called the null subspace or zero subspace and any other subspace of R n must have infinitely\nmany elements.\nWarning: do not confuse the null subspace with the empty set that is not counted as a\nempty set\nsubspace.\nAt the other extreme is R n itself. There is no doubt that this is a subspace, as conditions (S1)\nand (S2) are satisfied by default: the vectors u+v and av are certainly in R n as they have\nnowhere else to go!\nExample. To test whether a subset of R n is a subspace, check first that it contains 0. Be careful\nthough; here are two subsets of the plane that both contain 0 but are not subspaces:\n(a) A = (x, y) R 2 : x ! 0 and y ! 0 , geometrically the first quadrant; it satisfies (S1) but not\n{ in\n(S2).\n(b) B = (x, y) R 2 : xy = 0 , geometrically the union of the two axes; it satisfies (S2) but not\n{ in }\n(S1).\nIn practice, subspaces are constructed by taking linear combinations of vectors:\nLemma. Any subset L u 1 , . . . , u k (with each u i R n ) is a subspace.\n{ } in\nProof. For simplicity, suppose that we have only two vectors u = u , u = v . Two arbitrary\n1 2\nelements of L u, v are then au+bv , cu+dv , and their sum\n{ }\n(au + bv) + (cu + dv) = (a + c)u + (b + d)v\nobviously stays in L u, v . So does any multiple of au + bv . QED\n{ }\nThe converse of this result is valid, namely that any subspace of R n can be expressed in\nthe form L u , . . . , u . ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Translate the subspace condition into linear equations or generators, row-reduce, then read basis and dimension."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Vectors already inside a span cannot extend that span to a larger independent set."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 11-12: Subspaces of R^n` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-13",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 13 - Bases and dimension",
+    "summary": "Subspaces, bases and dimension: the core theory from Carlini note 13, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Subspaces, bases and dimension.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 13-14: Vector spaces and bases."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG13enV3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 13 - Bases and dimension\nThe concepts of linear combination and linear independence are combined in the definition\nof the basis of a subspace V of R n . Any two bases have the same number of elements, called\nthe dimension. When V is represented as the row space of a matrix A, its dimension equals\nthe rank of A.\nL13.1 Redundant elements. Describing a subspace as L u , , u is all very well, but\n1 k\n{ dot dot dot }\nthere are infinitely many ways to choose the representative vectors u , , u . Suppose that\n1 k\ndot dot dot\nu, v is a linearly independent set, and consider the subspace\n{ }\nV = L u, 2u, u+v, 0, u 7v .\n{ - }\nThe right-hand side is a bit ridiculous since most of its elements are redundant. We can\nmake the list of vectors more effective as follows:\nRetain the non-zero vector u .\nDiscard 2u because it is already in L u .\n{ }\nRetain u + v becuase it is not in L u .\n{ }\nDiscard 0 (since the null vector is already present in L u, v !).\n{ }\nDiscard u 7v as it too is in L u, v .\n- { }\nWe are finished with V = L u, u+v , which of course equals L u, v though it may be\n{ } { }\nthat u+v is simpler than v in a numerical example.\nDefinition. Let V be a subspace of R n . A basis of V is a linearly independent set v 1 , v k\n{ dot dot dot }\nsuch that V = L v , v .\n1 k\n{ dot dot dot }\nA basis of V is therefore characterized by two key properties:\n(B1) it generates V , meaning that any element in V is a LC of the basis, and\n(B2) the basis is LI.\nThe second condition implies that a basis can contain no more than n elements (for we can\nrepresent the basis elements as rows of a matrix with n columns, so at most n rows are LI).\nWe shall often indicate a particular basis as follows: B = v , . . . , v . Some authors re-\n1 k\n{ }\nquire a basis to be an ordered set, in which case one could write B = (v , . . . , v ) .\n1 k\nWarning. Since no LI set can contain 0, neither can a basis.\nL13.2 Bases of R n . The definition of basis makes perfect sense if we take the subspace\nV = R n (thought of as either row or column vectors), and there are infintely many bases\nto choose from. But the most obvious is the one consisting of the rows or columns of the\nmatrix I . In particular,\nn\nDefinition. The canonical basis of R n,1 consists of the columns of I n , and its individual\nelements are denoted e , . . . , e .\n1 n\nThus,\n1 0\n0 1\ne 1 = ! , e 2 = ! , . . .\ndot dot\n\" 0 % \" 0 %\n\" % \" % ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Translate the subspace condition into linear equations or generators, row-reduce, then read basis and dimension."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Vectors already inside a span cannot extend that span to a larger independent set."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 13-14: Vector spaces and bases` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-14",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 14 - Vector Spaces",
+    "summary": "Subspaces, bases and dimension: the core theory from Carlini note 14, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Subspaces, bases and dimension.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 13-14: Vector spaces and bases."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG14enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 14 - Vector Spaces\nThe theory of linear combinations, linear independence, bases, and subspaces that we have\nstudied in relation to R n can be generalized to the more general study of vector spaces. Any\nsubspace of R n (including of course R n itself) is an example of a vector space, but there are\nmany others including sets of matrices, polynomials and functions.\nL14.1 Motivation. A subspace of R n is the prime example of a vector space, but there are a\nnumber of reasons for discussing the general definition, namely\n(i) to emphasize aspects of the theory that do not depend upon the choice of a specific basis,\n(ii) to allow the use of scalars that are different from real numbers,\n(iii) to extend the theory to function spaces of infinite dimensions.\nWe shall explain each of these points in turn.\n(i) The whole description of R n is modelled on the existence of its canonical basis. To be\nspecific, consider R n,1 and let e j denote the j th column of the identity matrix I n . Then a\ntypical element of R n,1 is given by\nx\n1\nx\nv = ! 2 = x 1 e 1 + x 2 e 2 + + x n e n ,\ndot dot dot\ndot\n\" x %\n\" n %\n# &\nand is represented by its coefficients relative to the basis e , . . . , e . But when we wish to\n1 n\n{ }\ndescribe subspaces of R n,1 there is a need to work with other bases. In fact, any subspace of\nR n is a vector space in its own right. In general it is important to be able to change basis; in\nthis way, the abstract concept of vector space comes into its own.\n(ii) The scalars that are used to multiply vectors in the definition of a vector space need\nnot be real numbers. The set of scalars is required to be what is called a field, of which R\nis only one example. Other examples of fields include the set Q of rational numbers (p/q\nwhere p, q are integers with q = 0), the set C of complex numbers (x + iy with x, y R and\n in\ni = sqrt 1), and the binary set B = 0, 1 (also called F2 ) consisting of just two elements.\n- { }\n(iii) In this course, we shall only work with vector spaces of finite dimension. We shall\nexplain that such a vector space V is characterized by the existence of a basis of finite size\nn. The choice of such a basis makes V closely resemble the set R n or (for the other choices\nof fields mentioned above) Q n , C n or the finite set Bn of size 2n . However, in analysis, the ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Translate the subspace condition into linear equations or generators, row-reduce, then read basis and dimension."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Vectors already inside a span cannot extend that span to a larger independent set."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 13-14: Vector spaces and bases` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-15",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 15 - Bases and Linear Mappings",
+    "summary": "Linear maps, kernel and image: the core theory from Carlini note 15, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Linear maps, kernel and image.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 15-16: Linear maps."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG15enV2.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 15 - Bases and Linear Mappings\nFor the rest of the course, students should have in mind the following vector spaces:\nRn\n(that is, either R1,n or Rn,1 ), Rm,n and R [x]. All are real vector spaces, that is F = R .\nn\nMany other vector spaces can then be defined by choosing subspaces, a concept that we\nhave already investigated in\nRn\n.\nL15.1 Linear combinations and subspaces. Let u , dot dot dot , u be elements of a vector space V\n1 k\nover F . We can use the same notation as before for the set of all linear combinations (LCs) of\nthe vectors listed, so that\nL {u , dot dot dot , u } = {a u + dot dot dot + a u : a in F }. (1)\n1 k 1 1 k k i\nThe only novelty is that the coefficients now belong to F . Whilst the u s form a finite set,\ni\nthe right-hand side of (1) will be infinite if F is.\nSubspaces of V are defined exactly as for Rn :\nDefinition. Let V be a vector space over a field F . A non-empty subset U of V is a\nsub space iff\n(S1) u, v in U => u + v in U ,\n(S2) a in F, u in U => au in U .\nIt follows that a subspace is a vector space in its own right: the operations (S1) and (S2) will\nsatisfy all the vector space axioms because V itself does. In practice, subspaces are again\ndefined either by linear combinations or linear equations.\nExercise. Let V = R3,3 be the space of 3 x 3 matrices. Let S = {A in R3,3 : A = A} be the\nsubset consisting of symmetric matrices. Check that S is a subspace of V , and find matrices A\ni\nsuch that S = L {A , . . . , A }.\n1 6\nDefinition. A vector space V (for example, a subspace V of some other vector space W )\nis finite-dimensional, or finitely-generated, if there exists a finite subset {u , dot dot dot , u } such\n1 k\nthat V = L {u , dot dot dot , u }.\n1 k\nExample. Consider R2,3 again. This vector space is finite dimensional because any matrix of\nsize 2 x 3 is a LC of the matrices\n\n1 0 0 0 1 0 0 0 1\n, , ,\n0 0 0 0 0 0 0 0 0\n(2)\n\n0 0 0 0 0 0 0 0 0\n, , .\n1 0 0 0 1 0 0 0 1\nIndeed,\n\na a a 0 0 1 0 0 0 0 0 0\n5 3 1 = a + a + dot dot dot + a . (3)\na a a 1 0 0 0 2 0 0 1 6 1 0 0\n6 4 2\nWhilst the unordered set (2) is an obvious basis, there is no right or wrong way to order its\nelements into a list.\nWarning: there exists vectors spaces which are not finitely-generated, for example R[x] is\nnot finitely-generated\n1\nExercise. Prove that R[x] is not finitely-generated. (Hint: for nay finite set of polynomials ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Write the matrix of the map from images of a basis, then compute kernel, image, rank and eigen-data."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Surjectivity and injectivity depend on dimensions and rank-nullity, not on how simple the formula looks."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 15-16: Linear maps` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-16",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 16 - Linear Mappings and Matrices",
+    "summary": "Linear maps, kernel and image: the core theory from Carlini note 16, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Linear maps, kernel and image.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 15-16: Linear maps."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG16en_v3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 16 - Linear Mappings and Matrices\nIn this lecture, we turn our attention to linear mappings that may be neither surjective nor\ninjective. We show that once bases have been chosen, a linear map is completely determined\nby a matrix. This approach provides the first real justification for the definition of matrix\nmultiplication that we gave in the first lecture.\nL16.1 The linear mapping associated to a matrix. First, we point out that any matrix defines\na linear mapping.\nLemma. A matrix A in Rm,n defines a linear mapping f : Rn -> Rm by regarding elements\nof\nRn\nas column vectors and setting\nf (v) = Av, v in Rn,1.\nProof. The conditions (LM1) and (LM2) are obvious consequences of the rules of matrix\nalgebra. QED\nOur preference for column vectors means that an m x n matrix defines a mapping from Rn\nto Rm , so that m, n are swapped over. Here is an example:\n\n0 2 4\nA = in R2,3 defines f : R3 -> R2\n3 5 1\nwith\n     \n1 0 0\n0 2 4\nf  0  = , f  1  = , f  0  = .\n3 5 1\n0 0 1\nThe j th column of A represents the image of the j th element of the canonical basis of Rn,1 .\nThis example shows that at times we can use A and f interchangeably. But there is a subtle\ndifference: in applying f , we are allowed to represent elements of Rn and Rm by row\nvectors. Thus it is also legitimate to write\nf (1, 0, 0) = (0, 3), f (0, 1, 0) = (2, 5), f (0, 0, 1) = (4, 1),\nand more memorably,\nf (x , x , x ) = (2x + 4x , 3x + 5x + x ). (1)\n1 2 3 2 3 1 2 3\nThe last equation shows us how to pass from the rows of A to the definition of f . It turns\nout that any linear mapping f : Rn -> Rm has a form analogous to (1), from which we can\nconstruct the rows of an associated matrix.\nL16.2 The matrix associated to a linear mapping. Let V, W be vector spaces.\nLemma. Let V be a vector space with basis {v , . . . , v }. A linear mapping f : V -> W\n1 n\nis completely determined by vectors f (v ), . . . , f (v ), which (in order to define f ) can be\n1 n\nassigned arbitrarily.\n1\nProof. Note that (LM1) and (LM2) yield that any element v of V can be written in a unique\nway as a v + dot dot dot + a v , and\n1 1 n n\nf (v) = f (a v + dot dot dot + a v ) = a f (v ) + dot dot dot + a f (v ). (2)\n1 1 n n 1 1 n n\nThus, f (v) is determined by the n images f (v ) of the basis elements. Moreover, any choice\ni\nof n such vectors allows us to define a linear mapping f by means of (2). QED ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Write the matrix of the map from images of a basis, then compute kernel, image, rank and eigen-data."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Surjectivity and injectivity depend on dimensions and rank-nullity, not on how simple the formula looks."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 15-16: Linear maps` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-17",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 17 - Operations on Subspaces",
+    "summary": "Subspaces, bases and dimension: the core theory from Carlini note 17, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Subspaces, bases and dimension.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 17-18: Operations and eigenspaces."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG17enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 17 - Operations on Subspaces\nSubspaces of vector spaces (including R n ) can now be conveniently defined as the kernels or\nimages of linear mappings between vector spaces. This leads us to discuss their properties\nin more detail, and compute their dimensions.\nL17.1 Intersections and unions. Let W be any finite-dimensional vector space over a field\nF (or, if the student prefers) merely R n with F = R.\nLemma. Let U, V be two subspaces of the fixed vector space W . (i) The intersection U V\nintersection\nis a subspace of W .\n(ii) The union U V is a subspace of W if and only if U V or V U (in which case of\nunion subset subset\ncourse, it equals V or U ).\nProof. (i) If w , w U V and a F then aw + w belongs to both U and V by\n1 2 1 2\nin intersection in\nassumption. This is a combined verification of (LM1) and (LM2).\n(ii) If U V is a subspace, but neither U nor V is contained in the other, then we can choose\nunion\nu U V and v V U . By assumption, w = u + v U V so w belongs to either U or\nin \\ in \\ in union\nV . In the former case, v = w u U , contradiction. Latter case, similarly. QED\n- in\nRe-iterating (i), the intersection of any number of subpsaces is always a subspace. All sub-\nspaces contain the null vector 0, so at worst this subspace will be 0 .\n{ }\nAs for unions, there will always exist a smallest subspace of W containing U V . Any such\nunion\nsubspace must certainly contain all the vectors\nu + v, for any u U, v V, (1)\nin in\nby property (S1) of a subspace. Indeed the set of all these simple sums is a subspace:\nDefinition/Lemma. Let W be a vector space. The sum of two subspaces U, V of W is the\nset, denoted U + V , consisting of all the elements in (1). It is a subspace, and is contained\ninside any subspace that contains U V .\nunion\nProof. We check properties (S1) and (S2). Typical elements of U + V are u + v and u + v\n1 1 2 2\nwith u U and v V . Their sum is\ni i\nin in\n(u + v ) + (u + v ) = (u + u ) + (v + v ) U + V,\n1 1 2 2 1 2 1 2\nin\nand thus (S1) holds. Similarly,\na(u + v ) = (au ) + (av ) U + V,\n1 1 1 1\nin\nand thus (S2) holds. Hence, U + V is a subspace.\nIf X is a subspace that contains U V then it has to contain all elements u U and v V ,\nunion in in\nand therefore all elements u + v U + V . It therefore contains U + V . QED\nin\nOne also says that U + V is the subspace generated by U and V . This actually gives a clearer\nidea of its definition. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Translate the subspace condition into linear equations or generators, row-reduce, then read basis and dimension."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Vectors already inside a span cannot extend that span to a larger independent set."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 17-18: Operations and eigenspaces` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-18",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 18 - Eigenvectors and Eigenvalues",
+    "summary": "Eigenvalues and diagonalization: the core theory from Carlini note 18, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Eigenvalues and diagonalization.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 17-18: Operations and eigenspaces."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG18en.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 18 - Eigenvectors and Eigenvalues\nL18.1 Eigenvectors of a linear transformation. Consider a linear mapping\nf : V V,\n->\nwhere V is a vector space with field of scalars F .\nDefinition. A nonzero element v V is called an eigenvector of f if there exists lambda (possibly\nin\n0) in F such that\nf (v) = lambdav. (1)\nIn these circumstances, lambda is called the eigenvalue associated to v .\nWarning: Since f (0) = 0, it is obvious that the null vector satisfies (1). But the null vector\ndoes NOT count as an eigenvector; for one thing its eigenvalue lambda is undetermined. On the\nthe hand, observe that if v is an eigenvector of f and a = 0 then av is also an eigenvector\n\n(with the same eigenvalue).\nExample. Here are two extreme cases:\n(i) Suppose f is the identity mapping, so that f (v) = v for all v V . This is obviously linear,\nin\nand every nonnull vector v V is an eigenvector with eigenvalue 1.\nin\n(ii) Define g(v) = 0 for every v V (the null transformation, linear by default). Once again,\nin\nevery nonnull v V is an eigenvector, but this time with common eigenvalue 0.\nin\nMore interesting examples of eigenvectors can easily be written down if there is a basis of\nthe vector space V at ones disposal:\nExample. (i) Take V = R 2 and define a linear mapping f : R 2 R 2 by\n->\nf (e ) = e , f (e ) = e .\n1 1 2 2\n-\nBy this very definition, e and e are eigenvectors with eigenvalues 1 and 1. Geometrically,\n1 2\n-\nf is a reflection in the x -axis, and any reflection in the plane will have two such eigenvectors.\n(ii) Suppose that V has dimension 4 and a basis v , v , v , v . We are at liberty to define\n1 2 3 4\n{ }\nf (v ) = v , f (v ) = v , f (v ) = v , f (v ) = v ,\n1 2 2 3 3 4 4 1\nand this uniquely determines the linear mapping f : V V for which\n->\nv + v + v + v , v v + v v\n1 2 3 4 1 2 3 4\n- -\nare eigenvectors with respective eigenvalues 1 and 1.\n-\nTo show that bases are not essential for the existence of eigenvectors, here is an example in\nwhich the vector space is not finite-dimensional:\nExercise. Let V be the vector space of functions : R R that admit derivatives of all orders.\n->\nThen the mapping D: V V given by\n->\nd\nD() =   , where   (x) = ,\ndx\nis linear. Find all the eigenvectors (or rather, eigenfunctions) of D .\n1\nL18.2 Eigenvectors of a square matrix. Suppose that V is a vector space of finite dimension\nn with F = R (we shall only consider this case from now on). ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Compute the characteristic polynomial, eigenspaces, and compare algebraic and geometric multiplicities."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Distinct eigenvalues give independent eigenvectors; repeated eigenvalues still need eigenspace dimensions checked."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 17-18: Operations and eigenspaces` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-19",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 19 - Eigenspaces and Multiplicities",
+    "summary": "Eigenvalues and diagonalization: the core theory from Carlini note 19, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Eigenvalues and diagonalization.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 19-20: Diagonalization."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG19en_v3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 19 - Eigenspaces and Multiplicities\nIn this lecture, we shall explain how to compute methodically all the eigenvectors associated\nto a given square matrix.\nL19.1 Subspaces generated by eigenvectors. Given A in Rn,n , consider its characteristic\npolynomial\np(x) = det(A - xI).\nWe know that this polynomial has degree n, and its roots are precisely the eigenvalues of\nA. In particular,\n if lambda is real number, then lambda satisfies p(lambda) = 0 iff there exists a nonnull column vector\nv in Rn,1 such that Av = lambdav .\n if lambda is a complex number, then lambda satisfies p(lambda) = 0 iff there exists a nonnull column\nvector v in Cn,1 such that Av = lambdav .\nDefinition. If lambda is an eigenvalue, the subspace\nE = ker(A - lambdaI)\nlambda\nis called the eigenspace associated to lambda.\nWarning: Not quite all the elements of E are eigenvectors, since (being a subspace) E\nlambda lambda\nalso includes the null vector 0 that is not counted as an eigenvector.\n\n0 1\nWarning: Even if A in Rn,n , it can have complex eigenvalues, e.g. A = having\n-1 0\ncharcteristic polynomial x2+1 and eigenvalues i and -i. Since the eigenvalues are complex\nand not real, the corresponding eigenspaces contain no eigenvector with real components.\nThe dimension of E satisfies\nlambda\nn - dim E = r(A - lambdaI),\nlambda\nby the Rank-Nullity Theorem or (RC2).\n\n-6 9\nExample. The matrix A = has characteristic polynomial\n-4 7\np(x) = (-6 - x)(7 - x) + 36 = x2 - x - 6 = (x + 2)(x - 3).\nThe roots are lambda = -2 and lambda = 3, and we consider one at a time. Firstly,\n1 2\n\n-4 9 1 - 9\nA - lambda I = A + 2I =  4 .\n1 -4 9 0 0\nAs predicted (by the very fact that -2 is an eigenvalue), this matrix has rank less than 2. It is\neasy to find a nonnull vector in Ker(A + 2I), namely\n9 9 9\n4 or , whence E = L .\n1 4 -2 4\n1\nSimilarly,\nA - lambda I = A - 3I =\n\n-9 9\n\n\n\n1 -1\n\n, and E = L\n\n1\n\n.\n2 -4 4 0 0 3 1\nAlthough the previous example only has n = 2, it illustrates an important technique: that\nof selecting an eigenvector for each eigenvalue.\nThe next result is fairly obvious for k = 2, and we prove it in another special case.\nProposition. Suppose that v , . . . , v are eigenvectors of A associated to distinct eigenval-\n1 k\nues lambda , . . . , lambda . Then {v , . . . , v } is LI.\n1 k 1 k\nProof. To give the general idea, we take k = 3 (which, for the conclusion to be valid, means ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Compute the characteristic polynomial, eigenspaces, and compare algebraic and geometric multiplicities."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Distinct eigenvalues give independent eigenvectors; repeated eigenvalues still need eigenspace dimensions checked."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 19-20: Diagonalization` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-20",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 20 - Diagonalizability",
+    "summary": "Eigenvalues and diagonalization: the core theory from Carlini note 20, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Eigenvalues and diagonalization.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 19-20: Diagonalization."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG20en-v3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 20 - Diagonalizability\nFor an important class of square matrices (or linear transformations of a finite-dimensional\nvector space), it is possible to choose a basis of eigenvectors. We have already seen that this\nis possible if the characteristic polynomial of A R n,n has distinct real roots. We shall now\nin\nexplain the significance of, and give a more general criterion for, the existence of a basis of\neigenvectors. We include a well-known application to the theory of Fibonacci numbers.\nL20.1 An example in detail. Consider the following matrix:\n5 3 3\n-\nA = 0 1 0 .\n! #\n1 2 1\n\"\nOnes first observation upon setting eyes on this matrix is that A I has a row of 0s; it\n-\nfollows that 1 is an eigenvalue of A. Given that\ndet A = 5 1 ( 3) 1 = 8, tr A = 5+1+1 = 7,\nx - - x\nwe may choose the roots lambda , lambda , lambda of p(x) = det(A xI) so that\n1 2 3\n-\nlambda = 1, 1 lambda lambda = 8 1 + lambda + lambda = 7,\n1 2 3 2 3\nx x\nand lambda = 2 and lambda = 4. If required to do so, one can verify directly that\n2 4\np(x) = (x 1)(x 2)(x 4).\n- - - -\nEigenvectors can be found by picking particular solutions of the corresponding linear sys-\ntem:\n4 3 3 1 2 0 6\n- -\nA I = 0 0 0 0 5 3 v = 3\n1\n- ! #  ! # => ! #\n1 2 0 0 0 0 5\n-\n\" \" \"\n3 3 3 1 0 1 1\n- -\nA 2I = 0 1 0 0 1 0 v = 0\n2\n- ! - #  ! # => ! #\n1 2 1 0 0 0 1\n-\n\" \" \"\n1 3 3 1 0 3 3\n- -\nA 4I = 0 3 0 0 1 0 v = 0 .\n3\n- ! - #  ! # => ! #\n1 2 3 0 0 0 1\n-\n\" \" \"\nLet f : R 3 R 3 denote the linear transformation defined by f (v) = Av . Instead of using\n->\nthe canonical basis e 1 , e 2 , e 3 of R 3 , we are at liberty to use the basis v 1 , v 2 , v 3 (these three\nvectors are obviously LI, though this is also a theoretical consequence of the fact that the\ncorresponding eigenvalues are distinct). Whilst the matrix of f with respect to the canonical\nbasis is A, its matrix with respect to the new basis is\n1 0 0\nD = 0 2 0 , (1)\n! #\n0 0 4\n\"\nreflecting the equations\nAv = 1v , Av = 2v , Av = 4v . (2)\n1 1 2 1 3 3\nWe shall now make the relationship between the two matrices A and D more explicit.\n1\nLet P denote the matrix whose columns are the chosen eigenvectors:\n6 1 3\n   -\nP = v v v = 3 0 0\n1 2 3\n! # ! #\n5 1 1\n   -\n\" \"\n(vertical lines emphasize the column structure of this matrix). In view of (2),\n6 2 12\n   -\nAP = Av Av Av = 3 0 0 .\n1 2 3\n! # ! #\n5 2 4\n   -\n\" \"\nWe get exactly the same result by multiplying P by the diagonal matrix D on the right: ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Compute the characteristic polynomial, eigenspaces, and compare algebraic and geometric multiplicities."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Distinct eigenvalues give independent eigenvectors; repeated eigenvalues still need eigenspace dimensions checked."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 19-20: Diagonalization` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-21",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 21 - Symmetric and Orthogonal Matrices",
+    "summary": "Orthogonality and Gram-Schmidt: the core theory from Carlini note 21, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Orthogonality and Gram-Schmidt.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 21-22: Orthogonality and quadratic forms."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG21en_v3.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 21 - Symmetric and Orthogonal Matrices\nIn this lecture, we focus attention on symmetric matrices, whose eigenvectors can be used\nto construct orthogonal matrices. Determinants will then help us to distinguish those or-\nthogonal matrices that define rotations.\nL21.1 Orthogonal eigenvectors. Recall the definition of the dot or scalar product of two col-\numn vectors v, w R n,1 . Without writing out their components, we can nonetheless assert\nin\nthat\nv w = v  w. (1)\ndot\nRecall too that a matrix S is symmetric if S = S (this implies of course that it is square).\n\nLemma. Let v , v be eigenvectors of a symmetric matrix S corresponding to distinct eigen-\n1 2\nvalues lambda , lambda . Then v v = 0.\n1 2 1 2\ndot\nProof. First note that\n(Sv ) v = (Sv ) v = v S v = v (Sv ) = v (Sv ).\n1\ndot\n2 1  2 1  2 1 2 1\ndot\n2\nThis is true for any vectors v , v , but the assumptions Sv = lambda v and Sv = lambda v tell us\n1 2 1 1 1 2 2 2\nthat\nlambda v v = lambda v v ,\n1 1 2 2 1 2\ndot dot\nand the result follows. QED\nWe will see that pairwise orthogonal vectors are LI, and this motivates the following:\nDefinition. Let v 1 , . . . , v m be a basis of the subspace V R n . The basis is called an or-\nsubset\nthonormal basis (ON basis for short ) if the following holds\n(i) v v = 1 for all i ;\ni i\ndot\n(ii) v v = 0 for all i = j .\ni j\ndot \nExample. To begin with the 2 2 case, consider the symmetric matrix\nx\n5 2\nA = .\n2 8\n! \"\nIt is easy to check that its eigenvalues are 9 and 4, and that respective eigenvectors are\n1 2\nv 1 = 2 , v 2 = - 1 .\n! \" ! \"\nAs predicted by the Lemma, v v = 0. Given this fact, we can normalize v , v to manufacture\n1 2 1 2\ndot\nan orthonormal basis\n1 1 1 2\nf 1 = sqrt5 2 , f 2 = sqrt5 - 1\n! \" ! \"\nof eigenvectors, and use these to define the matrix\n1 1 2\nP = - .\nsqrt5 2 1\n! \"\n1\nWith this choice,\n1 1 2 1 2 1 5 0\nP  P = 5 2 1 2 - 1 = 5 0 5 = I 2 . (2)\n!- \" ! \" ! \"\nAnother way of expressing this relationship is\nP 1 = 1 1 2 = P ,\n- sqrt5 2 1 \n!- \"\nand also P P = I . It is easy to verify that\n\nP - 1AP = 1 5 1 2 2 1 5 2 2 8 1 2 - 1 2 = 9 0 0 4 .\n!- \" ! \" ! \" ! \"\nDefinition. A matrix P R n,n is called orthogonal if it satisfies one of the equivalent\nin\nconditions: (i) P P = I , (ii) P P = I , (iii) P is invertible and P 1 = P .\n n  n - \nLet us explain why the three conditions are indeed equivalent. As (1) and (2) make clear, ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Use scalar products, norms, orthogonal projections, Gram-Schmidt, or orthogonal-matrix identities."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Orthogonal means zero scalar product; orthonormal additionally requires unit norm."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 21-22: Orthogonality and quadratic forms` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-22",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 22 - The Gram-Schmidt algorithm and the Cayley-",
+    "summary": "Orthogonality and Gram-Schmidt: the core theory from Carlini note 22, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Orthogonality and Gram-Schmidt.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 21-22: Orthogonality and quadratic forms."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG22en_v1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 22 - The Gram-Schmidt algorithm and the Cayley-\nHamilton theorem\nIn this lecture, we introduce two important results having both theoretical both practice rel-\nevance. Gram-Schmidt algorithm allows us to find orthonormal basis of vector spaces (with\na scalar product). Cayley-Hamilton theorem allows us to simplify polynomial computations\nwith matrices, in particular the computation of powers and of the inverse.\nL22.1 Gram-Schmidt algorithm.\nWe restrict our attention to the real vector space\nRn\nwith the usual dot product defined by\nmatrix (vector) multiplication, but our analysis can be repeated in more general situation\nand even in the case of not finitely generated vector spaces.\nWe begin by noticing that orthonormal bases are particularly liked since they enjoy many of\nthe features of canonical bases:\nLemma. Let {v , . . . , v } be an orthonormal basis of Rn and let u in Rn . Then\n1 n\nu = u v + . . . + u v\n1 1 n n\nwhere u = u dot v for i = 1, . . . , n.\ni i\nExercise. Prove the Lemma!\nExample. The previous lemma, applied to canonical bases, just states the very well-known fact:\nwhen we write the vector v = (1, 2, 3, . . . , n) in Rn we really mean v = 1e + 2e + . . . + ne .\n1 2 n\nExercise. Can you find an orthonormal basis of R3 containing two given orthogonal unit vectors\nu, v ? (Hint: note that e = e x e is a unit vector)\n3 1 2\nSince orthonormal bases are so handy, we need a way to produce them at will, and in order\nto do so we will use projections.\nDefinition. Let u, v in Rn . The orthogonal projection of u on v is\nu dot v\npr (u) = v,\nv ||v||2\nsqrt\nwhere ||v|| = v dot v is the magnitude, or norm, of v .\nExample. If u, v and w in R2 are the three sides of a right triangle, that is v + w = u and\nv  w , then v = pr (u). Note that\nv\nu - pr (u) = w  v\nv\nand we will see that this property holds in general, not only in the plane.\nProposition. Let {v , . . . , v , u} be a basis of V such that v dot v = 1, for all i, and v dot v = 0\n1 n i i i j\nfor i = j . Then\n{v , . . . , v , v},\n1 n\nis an orthonormal basis of V where v =\nu\nand\n||u||\nu = u - pr (u) - pr (u) - . . . - pr (u).\nv1 v2 vn\n1\nProof. We need to check that the set {v , . . . , v , v} has properties (B1), (B2) and that its\n1 n\nelement are unit vectors orthogonal to each other.\nSince, for all i, pr (u) is a multiple of v and since u is a (non-zero) multiple of u we have\nvi i\nthat\nV = L{v , . . . ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Use scalar products, norms, orthogonal projections, Gram-Schmidt, or orthogonal-matrix identities."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Orthogonal means zero scalar product; orthonormal additionally requires unit norm."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 21-22: Orthogonality and quadratic forms` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-23",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 23 - Quadratic forms and conics",
+    "summary": "Quadratic forms, conics and quadrics: the core theory from Carlini note 23, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Quadratic forms, conics and quadrics.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 23-24: Conics and quadrics."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG23en_v2.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 23 - Quadratic forms and conics\nAfter some general definitions, we shall study quadratic forms in two variables x, y . Such a\nform corresponds to a 2 2 symmetric matrix whose diagonalization enables us to study the\nx\nquadratic form. The resulting equations typically describe ellipses or hyperbolas, although\ndegenerate cases are the subject of some of the exercises.\nL23.1 Homogeneous polynomials. We already know that any linear mapping from R n to\nR m is effectively the multiplication by an m n matrix. In particular, setting m = 1, a linear\nx\nmapping : R n R is defined by\n->\nx\n1\n.\n(v) = (a 1 dot dot dot a n )v = a 1 x 1 + dot dot dot + a n x n , where v = ! . .\n\" x %\n\" n %\n# &\nThe sum a x + + a x is called a linear form in the n variables x , . . . , x ; each term in\n1 1 n n 1 n\ndot dot dot\nthis sum has degree exactly 1 (no constants are allowed on their own as these would have\ndegree 0). Such a sum is also called a homogeneous polynomial of degree 1 in x , . . . , x .\n1 n\nA quadratic form in x , , x is a linear combination of terms of degree exactly 2, such as\n1 n\ndot dot dot\nx 2 , x x and so on. We can construct a quadratic form from a square matrix by setting\n1 1 2\na a x\n11 12 1\ndot dot dot\na a .\nq(v) = v  Av = (x 1 , . . . , x n ) ! 2 . 1 2 . 2 dot dot dot ! . .\ndot dot dot\n\" a %\" x %\n\" nn %\" n %\n# &# &\nUsing a calculation (best done in the 3 3 case), or the summation formula for matrix\nx\nmultiplication, we obtain\nn\nq(v) = a x 2 + a x x + + a x x + + a x 2 = a x x . (1)\n11 1 12 1 2 21 2 1 nn nn ij i j\ndot dot dot dot dot dot\ni,j=1\n!\nThis function is also called a homogeneous polynomial of degree 2 since the total power of each\nterm equals exactly 2.\nSince the coefficient of x x in (1) equals a + a if i = j , we may as well suppose that A\ni j ij ji\n\nis a symmetric matrix. With this assumption, we can recover A from the quadratic form:\nExample. Given the quadratic form\nq(x, y, z) = 2x2 + y2 + 5z2 + 6xy + 2yz,\nwe need to half the mixed coefficients to find the off-diagonal entries of the associated sym-\nmetric matrix\n2 3 0\nA = 3 1 1 ,\n!\n0 1 5\n# &\nso that\nx\nq(x, y, z) = (x, y, z)A y .\n!\nz\n# &\n1\nL23.2 A 2 2 example revisited. Recall the matrix\nx\n5 2\nA =\n2 8\n' (\nstudied in L19.1. It is associated to the quadratic form\nq(x, y) = 5x2 + 4xy + 8y2.\nand we now pose the problem: describe the set of points (x, y) in R 2 such that q(x, y) = 1. We ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build the symmetric matrix and classify by rank, determinant, eigenvalue signs and degeneracy."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "A sum of squares can be semidefinite, not necessarily positive definite, if a nonzero vector makes every square vanish."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 23-24: Conics and quadrics` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-24",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 24 - Conics and Quadrics",
+    "summary": "Quadratic forms, conics and quadrics: the core theory from Carlini note 24, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Quadratic forms, conics and quadrics.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 23-24: Conics and quadrics."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG24en_v7.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 24 - Conics and Quadrics\nIn the previous lecture, we discussed conics defined by setting a quadratic form equal to\na constant. After defining a general conic, we list the eight different types and investigate\nwhen a conic has a centre of symmetry. We then move on to discuss quadrics from a similar\npoint of view.\nL24.1 Definition of a conic. A conic C is the set of points (x, y) in R2 determined by an\nequation of the form\nAx2 + 2Bxy + Cy2 + 2Dx + 2Ey + F = 0, (1)\nwhere A, . . . , F are real constants, and A, B, C are not all zero so that the left-hand side is a\npolynomial of degree 2 in the two variables x, y . (The 2s are for convenience later.)\nOften we shall refer to an equation like (1) as a conic, though strictly speaking the latter is a\nset of points. The conics we discussed before were those for which D = E = 0. In this case,\nby diagonalizing the symmetric matrix\nA B\nS = , (2)\nB C\nC\nwe can always rotate the coordinate system so that the equation of becomes\nlambda X2 + lambda Y 2 = ,  = -F.\n1 2\nC\nIt follows that is one of\n(i) an ellipse (if lambda , lambda ,  all have the same sign); a circle is the special case in which lambda = lambda ;\n1 2 1 2\n(ii) a hyperbola (if lambda , lambda have opposite signs and  = 0); the corresponding special case\n1 2\nlambda = -lambda gives rise to a rectangular hyperbola whose asymptotes are perpendicular;\n1 2\n(iii) two straight lines interecting in one point (if lambda , lambda have opposite signs but  = 0);\n1 2\n(iv) two parallel lines (if one of lambda , lambda is zero and the other has the same sign as );\n1 2\n(v) a single line (if one of lambda , lambda is zero and  = 0 , for then the equation actually defines\n1 2\ntwo coincident lines, though only one is visible to the naked eye);\n(vi) a point (if lambda , lambda have the same sign but  = 0);\n1 2\nR\n(vii) in all other cases, the set of points satisfying (1) is empty (over ).\nAllowing D, E to be nonzero produces only one other type, namely\n(viii) a parabola (such as x2 + y = 0, or less obviously 4x2 + 12xy + 9y2 + x = 0).\nWarning: it is sometime convenient to speak of the type of a conic: we say that a conic is of\nelliptic type if the eigenvalues have the same sign; we say that a conic is of hyperbolic type\nif the eigenvalues have opposite signs; we say that a conic is of parabolic type if zero is an\neigenvalue. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Build the symmetric matrix and classify by rank, determinant, eigenvalue signs and degeneracy."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "A sum of squares can be semidefinite, not necessarily positive definite, if a nonzero vector makes every square vanish."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 23-24: Conics and quadrics` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-25",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 25 - Distances and circles",
+    "summary": "Distances, circles and spheres: the core theory from Carlini note 25, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Distances, circles and spheres.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 25-26: Distances, circles and spheres."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG25en.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 25 - Distances and circles\nIn this lecture we investigate the notion of distance between two geometrical objects. In\nparticular, we devise methods to deal with distances between two objects chosen among\npoints, lines, and planes. Then we will introduce the easiest curve defined by distances: the\ncircle.\nL25.1 Distances in general. We already know how to compute the distance between two\npoints using a formula. We now investigate the problem of finding distances in general.\nWhat is the distance between two geometrical objects? How can we define this number?\nHere is the most elegant way:\nDefinition. Given two sets X and Y , we define the distance between X and Y as\nd(X, Y ) = min{d(P, Q) : P in X and Q in Y }.\nNotice that, if X intersection Y = empty set, then d(X, Y ) = 0.\nWarning: to work in full generality the notion of minimum should be replaced with the one\ninfimum , but we will not go in this generality.\nExercise. Is the converse true? That is: if d(X, Y ) = 0 , then X intersection Y = empty set?\nHere are some examples of distances from points:\ni)Determine d(P, Q) the distance between two points.\n--->\nThis is the magnitude of the vector P Q.\nii)Determine d(P, r) the distance between a point and a line.\nThis can be determined by taking the plane alpha such that\nP in alpha, alpha  r.\nThen consider the point Q = alpha intersection r and notice that\nd(P, r) = d(P, Q).\nLets now check that this agrees with the definition above. That is, we have to prove that\nfor any point R in r , R = Q, we have d(P, R) > d(P, Q). This is easily done: consider the\n-->\ntriangle P QR which has a right angle in Q by construction. Thus, P R clearly has larger\n--->\nmagnitude than P Q.\niii)Determine d(P, alpha) the distance between a point and a plane.\nWe can proceed as follows. Take the line r such that\nP in r, r  alpha.\nThen consider the point Q = alpha intersection r and notice that\nd(P, alpha) = d(P, Q)\n1\nExercise. Prove that the described procedure agrees with the definition of distance. (Hint: use\northogonal projections.)\nL25.2 A formula for d(P, alpha). Consider the plane alpha : ax + by + cz = d where n = (a, b, c) is\nthe normal vector. It is convenient to arrange that n be a unit vector. If this is not already\nthe case, it suffices to divide both sides of the equation by |n|, thus modifying also d.\nLemma. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Complete squares or use center-radius and point/line/plane distance formulas."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Complete the square before reading centers and radii; raw coefficients are not coordinates of the center."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 25-26: Distances, circles and spheres` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-note-26",
+    "lecture": "Carlini theory notes",
+    "title": "Notes 26 - Circles and spheres",
+    "summary": "Distances, circles and spheres: the core theory from Carlini note 26, tied to the imported exercise set.",
+    "minutes": 16,
+    "objectives": [
+      "Understand the source theory for Distances, circles and spheres.",
+      "Know the standard first move for exam exercises from this note.",
+      "Recognize the common trap before starting calculations.",
+      "Move from this lesson into Carlini exercises 25-26: Distances, circles and spheres."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson is built from course_material/Algebra/Material/CARLINI/LAG-notes/LAG26enV1.pdf. Read it as an exam route: identify the object, choose the invariant or computation, then verify the requested form. The linked practice and exam banks contain the exercises attached to this note pair."
+      },
+      {
+        "kind": "heading",
+        "text": "Core source theory"
+      },
+      {
+        "kind": "prose",
+        "text": "Notes 26 - Circles and spheres\nIn this lecture we will intersect two circles. We then study spheres and their intersection,\nthis leads to the study of circles in 3 dimensional space.\nL26.1 Intersection of circles. We defined a circle as the solution set of a particular degree 2\nequation in x and y . Using this approach, the intersection of two circles is the solution set\nof a system of two quadratic equations in two variables. That is, the solutions of\n: x2 + y2 + D x + E y + F = 0\n1 1 1 1\nC\n!\n: x2 + y2 + D x + E y + F = 0\n2 \" 2 2 2\nC\ncorrespond to the points of # . But how can we solve such a system of equations?\n1 2\nC intersection C\nGaussian elimination only works for linear systems of equations, however it is a good idea\nto take linear combinations to produce an equivalent system of equations. Namely, we get\nthat the solutions of\n: x2 + y2 + D x + E y + F = 0\n1 1 1 1\nC\n!\n : (D D )x + (E E )y + F F = 0\n\" 2 1 2 1 2 1\n- - -\nare exactly the points of # , but now we are intersecting a line and a circle and this looks\n1 2\nC intersection C\nmuch more promising.\nThe line  is called radical axis of the circles and and it has the property that\n1 2\nC C\n =  = .\n1 2 1 2\nintersection C intersection C C intersection C\nExample. Lets find the intersection of the circles : x2 +y2 1 = 0 and : x2 +y2 +2x 1 = 0.\n1 2\nC - C -\nThe radical axis is the line\n : (x2 + y2 1) (x2 + y2 + 2x 1) = 2x = 0\n- - - -\nand thus =  = (x, y) : x = 0 and y2 1 = 0 = (0, 1), (0, 1) .\n1 2 1\nC intersection C intersection C { - } { - }\nExercise. Find for the circles : x2 + y2 1 = 0 and : x2 + y2 + ax 1 = 0 where\n1 2 1 2\nC intersection C C - C -\na R is a parameter.\nin\nExercise. Show that, if R = R , then the radical axis is the axis of the segment joining the\n1 2\ncenters of the two circles. What happens if R = R ?\n1 2\n\nThe following result is an easy application of the basic inequalities among the sides of a\ntriangle.\nProposition. Let and be circles having radius R , resp. R , and center C , resp. C .\n1 2 1 2 1 2\nC C\nThen\n(i) if d(C , C ) > R + R or d(C , C ) < R R , then =\n1 2 1 2 1 2 1 2 1 2\n| - | C intersection C empty set\n(ii) if R R d(C , C ) R + R , then =\n1 2 1 2 1 2 1 2\n| - | <= <= C intersection C  empty set\nExercise. State the previous Proposition using the radical axis and the distance from it.\n1\nL26.2 Spheres and intersection of spheres. The canonical form of a sphere is an expression ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Default solving route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Rewrite the statement in algebraic objects: vectors, matrices, equations, or MATLAB commands. Do this before simplifying."
+          },
+          {
+            "label": "Execute",
+            "content": "Complete squares or use center-radius and point/line/plane distance formulas."
+          },
+          {
+            "label": "Check",
+            "content": "Verify the result against the requested object: a basis must have the right dimension, a line/plane equation must satisfy the original conditions, and a MATLAB command must return the intended shape."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Complete the square before reading centers and radii; raw coefficients are not coordinates of the center."
+      },
+      {
+        "kind": "example",
+        "title": "What to drill after this lesson",
+        "text": "Open Practice for `Carlini exercises 25-26: Distances, circles and spheres` to drill first-move decisions, then open Exam problems for the same topic and work the actual source exercises on paper. Do not mark a problem solved until the final object has the requested form."
+      }
+    ]
+  },
+  {
+    "id": "lag-matlab-session-0",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "MATLAB session 0: vectors, matrices and plots",
+    "summary": "Hands-on commands and traps from exercise_session0.pdf.",
+    "minutes": 18,
+    "objectives": [
+      "Recognize the MATLAB command pattern being tested.",
+      "Predict dimensions and output before running a command.",
+      "Use source solution scripts as command templates."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson uses course_material/Algebra/Material/CASCAVITA/Session_0/exercise_session0.pdf and its solution script. The exam often asks what a command does, not only what answer it prints."
+      },
+      {
+        "kind": "heading",
+        "text": "Source exercise focus"
+      },
+      {
+        "kind": "prose",
+        "text": "Linear Algebra and Geometry - Scientific Computing\nExercise session 0\nTopics: matrices and vectors manipulation, plots of functions and Matlab\nprogramming language\n1. Define the vector x=[1:-0.1:0]. Type the following MATLAB instructions, understanding their meaning:\na) x([1 4 3]);\nb) x([1:2:7 10])=zeros(1,5);\nc) x([1 2 5])=[0.5 x ones(1,2) -0.3];\nd) y=x(end:-1:1).\n2. Define the matrix:\n \n1 2 3 4\nA = 5 6 7 8 \n9 10 11 12\nand type the following MATLAB instructions, understanding their meaning:\na) size(A);\nb) A(1:2,4), A(:,3), A(1:2,:), A(:,[2,4]), A([2 3 3],:);\nc) A(3,2)=A(1,1);\nd) A(1:2,4)=zeros(2,1);\ne) A(2,:)=A(2,:)-A(2,1)/A(1,1) x A(1,:).;\n3. Define the matrix:\n \n1 2 3 4 5 6\n 5 6 7 8 9 10\nA =  \n 9 10 11 12 13 14\n15 16 17 18 19 20\nAfter that:\na) assemble the matrix B made by the columns of A in reverse order (that is to say the first column\nof B is the 6th of A, the 2nd of B is the 5th of A, ...).\nb) assemble the matrix made by the even columns of A;\nc) assemble the matrix made by the odd rows of A;\nd) assemble the matrix made by rows 1,4,3 and columns 5,2 of A;\ne) assemble the vector made by the diagonal elements a , k = 1, ..., 4 of A;\nkk\n4. Use the MATLAB command diag to define a 10 x 10-tridiagonal matrix B in which the main diagonal\nelements are all equal to 5 while the sub-diagonal elements are equal to -1 and the super-diagonal\nelements are equal to 3. Set the elements of the intersection between column 6 and 9 and rows 5 and\n8 equal to 2.\n5. Let A be the matrix obtained by the MATLAB command A = magic(3).\n(a) Compute the determinant of A.\n(b) Compute the scalar product between the first and the third row of A.\n(c) Compute the cross product between the first two columns of A.\n1\n6. Use the Matlab command plot to graphically represent the following mathematical functions:\nf (x) = sin(x) x in [-pi, pi] ;\nf (x) = ex x in [-1, 1] ;\nf (x) = e-x2 x in [-pi, pi] ;\nf (x) = sin(x) x in (0, 4pi] ;\nx\nf (x) = x sin( 1 ) x in (0, 2] ;\nx\n7. Graphically represent the mathematical function:\n\n100(1 - 0.01x2)2 + 0.02x2\nf (x) = x in [0.1, 100] ,\n(1 - x2)2 + 0.1x2 ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Command route"
+      },
+      {
+        "kind": "steps",
+        "title": "MATLAB/numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify whether the command works on scalars, vectors or matrices; then check indexing dimensions before executing it."
+          },
+          {
+            "label": "Execute",
+            "content": "Translate the task into MATLAB indexing, colon notation, vectorization, plotting, and element-wise operators."
+          },
+          {
+            "label": "Check",
+            "content": "Check row/column shape and element-wise operators. In MATLAB, a syntactically valid command can still produce the wrong orientation."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "key",
+        "title": "Solution script pattern",
+        "text": "%esession 0: vector and matrix manipulation, graphs of\n% functions and MATLAB language\n\nclear all\nclc\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x exercise_0_1 x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\n\nx = [1:-0.1:0]\nx([1 4 3])\ndisp('extracts the components 1, 4 and 3 of the vector x')\npause\n%\nx = [1:-0.1:0]\nx([1:2:7 10])=zeros(1,5)\ndisp('sets the components 1, 3, 5, 7 and 10 of x equal to 0')\npause\n%\nx = [1:-0.1:0]\nx([1 2 5])=[0.5 x ones(1,2) -0.3]\ndisp('sets the components 1, 2 and 5 of x equal to 0.5, 0.5 and -0.3, respectively')\npause\n%\nx = [1:-0.1:0]\ny = x(end:-1:1)\ndisp('defines a vector y, whose components are those of vector x ordered from last to first')\n\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x END EXERCISE x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\npause\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\nclear all\nclc\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x exercise_0_2 x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\n\nA = [1:4;5:8;9:12] % A is a 3x4 matrix\nsize(A)\ndisp('gives the number of rows and the number of columns of matrix A')\npause\n\nA(1:2,4) ..."
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "`format long` changes display only; it does not increase precision or accuracy."
+      }
+    ]
+  },
+  {
+    "id": "lag-matlab-session-1",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "MATLAB session 1: arithmetic, errors and Taylor code",
+    "summary": "Hands-on commands and traps from exercise_session1_new.pdf.",
+    "minutes": 18,
+    "objectives": [
+      "Recognize the MATLAB command pattern being tested.",
+      "Predict dimensions and output before running a command.",
+      "Use source solution scripts as command templates."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson uses course_material/Algebra/Material/CASCAVITA/Session_1/exercise_session1_new.pdf and its solution script. The exam often asks what a command does, not only what answer it prints."
+      },
+      {
+        "kind": "heading",
+        "text": "Source exercise focus"
+      },
+      {
+        "kind": "prose",
+        "text": "Linear Algebra and Geometry - Scientific Computing\nExercise session 1\nTopics: finite arithmetic, cancellation error\n1. Given the function f (x) = sin(x), approximate f (x) using the following difference quotient\nsin(x + h) - sin(x)\nf (x)  r(x) = ,\nh\nwith h = 2-k, k = 1, 2, ..., 50.\nFix for instance x = pi/4; graphically represent the relative error |f (x) - r(x)|/|f (x)| and comment\nthe results. After that, reformulate r(x) in order to avoid cancellation errors and graphically represent\nthe relative error.\n2. QUIZ: Consider a floating point arithmetic with basis N = 10 with t digits of mantissa. Let y = f (x)\nan assigned numerical problem. Is known the condition number K = 2 x 109 of the problem. Let x a\n|y - y|\ndatum affected by rounding error and let y = f (x). If = 10-5, how many are (at maximum)\n|y|\nthe digits of mantissa t?\nAnswers:\na) 14\nb) 15\nc) 13\nd) 16\nAdditional exercises\n1. Consider a computer which uses floating-point arithmetic with base N = 10, t = 5 digits for mantissa\nand rounding rule. Introduce the following numbers:\na = 1.483593 ,\nb = 1.484111.\nDeterminate the result of s = a  b, where x stands for machine-number corresponding to x in the\nused floating-point arithmetic and  stands for the machine-subtraction. Compare s with c = a - b\nand then compute the relative error of s.\n2. Consider the sequence\nx = 2\n1\n\nx = 2n-1/2 1 - 1 - 41-nx2 , n >= 2\nn n-1\nwhich gives a pi approximation. Compute the relative errors |pi - x |/pi for n = 1, ..., 40 and plot the\nn\nrelative errors behavior using logarithmic scale. After that, determine an expression x equivalent to\nn\nx which avoids cancellation error. Graphically represent relative errors |pi - x |/pi for n = 1, ..., 40\nn n\nusing logarithmic scale. Compare this plot with the previous one and comment the results.\n1\n3. Evaluate the functions:\n1 - cos(x) ex - 1\nf (x) = , f (x) = ,\n1 x2 2 x\n(x + 1)2 - 1\nf (x) = 1 - 1 - x2, f (x) =\n3 4 x\nin x = 10-n, n = 1, 2, .., 16. After that, reformulate the functions in order to avoid cancellation error. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Command route"
+      },
+      {
+        "kind": "steps",
+        "title": "MATLAB/numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify the numerical task: solve a system, estimate error, factorize a matrix, compute eigenvalues, or compute singular values."
+          },
+          {
+            "label": "Execute",
+            "content": "Choose the numerical method: backslash, LU, Cholesky, QR, residuals, condition number, eig/eigs or svd."
+          },
+          {
+            "label": "Check",
+            "content": "Check residual, conditioning and whether the method's assumptions hold, especially symmetry and positive definiteness."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "key",
+        "title": "Solution script pattern",
+        "text": "%exercise session 1: numerical cancellation\n\nclear all\nclose all\nclc\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x exercise_1_1 x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\n\nx = pi/4;\nk = 1:50;\nh = 2.^(-k);\nr = (sin(x+h)-sin(x))./h;\nerr = abs(cos(x)-r)/abs(cos(x));\nloglog(h,err,'r','linewidth',2)\npause\nhold on\nr2 = 2 x sin(h/2). x cos(x+h/2)./h; %prosthaphaeresis formula\nerr2 = abs(cos(x)-r2)/abs(cos(x));\nloglog(h,err2,'g','linewidth',2)\n\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x END EXERCISE x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\npause\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\nclear all\nclose\ndisp(' x x x x x x x x x x x x x x x x x exercise_1_2_QUIZ x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\n% From|y-yb|/|y| <= K |x-xb|/|x| you obtain E_min=|x-xb|/|x|>=(|y-yb|/|y|)/K:=E_min;\nK=2e9;\nE_min=1e-5/K;\n% From Rounding_Error<=0.5 x N^(1-t) you obtain\n%E_min <= Rounding_Error <= 0.5 x N^(1-t)\n% 2 x E_min<=N^(1-t) --> log10(2 x Emin)<=(1-t) --> t<=-log(2 x Emin)+1\ntmax=-log10(2 x E_min)+1\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x END EXERCISE x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\npause ..."
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not solve numerical systems with `inv(A)*b`; use backslash or a factorization and check conditioning."
+      }
+    ]
+  },
+  {
+    "id": "lag-matlab-session-2",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "MATLAB session 2: systems and factorizations",
+    "summary": "Hands-on commands and traps from exercise_session2.pdf.",
+    "minutes": 18,
+    "objectives": [
+      "Recognize the MATLAB command pattern being tested.",
+      "Predict dimensions and output before running a command.",
+      "Use source solution scripts as command templates."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson uses course_material/Algebra/Material/CASCAVITA/Session_2/exercise_session2.pdf and its solution script. The exam often asks what a command does, not only what answer it prints."
+      },
+      {
+        "kind": "heading",
+        "text": "Source exercise focus"
+      },
+      {
+        "kind": "prose",
+        "text": "Linear Algebra and Geometry - Scientific Computing\nExercise session 2\nTopics: linear systems\n1. Write a MATLAB function called elleu which computes L and U factors of the decomposition A = LU.\nSubsequently, generate the matrix A of order n = 100, whose elements are a = max(i, j) and b\nij\nsuch that the solution x is a vector of all ones. Finally, solve the linear system Ax = b, using the\ndecomposition A = LU from the function elleu at first, then by means of the decomposition PA = LU\nfrom MATLAB function lu.\nIn both cases compute the infinity-norm of the relative error the solution. Based on the obtained results,\ndeduce what solution is more accurate, motivating your answer.\n2. Assemble the matrix A of order n = 100, whose elements are a = i max(i, j). Find the matrices\nij\nP, L and U from the decomposition PA = LU of the matrix A by means of the MATLAB function lu.\nSubsequently, use above factors to invert the matrix A. Verify the result using the MATLAB function\ninv.\n3. Assemble a matrix A of order n = 100, whose elements are pseudo-random numbers. Efficiently solve\n(minimizing the number of arithmetic operations) the following linear systems:\n\n A\nA\nx\nx\n1\n2\n=\n=\nb\nb\n1\n2\nAx = b\n2 3\n\n.\nA\n..\nx = b\n30 30\nsharing the same matrix A; let b such that the corresponding solution x is a vector of all ones and\n1 1\nb = x , i = 2, . . . , 30. Subsequently, solve each system using MATLAB command \\. Comparing the\ni i-1\ncomputation time of both procedures, using MATLAB commands tic and toc, and comment the results.\n4. Assemble the tridiagonal matrix B of order n = 100, whose main diagonal elements are all equal to\n10, while the sub-diagonal and super-diagonal elements are equal to -5 and 5 respectively. Bearing in\nmind that B is not singular, therefore A = BT B is symmetric and positive-definite, use the MATLAB\nfunction chol to find the Choleski decomposition A = RT R. After that, use the above decomposition\nfor calculating the inverse of A and for solving the linear system Ax = b, where b such that the\nsolution x is a vector of all ones. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Command route"
+      },
+      {
+        "kind": "steps",
+        "title": "MATLAB/numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify the numerical task: solve a system, estimate error, factorize a matrix, compute eigenvalues, or compute singular values."
+          },
+          {
+            "label": "Execute",
+            "content": "Choose the numerical method: backslash, LU, Cholesky, QR, residuals, condition number, eig/eigs or svd."
+          },
+          {
+            "label": "Check",
+            "content": "Check residual, conditioning and whether the method's assumptions hold, especially symmetry and positive definiteness."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "key",
+        "title": "Solution script pattern",
+        "text": "%exercise session 3: lynear systems\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\nclear all\nclose all\nclc\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x exercise_3_1 x x x x x x x x x x x x x x x x x ')\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\n\nn = 100;\nfor i = 1:n % double cycle to define A\nfor j = 1:n\nA(i,j) = max([i j]);\nend\nend\nKinf = cond(A,inf)\nb = sum(A,2);\n[L,U] = elleu(A); % computes the L and U factors without executing swaps\ny = L\\b;\nx_nopiv = U\\y; % solves the system Ax=b without applying pivoting\nerr_nopiv = norm(ones(n,1)-x_nopiv,inf)/norm(ones(n,1),inf) % computes the relative error associated with the solution calculated without pivoting\n[L,U,P] = lu(A); % computess L and U factors by pivoting, that means performing swapping on the rows\ny = L\\(P x b);\nx_piv = U\\y;\nerr_piv = norm(ones(n,1)-x_piv,inf)/norm(ones(n,1),inf) % computes the relative error associated with the solution obtained with pivoting\n\n% the solution obtained by the method of the elimination of\n% Gauss with pivoting (i.e. obtained by factoring PA=LU)\n% is more accurate than without pivoting (elleu)\n\ndisp(' x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x END EXERCISE x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x ')\npause\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ..."
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not solve numerical systems with `inv(A)*b`; use backslash or a factorization and check conditioning."
+      }
+    ]
+  },
+  {
+    "id": "lag-matlab-session-3",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "MATLAB session 3: eigenvalues, inverse power and SVD",
+    "summary": "Hands-on commands and traps from exercise_session3.pdf.",
+    "minutes": 18,
+    "objectives": [
+      "Recognize the MATLAB command pattern being tested.",
+      "Predict dimensions and output before running a command.",
+      "Use source solution scripts as command templates."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "This lesson uses course_material/Algebra/Material/CASCAVITA/Session_3/exercise_session3.pdf and its solution script. The exam often asks what a command does, not only what answer it prints."
+      },
+      {
+        "kind": "heading",
+        "text": "Source exercise focus"
+      },
+      {
+        "kind": "prose",
+        "text": "Linear Algebra and Geometry - Scientific Computing\nExercise session 3\nTopics: eigenvalues and singular values\n1. Implement power iteration method using a function called powerIt.m. Fix the maximum number of\niterations m max to be executed and relative precision tol. Subsequently, starting form the vector\nz = (1, 2, 3)T , using a tolerance tol=1e-10 find the the eigenvalue of largest modulus of the following\nmatrices:\n     \n1 2 0 0.1 3.8 0 0 -1 0\nA 1 = 1 0 0 , A 2 =  1 0 0 , A 3 = 1 0 0 .\n0 1 0 0 1 0 0 1 0\nJustify the results using the Matlab command eig.\n2. Implement the inverse power method using a function called InvPowerIt.m (modify the algorithm\nimplemented in powerIt.m). Subsequently, apply InvPowerIt.m in order to find the eigenvalue closest\nto p = 0.5 of the following matrices\n     \n1 -2 0 0.5 -2 0 0 -2 0\nA 1 = 0 2 0 , A 2 =  0 2 0 , A 3 = 0 1 0 .\n1 1 3 1 1 3 1 1 3\nUse the Matlab function eigs.m and comment the results from InvPowerIt.m .\n3. Implement QR method (elementary form) in a function named qr basic.m; fix a maximum iterations\nnumber m max and the following stopping criterion: norm(tril(A,-1),inf)<=toll, where tol is an\ninput argument of the function.\nApply this method to the 10-order Hilbert matrix, using m max=100 and tol=1.0e-14.\nCompute the error linked to these eigenvalues, using as correct values the ones from eig command.\nAfter that, execute 100 iterations of QR method applied to the following matrices:\n \n  0 1 0 1\n0 0 2\n 2 0 4 -2\nB 1 = 1 0 1 , B 2 =  -1 0 -1 0   .\n0 1 1\n-1 2 1 0\nComment the results.\n4. Select format long e. Define upper-triangular matrices A of order n = 5, 10, 15, dot dot dot , 100, whose\nelements are\n\n1 for i = j\n\na = -1, for i < j\nij\n0,\nfor i > j\nCompute the determinant, the rank and the singular values of the matrix A and comment the results.\n5. Consider the following linear system:\n1\n\n3x - 2x + x + 2x = 1\n\n-\n5x\nx\n1\n1\n-\n+\n6\n2\nx\nx\n2\n3\n-\n+\nx\nx\n3\n4\n4\n=\n=\n-\n7\n3\n2 3 4\n x\nx\n8x\n1\n1\n+\n-\n-\nx\nx\nx\n2\n2\n-\n-\n-\nx\nx\n5\n3\n3\nx\n+\n-\nx\nx\n+\n4\n4\n2x\n=\n=\n=\n-\n0\n2\n6\n1 2 3 4\nCompute the rank of the matrix of the coefficients of the system. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Command route"
+      },
+      {
+        "kind": "steps",
+        "title": "MATLAB/numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify the numerical task: solve a system, estimate error, factorize a matrix, compute eigenvalues, or compute singular values."
+          },
+          {
+            "label": "Execute",
+            "content": "Choose the numerical method: backslash, LU, Cholesky, QR, residuals, condition number, eig/eigs or svd."
+          },
+          {
+            "label": "Check",
+            "content": "Check residual, conditioning and whether the method's assumptions hold, especially symmetry and positive definiteness."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "key",
+        "title": "Solution script pattern",
+        "text": "% Exercise 4: Eigenvalues and Singular Values\n\nclc\ndisp('')\ndisp('exercise_4_1')\ndisp('')\n\nclear all\nclose all\nm_max = 100;\ntol = 1.0e-10;\nz = [1;2;3];\nA_1 = [1 2 0; 1 0 0; 0 1 0];\n[lambda_1,w1,m1] = mypower(A_1,z,tol,m_max)\nplot(1:m1+1,lambda_1,'b+-','linewidth',2)\nlambda_max_1=lambda_1(end)\neigenvalues_A_1_eig = eig(A_1)\n% The method converges quite quickly because the speed\n% depends on the ratio |lambda_2|/|lambda_1|=1/2 and, therefore,\n% reaches the tolerance tol in 35 iterations\npause\n%%%%%\nA_2 = [0.1 3.8 0; 1 0 0; 0 1 0];\n[lambda_2,w2,m2] = mypower(A_2,z,tol,m_max)\nplot(1:m2+1,lambda_2,'b+-','linewidth',2)\nlambda_max_2 = lambda_2(end)\neigenvalues_A_2_eig = eig(A_2)\n% The method converges slowly because the speed\n% depends on the ratio |lambda_2|/|lambda_1|=1.9/2=0.95\n% and, therefore, 100 iterations are not sufficient to\n% reach the specified tolerance\npause\n%%%%%\nA_3 = [0 -1 0; 1 0 0; 0 1 0];\n[lambda_3,w3,m3] = mypower(A_3,z,tol,m_max)\nplot(1:m3+1,lambda_3,'b+-','linewidth',2)\nlambda_max_3 = lambda_3(end)\neigenvalues_A_3_eig = eig(A_3)\n% The method does not converge because A has two complex\n% conjugate eigenvalues i and -i with maximum modulus\n\ndisp('END OF EXERCISE')\npause\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\nclc\ndisp('')\ndisp('exercise_4_2')\ndisp('')\n\nclear all\nclose all\nm_max = 100;\ntol = 1.0e-10;\nz = ones(3,1);\np = 0.5;\nA_1 = [1 -2 0; 0 2 0; 1 1 3];\n[lambda_1,w1,m1] = myinvers(A_1,p,z,tol,m_max)\nplot(1:m1+1,lambda_1,'b+-','linewidth',2)\neigenvalue_p = lambda_1(end)\nall_eigenvalues_A_1_eigs = eigs(A_1,3)\neigenvalues_A_1_eigs_p = eigs(A_1,1,p) ..."
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not solve numerical systems with `inv(A)*b`; use backslash or a factorization and check conditioning."
+      }
+    ]
+  },
+  {
+    "id": "lag-nla-arithmetic",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "Numerical arithmetic: floating point and errors",
+    "summary": "Numerical theory for the MATLAB part of the exam.",
+    "minutes": 18,
+    "objectives": [
+      "Connect the MATLAB command to the numerical method.",
+      "Know the accuracy/stability assumption behind the method.",
+      "Identify the usual wrong multiple-choice interpretation."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "Built from course_material/Algebra/Material/FESTA/2026_nla1_arithmetic.pdf. These slides explain why the MATLAB commands are used, when they are stable, and what the output means."
+      },
+      {
+        "kind": "heading",
+        "text": "Source theory excerpt"
+      },
+      {
+        "kind": "prose",
+        "text": "ARITHMETIC, ERRORS\nA.Y. 2024/2025\nArithmetic A.Y. 2024/2025 1 / 1\nThe scientific computing is a field of mathematics that proposes and\nanalyzes methods which allow us to obtain numerical solutions of\nmathematical problems whose analytical resolution methods do not exist\nor are too demanding.\nSuch methods are applied to the so-called numerical problems and, in\norder to obtain a numerical solution, we make use of algorithms that can\nbe executed by a calculator/computer and deduced from the methods\nthemselves.\nWe will introduce methods for numerically solving several Linear Algebra\nproblems.\nFor coding the algorithms that implement the above mentioned methods\n\nwe will adopt the Matlab programming language.\nArithmetic A.Y. 2022/2023 2 / 1\nDefinition\nA numerical problem is a functional relation\nx f y\nbetween the data x (inputs) and the results y (outputs).\nBoth the data x and the results y need to admit a representation as\nnumbers, vectors or matrices of finite dimension.\nThe connection f between x and y can be explicit\ny = f (x)\nor implicit\nf (x , y ) = 0\nArithmetic A.Y. 2022/2023 3 / 1\nExamples\n1 The sum of two real numbers y = x 1 + x 2 , with x 1 , x 2 in R (inputs)\nand y in R (output), is an explicit problem.\n2 The linear system\n\na y + a y = x\n11 1 12 2 1\na y + a y = x\n21 1 22 2 2\nwhere a , a , a , a , x , x in R (inputs) and its solution\n11 12 21 22 1 2\ny = (y , y )T in R2 (output), is an implicit problem.\n1 2\nDefinition\nAn algorithm is a finite sequence of operations (arithmetic or not) that,\ngiven the input data, allows us to obtain the output of a numerical\nproblem.\nArithmetic A.Y. 2022/2023 4 / 1\nOne of the worst errors to avoid when programming with a computer is\nthinking that the so-obtained numerical results are correct or affected by\nnegligible errors.\nSome catastrophic failures are due to the incorrect use of the Numerical\nCalculus.\nOne example between too many others: on June 4, 1996 an unmanned\nAriane 5 rocket launched by the European Space Agency exploded just\nforty seconds after lift-off: 500 million lost in a fraction of a second; see:\nhttp://ta.twi.tudelft.nl/users/vuik/wi211/disasters.html\nArithmetic A.Y. 2022/2023 5 / 1\nExercise\nThe following notable special limit is a less catastrophic example, which\nhowever is somehow disturbing:\n1 - cos x 1\nlim = .\nx->0 x 2 2\nThe theoretical definition of the limit implies that f (x ) = 1-cos x gets\nx2\ncloser and closer to 1 as x decreases. In practice, implementing with\n2\nMatlab the calculus of f (x), where x = 10-n, n = 1, ..., 14, we have that, ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify the numerical task: solve a system, estimate error, factorize a matrix, compute eigenvalues, or compute singular values."
+          },
+          {
+            "label": "Execute",
+            "content": "Choose the numerical method: backslash, LU, Cholesky, QR, residuals, condition number, eig/eigs or svd."
+          },
+          {
+            "label": "Check",
+            "content": "Check residual, conditioning and whether the method's assumptions hold, especially symmetry and positive definiteness."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not solve numerical systems with `inv(A)*b`; use backslash or a factorization and check conditioning."
+      }
+    ]
+  },
+  {
+    "id": "lag-nla-linear-systems",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "Numerical linear systems: LU, Cholesky, QR",
+    "summary": "Numerical theory for the MATLAB part of the exam.",
+    "minutes": 18,
+    "objectives": [
+      "Connect the MATLAB command to the numerical method.",
+      "Know the accuracy/stability assumption behind the method.",
+      "Identify the usual wrong multiple-choice interpretation."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "Built from course_material/Algebra/Material/FESTA/2026_nla2_linear_systems.pdf. These slides explain why the MATLAB commands are used, when they are stable, and what the output means."
+      },
+      {
+        "kind": "heading",
+        "text": "Source theory excerpt"
+      },
+      {
+        "kind": "prose",
+        "text": "LINEAR SYSTEMS\nA.A. 2024/2025\nLinear systems A.A. 2024/2025 1 / 1\nLinear systems\nThe problem of solving a linear system is common to many and many\napplications, both as\nan explicit model (mathematical formulation) of a physical\nphenomenon;\nan intermediate or final step of the numerical solution of such a\nmodel, e.g, differential equations.\nThe application of numerical methods for approximating functions and\ndata, for solving non-linear or differential equations, for computing matrix\neigenvalues, might require the solution of linear systems.\nBefore analyzing some numerical methods used to solving linear systems,\nwe recall several properties about matrices and vectors.\nLinear systems A.A. 2024/2025 2 / 1\nVector and matrix norms\nLet x = (x , . . . , x )T in Rn be a column vector.\n1 n\nIn what follows, we will consider the following vector norms:\nn\n\n||x|| = |x |;\n1 i\ni=1\n\nn sqrt\n\n||x|| 2 = x i 2 = xT x, euclidean norm;\ni=1\n||x|| = max |x |.\ninfinity i\n1<=i<=n\nMatlab commands\nnorm(x,1) provides the 1 norm of the vector x;\nnorm(x,2) or norm(x) provides the 2 norm of the vector x;\nnorm(x,inf) provides the infinity norm of the vector x.\nLinear systems A.A. 2024/2025 3 / 1\nLet A = (a ) in Rm,n be a matrix of dimensions m x n. For\nij i=1,...,m,j=1,...,n\nstudying linear systems, we will use the following matrix norms:\nm\n\n||A|| = max |a |;\n1 ij\n1<=j<=n\ni=1\nn\n\n||A|| = max |a |, (||A|| = ||AT || ).\ninfinity ij infinity 1\n1<=i<=m\nj=1\nThe 2 norm of a matrix ||A|| , known as spectral norm, will be defined\n2\nlater.\nMatlab commands\nnorm(A,1) provides the 1 norm of the matrix A;\nnorm(A,inf) provides the infinity norm of the matrix A.\nLinear systems A.A. 2024/2025 4 / 1\nWe now list some particular matrix types that we will face later:\nDefinition\nWe say that a matrix A in Rn,n is an upper triangular matrix if\n \n    \n 0     \n \nA =  0 0     a ij = 0, i > j\n \n 0 0 0   \n0 0 0 0 \nDefinition\nWe say that a matrix A in Rn,n is a lower triangular matrix if\n \n 0 0 0 0\n   0 0 0 \n \nA =     0 0  a ij = 0, i < j\n \n     0 \n    \nLinear systems A.A. 2024/2025 5 / 1\nDefinition\nWe say that a matrix A in Rn,n is a diagonal matrix if\n \n 0 0 0 0\n 0  0 0 0 \n \nA =  0 0  0 0  a ij = 0, i = j\n \n 0 0 0  0 \n0 0 0 0 \nDefinition\nWe say that a matrix A in Rn,n is a tridiagonal matrix if\n \n  0 0 0\n    0 0 \n \nA =  0    0  a ij = 0, |i - j| > 1\n \n 0 0    \n0 0 0  \nLinear systems A.A. 2024/2025 6 / 1\nDefinition\nThe transpose of a matrix A is denoted by AT , and is the matrix whose\nelements are given by (AT ) = (A) .\nij ji\nA matrix A in Rn,n is called symmetric if AT = A. ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify the numerical task: solve a system, estimate error, factorize a matrix, compute eigenvalues, or compute singular values."
+          },
+          {
+            "label": "Execute",
+            "content": "Choose the numerical method: backslash, LU, Cholesky, QR, residuals, condition number, eig/eigs or svd."
+          },
+          {
+            "label": "Check",
+            "content": "Check residual, conditioning and whether the method's assumptions hold, especially symmetry and positive definiteness."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not solve numerical systems with `inv(A)*b`; use backslash or a factorization and check conditioning."
+      }
+    ]
+  },
+  {
+    "id": "lag-nla-eigen-svd",
+    "lecture": "MATLAB and numerical linear algebra",
+    "title": "Eigenvalues, singular values and iterative methods",
+    "summary": "Numerical theory for the MATLAB part of the exam.",
+    "minutes": 18,
+    "objectives": [
+      "Connect the MATLAB command to the numerical method.",
+      "Know the accuracy/stability assumption behind the method.",
+      "Identify the usual wrong multiple-choice interpretation."
+    ],
+    "blocks": [
+      {
+        "kind": "prose",
+        "text": "Built from course_material/Algebra/Material/FESTA/2026_nla3_eigenvalues_singular_values.pdf. These slides explain why the MATLAB commands are used, when they are stable, and what the output means."
+      },
+      {
+        "kind": "heading",
+        "text": "Source theory excerpt"
+      },
+      {
+        "kind": "prose",
+        "text": "MATRICES EIGENVALUES AND SINGULAR VALUES\nA.A. 2024/2025\nEigenvalues and SVD A.A. 2024/2025 1 / 1\nDefinition\nGiven a matrix A in Rn,n, a (real or complex) number lambda, is said to be an\neigenvalue of A if there exists a non-null vector x (real or complex),\nwhich is solution of the homogeneous system\nAx = lambdax\nThe vector x is called eigenvector of A corresponding to the eigenvalue lambda.\nThe fact that each eigenvector is defined up to a multiplicative constant\ncan be immediately verified.\nThanks to the previous definition, we get that\nlambda is an eigenvalue of A if and only if the matrix A - lambdaI is singular\nEigenvalues and SVD A.A. 2024/2025 2 / 1\nTherefore, the eigenvalues of A coincide with the n roots of the\ncharacteristic equation (algebraic of degree n):\ndet(A - lambdaI) = 0\nAs a consequence, we observe that a squared matrix of dimension n has\nexactly n eigenvalues, either real or complex, and not necessarily distinct.\nObserve that, since the elements of A are real, then the characteristic\nequation has real coefficients and, consequently, if A admits a complex\nnumber lambda as eigenvalue, its conjugate lambda will be an eigenvalue too.\nEigenvalues and SVD A.A. 2024/2025 3 / 1\nFrom the eigenvalue/eigenvector definition we immediately deduce the\nfollowing properties.\nProperty\nIf lambda , lambda , . . . , lambda are the eigenvalues of a matrix A, and x , x , . . . , x\n1 2 n 1 2 n\nare the corresponding eigenvectors, then lambdak , lambdak , . . . , lambdak are the n\n1 2 n\neigenvalues of Ak . Moreover, the eigenvectors of A are also\neigenvectors of Ak .\nIf lambda , lambda , . . . , lambda are the eigenvalues of an invertible matrix A, and\n1 2 n\nx , x , . . . , x are the corresponding eigenvectors, then,\n1 2 n\nlambda-1, lambda-1, . . . , lambda-1 are the n eigenvalues of A-1. Moreover, the\n1 2 n\neigenvectors of A are also eigenvectors of A-1.\nEigenvalues and SVD A.A. 2024/2025 4 / 1\nThe definition of eigenvalue/eigenvector\nAx = lambda x , i = 1, . . . , n\ni i i\nallows us to write the following identity\n(Ax , Ax , . . . , Ax ) = (lambda x , lambda x , . . . , lambda x )\n1 2 n 1 1 2 2 n n\ni.e.\nAX = XD\nwith\n \nlambda 0\n1\n lambda 2 \nX = (x 1 , x 2 , . . . , x n ), D =   . . .  \n \n0 lambda\nn\nEigenvalues and SVD A.A. 2024/2025 5 / 1\nThe following Matlab commands allows us to compute the eigenvalues and\nthe eigenvectors of a given matrix A.\nMatlab commands\nd = eig(A) returns the vector d containing all the eigenvalues of the\nmatrix A.\n[X,D] = eig(A) returns the diagonal matrix D whose elements are ..."
+      },
+      {
+        "kind": "heading",
+        "text": "Exam method"
+      },
+      {
+        "kind": "steps",
+        "title": "Numerical route",
+        "steps": [
+          {
+            "label": "Translate",
+            "content": "Identify the numerical task: solve a system, estimate error, factorize a matrix, compute eigenvalues, or compute singular values."
+          },
+          {
+            "label": "Execute",
+            "content": "Choose the numerical method: backslash, LU, Cholesky, QR, residuals, condition number, eig/eigs or svd."
+          },
+          {
+            "label": "Check",
+            "content": "Check residual, conditioning and whether the method's assumptions hold, especially symmetry and positive definiteness."
+          }
+        ]
+      },
+      {
+        "kind": "callout",
+        "tone": "trap",
+        "title": "Exam trap",
+        "text": "Do not solve numerical systems with `inv(A)*b`; use backslash or a factorization and check conditioning."
+      }
+    ]
+  }
+]
