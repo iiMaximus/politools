@@ -37,9 +37,9 @@ const thermodynamics: Course = {
     id: "thermodynamics",
     title: "Thermodynamics & Heat Transfer",
     short: "Thermo",
-    tagline: "Energy, cycles and heat flow — the whole course, built for 30/30.",
+    tagline: "Energy, cycles and heat flow — taught like a checklist, not a brick wall.",
     description:
-      "The complete Thermodynamics & Heat Transfer course: from properties and the two laws through power & refrigeration cycles and moist air, into conduction, convection, heat exchangers and radiation. Every lecture is interactive — live simulations, worked examples and instant-feedback checkpoints — backed by a large adaptive question bank and real exam problems with full solutions.",
+      "The complete Thermodynamics & Heat Transfer course, rewritten to be easier to enter: every lesson starts with the plain-English idea, the exam recipe, and the traps that usually steal marks. Then the course builds from properties and the two laws through power and refrigeration cycles, moist air, conduction, convection, heat exchangers, and radiation, with simulations, worked examples, checkpoints, adaptive practice, and exam-style problems.",
     accent: "#ff7a59",
     accent2: "#ffb454",
     icon: "Flame",

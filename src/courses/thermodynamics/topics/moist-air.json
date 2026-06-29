@@ -1,20 +1,52 @@
 {
   "title": "Moist Air & Air Conditioning (Psychrometrics)",
-  "summary": "Treat air as dry air + water vapor. Master $\\omega$, $\\varphi$, dew point, wet-bulb and the enthalpy $h=c_{p,a}t+\\omega(r_0+c_{p,v}t)$; read the psychrometric chart; and solve the five AC processes (heating, cooling, dehumidification, humidification, mixing) with mass/energy balances on the conserved dry air.",
+  "summary": "Moist air is dry air carrying water vapor. The safe basis is 1 kg of dry air. Learn humidity ratio $\\omega$, relative humidity $\\varphi$, dew point, wet bulb, and moist-air enthalpy; then every air-conditioning process becomes dry-air mass balance, water-vapor balance, and energy balance.",
   "minutes": 75,
   "objectives": [
-    "Compute $p_v$, $p_a$, $\\omega$, $\\varphi$, dew point and enthalpy of a moist-air state from $p$, $t$, and one humidity measure",
-    "Explain and use wet-bulb / dry-bulb temperatures and the constant-enthalpy adiabatic-saturation idea",
-    "Locate and move states on the psychrometric (Mollier/Carrier) chart for each process",
-    "Write dry-air, water and energy balances for steady-flow AC devices",
-    "Solve sensible heating/cooling, cooling-with-dehumidification, steam and adiabatic humidification, and adiabatic mixing numerically",
-    "Split a cooling+dehumidification duty into sensible and latent parts",
-    "Describe the summer and winter air-conditioning process trains"
+    "Read moist air as a mixture of dry air plus water vapor, not as a mysterious new substance.",
+    "Compute and interpret humidity ratio $\\omega$, relative humidity $\\varphi$, dew point, dry-bulb, and wet-bulb temperature.",
+    "Use moist-air enthalpy per kg of dry air.",
+    "Read the psychrometric chart and know which lines represent which properties.",
+    "Solve heating, cooling, humidification, dehumidification, mixing, and evaporative cooling processes.",
+    "Write dry-air, water-vapor, and energy balances for air-conditioning devices.",
+    "Avoid confusing relative humidity with actual water content."
   ],
   "blocks": [
     {
       "kind": "heading",
       "text": "What moist air is"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Psychrometrics feels weird because the units are sneaky: most properties are per kg of dry air, even though water vapor is the interesting part. Keep that basis and the fog clears. Dry air flows through the device; water vapor may be added, removed, or condensed; energy follows the moist-air enthalpy."
+    },
+    {
+      "kind": "steps",
+      "title": "Moist-air exam recipe",
+      "steps": [
+        {
+          "label": "Choose the basis",
+          "text": "Use kg of dry air. Humidity ratio $\\omega$ means kg water vapor per kg dry air."
+        },
+        {
+          "label": "Find the state",
+          "text": "From two independent properties, use formulas or the psychrometric chart to read $\\omega$, $h$, $\\varphi$, dew point, or wet bulb."
+        },
+        {
+          "label": "Name the process",
+          "text": "Heating, cooling, humidification, dehumidification, evaporative cooling, or mixing each has a recognizable path on the chart."
+        },
+        {
+          "label": "Write balances",
+          "text": "Dry air is usually conserved. Water vapor may change. Energy uses moist-air enthalpy and any added heat/water."
+        },
+        {
+          "label": "Check physical sense",
+          "text": "Heating alone lowers relative humidity but does not change $\\omega$. Cooling below dew point removes water. Mixing lands between inlet states."
+        }
+      ]
     },
     {
       "kind": "prose",

@@ -179,7 +179,14 @@ export function CoursePage() {
             <Icon name="Target" size={20} style={{ color: "var(--accent)" }} />
             <h2 className="text-xl font-bold tracking-tight">Drill &amp; test</h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
+            <ActionCard
+              to={`/c/${courseId}/scroll`}
+              icon="Sparkles"
+              title="Scroll mode"
+              desc="Short concept cards, formula recall, and quick checks for low-energy studying."
+              footer="Bed-friendly review"
+            />
             <ActionCard
               to={`/c/${courseId}/practice`}
               icon="Dumbbell"

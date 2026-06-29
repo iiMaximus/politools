@@ -5,6 +5,38 @@
       "text": "The big picture: four cycles, two families"
     },
     {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Air-standard cycles are not real engines; they are clean cartoons of real engines. That is good news for exams. The working fluid is air, properties are ideal-gas properties, and every process has a label: isentropic compression/expansion, constant-volume heat transfer, constant-pressure heat transfer, or regeneration. Once the labels are right, the math follows."
+    },
+    {
+      "kind": "steps",
+      "title": "Gas-cycle exam recipe",
+      "steps": [
+        {
+          "label": "Identify the cycle family",
+          "text": "Otto: constant-volume heat addition. Diesel: constant-pressure heat addition. Brayton: compressor + turbine with constant-pressure heat transfer. Reverse Brayton: refrigeration."
+        },
+        {
+          "label": "Draw and label processes",
+          "text": "Write “isentropic,” “constant volume,” or “constant pressure” beside every leg before formulas."
+        },
+        {
+          "label": "Solve temperatures in order",
+          "text": "Use isentropic relations for compression/expansion legs, then heat-transfer relations for constant $v$ or constant $p$ legs."
+        },
+        {
+          "label": "Convert temperatures to heat/work",
+          "text": "$q=c_v\\Delta T$ for constant-volume heat; $q=c_p\\Delta T$ for constant-pressure heat. Compressor/turbine work in Brayton also uses $c_p\\Delta T$."
+        },
+        {
+          "label": "Finish with the requested metric",
+          "text": "Efficiency, COP, net work, or back-work ratio. Keep signs clear: engines produce net work; refrigerators consume net work."
+        }
+      ]
+    },
+    {
       "kind": "prose",
       "text": "Every gas cycle here uses **air treated as an ideal gas** (the \"air standard\"). The combustion is replaced by heat addition from an external reservoir, specific heats are constant, and all internal processes are reversible. With $k=c_p/c_v=1.4$, $R=287$ J/kgK, you get $c_v=R/(k-1)=717.5$ J/kgK and $c_p=kc_v=1004.5$ J/kgK."
     },
@@ -856,15 +888,15 @@
     }
   ],
   "title": "Gas Power & Refrigeration Cycles (Air-Standard)",
-  "summary": "The air-standard analysis of the four gas cycles you must master at Polito: the Otto and Diesel internal-combustion cycles (closed system, work from $\\int p\\,dV$), the Brayton-Joule gas-turbine cycle (open/SSSF, work from enthalpy), and the reverse Brayton-Joule gas refrigeration cycle. You will learn compression ratio vs pressure ratio, the three efficiency formulas, the back-work ratio, regeneration, and the COP of gas refrigeration — all grounded in Tutorial 4.",
+  "summary": "Gas cycles are ideal-gas engine cartoons. Otto, Diesel, Brayton-Joule, and reverse Brayton all use air-standard assumptions, so you combine isentropic relations with constant-volume or constant-pressure heat transfer. Draw the cycle, label process types, then compute temperatures and heat/work from $c_v\\Delta T$ or $c_p\\Delta T$.",
   "minutes": 75,
   "objectives": [
-    "Apply the air-standard assumptions and compute state points using isentropic and constant-v/constant-p relations",
-    "Derive and use the Otto efficiency $\\eta=1-r^{1-k}$ and the Diesel efficiency with cut-off ratio $r_c$",
-    "Analyze the Brayton-Joule cycle on p-v and T-s, using $\\eta=1-r_p^{-(k-1)/k}$ and the back-work ratio",
-    "Distinguish compression ratio $r$ (Otto/Diesel) from pressure ratio $r_p$ (Brayton) and know which work expression applies",
-    "Account for isentropic efficiencies of compressor and turbine in the actual Brayton cycle",
-    "Compute the effect of a regenerator on Brayton thermal efficiency",
-    "Analyze the reverse Brayton-Joule gas refrigeration cycle and its coefficient of performance $\\beta$"
+    "Tell Otto, Diesel, Brayton-Joule, and reverse Brayton apart from their process sequence.",
+    "Use air-standard assumptions and know what they simplify.",
+    "Apply isentropic ideal-gas relations with pressure ratio, volume ratio, or compression ratio.",
+    "Use $c_v\\Delta T$ for constant-volume heat and $c_p\\Delta T$ for constant-pressure heat.",
+    "Compute net work, thermal efficiency, back-work ratio, and refrigeration COP as needed.",
+    "Explain regeneration in Brayton and when it helps.",
+    "Sketch $p$-$v$ and $T$-$s$ cycles without mixing up heat addition and compression/expansion."
   ]
 }

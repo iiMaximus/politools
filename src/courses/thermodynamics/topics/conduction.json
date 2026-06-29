@@ -1,19 +1,52 @@
 {
   "title": "Conduction Heat Transfer",
-  "summary": "Master 1-D steady conduction (plane and cylindrical), the thermal-resistance / electrical analogy for composite walls and pipes, the overall U, contact resistance, the critical radius of insulation, extended surfaces (fins), and transient lumped-capacitance cooling with the Biot number. Everything is grounded in the Polito lectures and Tutorial 6.",
+  "summary": "Conduction is heat diffusing through solids because temperature is not uniform. Most exam problems reduce to a thermal resistance network: temperature difference divided by resistance gives heat rate. Plane walls, cylinders, contact resistance, generation, fins, and lumped transients are variations on that same idea.",
   "minutes": 75,
   "objectives": [
-    "State Fourier's law and compute conduction heat flux/rate for a plane wall and a hollow cylinder",
-    "Build thermal-resistance circuits (series and parallel) and find heat rate, interface temperatures, and the overall coefficient U",
-    "Handle conduction WITH internal generation (plane slab and current-carrying wire) and locate the maximum temperature",
-    "Apply the critical radius of insulation $r_c = k/h$ and explain when insulation increases heat loss",
-    "Analyze a single fin and a fin array: $m$, tip temperature, $q_{fin}$, effectiveness and efficiency",
-    "Use the lumped-capacitance method, check validity with the Biot number ($Bi < 0.1$), and find time, energy, and instantaneous heat rate"
+    "Recognize conduction as heat transfer through a solid or stationary medium due to a temperature gradient.",
+    "Use Fourier law and the thermal-resistance analogy for plane walls and cylindrical pipes.",
+    "Combine conduction, convection, and contact resistances in series/parallel without losing units.",
+    "Compute overall $U$ and heat rate for composite walls and pipes.",
+    "Handle internal heat generation, critical insulation radius, fins, and lumped capacitance transients.",
+    "Know when lumped capacitance is allowed by checking Biot number.",
+    "Translate a wall/pipe drawing into a clean resistance circuit."
   ],
   "blocks": [
     {
       "kind": "heading",
       "text": "What conduction is"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Conduction problems are usually less about calculus and more about drawing the heat path. Heat goes from hot to cold. Every layer resists that flow. Put the resistances in the same order the heat sees them, then use the same logic as an electric circuit: driving difference over resistance."
+    },
+    {
+      "kind": "steps",
+      "title": "Conduction exam recipe",
+      "steps": [
+        {
+          "label": "Draw the heat path",
+          "text": "Plane wall, cylinder, composite wall, pipe, fin, or transient lump. Geometry decides the resistance formula."
+        },
+        {
+          "label": "Write every resistance",
+          "text": "Conduction through material, convection at surfaces, contact resistance between layers. Keep per-area vs total resistance straight."
+        },
+        {
+          "label": "Combine the network",
+          "text": "Series resistances add. Parallel paths split heat. The total heat rate is usually $\\Delta T/R_{tot}$."
+        },
+        {
+          "label": "Add special physics only if present",
+          "text": "Generation creates a different temperature profile. Fins add area but need efficiency/effectiveness. Lumped transient needs $Bi<0.1$."
+        },
+        {
+          "label": "Check units and direction",
+          "text": "Heat rate in W, heat flux in W/m², thermal conductivity in W/(m K). Negative signs mainly tell direction."
+        }
+      ]
     },
     {
       "kind": "prose",

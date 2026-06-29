@@ -1,20 +1,52 @@
 {
   "title": "First Law: Closed & Open Systems",
-  "summary": "Energy conservation applied to thermodynamic systems. Master the closed-system balance $Q-W=\\Delta U$ and the steady-flow (SSSF) balance for control volumes, the sign convention, work as the area under the $p$-$V$ curve, the four basic processes plus polytropic, and the standard flow devices (turbine, compressor, pump, nozzle, throttle, heat exchanger, mixing). Built around the real Tutorial 1 problems.",
+  "summary": "The First Law is energy accounting. You write what enters as heat, what leaves as work, and what changes inside the system. Closed systems use $Q-W=\\Delta U$; steady-flow devices use the control-volume balance with enthalpy. Once you can classify the device/process, the equations become almost mechanical.",
   "minutes": 55,
   "objectives": [
-    "Apply the first law $Q-W=\\Delta U$ to closed systems with the correct sign convention",
-    "Compute boundary work as the area under the $p$-$V$ curve for any quasi-static process",
-    "Find $W$, $Q$ and $\\Delta U$ for isochoric, isobaric, isothermal, adiabatic and polytropic ideal-gas processes",
-    "Write and simplify the steady-flow energy equation for a control volume",
-    "Analyze turbines, compressors/pumps, nozzles, throttles, heat exchangers and mixing chambers",
-    "Distinguish state functions ($U$, $h$) from path functions ($Q$, $W$) and use them in cycle analysis",
-    "Compute the thermal efficiency of a closed-system cycle"
+    "Translate a word problem into an energy balance instead of hunting randomly for formulas.",
+    "Use the sign convention consistently: heat in is positive, work done by the system is positive.",
+    "Compute boundary work as area under the $p$-$V$ curve for isobaric, isochoric, isothermal, adiabatic, and polytropic paths.",
+    "Apply steady-flow energy balances to turbines, compressors, pumps, nozzles, throttles, heat exchangers, and mixers.",
+    "Know which terms can be deleted because of the device, not because you feel like it.",
+    "Compute cycle work and efficiency from heat/work totals.",
+    "Avoid the classic trap: closed/open describes mass flow; adiabatic describes heat transfer."
   ],
   "blocks": [
     {
       "kind": "heading",
       "text": "The First Law: bookkeeping for energy"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "The First Law is not a new mysterious force. It is a bank account for energy. If energy enters, leaves, or changes form, your equation must show it. The whole skill is deciding which “account” to use: a fixed mass account for closed systems, or a flow-through account for turbines, compressors, nozzles, pumps, mixers, and heat exchangers."
+    },
+    {
+      "kind": "steps",
+      "title": "First-law exam recipe",
+      "steps": [
+        {
+          "label": "Classify the system",
+          "text": "Closed system: fixed mass, usually piston/tank. Open system: control volume with $\\dot m$, usually a device."
+        },
+        {
+          "label": "Write the full balance first",
+          "text": "Closed: $Q-W=\\Delta U$ if kinetic/potential changes are negligible. Steady flow: heat, shaft work, enthalpy, kinetic energy, and potential energy terms."
+        },
+        {
+          "label": "Delete terms with a reason",
+          "text": "Rigid tank means no boundary work. Adiabatic means $Q=0$. Throttle means $h_1\\approx h_2$. Nozzle usually trades enthalpy for velocity."
+        },
+        {
+          "label": "Use the correct property change",
+          "text": "Ideal gas: $\\Delta u=c_v\\Delta T$, $\\Delta h=c_p\\Delta T$. Real substance: read $u$ or $h$ from tables."
+        },
+        {
+          "label": "Only then calculate",
+          "text": "Most wrong answers come from starting with numbers before the energy story is clear."
+        }
+      ]
     },
     {
       "kind": "prose",

@@ -1,19 +1,52 @@
 {
   "title": "Radiation Heat Transfer",
-  "summary": "Learn how heat moves as electromagnetic waves: blackbody emission and the Stefan-Boltzmann $T^4$ law, Planck and Wien qualitatively, emissivity/absorptivity and Kirchhoff's law for gray diffuse surfaces, view factors with their reciprocity and summation rules, and the electrical analogy (surface and space resistances) for computing net exchange between black and gray surfaces, including radiation shields.",
+  "summary": "Radiation is heat transfer by electromagnetic waves, so it can cross vacuum and scales with absolute temperature to the fourth power. The exam skill is using blackbody ideas, emissivity, absorptivity, view factors, and the radiation-resistance network for gray surfaces.",
   "minutes": 55,
   "objectives": [
-    "Apply the Stefan-Boltzmann law $E=\\sigma T^4$ correctly, always converting temperatures to kelvin",
-    "Use Planck and Wien qualitatively to describe how the blackbody spectrum shifts with temperature",
-    "Distinguish emissivity, absorptivity, reflectivity and transmissivity and apply Kirchhoff's law ($\\varepsilon=\\alpha$) for gray diffuse surfaces",
-    "Compute view factors using the reciprocity rule $A_1F_{12}=A_2F_{21}$ and the summation rule $\\sum F_{ij}=1$, plus standard geometric cases",
-    "Build the electrical-analogy circuit with surface and space resistances and find net exchange between black and gray surfaces",
-    "Solve radiation-shield problems, including the steady shield temperature from a fourth-power energy balance"
+    "Explain why radiation is different from conduction/convection and why temperature must be in kelvin.",
+    "Use Stefan-Boltzmann law and understand the $T^4$ dependence.",
+    "Interpret emissivity, absorptivity, blackbody, gray surface, and Kirchhoff’s law.",
+    "Use view factors and reciprocity/summation rules for surface exchange.",
+    "Compute black-surface and gray-surface radiation exchange.",
+    "Build the radiation-resistance network for diffuse-gray surfaces.",
+    "Explain why low-emissivity shields strongly reduce radiation heat transfer."
   ],
   "blocks": [
     {
       "kind": "heading",
       "text": "What radiation is and why it's different"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Radiation is the topic where Celsius will quietly ruin your day. Because emission goes like $T^4$, all temperatures must be absolute. Conceptually, each surface emits based on its own temperature and emissivity, sees only part of other surfaces through view factors, and exchanges net heat depending on the difference between what leaves and what arrives."
+    },
+    {
+      "kind": "steps",
+      "title": "Radiation exam recipe",
+      "steps": [
+        {
+          "label": "Convert to kelvin",
+          "text": "Before any $T^4$ calculation, convert. Radiation does not care about Celsius zero."
+        },
+        {
+          "label": "Identify surface model",
+          "text": "Black surface: emissivity 1. Gray real surface: emissivity less than 1 and radiation resistance matters."
+        },
+        {
+          "label": "Find geometry/view factors",
+          "text": "Use given view factors, reciprocity, and summation. The geometry decides who sees whom."
+        },
+        {
+          "label": "Choose the exchange formula",
+          "text": "Black surfaces are simpler. Gray diffuse surfaces use the electrical-resistance analogy."
+        },
+        {
+          "label": "Look for shields",
+          "text": "A shield adds surface resistances and gaps in series; low emissivity makes it powerful."
+        }
+      ]
     },
     {
       "kind": "prose",

@@ -5,6 +5,38 @@
       "text": "Why we need a second law"
     },
     {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "The First Law says the energy bill balances. The Second Law asks the nastier question: did we waste the ability to turn that energy into work? Entropy is the bookkeeping for that waste. Reversible means no internal mess was made. Irreversible means friction, mixing, heat transfer through a finite temperature difference, throttling, or other real-world ugliness created entropy."
+    },
+    {
+      "kind": "steps",
+      "title": "Second-law exam recipe",
+      "steps": [
+        {
+          "label": "Ask what is being judged",
+          "text": "Possibility? Use $\\sigma\\ge0$. Maximum work or best efficiency? Use the reversible limit. Real turbine/compressor? Use isentropic efficiency."
+        },
+        {
+          "label": "Draw the reservoirs or device",
+          "text": "Heat engines, refrigerators, and heat pumps are easiest when you label hot reservoir, cold reservoir, heat directions, and desired output."
+        },
+        {
+          "label": "Write entropy balance",
+          "text": "Closed or open, entropy changes because entropy crosses with heat and because entropy is produced inside."
+        },
+        {
+          "label": "Set the right limit",
+          "text": "Reversible means $\\sigma=0$. Real means $\\sigma>0$. Impossible means the math demands $\\sigma<0$."
+        },
+        {
+          "label": "Use the T-s diagram as a lie detector",
+          "text": "Isentropic is vertical on $T$-$s$. Heat transfer is area under a reversible path. Expansion in a real turbine moves to higher entropy."
+        }
+      ]
+    },
+    {
       "kind": "prose",
       "text": "The **first law** says energy is conserved: $Q_{12}-W_{12}=U_2-U_1$. But it never tells you which **direction** a process goes. A gas at high pressure rushes out of a tank to ambient; it never spontaneously rushes back in. Heat flows from hot to cold, never the reverse on its own. Energy is conserved both ways — yet only one direction actually happens.\n\nThe **second law** fixes this. It tells us (1) the natural direction of spontaneous processes, (2) the best theoretical performance of engines and refrigerators, and (3) how much real irreversibilities cost us. Its bookkeeping quantity is **entropy**."
     },
@@ -850,15 +882,15 @@
     }
   ],
   "title": "Second Law & Entropy",
-  "summary": "From the Kelvin-Planck and Clausius statements to entropy production $\\sigma\\ge0$: this lesson builds the second law from scratch. You'll learn entropy as a state property, the closed- and open-system entropy balances, reservoir entropy, the Carnot cycle and its efficiency, COP of reversible fridges/heat pumps, isentropic processes, the Gibbs equations, T-s diagrams, and the isentropic efficiency of turbines and compressors — with every formula tied to a worked number.",
+  "summary": "The Second Law explains direction, limits, and losses. The First Law says energy is conserved; the Second Law says not every conserved joule is equally useful. Entropy tracks irreversibility: reversible processes have no entropy production, real processes have $\\sigma>0$, and impossible processes would require $\\sigma<0$.",
   "minutes": 55,
   "objectives": [
-    "State the Kelvin-Planck and Clausius statements and explain why they are equivalent",
-    "Distinguish reversible, internally reversible and irreversible processes and identify sources of irreversibility",
-    "Compute entropy production $\\sigma$ for closed and open systems and use $\\sigma\\ge0$ to test feasibility and find process direction",
-    "Apply the Gibbs equations to find entropy changes of ideal gases, incompressible substances and water",
-    "Derive and use Carnot efficiency $\\eta=1-T_C/T_H$ and the reversible COPs $\\beta$ and $\\gamma$",
-    "Read T-s diagrams (heat = area under path, work = enclosed area) and identify isentropic processes",
-    "Compute isentropic efficiency of turbines and compressors without inverting the ratio"
+    "Explain why the First Law alone cannot tell whether a process is possible.",
+    "Use Kelvin-Planck and Clausius statements without treating them as memorized poetry.",
+    "Build entropy balances for closed systems and steady-flow control volumes.",
+    "Use $\\sigma\\ge0$ to decide reversible, irreversible, and impossible cases.",
+    "Recognize isentropic processes and use them for ideal turbines, compressors, and nozzles.",
+    "Compute Carnot efficiency, refrigerator COP, heat-pump COP, and compare real devices to reversible limits.",
+    "Use isentropic efficiency to connect ideal and real turbine/compressor states."
   ]
 }

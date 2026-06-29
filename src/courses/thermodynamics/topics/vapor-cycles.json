@@ -5,6 +5,38 @@
       "text": "The big picture: closed-loop power and refrigeration"
     },
     {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "These problems look big because every point has a table lookup, but the story is small. A vapor power plant is four boxes in a loop: add heat, extract work, reject heat, pump back up. A refrigerator is also four boxes: absorb heat where it is cold, compress, reject heat where it is warm, throttle back down. The numbers mostly come from enthalpy differences."
+    },
+    {
+      "kind": "steps",
+      "title": "Vapor-cycle exam recipe",
+      "steps": [
+        {
+          "label": "Draw the loop first",
+          "text": "Rankine: pump → boiler → turbine → condenser. Refrigeration: compressor → condenser → valve → evaporator."
+        },
+        {
+          "label": "Build a state table",
+          "text": "For each state, write what you know: pressure, temperature, quality, entropy, or “saturated liquid/vapor.” Then go to the correct table."
+        },
+        {
+          "label": "Find enthalpies",
+          "text": "Most heat and work terms are $h$ differences. Do not compute before $h_1,h_2,h_3,h_4$ are known."
+        },
+        {
+          "label": "Apply one device at a time",
+          "text": "Turbine/compressor/pump give work. Boiler/condenser/evaporator give heat. Valve is usually $h_{in}=h_{out}$."
+        },
+        {
+          "label": "Calculate the performance number",
+          "text": "Power cycle: $\\eta=W_{net}/Q_{in}$. Refrigerator: $COP_R=Q_L/W_{in}$. Heat pump: $COP_{HP}=Q_H/W_{in}$."
+        }
+      ]
+    },
+    {
       "kind": "prose",
       "text": "A **vapor power plant** boils water, runs the high-pressure steam through a **turbine** to make work, condenses it back to liquid, and **pumps** it back up to boiler pressure. The water continuously cycles between liquid and vapor. Reverse the idea — spend work to move heat from cold to hot — and you have a **refrigerator** or **heat pump**.\n\nThe whole topic reduces to one habit: **build a state table** ($p$, $T$, $h$, $s$, $x$ for every numbered point) from the tables, then plug enthalpy differences into the 1st law for each device."
     },
@@ -802,15 +834,15 @@
     }
   ],
   "title": "Vapor Power & Refrigeration Cycles",
-  "summary": "The Rankine power cycle (boiler, turbine, condenser, pump) and the vapor-compression refrigeration / heat-pump cycle, solved with steam and R134a tables. You will learn to build a state table, compute pump work via v·Δp, turbine work from enthalpies, thermal efficiency, back-work ratio, and COP, and to reason about superheat, reheat and regeneration.",
+  "summary": "Vapor cycles are table-based loop problems. Rankine turns heat into work with boiler-turbine-condenser-pump; vapor compression uses compressor-condenser-valve-evaporator to move heat uphill. The core skill is making a state table, finding $h$ at each state, then doing simple device energy balances.",
   "minutes": 75,
   "objectives": [
-    "Draw the ideal Rankine cycle on a T-s diagram and identify the four devices and four states.",
-    "Apply the open-system 1st law to each device to get turbine, pump, boiler and condenser specific energies.",
-    "Compute pump work as $v(p_2-p_1)$, thermal efficiency and back-work ratio, using steam tables and quality.",
-    "Explain how boiler pressure, boiler temperature (superheat) and condenser pressure change efficiency and exit quality.",
-    "Describe reheat and regeneration and write their efficiency expressions, including the open feedwater-heater mass balance.",
-    "Analyse a vapor-compression refrigeration / heat-pump cycle with R134a: COP, compressor work, throttling ($h=$const).",
-    "Use isentropic efficiency for turbine and compressor and compare against Carnot limits."
+    "Draw Rankine and vapor-compression cycles and label the four devices in order.",
+    "Create a state table with pressure, temperature/quality/entropy, and enthalpy for each point.",
+    "Use turbine, pump, boiler, condenser, compressor, valve, and evaporator energy balances.",
+    "Compute thermal efficiency, refrigeration COP, and heat-pump COP.",
+    "Check turbine exit quality and understand why wetness matters.",
+    "Explain how pressure, superheat, and regeneration/reheat ideas affect performance.",
+    "Use steam/R134a tables without losing the physical meaning of the cycle."
   ]
 }

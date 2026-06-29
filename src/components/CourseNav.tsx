@@ -2,12 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { Icon } from "./Icon";
 import { cn } from "../lib/cn";
 
-/** Persistent tab strip for moving between a course's three sections. */
+/** Persistent tab strip for moving between a course's main study modes. */
 export function CourseNav({ courseId, due }: { courseId: string; due?: number }) {
   const { pathname } = useLocation();
   const base = `/c/${courseId}`;
   const tabs = [
     { id: "overview", label: "Overview", icon: "LayoutDashboard", to: base, match: pathname === base || pathname.includes("/learn/") },
+    { id: "scroll", label: "Scroll", icon: "Sparkles", to: `${base}/scroll`, match: pathname.includes("/scroll") },
     { id: "practice", label: "Practice", icon: "Dumbbell", to: `${base}/practice`, match: pathname.includes("/practice") },
     { id: "exams", label: "Exams", icon: "FileText", to: `${base}/exams`, match: pathname.includes("/exams") },
   ];

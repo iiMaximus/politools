@@ -1,20 +1,52 @@
 {
   "title": "Fundamentals: Properties, Ideal Gas & Phase Change",
-  "summary": "The foundation lesson. You will learn the vocabulary of thermodynamics (system, surroundings, closed vs open, state, properties), the state postulate, the ideal-gas law $pV=mRT$ and the special property relations $u=u(T)$, $h=h(T)$, $du=c_v\\,dT$, $dh=c_p\\,dT$, $c_p-c_v=R$, $k=c_p/c_v$. Then you will master real substances: the $p$-$v$-$T$ surface, the vapor dome, saturation, quality $x$, and exactly how to read and interpolate the water / R134a property tables using $v=(1-x)v_f+x\\,v_g$.",
+  "summary": "Start here. This lesson turns thermodynamics from a fog of symbols into a checklist: choose the system, name the properties, decide whether the substance behaves like an ideal gas or a real fluid, then use either $pV=mRT$ or the tables. The big win is knowing when $p$ and $T$ are enough, when they are not, and how quality $x$ locates a wet mixture inside the vapor dome.",
   "minutes": 55,
   "objectives": [
-    "Classify a system as closed, open, or isolated and identify its boundary, surroundings, and whether properties are extensive, intensive, or specific.",
-    "State the state postulate and use it: fix a simple compressible state with two independent intensive properties.",
-    "Apply the ideal-gas law $pV=mRT$ in all its forms and convert between $^{\\circ}\\mathrm{C}$ and K correctly.",
-    "Use the ideal-gas property relations $u=u(T)$, $h=h(T)$, $du=c_v\\,dT$, $dh=c_p\\,dT$, and the constants $c_p-c_v=R$, $k=c_p/c_v$.",
-    "Read the $p$-$v$-$T$ surface and the vapor dome: identify subcooled liquid, two-phase mixture, and superheated vapor regions and the meaning of saturation.",
-    "Compute quality $x$ and any mixture property via $v=(1-x)v_f+x\\,v_g$ (and the same for $u$, $h$, $s$).",
-    "Locate a state in the water / R134a tables and linearly interpolate between table rows."
+    "Point at a problem and say what the system, boundary, surroundings, and universe are.",
+    "Separate closed, open, and isolated systems without mixing them up with adiabatic processes.",
+    "Recognize extensive, intensive, and specific properties, especially the lowercase per-kg properties $v,u,h,s$.",
+    "Use the state postulate: two independent intensive properties fix a simple compressible state.",
+    "Use $pV=mRT$ safely, with kelvin temperatures and the correct gas constant.",
+    "Read the vapor dome: subcooled liquid, saturated mixture, superheated vapor, and why quality $x$ exists.",
+    "Use saturation/superheated tables and linear interpolation without freezing up."
   ],
   "blocks": [
     {
       "kind": "heading",
       "text": "1. The language: systems, boundaries, surroundings"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Think of fundamentals as learning the names of the pieces on the board before playing the game. Most mistakes here are not deep physics mistakes; they are choosing the wrong model. Ideal gas? Use $pV=mRT$. Water/R134a near boiling or condensation? Use tables and the vapor dome. Two-phase mixture? You need quality $x$, because $p$ and $T$ are glued together by saturation."
+    },
+    {
+      "kind": "steps",
+      "title": "Zero-panic route for any state-property question",
+      "steps": [
+        {
+          "label": "Name the container",
+          "text": "Closed system means fixed mass. Open system means mass crosses the boundary. This choice decides which later equations are even allowed."
+        },
+        {
+          "label": "Choose the substance model",
+          "text": "If the statement says ideal gas, air at ordinary conditions, or gives $R,c_p,c_v$, think ideal-gas law. If it gives water/R134a saturation data, think tables."
+        },
+        {
+          "label": "Find the state",
+          "text": "For a simple compressible system, look for two independent intensive properties. Inside the vapor dome, $p$ and $T$ count as only one independent fact."
+        },
+        {
+          "label": "If wet, use quality",
+          "text": "Inside the dome, interpolate by mass fraction: property $= (1-x)f + xg$. Quality is the vapor mass fraction, not a volume fraction."
+        },
+        {
+          "label": "Watch units before touching numbers",
+          "text": "Gas-law temperature is kelvin. Table specific volume may be scaled. Pressure units must match $R$. This is where easy marks leak away."
+        }
+      ]
     },
     {
       "kind": "prose",

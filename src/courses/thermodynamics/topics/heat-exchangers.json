@@ -1,20 +1,52 @@
 {
   "title": "Heat Exchangers: LMTD and ε-NTU",
-  "summary": "Learn to analyse heat exchangers from scratch: per-stream energy balance and capacity rates, parallel vs counter flow temperature profiles, the LMTD method with the correct $\\Delta T$ pairing, building the overall coefficient $U$, and the effectiveness-NTU method ($\\varepsilon$, $NTU$, $C_R$) for inlet-only problems. Includes fully worked tutorial problems and the rule for choosing LMTD vs $\\varepsilon$-NTU.",
+  "summary": "A heat exchanger is two streams trading heat without mixing. First do energy balances with heat-capacity rates. Then choose the method: LMTD when outlet temperatures are known or can be found; $\\varepsilon$-NTU when outlet temperatures are unknown and the exchanger size/effectiveness relation is the path.",
   "minutes": 45,
   "objectives": [
-    "Write the per-stream energy balance $q=\\dot m\\,c_p\\,\\Delta T$ and compute capacity rates $C=\\dot m\\,c_p$, identifying $C_{min}$ and $C_{max}$",
-    "Sketch parallel and counter flow temperature profiles and define $\\Delta T_1,\\Delta T_2$ correctly for each",
-    "Apply the LMTD method $q=U\\,A\\,\\Delta T_{lm}$ to size area, length, or $U$",
-    "Build the overall heat transfer coefficient $U$ from series convection/conduction resistances",
-    "Use the $\\varepsilon$-NTU method ($\\varepsilon$, $NTU=UA/C_{min}$, $C_R=C_{min}/C_{max}$) for inlet-only problems",
-    "Apply the correct $\\varepsilon$-NTU relations and special cases ($C_R=1$ counter flow, $C_R=0$ phase change)",
-    "Decide when to use LMTD versus $\\varepsilon$-NTU"
+    "Set up hot-side and cold-side energy balances using heat-capacity rates $C=\\dot m c_p$.",
+    "Tell parallel flow, counterflow, and crossflow temperature profiles apart.",
+    "Use LMTD with the correct terminal temperature differences and correction factor when needed.",
+    "Use effectiveness-NTU when outlet temperatures are not known directly.",
+    "Compute $UA$, area, heat rate, outlet temperatures, or effectiveness depending on what is asked.",
+    "Identify $C_{min}$, $C_{max}$, and $C_r$ without swapping hot and cold streams.",
+    "Check answers for impossible temperature crossing."
   ],
   "blocks": [
     {
       "kind": "heading",
       "text": "What a heat exchanger does"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Heat exchangers are polite devices: one stream cools down, the other warms up, and energy lost by one is gained by the other. The confusion is choosing the method. LMTD is a temperature-difference method. Effectiveness-NTU is a “how close did we get to the maximum possible heat transfer?” method."
+    },
+    {
+      "kind": "steps",
+      "title": "Heat-exchanger exam recipe",
+      "steps": [
+        {
+          "label": "Write stream balances",
+          "text": "$q=C_h(T_{h,in}-T_{h,out})=C_c(T_{c,out}-T_{c,in})$ for no losses."
+        },
+        {
+          "label": "Compute capacity rates",
+          "text": "$C=\\dot m c_p$. Then identify $C_{min}$, $C_{max}$, and $C_r=C_{min}/C_{max}$."
+        },
+        {
+          "label": "Choose the method",
+          "text": "Known terminal temperatures? LMTD. Unknown outlet temperatures but given $UA$ or effectiveness setup? Use $\\varepsilon$-NTU."
+        },
+        {
+          "label": "For LMTD, mind the ends",
+          "text": "Parallel and counterflow use different terminal temperature differences. Crossflow/shell-and-tube may require a correction factor."
+        },
+        {
+          "label": "Sanity check temperatures",
+          "text": "Cold outlet cannot exceed the hot inlet in an ordinary exchanger; counterflow can do more than parallel but not magic."
+        }
+      ]
     },
     {
       "kind": "prose",

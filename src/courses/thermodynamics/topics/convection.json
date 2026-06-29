@@ -5,6 +5,38 @@
       "text": "What convection is"
     },
     {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Plain-English map",
+      "text": "Convection looks like a library of random formulas until you see the pattern. Every correlation is just a machine for finding $h$. You feed it geometry, fluid properties, and flow regime; it returns $Nu$; $Nu$ gives $h$; then Newton’s law gives $q$."
+    },
+    {
+      "kind": "steps",
+      "title": "Convection exam recipe",
+      "steps": [
+        {
+          "label": "Classify the situation",
+          "text": "Forced or natural? Flat plate, pipe, cylinder, sphere, vertical wall? External or internal flow?"
+        },
+        {
+          "label": "Choose the characteristic length and properties",
+          "text": "Use the length named by the correlation and evaluate fluid properties at the requested temperature, often film temperature."
+        },
+        {
+          "label": "Compute dimensionless numbers",
+          "text": "Forced convection: usually $Re$ and $Pr$. Natural convection: usually $Gr$, $Ra$, and $Pr$."
+        },
+        {
+          "label": "Pick the correlation",
+          "text": "Check laminar/turbulent range and geometry. The correlation is not decoration; it is the rule of the problem."
+        },
+        {
+          "label": "Convert to heat rate",
+          "text": "$Nu=hL/k$, so $h=Nu\\,k/L$. Then $q=hA(T_s-T_\\infty)$."
+        }
+      ]
+    },
+    {
       "kind": "prose",
       "text": "**Convection** is heat transfer between a solid wall and a fluid (gas or liquid) that moves relative to it, when there is a temperature difference between them.\n\nThink of a hot plate cooled by a breeze. The air right next to the plate is heated by **conduction**; then the moving air carries that energy away and brings in fresh cool air. Conduction sets the energy into the fluid, motion sweeps it away. The combination is convection.\n\nThe whole game in this topic is: **find the convection coefficient $h$, then compute the heat $q$.**"
     },
@@ -775,15 +807,15 @@
     }
   ],
   "title": "Convection Heat Transfer",
-  "summary": "Master Newton's law of cooling and the convection coefficient h: what boundary layers are, the difference between forced and natural convection, the physical meaning of Re, Pr, Nu, Gr and Ra, and how to pick a Nu correlation, invert it to get h, and compute q. Includes four fully worked tutorial problems.",
+  "summary": "Convection is heat transfer between a surface and a moving fluid. The hard part is not Newton’s law $q=hA(T_s-T_\\infty)$; the hard part is finding $h$. You do that with dimensionless groups and correlations: identify the flow, compute Re/Pr/Ra, get Nu, then convert Nu to $h$.",
   "minutes": 55,
   "objectives": [
-    "Apply Newton's law of cooling $q=hA(T_w-T_\\infty)$ and explain why h is a flow result, not a fluid property",
-    "Describe velocity and thermal boundary layers and link h to the wall temperature gradient",
-    "Distinguish forced from natural (free) convection and choose the right dimensionless framework",
-    "State the physical meaning of Re, Pr, Nu, Gr and Ra and compute each",
-    "Select the correct Nu correlation for flat plate, duct, and natural-convection geometries (laminar vs turbulent)",
-    "Invert Nu to get h ($h=Nu\\cdot k/L^*$) and then compute q, closing energy balances for heated streams",
-    "Avoid the classic traps: Kelvin for $\\beta$, fluid k (not wall k), correct characteristic length and heat-exchange area"
+    "Explain convection as conduction at the wall plus fluid motion carrying energy away.",
+    "Distinguish forced and natural convection, external and internal flow, laminar and turbulent regimes.",
+    "Interpret Reynolds, Prandtl, Nusselt, Grashof, and Rayleigh numbers physically.",
+    "Choose the correct correlation from the problem geometry and flow regime.",
+    "Compute $h$ from Nusselt number and then heat rate from Newton’s law of cooling.",
+    "Use film temperature and characteristic length sensibly.",
+    "Avoid using a correlation outside its stated range."
   ]
 }
