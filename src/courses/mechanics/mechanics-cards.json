@@ -1,0 +1,1244 @@
+[
+  {
+    "id": "mech-q1",
+    "topic": "Kinematics of mechanisms",
+    "difficulty": "easy",
+    "prompt": "For two points O and P of the same rigid body, the velocity field is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$\\vec v_P=\\vec v_O+\\vec\\omega\\times(P-O)$"
+      },
+      {
+        "id": "B",
+        "content": "$\\vec v_P=\\vec v_O-\\omega^2(P-O)$"
+      },
+      {
+        "id": "C",
+        "content": "$\\vec v_P=\\vec\\alpha\\times(P-O)$"
+      },
+      {
+        "id": "D",
+        "content": "$\\vec v_P=\\vec v_O+2\\vec\\omega\\times\\vec v_{rel}$"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Velocity transports rigidly: the difference between two points' velocities is the rotation $\\vec\\omega$ crossed with their relative position. The $-\\omega^2$ term and the Coriolis term belong to accelerations.",
+    "source": "Rigid-body velocity field"
+  },
+  {
+    "id": "mech-q2",
+    "topic": "Kinematics of mechanisms",
+    "difficulty": "medium",
+    "prompt": "A rectangular plate slides with corner A on a horizontal runner and corner B on a vertical runner. The ICR is located at:",
+    "options": [
+      {
+        "id": "A",
+        "content": "The midpoint of AB"
+      },
+      {
+        "id": "B",
+        "content": "The intersection of the vertical line through A and the horizontal line through B"
+      },
+      {
+        "id": "C",
+        "content": "At corner A"
+      },
+      {
+        "id": "D",
+        "content": "At the plate centroid"
+      }
+    ],
+    "correct": "B",
+    "explanation": "$v_A$ is horizontal so the perpendicular to it is vertical (through A); $v_B$ is vertical so its perpendicular is horizontal (through B). Their intersection is K. This is exactly the construction used in Problem 1.",
+    "source": "ICR by perpendiculars"
+  },
+  {
+    "id": "mech-q3",
+    "topic": "Kinematics of mechanisms",
+    "difficulty": "medium",
+    "prompt": "The centripetal acceleration term in the rigid-body acceleration field, $-\\omega^2(P-O)$, points:",
+    "options": [
+      {
+        "id": "A",
+        "content": "From P toward O along the line PO"
+      },
+      {
+        "id": "B",
+        "content": "Perpendicular to PO in the sense of rotation"
+      },
+      {
+        "id": "C",
+        "content": "Always vertically downward"
+      },
+      {
+        "id": "D",
+        "content": "Tangent to the path of P"
+      }
+    ],
+    "correct": "A",
+    "explanation": "$-\\omega^2(P-O)$ is directed opposite to $(P-O)$, i.e. from P toward the reference point O. The tangential part $\\vec\\alpha\\times(P-O)$ is the one perpendicular to PO.",
+    "source": "Acceleration field"
+  },
+  {
+    "id": "mech-q4",
+    "topic": "Kinematics of mechanisms",
+    "difficulty": "easy",
+    "prompt": "Two wheels of equal radius are connected by a horizontal bar joining their centres, and both roll without slip. The angular velocity of the connecting bar is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Equal to each wheel's angular velocity"
+      },
+      {
+        "id": "B",
+        "content": "Twice the wheel angular velocity"
+      },
+      {
+        "id": "C",
+        "content": "Zero (the bar translates)"
+      },
+      {
+        "id": "D",
+        "content": "Equal to $v_A/r$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Both centres are at the same height and move at the same horizontal speed, so the bar simply translates: $\\omega_{AC}=0$. This is the situation of Problem 3 with $\\beta=0$.",
+    "source": "Wheels with connecting rod"
+  },
+  {
+    "id": "mech-q5",
+    "topic": "Kinematics of mechanisms",
+    "difficulty": "hard",
+    "prompt": "To find the angular acceleration $\\alpha_2$ of a coupler whose ends A and B are both known kinematically, you should:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Use $\\alpha_2=v_B/\\overline{AB}$"
+      },
+      {
+        "id": "B",
+        "content": "Write $\\vec a_B=\\vec a_A+\\vec\\alpha_2\\times(B-A)-\\omega_2^2(B-A)$ and project onto a known direction"
+      },
+      {
+        "id": "C",
+        "content": "Set $\\alpha_2=\\alpha_1$ since they are linked"
+      },
+      {
+        "id": "D",
+        "content": "Use the ICR: $\\alpha_2=a_A/\\overline{KA}$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Accelerations require the full field including the centripetal $-\\omega_2^2(B-A)$ (known once $\\omega_2$ is found). Projecting the vector equation on the direction that kills the slider/rocker unknown isolates $\\alpha_2$. ICR cannot be used for accelerations.",
+    "source": "Acceleration analysis method"
+  },
+  {
+    "id": "mech-q6",
+    "topic": "Kinematics of mechanisms",
+    "difficulty": "medium",
+    "prompt": "A sphere slides outward at $v_{rel}$ along a radial groove of a turntable spinning at $\\omega$. The magnitude of its Coriolis acceleration is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$\\omega^2 r$"
+      },
+      {
+        "id": "B",
+        "content": "$\\alpha r$"
+      },
+      {
+        "id": "C",
+        "content": "$2\\omega v_{rel}$"
+      },
+      {
+        "id": "D",
+        "content": "$v_{rel}^2/r$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Coriolis acceleration is $2\\vec\\omega\\times\\vec v_{rel}$; for a radial slide perpendicular to $\\vec\\omega$ its magnitude is $2\\omega v_{rel}$, directed tangentially. This is the core of Problems 6 and 8.",
+    "source": "Coriolis acceleration"
+  },
+  {
+    "id": "mech-q7",
+    "topic": "Dynamics: forces, FBD & energy",
+    "difficulty": "easy",
+    "prompt": "To find the velocity of a cart at the top of an incline after it has travelled a known distance under constant forces, the fastest correct method is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Sum of moments about the contact point"
+      },
+      {
+        "id": "B",
+        "content": "The work-energy theorem $\\sum L=\\Delta E_k$"
+      },
+      {
+        "id": "C",
+        "content": "Conservation of linear momentum"
+      },
+      {
+        "id": "D",
+        "content": "Coriolis acceleration analysis"
+      }
+    ],
+    "correct": "B",
+    "explanation": "A velocity after a finite displacement, with constant forces and no impact, is exactly the work-energy theorem: work of all forces equals the change in kinetic energy. Momentum is not conserved (external forces act), and moment balance gives accelerations, not the final velocity directly.",
+    "source": "Work-energy method"
+  },
+  {
+    "id": "mech-q8",
+    "topic": "Dynamics: forces, FBD & energy",
+    "difficulty": "medium",
+    "prompt": "A homogeneous cylinder sits on the bed of a truck that accelerates forward at $A$. If it rolls without slipping, the cylinder's acceleration relative to the truck is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$2A$ backward"
+      },
+      {
+        "id": "B",
+        "content": "$A$ backward"
+      },
+      {
+        "id": "C",
+        "content": "$\\tfrac23 A$ backward"
+      },
+      {
+        "id": "D",
+        "content": "zero (it moves with the truck)"
+      }
+    ],
+    "correct": "C",
+    "explanation": "In the truck frame the pseudo-force $mA$ drives the rolling: $(m+I/r^2)a_{rel}=mA$ with $I/r^2=\\tfrac12 m$, so $a_{rel}=\\tfrac23 A$ backward. This is exactly the mechanism in the 'roller on the truck' problem giving $x=1.5d$.",
+    "source": "d'Alembert on accelerating support"
+  },
+  {
+    "id": "mech-q9",
+    "topic": "Dynamics: forces, FBD & energy",
+    "difficulty": "medium",
+    "prompt": "In a perfectly elastic head-on collision of a light bullet ($m_1$) with a much heavier block ($m_2\\gg m_1$), the bullet's velocity after impact is approximately:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$+v_1$ (passes through unchanged)"
+      },
+      {
+        "id": "B",
+        "content": "0 (stops)"
+      },
+      {
+        "id": "C",
+        "content": "$+\\tfrac12 v_1$"
+      },
+      {
+        "id": "D",
+        "content": "$-v_1$ (bounces back at almost the same speed)"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Elastic formula $v_1'=\\frac{m_1-m_2}{m_1+m_2}v_1\\to -v_1$ when $m_2\\gg m_1$. The light bullet rebounds at nearly its incoming speed (in the bank's problem 19: $-490$ m/s vs $+500$). The heavy body barely moves, $v_2'=\\frac{2m_1}{m_1+m_2}v_1$ is small.",
+    "source": "Elastic impact"
+  },
+  {
+    "id": "mech-q10",
+    "topic": "Dynamics: forces, FBD & energy",
+    "difficulty": "easy",
+    "prompt": "A cylindrical pulley of mass $m_p$ and radius $r$ spins at angular speed $\\omega$ with rim speed $v=\\omega r$. Its rotational kinetic energy is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$\\tfrac12 m_p v^2$"
+      },
+      {
+        "id": "B",
+        "content": "$m_p v^2$"
+      },
+      {
+        "id": "C",
+        "content": "$\\tfrac14 m_p v^2$"
+      },
+      {
+        "id": "D",
+        "content": "$\\tfrac12 m_p r^2\\omega$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "$E_k^{rot}=\\tfrac12 I\\omega^2$ with $I=\\tfrac12 m_p r^2$, so $E_k^{rot}=\\tfrac14 m_p r^2\\omega^2=\\tfrac14 m_p v^2$. Forgetting this term is the commonest energy-method error when a pulley's mass is not negligible (problems 15, 16).",
+    "source": "Rotational kinetic energy"
+  },
+  {
+    "id": "mech-q11",
+    "topic": "Dynamics: forces, FBD & energy",
+    "difficulty": "medium",
+    "prompt": "A cart runs freely on a horizontal rail; on it an arm with a tip mass rotates. As the system runs, the horizontal momentum of (cart + tip mass) is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "constant, because there is no horizontal external force"
+      },
+      {
+        "id": "B",
+        "content": "increasing, because the arm adds energy"
+      },
+      {
+        "id": "C",
+        "content": "zero at all times"
+      },
+      {
+        "id": "D",
+        "content": "constant only if the arm is vertical"
+      }
+    ],
+    "correct": "A",
+    "explanation": "With a frictionless horizontal rail there is no external horizontal force, so total horizontal momentum is conserved. This lets you find the cart speed at any arm angle (problem 20): $m_1V+m_2(V-r\\omega\\sin\\theta)=\\text{const}$.",
+    "source": "Conservation of linear momentum"
+  },
+  {
+    "id": "mech-q12",
+    "topic": "Dynamics: forces, FBD & energy",
+    "difficulty": "hard",
+    "prompt": "A ballistic pendulum (moment of inertia $I_O$ about its pivot) is struck and captures a bullet of momentum $mv$ at distance $b$ from the pivot. The angular speed just after impact is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$\\omega=\\dfrac{mvb}{I_O+mb^2}$"
+      },
+      {
+        "id": "B",
+        "content": "$\\omega=\\dfrac{mv}{I_O}$"
+      },
+      {
+        "id": "C",
+        "content": "$\\omega=\\dfrac{mvb}{I_O}$"
+      },
+      {
+        "id": "D",
+        "content": "$\\omega=\\dfrac{mv}{mb}$"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Conserve angular momentum about the pivot O: before $=mvb$ (bullet), after $=(I_O+mb^2)\\omega$ (pendulum plus embedded bullet now at radius $b$). Hence $\\omega=mvb/(I_O+mb^2)$. This is exactly problem 21, giving $\\omega=0.73$ rad/s.",
+    "source": "Angular momentum in impact"
+  },
+  {
+    "id": "mech-q13",
+    "topic": "Friction & rolling",
+    "difficulty": "easy",
+    "prompt": "The friction cone has half-angle $\\varphi$ related to the friction coefficient by:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$\\varphi=\\arcsin f$"
+      },
+      {
+        "id": "B",
+        "content": "$\\varphi=\\arctan f$"
+      },
+      {
+        "id": "C",
+        "content": "$\\varphi=\\arccos f$"
+      },
+      {
+        "id": "D",
+        "content": "$\\varphi = f$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "At the slip limit, friction $fN$ and normal $N$ give a reaction inclined at $\\varphi$ from the normal with $\\tan\\varphi=fN/N=f$, hence $\\varphi=\\arctan f$.",
+    "source": "Friction cone theory"
+  },
+  {
+    "id": "mech-q14",
+    "topic": "Friction & rolling",
+    "difficulty": "medium",
+    "prompt": "For a V-bearing of shaft radius $r$ and semi-opening angle $\\alpha$, the friction torque to keep it turning at constant speed under load $W$ is approximately:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$f\\,W\\,r$"
+      },
+      {
+        "id": "B",
+        "content": "$f\\,W\\,r\\,\\sin\\alpha$"
+      },
+      {
+        "id": "C",
+        "content": "$\\dfrac{f\\,W\\,r}{\\sin\\alpha}$"
+      },
+      {
+        "id": "D",
+        "content": "$\\dfrac{f\\,W\\,r}{\\cos\\alpha}$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The wedge geometry increases the contact normals: $2N\\sin\\alpha=W$, so the effective coefficient is $f'=f/\\sin\\alpha$ and the torque is $f'Wr=fWr/\\sin\\alpha$. A flat bearing ($\\alpha=90^\\circ$) recovers $fWr$.",
+    "source": "Problem 27, dry friction bearing"
+  },
+  {
+    "id": "mech-q15",
+    "topic": "Friction & rolling",
+    "difficulty": "medium",
+    "prompt": "During a car's acceleration on level ground, the normal load on the driving rear axle, compared with standstill:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Decreases (load transfers to the front)"
+      },
+      {
+        "id": "B",
+        "content": "Increases (load transfers to the rear)"
+      },
+      {
+        "id": "C",
+        "content": "Stays the same"
+      },
+      {
+        "id": "D",
+        "content": "Drops to zero"
+      }
+    ],
+    "correct": "B",
+    "explanation": "The inertia force $Ma$ acts backward at the CG height $z_G$; the moment about the CG transfers vertical load onto the rear axle, increasing $N_{\\text{rear}}$ and hence the available traction $f_aN_{\\text{rear}}$ for a rear-drive car.",
+    "source": "Problem 30, car start"
+  },
+  {
+    "id": "mech-q16",
+    "topic": "Friction & rolling",
+    "difficulty": "hard",
+    "prompt": "A rotor whose spin axis is slightly misaligned (angle $\\alpha$) from its polar axis generates a bearing couple proportional to:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$(J_t-J_p)\\,\\omega^2\\sin\\alpha\\cos\\alpha$"
+      },
+      {
+        "id": "B",
+        "content": "$J_p\\,\\omega\\,\\alpha$"
+      },
+      {
+        "id": "C",
+        "content": "$(J_t+J_p)\\,\\omega^2\\alpha$"
+      },
+      {
+        "id": "D",
+        "content": "$J_t\\,\\omega^2$"
+      }
+    ],
+    "correct": "A",
+    "explanation": "The deviatoric inertia produces a rotating couple $M=(J_t-J_p)\\,\\omega^2\\sin\\alpha\\cos\\alpha=\\tfrac12(J_t-J_p)\\,\\omega^2\\sin2\\alpha$, which loads the bearings; it vanishes if the rotor is balanced ($J_t=J_p$ or $\\alpha=0$).",
+    "source": "Problem 23, unbalanced rotor"
+  },
+  {
+    "id": "mech-q17",
+    "topic": "Friction & rolling",
+    "difficulty": "easy",
+    "prompt": "A roller rolls without slipping if the friction it needs to provide its angular acceleration satisfies:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$T = f\\,N$ exactly"
+      },
+      {
+        "id": "B",
+        "content": "$T > f_a\\,N$"
+      },
+      {
+        "id": "C",
+        "content": "$T \\le f_a\\,N$"
+      },
+      {
+        "id": "D",
+        "content": "$T = 0$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Rolling is a stick condition: the required friction is an unknown that must stay within the static cap $f_aN$. If the demand exceeds it, the roller slips and friction drops to the kinetic value $fN$.",
+    "source": "Problem 29, roller on incline"
+  },
+  {
+    "id": "mech-q18",
+    "topic": "Friction & rolling",
+    "difficulty": "medium",
+    "prompt": "A box is pushed by a horizontal force applied high up. It tips (overturns) rather than just sliding when:",
+    "options": [
+      {
+        "id": "A",
+        "content": "The required friction exceeds $f_aN$"
+      },
+      {
+        "id": "B",
+        "content": "The line of the normal force would fall outside the front bottom edge"
+      },
+      {
+        "id": "C",
+        "content": "The applied force exceeds the weight"
+      },
+      {
+        "id": "D",
+        "content": "The acceleration exceeds $g$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "The normal reaction shifts forward to balance the tipping moment of the high push. When that shift reaches the front edge, the box can no longer balance and rotates about the edge — overturning, with $\\ddot\\theta\\ne0$ and $\\ddot y\\ne0$.",
+    "source": "Problem 26, box slipping/overturning"
+  },
+  {
+    "id": "mech-q19",
+    "topic": "Brakes & clutches",
+    "difficulty": "easy",
+    "prompt": "A self-energizing (self-actuating) brake configuration is one in which:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the friction force creates a moment that helps press the pad, reducing the required actuator force F"
+      },
+      {
+        "id": "B",
+        "content": "the friction force always opposes the actuator, increasing F"
+      },
+      {
+        "id": "C",
+        "content": "no actuator force is ever needed"
+      },
+      {
+        "id": "D",
+        "content": "the normal force is independent of F"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Self-energizing means the friction moment adds to the actuating moment (minus sign in the denominator $\\ell_N-fc$), so N grows and less F is needed. The opposite case is self-de-energizing. It still needs some F to start.",
+    "source": "Pad/drum brake theory"
+  },
+  {
+    "id": "mech-q20",
+    "topic": "Brakes & clutches",
+    "difficulty": "easy",
+    "prompt": "The braking torque of a simple drum (shoe) brake of drum radius $r_d$ with total normal force N and friction coefficient f is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$f N / r_d$"
+      },
+      {
+        "id": "B",
+        "content": "$N r_d$"
+      },
+      {
+        "id": "C",
+        "content": "$f N r_d$"
+      },
+      {
+        "id": "D",
+        "content": "$f N r_d^2$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Friction force is $T=fN$ and it acts at the drum radius, so torque $M_f=fN r_d$. Units: N·m.",
+    "source": "Drum brake"
+  },
+  {
+    "id": "mech-q21",
+    "topic": "Brakes & clutches",
+    "difficulty": "medium",
+    "prompt": "A flat multi-plate clutch with N=4 active friction surfaces, mean radius $R_m$, axial force F and friction f transmits torque:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$f F R_m$"
+      },
+      {
+        "id": "B",
+        "content": "$4 f F R_m$"
+      },
+      {
+        "id": "C",
+        "content": "$f F R_m / 4$"
+      },
+      {
+        "id": "D",
+        "content": "$4 f F R_m / \\sin\\alpha$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Each active surface contributes $fFR_m$; with N=4 surfaces the total is $C=N f F R_m=4fFR_m$. The $\\sin\\alpha$ term only appears for conical clutches.",
+    "source": "Multi-plate clutch"
+  },
+  {
+    "id": "mech-q22",
+    "topic": "Brakes & clutches",
+    "difficulty": "medium",
+    "prompt": "The energy dissipated as heat when a brake stops a rotor of inertia I from angular velocity $\\omega_0$ to rest is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$I\\omega_0$"
+      },
+      {
+        "id": "B",
+        "content": "$\\tfrac12 I \\omega_0^2$"
+      },
+      {
+        "id": "C",
+        "content": "$\\tfrac12 I \\omega_0$"
+      },
+      {
+        "id": "D",
+        "content": "$M_f \\omega_0$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "All the kinetic energy is converted to heat: $L_i=\\tfrac12 I\\omega_0^2$. Option D is a power, not an energy.",
+    "source": "Braking energy balance"
+  },
+  {
+    "id": "mech-q23",
+    "topic": "Brakes & clutches",
+    "difficulty": "medium",
+    "prompt": "For a band brake, increasing the wrap angle θ (with the same end tension) ...",
+    "options": [
+      {
+        "id": "A",
+        "content": "decreases the braking torque"
+      },
+      {
+        "id": "B",
+        "content": "increases $T_1/T_2=e^{f\\theta}$ and so increases the achievable braking torque"
+      },
+      {
+        "id": "C",
+        "content": "has no effect because torque depends only on r"
+      },
+      {
+        "id": "D",
+        "content": "reverses the self-energizing direction"
+      }
+    ],
+    "correct": "B",
+    "explanation": "A larger wrap angle increases the exponential ratio $e^{f\\theta}$, so for a given slack tension the tight tension (and the difference $T_1-T_2$) grows, raising $M_f=(T_1-T_2)r$.",
+    "source": "Band brake"
+  },
+  {
+    "id": "mech-q24",
+    "topic": "Brakes & clutches",
+    "difficulty": "hard",
+    "prompt": "In a conical clutch (half-angle α) the maximum admissible pressure is fixed. Compared with a flat clutch of the same mean radius and axial force, the conical clutch ...",
+    "options": [
+      {
+        "id": "A",
+        "content": "transmits the same torque"
+      },
+      {
+        "id": "B",
+        "content": "transmits less torque"
+      },
+      {
+        "id": "C",
+        "content": "transmits more torque, by the factor $1/\\sin\\alpha$"
+      },
+      {
+        "id": "D",
+        "content": "cannot transmit torque at all"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The wedge raises the normal force to $Q=F/\\sin\\alpha$, so $C=fFR_m/\\sin\\alpha$ — larger by $1/\\sin\\alpha$ than the flat-clutch torque $fFR_m$.",
+    "source": "Conical clutch"
+  },
+  {
+    "id": "mech-q25",
+    "topic": "Gears",
+    "difficulty": "easy",
+    "prompt": "For full-depth spur teeth with pressure angle $\\alpha=20°$, the theoretical minimum number of teeth to avoid interference is about:",
+    "options": [
+      {
+        "id": "A",
+        "content": "7"
+      },
+      {
+        "id": "B",
+        "content": "12"
+      },
+      {
+        "id": "C",
+        "content": "17"
+      },
+      {
+        "id": "D",
+        "content": "30"
+      }
+    ],
+    "correct": "C",
+    "explanation": "$z_{min}=2/\\sin^2 20° \\approx 17$. In practice it is rounded to 14–17 depending on addendum.",
+    "source": "Interference"
+  },
+  {
+    "id": "mech-q26",
+    "topic": "Gears",
+    "difficulty": "medium",
+    "prompt": "In a parallel-helical gear with normal module $m_n$ and helix angle $\\beta$, the pitch radius is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$r=m_n z/2$"
+      },
+      {
+        "id": "B",
+        "content": "$r=\\dfrac{m_n z}{2\\cos\\beta}$"
+      },
+      {
+        "id": "C",
+        "content": "$r=\\dfrac{m_n z\\cos\\beta}{2}$"
+      },
+      {
+        "id": "D",
+        "content": "$r=\\dfrac{m_n z}{2\\sin\\beta}$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "The transverse module is $m_t=m_n/\\cos\\beta$ and $r=m_t z/2$, giving $r=m_n z/(2\\cos\\beta)$. Using $m_n$ directly is the classic error.",
+    "source": "Helical geometry"
+  },
+  {
+    "id": "mech-q27",
+    "topic": "Gears",
+    "difficulty": "easy",
+    "prompt": "An idle (intermediate) gear inserted between driver and driven gear changes:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the magnitude of the transmission ratio between the outer gears"
+      },
+      {
+        "id": "B",
+        "content": "only the sense of rotation of the driven gear, not the ratio"
+      },
+      {
+        "id": "C",
+        "content": "the module of the gears"
+      },
+      {
+        "id": "D",
+        "content": "nothing at all"
+      }
+    ],
+    "correct": "B",
+    "explanation": "$i=z_2/z_1$ between the outer gears is independent of the idler's teeth; the idler only reverses the sense (makes driver and driven turn the same way here).",
+    "source": "Gear trains"
+  },
+  {
+    "id": "mech-q28",
+    "topic": "Gears",
+    "difficulty": "medium",
+    "prompt": "The separating (radial) force between two spur teeth transmitting tangential force $F_t$ at pressure angle $\\alpha$ is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$F_t\\sin\\alpha$"
+      },
+      {
+        "id": "B",
+        "content": "$F_t/\\cos\\alpha$"
+      },
+      {
+        "id": "C",
+        "content": "$F_t\\tan\\alpha$"
+      },
+      {
+        "id": "D",
+        "content": "$F_t\\cos\\alpha$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The tooth normal force is $F_n=F_t/\\cos\\alpha$; its radial component is $F_n\\sin\\alpha=F_t\\tan\\alpha$. The full normal force is $F_t/\\cos\\alpha$ (option B is $F_n$, not $F_r$).",
+    "source": "Tooth forces"
+  },
+  {
+    "id": "mech-q29",
+    "topic": "Gears",
+    "difficulty": "hard",
+    "prompt": "In a worm-gear pair, which force pairing is correct?",
+    "options": [
+      {
+        "id": "A",
+        "content": "Worm tangential force = wheel tangential force"
+      },
+      {
+        "id": "B",
+        "content": "Worm axial force = wheel tangential force"
+      },
+      {
+        "id": "C",
+        "content": "Worm radial force = wheel axial force"
+      },
+      {
+        "id": "D",
+        "content": "All three forces are equal on worm and wheel"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Because the worm and wheel axes are at 90°, the worm's axial direction is the wheel's tangential direction: the worm axial force equals the wheel tangential force (and the worm tangential force equals the wheel axial force).",
+    "source": "Worm gears"
+  },
+  {
+    "id": "mech-q30",
+    "topic": "Gears",
+    "difficulty": "medium",
+    "prompt": "A straight bevel gear (axes at 90°) with pinion cone half-angle $\\delta_1$ carries tangential force $F_t$. Its axial component on the pinion is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$F_t\\tan\\alpha\\cos\\delta_1$"
+      },
+      {
+        "id": "B",
+        "content": "$F_t\\tan\\alpha\\sin\\delta_1$"
+      },
+      {
+        "id": "C",
+        "content": "$F_t\\sin\\delta_1$"
+      },
+      {
+        "id": "D",
+        "content": "$F_t\\tan\\alpha$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "The separating force $F_t\\tan\\alpha$ lies in the plane containing the cone; it splits into radial $F_t\\tan\\alpha\\cos\\delta_1$ and axial $F_t\\tan\\alpha\\sin\\delta_1$ along the pinion axis.",
+    "source": "Bevel gears"
+  },
+  {
+    "id": "mech-q31",
+    "topic": "Gear trains, belts & power screws",
+    "difficulty": "easy",
+    "prompt": "An idle (intermediate) gear placed between driver and driven gear changes:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Only the sense of rotation, not the magnitude of the speed ratio"
+      },
+      {
+        "id": "B",
+        "content": "The speed ratio in proportion to its own teeth number"
+      },
+      {
+        "id": "C",
+        "content": "Nothing at all"
+      },
+      {
+        "id": "D",
+        "content": "Both the ratio and the module"
+      }
+    ],
+    "correct": "A",
+    "explanation": "In i = product of (z_driven/z_driver), the idle gear's teeth appear once in a numerator and once in a denominator, cancelling out. It only adds one extra external mesh, flipping the output sense. Its own teeth count still sets its size and the center distances.",
+    "source": "Ordinary gear trains"
+  },
+  {
+    "id": "mech-q32",
+    "topic": "Gear trains, belts & power screws",
+    "difficulty": "medium",
+    "prompt": "A power screw must be irreversible (self-locking). The required condition on the helix angle lambda is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "lambda must equal the pressure angle"
+      },
+      {
+        "id": "B",
+        "content": "lambda < phi_a, where phi_a = arctan(f_a) is the stick friction angle"
+      },
+      {
+        "id": "C",
+        "content": "lambda > phi_a"
+      },
+      {
+        "id": "D",
+        "content": "lambda < 45 degrees always"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Self-locking means the axial load cannot back-drive the screw. This holds when the helix angle is smaller than the stick (static) friction angle: lambda < phi_a. Equivalently the lowering torque Q(dm/2)tan(lambda - phi_a) would be negative, so the load stays put. Such screws always have raising efficiency below 0.5.",
+    "source": "Power screws"
+  },
+  {
+    "id": "mech-q33",
+    "topic": "Gear trains, belts & power screws",
+    "difficulty": "medium",
+    "prompt": "In the Willis formula for an epicyclic train, the quantity tau = (n1 - nP)/(n4 - nP) physically represents:",
+    "options": [
+      {
+        "id": "A",
+        "content": "The overall transmission ratio of the train as built"
+      },
+      {
+        "id": "B",
+        "content": "The ratio of the two gears' radii only"
+      },
+      {
+        "id": "C",
+        "content": "The speed ratio between gears 1 and 4 as if the planet carrier were held fixed"
+      },
+      {
+        "id": "D",
+        "content": "The efficiency of the train"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Subtracting the carrier speed nP from every gear puts us in the carrier's rotating frame, where the planet axes appear stationary and the train is ordinary. tau is exactly that ordinary (fixed-carrier) ratio between the end gears, computed from teeth numbers and external-mesh signs.",
+    "source": "Epicyclic trains"
+  },
+  {
+    "id": "mech-q34",
+    "topic": "Gear trains, belts & power screws",
+    "difficulty": "easy",
+    "prompt": "For a flat belt at the slip limit, the tight-side and slack-side tensions satisfy T1/T2 = e^(f*theta). Here theta is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "The pressure angle of the belt"
+      },
+      {
+        "id": "B",
+        "content": "The wrap (contact) angle in radians"
+      },
+      {
+        "id": "C",
+        "content": "The pulley rotation per second"
+      },
+      {
+        "id": "D",
+        "content": "The half-groove angle"
+      }
+    ],
+    "correct": "B",
+    "explanation": "theta is the angle of belt wrap around the pulley, expressed in radians (a common error is to leave it in degrees). Slip starts on the pulley with the smaller product f*theta. The difference T1 - T2 is what transmits the useful pulling force.",
+    "source": "Belt drives / capstan equation"
+  },
+  {
+    "id": "mech-q35",
+    "topic": "Gear trains, belts & power screws",
+    "difficulty": "medium",
+    "prompt": "A reducer has i = 10 and efficiency eta = 1. If the input torque is 5 Nm, the output torque is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "0.5 Nm"
+      },
+      {
+        "id": "B",
+        "content": "5 Nm"
+      },
+      {
+        "id": "C",
+        "content": "50 Nm"
+      },
+      {
+        "id": "D",
+        "content": "Cannot be determined"
+      }
+    ],
+    "correct": "C",
+    "explanation": "With eta = 1, power is conserved: C_in*omega_in = C_out*omega_out, so C_out = C_in*(omega_in/omega_out) = C_in*i = 5*10 = 50 Nm. A reducer slows the shaft down and multiplies torque by the ratio.",
+    "source": "Torque flow in transmissions"
+  },
+  {
+    "id": "mech-q36",
+    "topic": "Gear trains, belts & power screws",
+    "difficulty": "hard",
+    "prompt": "In an epicyclic reducer one gear is bolted to the fixed casing (carter). The constraint couple C_V it must carry equals:",
+    "options": [
+      {
+        "id": "A",
+        "content": "The input torque only"
+      },
+      {
+        "id": "B",
+        "content": "The output torque minus the input torque, always"
+      },
+      {
+        "id": "C",
+        "content": "Zero, since the gear does not rotate"
+      },
+      {
+        "id": "D",
+        "content": "Whatever balances the torque sum: C_in + C_out + C_V = 0"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Treating the whole train as one free body, the three external torques (input, output, and the reaction from the casing on the fixed gear) must sum to zero. So C_V = -(C_in + C_out). A non-rotating member still carries torque even though it does no work.",
+    "source": "Epicyclic speed reducer"
+  },
+  {
+    "id": "mech-q37",
+    "topic": "Transients & vibrations",
+    "difficulty": "easy",
+    "prompt": "In a flat multi-disc clutch slipping while it transmits torque, the friction torque per active surface (uniform wear) is best taken as:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$f F r_e$ using the external radius"
+      },
+      {
+        "id": "B",
+        "content": "$f F r_m$ with $r_m=(r_i+r_e)/2$"
+      },
+      {
+        "id": "C",
+        "content": "$f F (r_e-r_i)$"
+      },
+      {
+        "id": "D",
+        "content": "$f F r_i$ using the internal radius"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Under the uniform-wear hypothesis the resultant friction force acts at the mean radius $r_m=(r_i+r_e)/2$, so each surface gives $f F r_m$; multiply by the number of active surfaces $N$.",
+    "source": "Clutch transient theory"
+  },
+  {
+    "id": "mech-q38",
+    "topic": "Transients & vibrations",
+    "difficulty": "medium",
+    "prompt": "During a clutch engagement, the heat generated equals:",
+    "options": [
+      {
+        "id": "A",
+        "content": "The kinetic energy of the motor before engagement"
+      },
+      {
+        "id": "B",
+        "content": "The transmitted torque times the absolute angle turned by the motor"
+      },
+      {
+        "id": "C",
+        "content": "The transmitted torque times the relative slip angle between the two sides"
+      },
+      {
+        "id": "D",
+        "content": "Zero, because the clutch is ideal"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Friction heat = friction force × relative sliding. Here $Q=C^*\\int(\\omega_M-\\omega_D)\\,dt$. The relative speed drops linearly from $\\omega_{M0}$ to 0 over $t^*$, giving the slip angle $\\tfrac12\\omega_{M0}t^*$.",
+    "source": "Clutch transient theory"
+  },
+  {
+    "id": "mech-q39",
+    "topic": "Transients & vibrations",
+    "difficulty": "medium",
+    "prompt": "For a flywheel in periodic steady state, the index of fluctuation is $i=(\\omega_{max}-\\omega_{min})/\\omega_m$. To halve $i$ (same engine and load), the flywheel inertia must be:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Halved"
+      },
+      {
+        "id": "B",
+        "content": "Doubled"
+      },
+      {
+        "id": "C",
+        "content": "Quadrupled"
+      },
+      {
+        "id": "D",
+        "content": "Unchanged — $i$ does not depend on inertia"
+      }
+    ],
+    "correct": "B",
+    "explanation": "From $i=\\Delta E/(I\\omega_m^2)$, with $\\Delta E$ and $\\omega_m$ fixed, $i\\propto 1/I$. Halving $i$ requires doubling $I$.",
+    "source": "Flywheel theory"
+  },
+  {
+    "id": "mech-q40",
+    "topic": "Transients & vibrations",
+    "difficulty": "easy",
+    "prompt": "Two springs $k_1$ and $k_2$ in series support a mass. The equivalent stiffness is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$k_1+k_2$ (stiffer than either)"
+      },
+      {
+        "id": "B",
+        "content": "$k_1k_2/(k_1+k_2)$ (softer than either)"
+      },
+      {
+        "id": "C",
+        "content": "$\\sqrt{k_1k_2}$"
+      },
+      {
+        "id": "D",
+        "content": "$(k_1+k_2)/2$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Springs in series share the same force and add deflections, so compliances add: $1/k_{eq}=1/k_1+1/k_2$, giving $k_{eq}=k_1k_2/(k_1+k_2)$, always smaller than the smaller spring. Parallel springs add stiffnesses.",
+    "source": "Equivalent stiffness theory"
+  },
+  {
+    "id": "mech-q41",
+    "topic": "Transients & vibrations",
+    "difficulty": "hard",
+    "prompt": "A spring of stiffness $k$ is attached at distance $d$ from the pivot of a bar; the equation of motion is written in the rotation angle $\\theta$. The rotational stiffness contributed by this spring is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$k$"
+      },
+      {
+        "id": "B",
+        "content": "$k\\,d$"
+      },
+      {
+        "id": "C",
+        "content": "$k\\,d^2$"
+      },
+      {
+        "id": "D",
+        "content": "$k/d^2$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The spring extension is $d\\theta$, its force $k d\\theta$, and the restoring torque $k d\\theta\\cdot d = k d^2\\theta$. Hence the equivalent rotational stiffness is $k d^2$. Similarly a damper at arm $b$ gives $c b^2$.",
+    "source": "Equivalent stiffness theory"
+  },
+  {
+    "id": "mech-q42",
+    "topic": "Transients & vibrations",
+    "difficulty": "medium",
+    "prompt": "A spring-mass-damper is driven above its natural frequency ($\\omega>\\omega_n$). Compared with the excitation, the steady-state response phase lag $\\varphi$ is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "Less than 90° (it stays nearly in phase)"
+      },
+      {
+        "id": "B",
+        "content": "Exactly 0°"
+      },
+      {
+        "id": "C",
+        "content": "Greater than 90° (toward anti-phase)"
+      },
+      {
+        "id": "D",
+        "content": "Always exactly 180°"
+      }
+    ],
+    "correct": "C",
+    "explanation": "$\\tan\\varphi=c\\omega/(k-m\\omega^2)$. Above resonance, $k-m\\omega^2<0$, so the phase lies in the second quadrant: $90^\\circ<\\varphi<180^\\circ$. At resonance $\\varphi=90^\\circ$; well below it $\\varphi\\to0$.",
+    "source": "Forced response theory"
+  },
+  {
+    "id": "mech-q43",
+    "topic": "Full exam simulations",
+    "difficulty": "easy",
+    "prompt": "In a four-gear reducer, the axes of gears 1 and 4 are aligned and the module is the same for all gears. What does the alignment condition impose on the tooth numbers?",
+    "options": [
+      {
+        "id": "A",
+        "content": "$z_1=z_4$"
+      },
+      {
+        "id": "B",
+        "content": "$z_1+z_2=z_3+z_4$ (equal centre distances)"
+      },
+      {
+        "id": "C",
+        "content": "$z_1 z_2=z_3 z_4$"
+      },
+      {
+        "id": "D",
+        "content": "$z_2=z_3$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Aligned axes 1 and 4 means the two centre distances are equal: $a_{12}=\\tfrac{m}{2}(z_1+z_2)=a_{34}=\\tfrac{m}{2}(z_3+z_4)$, hence $z_1+z_2=z_3+z_4$.",
+    "source": "Simulation 1, Problem 3"
+  },
+  {
+    "id": "mech-q44",
+    "topic": "Full exam simulations",
+    "difficulty": "medium",
+    "prompt": "For an end-pivoted uniform bar with a damper at distance $d$ from the pivot, the damper's contribution to the equation of motion in $\\vartheta$ is:",
+    "options": [
+      {
+        "id": "A",
+        "content": "$c\\,\\dot\\vartheta$"
+      },
+      {
+        "id": "B",
+        "content": "$c\\,d\\,\\dot\\vartheta$"
+      },
+      {
+        "id": "C",
+        "content": "$c\\,d^2\\,\\dot\\vartheta$"
+      },
+      {
+        "id": "D",
+        "content": "$c\\,\\dot\\vartheta/d$"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The damper velocity is $d\\dot\\vartheta$, its force is $c\\,d\\dot\\vartheta$, and its moment about the pivot is force times arm $=c\\,d^2\\dot\\vartheta$. So generalized damping $c_{eq}=c\\,d^2$.",
+    "source": "Simulation 1, Problem 2"
+  },
+  {
+    "id": "mech-q45",
+    "topic": "Full exam simulations",
+    "difficulty": "medium",
+    "prompt": "For a helical gear pair with normal module $m_n$ and helix angle $\\beta$, the centre distance is computed with which module?",
+    "options": [
+      {
+        "id": "A",
+        "content": "The normal module $m_n$"
+      },
+      {
+        "id": "B",
+        "content": "The transverse module $m_t=m_n/\\cos\\beta$"
+      },
+      {
+        "id": "C",
+        "content": "$m_n\\cos\\beta$"
+      },
+      {
+        "id": "D",
+        "content": "$m_n\\tan\\beta$"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Centre distance and pitch radii live in the transverse plane: $a=\\tfrac{m_t}{2}(z_1+z_2)$ with $m_t=m_n/\\cos\\beta>m_n$. Using $m_n$ underestimates the centre distance.",
+    "source": "Simulation 2, Problem 2"
+  },
+  {
+    "id": "mech-q46",
+    "topic": "Full exam simulations",
+    "difficulty": "medium",
+    "prompt": "A load descends and is braked by a band brake. The system decelerates only if:",
+    "options": [
+      {
+        "id": "A",
+        "content": "the rope tension equals the weight"
+      },
+      {
+        "id": "B",
+        "content": "the rope tension (reflected from the brake torque) exceeds the weight $mg$"
+      },
+      {
+        "id": "C",
+        "content": "the brake torque equals zero"
+      },
+      {
+        "id": "D",
+        "content": "the belt ratio is greater than 1"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Newton on the load: $m\\ddot x=mg-T_{rope}$ (down positive). Deceleration of the descending mass requires $T_{rope}>mg$, i.e. the brake torque reflected through the belt to drum 1 must overcome the weight.",
+    "source": "Simulation 2, Problem 3"
+  }
+]

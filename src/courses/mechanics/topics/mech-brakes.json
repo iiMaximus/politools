@@ -1,0 +1,169 @@
+{
+  "title": "Brakes & clutches",
+  "summary": "A focused worked-problem lesson on friction brakes and clutches: pad (plane) brakes pivoted and non-pivoted, drum (shoe) brakes, self-energizing band brakes with the $e^{f\\theta}$ tension ratio, disc brakes, plus plane/multi-plate and conical clutches. The unifying method is normal force from a lever balance → friction force $T=fN$ → torque → dynamics. Eight fully solved exam problems (33–40) reproduce the answer-key values.",
+  "minutes": 45,
+  "objectives": [
+    "Find the normal force from a brake lever's moment balance and recognise self-energizing vs self-de-energizing configurations",
+    "Compute braking/transmitted torque for pad, drum, band, disc, plate-clutch and conical-clutch geometries",
+    "Apply the band-brake capstan relation $T_1/T_2=e^{f\\theta}$ with θ in radians",
+    "Connect braking torque to dynamics: deceleration, stopping time/distance, transmitted power and dissipated heat",
+    "Determine pivot/support reactions by vector-balancing all forces on a brake lever or shoe",
+    "Size clutch radii and back out contact pressures from the uniform-wear / max-pressure conditions"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Brakes & clutches — the friction-machine family"
+    },
+    {
+      "kind": "prose",
+      "text": "Brakes and clutches all do the same physical thing: a **normal force N** is pressed onto a moving surface, dry friction produces a **tangential force T = f·N**, and that friction force times its radius gives a **braking (or transmitted) torque**. The whole topic is bookkeeping: (1) find the normal force from a lever/actuator balance, (2) multiply by f to get the friction force, (3) take moments to get torque, and (4) use dynamics (KE, $C=I\\dot\\omega$) to connect torque to stopping time, deceleration or transmitted power."
+    },
+    {
+      "kind": "definition",
+      "term": "Friction force / braking torque",
+      "text": "On every friction surface the tangential force is $T=f\\,N$ (slip) or limited by $f_a N$ (stick). A brake torque about the rotation axis is $M_f=T\\cdot r=f\\,N\\,r$, where $r$ is the radius at which friction acts (drum radius, mean disc radius, etc.)."
+    },
+    {
+      "kind": "heading",
+      "text": "Pad (plane) brakes — pivoted vs non-pivoted"
+    },
+    {
+      "kind": "prose",
+      "text": "A pad/block is pushed against a flat or cylindrical surface by a lever. Write the **moment balance of the lever about its pivot**. The applied force F, the normal reaction N and the friction force T=fN each contribute a moment. The friction moment is what makes the brake **self-energizing** (T helps press the pad harder → less F needed) or **self-de-energizing** (T fights the actuator → more F needed). Which one you get depends on the rotation/sliding direction, so a brake almost always must be solved twice (one for each direction)."
+    },
+    {
+      "kind": "formula",
+      "tex": "F\\,\\ell_F \\;=\\; N\\,\\ell_N \\;\\mp\\; f\\,N\\,c \\quad\\Rightarrow\\quad N=\\dfrac{F\\,\\ell_F}{\\ell_N \\mp f\\,c}",
+      "text": "$\\ell_F$ = arm of the applied force, $\\ell_N$ = arm of the normal force, $c$ = perpendicular distance of the friction line from the pivot. Minus sign = self-energizing (smaller denominator, larger N), plus sign = self-de-energizing."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Master recipe: **N from a lever moment balance → T = fN → torque or braking force → dynamics.** The pin/pivot reaction R is then found by vector-summing all forces on the lever (it is NOT simply N or F)."
+    },
+    {
+      "kind": "heading",
+      "text": "Drum (shoe) brakes"
+    },
+    {
+      "kind": "prose",
+      "text": "Two curved shoes press outward (or a band inward) on a drum of radius $r_d$. Each shoe is driven by a lever exactly like a pad: $F\\,\\ell_F=N\\,\\ell_N\\mp f N c$. For the two shoes of one drum, one is leading (self-energizing, smaller denominator → larger N) and one is trailing (larger denominator → smaller N). Total braking torque is $M_f=f\\,(N_1+N_2)\\,r_d$. A **pivoted** shoe pivots about a fixed point on the shoe; a **non-pivoted (rigid)** shoe is rigidly attached to its lever — the algebra of the moment balance is the same, only the arms differ."
+    },
+    {
+      "kind": "heading",
+      "text": "Band brakes and the e^{fθ} ratio"
+    },
+    {
+      "kind": "prose",
+      "text": "A flexible band wraps an angle θ around the drum. As in belt/capstan theory the two end tensions obey the Eytelwein (capstan) relation. The tight side $T_1$ and slack side $T_2$ differ by the exponential of $f\\theta$, and the braking torque is $(T_1-T_2)r$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\dfrac{T_1}{T_2}=e^{f\\theta}, \\qquad M_f=(T_1-T_2)\\,r",
+      "text": "$T_1$ is always the larger (tight) tension on the side toward which the drum surface pulls the band. Swapping the rotation direction swaps which physical band end is $T_1$, which is exactly why band brakes are strongly self-energizing in one sense and not the other."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic mistakes: (1) using the wrong sign of the friction moment → solving the wrong direction; (2) forgetting that $T_1/T_2=e^{f\\theta}$ uses θ in **radians** (180° = π); (3) for the pin reaction, writing R = N (it must balance F, N and T together); (4) a disc-brake caliper presses on the disc but each caliper has ONE friction interface per side — count surfaces carefully; (5) mixing slip f and stick $f_a$."
+    },
+    {
+      "kind": "definition",
+      "term": "Disc brake",
+      "text": "An axial pad presses on a flat rotor. Friction torque $M_f=f\\,F\\,R_m$ per friction surface, with mean radius $R_m=\\tfrac{R_i+R_e}{2}$ (uniform wear). For $N$ friction surfaces $M_f=N\\,f\\,F\\,R_m$. No self-energizing in the simple axial pad."
+    },
+    {
+      "kind": "definition",
+      "term": "Plate & conical clutches",
+      "text": "A clutch transmits torque by friction, same physics as a disc brake. Flat multi-plate: $C=N\\,f\\,F\\,R_m$ with $N$ active surfaces, $R_m=\\tfrac{R_i+R_e}{2}$. Conical clutch (half-angle α): the normal force is amplified, $Q=F/\\sin\\alpha$, so $C=\\dfrac{f\\,F\\,R_m}{\\sin\\alpha}$ — a small axial force gives a large torque."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\text{Uniform wear: } p\\,r=\\text{const}\\;\\Rightarrow\\; p_{max}=\\frac{c}{R_i},\\; p_{min}=\\frac{c}{R_e},\\quad F=2\\pi c\\,(R_e-R_i)",
+      "text": "Pressure is highest at the inner radius. $c=p\\,r=F/[2\\pi(R_e-R_i)]$. This lets you back out $p_{max},p_{min}$ once F is known. (Uniform-pressure variant: $F=\\pi p (R_e^2-R_i^2)$.)"
+    },
+    {
+      "kind": "steps",
+      "title": "Reliable solving recipe",
+      "steps": [
+        {
+          "label": "1. Dynamics target",
+          "text": "From the required deceleration/stopping time/power, get the braking torque or friction force you must produce: $M_f=I\\dot\\omega$ with $I=m\\rho^2$ and $\\dot\\omega=\\omega_0/t$; or braking force $T=m\\,a$; or transmitted torque $C=P/\\omega$."
+        },
+        {
+          "label": "2. Relate torque to N",
+          "text": "Pad/drum: $M_f=fN r$. Disc/clutch: $C=N f F R_m$. Cone: $C=fFR_m/\\sin\\alpha$. Band: $M_f=(T_1-T_2)r$ with $T_1/T_2=e^{f\\theta}$."
+        },
+        {
+          "label": "3. Lever moment balance",
+          "text": "Solve the actuator force from $F\\,\\ell_F=N\\,\\ell_N\\mp fNc$. Do it once for each sliding direction (sign of the friction moment flips)."
+        },
+        {
+          "label": "4. Reactions",
+          "text": "Find pin/support reactions by vector force balance on the lever/shoe (sum of F, N, T)."
+        },
+        {
+          "label": "5. Dissipation",
+          "text": "Heat = lost kinetic energy: $L_i=\\tfrac12 I\\omega_0^2$ (or $\\tfrac12 mv^2$); dissipated power $P_d=T\\,v$ or $M_f\\,\\omega$."
+        }
+      ]
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "In a band brake wrapping θ=180° with f=0.3, what is the tight-to-slack tension ratio $T_1/T_2$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$e^{0.3}=1.35$"
+          },
+          {
+            "id": "B",
+            "content": "$e^{0.3\\pi}=2.57$"
+          },
+          {
+            "id": "C",
+            "content": "$0.3\\times180=54$"
+          },
+          {
+            "id": "D",
+            "content": "$e^{0.3\\times180}$ (a huge number)"
+          }
+        ],
+        "correct": "B",
+        "explanation": "θ must be in radians: 180° = π rad, so $T_1/T_2=e^{f\\theta}=e^{0.3\\pi}\\approx2.57$. Option D wrongly uses degrees; A drops the angle.",
+        "theory": "Capstan / Eytelwein relation."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Why does a conical clutch transmit much more torque than a flat clutch for the same axial force F?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The cone has a larger mean radius automatically"
+          },
+          {
+            "id": "B",
+            "content": "The wedge action makes the normal force $Q=F/\\sin\\alpha$, larger than F"
+          },
+          {
+            "id": "C",
+            "content": "Friction coefficient is higher on cones"
+          },
+          {
+            "id": "D",
+            "content": "The cone spins faster"
+          }
+        ],
+        "correct": "B",
+        "explanation": "On a cone of half-angle α the axial force is reacted by a normal force $Q=F/\\sin\\alpha$; with small α this is much larger than F, so $C=fFR_m/\\sin\\alpha$. The friction coefficient and radius are not intrinsically different.",
+        "theory": "Conical clutch wedge effect."
+      }
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Full exam simulations",
+  "summary": "Two complete past-exam simulations worked end to end. Each exam is three multi-part problems — planar mechanism kinematics (ICR + rigid-body relations), single-DoF free vibrations of a pivoted bar, and motion transmission (gear trains, helical tooth forces, belt-and-band-brake braking). A short theory refresher gives the three reliable solving recipes, then all six sub-problems are solved with full method, formulas, final answers and traps.",
+  "minutes": 45,
+  "objectives": [
+    "Recognize the three standard exam problem types (kinematics, vibrations, transmission) and the method each one demands",
+    "Locate the instantaneous centre of rotation and apply the rigid-body velocity and acceleration equations, including the centripetal term and guide constraints",
+    "Reduce a pivoted bar with springs and a damper to a single-DoF canonic equation and extract ω_n, ζ and ω_d",
+    "Compute gear-train ratios, reflected inertias and torques using power balance with η = 1",
+    "Resolve spur and helical tooth forces into tangential, radial and axial components using the transverse plane quantities",
+    "Analyse a belt-plus-band-brake braking system: ratio, capstan tensions, reflected rope tension, deceleration and stop time"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "How the Applied Mechanics exam is built"
+    },
+    {
+      "kind": "prose",
+      "text": "The written exam is **three multi-part worked problems**, always in the same flavours:\n\n- **Problem 1 — planar kinematics of a mechanism** (slider-crank, four-bar, rollers in guides). You are given one point's velocity and acceleration and must find the velocity/acceleration of another point plus the angular velocity/acceleration of a link, usually via the **instantaneous centre of rotation (ICR)** and the **rigid-body velocity/acceleration equations**.\n- **Problem 2 — dynamics / free vibrations** of a pivoted bar with springs and a damper. You build the **single-DoF equation of motion**, reduce it to canonic form and read off $\\omega_n$, $\\zeta$, $\\omega_d$.\n- **Problem 3 — motion transmission**: gear trains (spur or helical), drums, belts, brakes. You compute transmission ratios, torques and exchanged forces using **power balance** ($\\eta=1$ here) and tooth-force geometry."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "The professor uses the easier first parts to check you understand the **method**. Always: (1) draw the mechanism, (2) write the constraint each body obeys, (3) apply the rigid-body relations or a power/torque balance, (4) carry signs and senses, (5) state units."
+    },
+    {
+      "kind": "heading",
+      "text": "The three standard attack recipes"
+    },
+    {
+      "kind": "definition",
+      "term": "Velocity ICR method",
+      "text": "The instantaneous centre $C$ of a link is the point with zero velocity. It lies at the intersection of the lines drawn **perpendicular to the velocity of two points** of the link. Then $\\omega=\\dfrac{v_P}{\\overline{CP}}$ for every point $P$, and $v_P\\perp\\overline{CP}$. If the two perpendiculars are parallel, $C$ is at infinity and the link is in **pure translation** ($\\omega=0$)."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\vec v_B=\\vec v_A+\\vec\\omega\\times\\vec r_{AB},\\qquad \\vec a_B=\\vec a_A+\\vec\\alpha\\times\\vec r_{AB}-\\omega^2\\,\\vec r_{AB}"
+    },
+    {
+      "kind": "prose",
+      "text": "These two relations solve every kinematics problem. Pick the point whose motion you know fully ($A$), the point you want ($B$), and impose the **constraint** on $B$ (e.g. \"$B$ stays on a horizontal guide\" $\\Rightarrow v_{By}=0,\\,a_{By}=0$; \"$B$ on a circle of radius $r$\" $\\Rightarrow$ centripetal $v^2/r$ toward the centre)."
+    },
+    {
+      "kind": "formula",
+      "tex": "I_O\\,\\ddot\\vartheta+c_{eq}\\,\\dot\\vartheta+k_{eq}\\,\\vartheta=0\\;\\Rightarrow\\;\\ddot\\vartheta+2\\zeta\\omega_n\\dot\\vartheta+\\omega_n^2\\vartheta=0,\\quad \\omega_n=\\sqrt{\\tfrac{k_{eq}}{I_O}},\\;\\omega_d=\\omega_n\\sqrt{1-\\zeta^2}"
+    },
+    {
+      "kind": "prose",
+      "text": "For a pivoted bar, reduce springs/dampers to the rotation $\\vartheta$ about the pivot: a spring at distance $d$ contributes $k\\,d^2$ to $k_{eq}$, a damper at distance $d$ contributes $c\\,d^2$. The bar's inertia about the pivot $O$ (end-pivot) is $I_O=\\tfrac{1}{3}mL^2$ (from $I_G=\\tfrac{1}{12}mL^2$ + parallel axis)."
+    },
+    {
+      "kind": "definition",
+      "term": "Gear / transmission relations",
+      "text": "Spur gears: pitch radius $r=\\tfrac{m\\,z}{2}$, ratio $i=\\tfrac{\\omega_{in}}{\\omega_{out}}=\\prod\\tfrac{z_{driven}}{z_{driver}}$. Power conserved with $\\eta=1$: $P=C\\,\\omega$ constant $\\Rightarrow C_{out}=i\\,C_{in}$. Tangential tooth force $F_t=\\tfrac{C}{r}$; radial $F_r=F_t\\tan\\alpha$; normal $F_n=\\tfrac{F_t}{\\cos\\alpha}$. For helical gears use the **transverse** quantities: $m_t=\\tfrac{m_n}{\\cos\\beta}$, $\\tan\\alpha_t=\\tfrac{\\tan\\alpha_n}{\\cos\\beta}$, and axial force $F_a=F_t\\tan\\beta$."
+    },
+    {
+      "kind": "steps",
+      "title": "Reliable solving recipe",
+      "steps": [
+        {
+          "label": "Sketch & constraints",
+          "text": "Redraw the mechanism, mark known $\\vec v$, $\\vec a$, and write what each joint forces ($v\\perp$ link for a pin on a rotating bar; $v$ along the guide for a slider; $v^2/r$ centripetal on a circular guide)."
+        },
+        {
+          "label": "Velocities",
+          "text": "Find the ICR (or use $\\vec v_B=\\vec v_A+\\vec\\omega\\times\\vec r_{AB}$). Get $\\omega$ and the unknown velocity. State the sense (CW/CCW, left/right)."
+        },
+        {
+          "label": "Accelerations",
+          "text": "Apply $\\vec a_B=\\vec a_A+\\vec\\alpha\\times\\vec r_{AB}-\\omega^2\\vec r_{AB}$ with the constraint on $B$. Solve the two scalar equations for $\\alpha$ and the unknown acceleration component."
+        },
+        {
+          "label": "Dynamics/transmission",
+          "text": "For vibrations: torque balance about the pivot, reduce to canonic form. For transmission: ratio from teeth/radii, then power/torque balance ($\\eta=1$) and tooth-force geometry."
+        },
+        {
+          "label": "Check",
+          "text": "Units, order of magnitude, and that any brake/resistance produces a **deceleration** (resisting torque larger than driving)."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic mistakes: (1) forgetting the **centripetal $-\\omega^2 r_{AB}$** term in the acceleration equation; (2) using $I_G=\\tfrac{1}{12}mL^2$ instead of $I_O=\\tfrac{1}{3}mL^2$ for an end-pivoted bar; (3) for helical gears, plugging the **normal** module/pressure angle into the centre-distance instead of the **transverse** ones; (4) dropping the sense (CW/CCW) — the professor grades it."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "At an instant the velocities of two points of a rigid link are both horizontal. Where is the link's instantaneous centre of rotation?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Midway between the two points"
+          },
+          {
+            "id": "B",
+            "content": "At infinity — the link is in pure translation, so $\\omega=0$"
+          },
+          {
+            "id": "C",
+            "content": "At the faster of the two points"
+          },
+          {
+            "id": "D",
+            "content": "Undefined; the link cannot be rigid"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The ICR is where the perpendiculars to the two velocities meet. Two horizontal velocities give two parallel (vertical) perpendiculars, which meet only at infinity: the link instantaneously translates and $\\omega=0$ (though $\\alpha$ may be non-zero)."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A uniform bar of mass $m$, length $L$ is pivoted at one end $O$ and carries a spring $k$ at its tip. The small-oscillation natural frequency is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\omega_n=\\sqrt{k/m}$"
+          },
+          {
+            "id": "B",
+            "content": "$\\omega_n=\\sqrt{kL^2/(mL^2/12)}$"
+          },
+          {
+            "id": "C",
+            "content": "$\\omega_n=\\sqrt{kL^2/(mL^2/3)}=\\sqrt{3k/m}$"
+          },
+          {
+            "id": "D",
+            "content": "$\\omega_n=\\sqrt{k/(3m)}$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Reduce to rotation about $O$: $k_{eq}=kL^2$ (spring at distance $L$) and $I_O=\\tfrac13 mL^2$ (end-pivoted bar, parallel-axis from $\\tfrac1{12}mL^2$). Then $\\omega_n=\\sqrt{k_{eq}/I_O}=\\sqrt{3k/m}$."
+      }
+    }
+  ]
+}

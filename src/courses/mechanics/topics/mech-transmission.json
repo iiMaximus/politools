@@ -1,0 +1,175 @@
+{
+  "title": "Gear trains, belts & power screws",
+  "summary": "A focused toolkit for the motion-transmission exam problem: ordinary and epicyclic gear trains (Willis formula), belt drives via the Eytelwein/capstan law, ropes and raising devices, and power screws including efficiency, self-locking and the differential screw. Quick theory plus nine fully worked past-exam problems (49-57) with every number verified against the answer key.",
+  "minutes": 55,
+  "objectives": [
+    "Compute speed ratios and torques through ordinary multi-stage gear trains, including idle gears and the role of the constraint couple on a fixed casing.",
+    "Apply the Willis formula to epicyclic (planetary) trains: build the fixed-carrier ratio tau with correct external-mesh signs and solve for any shaft speed.",
+    "Use coaxiality conditions to find missing teeth numbers and explain why planetary reducers achieve very large ratios.",
+    "Solve flat- and V-belt drives with the Eytelwein/capstan equation, including the V-belt wedge factor and pretension/take-up tensioning.",
+    "Analyse power screws: helix angle, raising/lowering torque, efficiency, and the self-locking (irreversibility) criterion, including the differential screw.",
+    "Reduce inertias to a single shaft to find start-up accelerations and close bearing/support reactions with equilibrium checks."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Motion transmission: the big picture"
+    },
+    {
+      "kind": "prose",
+      "text": "Almost every machine moves a load that turns slowly and forcefully from a motor that turns fast and weakly (or vice-versa). The job of a **transmission** is to change speed, torque and sometimes direction with high efficiency. Four families cover the whole exam:\n\n- **Gear trains** (spur/helical gears in series): exact, compact ratios.\n- **Epicyclic (planetary) trains**: huge ratios in a coaxial package, solved with the Willis formula.\n- **Belts & ropes**: flexible drive limited by friction grip (Eytelwein) — they can slip.\n- **Power screws**: turn rotation into a strong linear push; can be made self-locking.\n\nThe golden rule for all of them: with efficiency $\\eta$, **power in = power out / efficiency** and **torque scales inversely with speed**."
+    },
+    {
+      "kind": "definition",
+      "term": "Transmission (speed) ratio",
+      "text": "$i=\\dfrac{\\omega_{in}}{\\omega_{out}}=\\dfrac{n_{in}}{n_{out}}$. For a meshing gear pair $\\dfrac{\\omega_1}{\\omega_2}=\\dfrac{z_2}{z_1}=\\dfrac{r_2}{r_1}$ (teeth ratio = inverse radius ratio). For a multi-stage train, multiply the stage ratios. $i>1$ is a reducer (slows down, multiplies torque)."
+    },
+    {
+      "kind": "formula",
+      "tex": "r=\\frac{m\\,z}{2},\\qquad F_t=\\frac{C}{r},\\qquad F_n=\\frac{F_t}{\\cos\\alpha},\\qquad F_r=F_t\\tan\\alpha",
+      "caption": "Spur-gear basics: pitch radius from module m and teeth z; tangential force from torque; normal force along the line of action at pressure angle alpha; radial component."
+    },
+    {
+      "kind": "prose",
+      "text": "**Ordinary trains.** Stack meshing pairs on intermediate shafts. The overall ratio is the product of stage ratios $i=\\prod (z_{driven}/z_{driver})$. An **idle gear** (one between two others) changes only the sense of rotation, not the magnitude of the ratio. Torque on each shaft = (torque on previous shaft)$\\times$(its stage ratio); the slow output shaft carries the largest torque."
+    },
+    {
+      "kind": "heading",
+      "text": "Epicyclic trains — the Willis formula"
+    },
+    {
+      "kind": "prose",
+      "text": "In a planetary train the planet axes move (carried by the **planet carrier/arm** P or H). You cannot just multiply ratios. The trick: work in the reference frame of the carrier, where the train looks ordinary. Subtract the carrier speed from every gear."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\tau=\\frac{n_1-n_P}{n_4-n_P}=(-1)^{e}\\prod\\frac{z_{driven}}{z_{driver}}",
+      "caption": "Willis: tau is the fixed-carrier ('basic') ratio between the two sun/annulus gears. e = number of EXTERNAL meshes (each external mesh gives a sign flip; internal/annulus meshes do not). Plug in the two known speeds, solve for the third."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "Willis recipe: (1) identify the two end gears (1 and 4) and the carrier P. (2) Compute $\\tau$ with the carrier imagined fixed, counting external meshes for the sign. (3) Write $\\dfrac{n_1-n_P}{n_4-n_P}=\\tau$ and substitute the two given speeds. (4) Solve linearly for the unknown. Coaxiality fixes the missing teeth count, e.g. for two suns sharing a carrier $z_1+z_2=z_3+z_4$."
+    },
+    {
+      "kind": "heading",
+      "text": "Belts, ropes and the capstan equation"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\frac{T_1}{T_2}=e^{f\\,\\theta}\\quad(\\text{flat belt/rope}),\\qquad \\frac{T_1}{T_2}=e^{f\\theta/\\sin\\gamma}\\quad(\\text{V-belt})",
+      "caption": "Eytelwein / capstan law. T1 = tight side, T2 = slack side, f = friction coeff, theta = wrap angle (rad). A V-belt with half-groove angle gamma multiplies grip by 1/sin(gamma) (the wedge effect)."
+    },
+    {
+      "kind": "formula",
+      "tex": "W=(T_1-T_2)\\,v,\\qquad v=\\omega\\,\\frac{D}{2},\\qquad C=(T_1-T_2)\\frac{D}{2}",
+      "caption": "Transmitted power = tension difference times belt speed; torque on a pulley = tension difference times its radius. A pretension/take-up commonly fixes T1+T2 (or the slack T2); Eytelwein then gives the other tension at the slip limit."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic belt mistakes: (1) using degrees instead of radians for theta; (2) forgetting the V-belt factor 1/sin(gamma) — a 12 deg groove multiplies the effective friction by ~5; (3) applying the wrap angle of the WRONG pulley — slip starts on the pulley with the SMALLER f*theta, usually the small one."
+    },
+    {
+      "kind": "heading",
+      "text": "Power screws"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\tan\\lambda=\\frac{p}{\\pi d_m},\\qquad C=Q\\frac{d_m}{2}\\tan(\\lambda+\\varphi)\\ \\text{(raise)},\\qquad C=Q\\frac{d_m}{2}\\tan(\\lambda-\\varphi)\\ \\text{(lower)}",
+      "caption": "Helix angle lambda from lead p and mean diameter d_m; friction angle phi=arctan(f). Driving torque to raise a load Q. The lowering torque uses (lambda - phi)."
+    },
+    {
+      "kind": "definition",
+      "term": "Self-locking (irreversibility) & efficiency",
+      "text": "A screw is **self-locking / irreversible** (the load cannot back-drive it) when $\\lambda<\\varphi_a$, i.e. the helix angle is below the stick friction angle $\\varphi_a=\\arctan f_a$. Raising **efficiency**: $\\eta=\\dfrac{\\tan\\lambda}{\\tan(\\lambda+\\varphi)}$. A self-locking screw always has $\\eta<0.5$."
+    },
+    {
+      "kind": "steps",
+      "title": "Reliable solving recipe for a transmission problem",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Identify the kinematic chain and the ratio. Gears: multiply stage teeth ratios. Epicyclic: use Willis with the carrier. Belt: speeds equal at the contact, $i=D_2/D_1$. Screw: $v=\\omega\\,p/2\\pi$."
+        },
+        {
+          "label": "2",
+          "text": "Do statics/torque flow with efficiency. With eta=1, power and so $C_{out}=C_{in}\\cdot i$. A fixed member (annulus, carter) carries a constraint couple $C_V$ found from torque balance $C_{in}+C_{out}+C_V=0$."
+        },
+        {
+          "label": "3",
+          "text": "Get tooth/belt/thread forces: $F_t=C/r$, $F_n=F_t/\\cos\\alpha$ for gears; Eytelwein for belts; $Q\\,(d_m/2)\\tan(\\lambda\\pm\\varphi)$ for screws."
+        },
+        {
+          "label": "4",
+          "text": "Bearing reactions from the FBD of each shaft: sum forces and take moments about a support. Vertical equilibrium checks: reactions must support all weights plus rope/belt loads."
+        },
+        {
+          "label": "5",
+          "text": "For dynamics (start-up), reduce all inertias to one shaft: $I_{eq}=I_{in}+\\sum I_k/i_k^2+\\sum m_k r_k^2/i_k^2$, then $C_{in}-C_{load,red}=I_{eq}\\,\\dot\\omega$."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Memorize three workhorses: Willis $\\dfrac{n_1-n_P}{n_4-n_P}=\\tau$; Eytelwein $\\dfrac{T_1}{T_2}=e^{f\\theta}$ (V-belt: $f/\\sin\\gamma$); screw $C=Q\\dfrac{d_m}{2}\\tan(\\lambda+\\varphi)$ with self-locking when $\\lambda<\\varphi_a$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "In an epicyclic train, how many sign flips does the fixed-carrier ratio tau pick up?",
+        "options": [
+          {
+            "id": "A",
+            "content": "One per external mesh; internal (annulus) meshes give no flip"
+          },
+          {
+            "id": "B",
+            "content": "One per gear in the train"
+          },
+          {
+            "id": "C",
+            "content": "Always exactly one"
+          },
+          {
+            "id": "D",
+            "content": "One per internal mesh; external meshes give no flip"
+          }
+        ],
+        "correct": "A",
+        "explanation": "Each external (gear-on-gear) mesh reverses rotation, so tau gets a factor of -1; an internal mesh (planet inside an annulus) keeps the same sense, so no flip. Count the external meshes to set the sign of tau.",
+        "theory": "Willis formula sign convention."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A V-belt has half-groove angle gamma=12 deg and friction f=0.4. Its effective gripping friction coefficient is about:",
+        "options": [
+          {
+            "id": "A",
+            "content": "0.4 (the wedge has no effect)"
+          },
+          {
+            "id": "B",
+            "content": "0.08"
+          },
+          {
+            "id": "C",
+            "content": "1.9"
+          },
+          {
+            "id": "D",
+            "content": "0.2"
+          }
+        ],
+        "correct": "C",
+        "explanation": "The wedge multiplies grip by 1/sin(gamma): f' = 0.4/sin(12 deg) = 0.4/0.208 = 1.92. This is why V-belts transmit far more torque than flat belts of the same pretension.",
+        "theory": "V-belt effective friction."
+      }
+    }
+  ]
+}

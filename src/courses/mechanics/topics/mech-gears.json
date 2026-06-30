@@ -1,0 +1,188 @@
+{
+  "title": "Gears",
+  "summary": "Gear geometry (module, pitch, pressure angle), transmission ratio, minimum teeth to avoid interference, and the tangential/radial/axial tooth forces for spur, helical, bevel and worm gears — plus elastic and Cardan joints. The whole topic reduces to three relations ($P=F_t v$, $v=\\omega r$, $F_r=F_t\\tan\\alpha$) followed by a shaft moment balance for the bearing reactions.",
+  "minutes": 45,
+  "objectives": [
+    "Compute gear geometry: module, pitch, pitch and base radii, centre distance, and the minimum number of teeth to avoid interference.",
+    "Apply the transmission ratio i = z2/z1 = n1/n2 and reason about idle gears and rotation sense.",
+    "Convert between normal and transverse module/pressure angle for parallel helical gears and find the helix and base-helix angles.",
+    "Resolve tooth contact into tangential, radial and axial forces for spur, helical, bevel and worm gears.",
+    "Find bearing reactions on a gear shaft by a two-plane moment balance including the axial-force moment.",
+    "Analyse elastic and Cardan joints: internal torque, fluctuating torque, and bearing reactions."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why gears, and the one idea behind them"
+    },
+    {
+      "kind": "prose",
+      "text": "A gear pair transmits rotation between shafts by teeth that mesh on a **line of action** tilted by the **pressure angle** $\\alpha$ (usually $20°$). Two meshing wheels behave as two **pitch circles** rolling without slip, so the contact point moves at the same speed on both: $\\omega_1 r_1 = \\omega_2 r_2$. Everything else (forces, ratios, geometry) flows from this single rolling condition plus the geometry of the tooth normal."
+    },
+    {
+      "kind": "heading",
+      "text": "Geometry: module, pitch, pressure angle"
+    },
+    {
+      "kind": "definition",
+      "term": "Module m, pitch p, pitch radius r",
+      "text": "The **module** $m$ is the basic size of a tooth: $m = d/z = 2r/z$, where $z$ is the number of teeth and $r$ the pitch radius. The **circular pitch** is $p = \\pi m$ (arc between two teeth on the pitch circle). Two gears mesh only if they share the same module $m$ and pressure angle $\\alpha$."
+    },
+    {
+      "kind": "formula",
+      "tex": "r=\\frac{m z}{2},\\qquad p=\\pi m,\\qquad r_b=r\\cos\\alpha,\\qquad a=r_1+r_2"
+    },
+    {
+      "kind": "prose",
+      "text": "The **base radius** $r_b=r\\cos\\alpha$ is the circle the involute is generated from; the **line of action** is tangent to both base circles and inclined at $\\alpha$ to the common tangent of the pitch circles. The **centre distance** is $a=r_1+r_2$ for external gears."
+    },
+    {
+      "kind": "heading",
+      "text": "Transmission ratio"
+    },
+    {
+      "kind": "definition",
+      "term": "Transmission ratio i",
+      "text": "Defined as driven-over-driver: $i=\\dfrac{\\omega_{driver}}{\\omega_{driven}}=\\dfrac{n_1}{n_2}=\\dfrac{z_2}{z_1}=\\dfrac{r_2}{r_1}$. A bigger driven wheel turns slower. For an **idle gear** (a wheel inserted between driver and driven), the ratio between the outer two is unaffected — the idler only changes the sense of rotation."
+    },
+    {
+      "kind": "formula",
+      "tex": "i=\\frac{n_1}{n_2}=\\frac{z_2}{z_1}=\\frac{r_2}{r_1}"
+    },
+    {
+      "kind": "heading",
+      "text": "Minimum number of teeth (interference)"
+    },
+    {
+      "kind": "prose",
+      "text": "If a pinion has too few teeth the tip of the mating gear digs into the dedendum (**interference / undercut**). The standard limit for full-depth teeth is $z_{min}=\\dfrac{2}{\\sin^2\\alpha}$. For $\\alpha=20°$ this gives $\\approx 17$; in practice $z_{min}$ is rounded down (14–17) depending on the addendum. For helical gears the limit drops because of the helix: $z_{min}=\\dfrac{2\\cos\\beta}{\\sin^2\\alpha_t}$."
+    },
+    {
+      "kind": "formula",
+      "tex": "z_{min}=\\frac{2}{\\sin^2\\alpha}\\;\\;(\\text{spur}),\\qquad z_{min}=\\frac{2\\cos\\beta}{\\sin^2\\alpha_t}\\;\\;(\\text{helical})"
+    },
+    {
+      "kind": "heading",
+      "text": "Forces on the teeth"
+    },
+    {
+      "kind": "definition",
+      "term": "Tangential, radial, axial force",
+      "text": "From the transmitted power $P=C\\,\\omega = F_t\\,v$ at pitch line speed $v=\\omega r$: the **tangential** (useful) force is $F_t=P/v=C/r$. The tooth normal is tilted by $\\alpha$, so there is a **radial** (separating) force $F_r=F_t\\tan\\alpha$ pointing toward the centre. The total normal force is $F_n=F_t/\\cos\\alpha$."
+    },
+    {
+      "kind": "formula",
+      "tex": "F_t=\\frac{P}{\\omega r},\\quad F_r=F_t\\tan\\alpha,\\quad F_a=F_t\\tan\\beta\\;(\\text{helical}),\\quad F_n=\\frac{F_t}{\\cos\\alpha\\cos\\beta}"
+    },
+    {
+      "kind": "heading",
+      "text": "Helical, bevel and worm gears"
+    },
+    {
+      "kind": "prose",
+      "text": "- **Parallel helical:** teeth cut at helix angle $\\beta$. Normal module $m_n$ relates to transverse module by $m_t=m_n/\\cos\\beta$, so $r=\\dfrac{m_n z}{2\\cos\\beta}$. Pressure angles: $\\tan\\alpha_t=\\dfrac{\\tan\\alpha_n}{\\cos\\beta}$; base helix $\\tan\\beta_b=\\tan\\beta\\cos\\alpha_t$. They add an **axial** force $F_a=F_t\\tan\\beta$.\n- **Straight bevel (conic):** axes meet at an angle (here $90°$); pitch cone half-angles satisfy $\\tan\\delta_1=z_1/z_2$. The radial reaction $F_t\\tan\\alpha$ splits into a true radial $F_r=F_t\\tan\\alpha\\cos\\delta$ and an axial $F_a=F_t\\tan\\alpha\\sin\\delta$.\n- **Worm gear:** the worm has $Z_1$ threads (=‘teeth’); lead angle on mean radius $\\tan\\lambda=\\dfrac{Z_1 m}{2 r_1}$. Big ratio $i=z_2/Z_1$. Key swap: the worm's **axial** force equals the wheel's **tangential** force, and vice-versa."
+    },
+    {
+      "kind": "heading",
+      "text": "Joints: elastic and Cardan"
+    },
+    {
+      "kind": "prose",
+      "text": "- **Elastic joint:** an elastic block lets two shafts meet at a small misalignment angle and still rotate at the same $\\omega$. The transmitted torque bends through the joint; the internal torque grows as $C_g=C/\\cos(\\alpha/2)$ and the misalignment produces a transverse moment $C\\tan(\\alpha/2)$ reacted by the bearings.\n- **Cardan (universal) joint:** transmits between misaligned shafts but the output speed is **not constant** even with constant input: $\\dfrac{\\omega_2}{\\omega_1}$ oscillates between $\\cos\\alpha$ and $1/\\cos\\alpha$. With constant output power the input torque swings between $C_1^{max}=C_2/\\cos\\alpha$ and $C_1^{min}=C_2\\cos\\alpha$."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Master triangle: $P=F_t\\,v$, $v=\\omega r$, $F_r=F_t\\tan\\alpha$. Almost every gear-force problem is just these three relations plus a moment balance on the shaft to split the load between two bearings."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic mistakes: (1) confusing **normal module** $m_n$ with **transverse module** $m_t$ in helical gears — pitch radius uses $m_t=m_n/\\cos\\beta$. (2) Forgetting the **axial force** in helical/bevel/worm gears and its **moment** $F_a\\,r$ about the shaft, which unbalances the two bearing reactions. (3) Using the wrong HP: Polito answers use **metric HP = 735.5 W (1 CV)**, not 745.7 W."
+    },
+    {
+      "kind": "steps",
+      "title": "Reliable recipe for a gear-force problem",
+      "steps": [
+        {
+          "label": "Geometry",
+          "text": "Find pitch radii $r=mz/2$ (use $m_t=m_n/\\cos\\beta$ for helical). Get teeth from $z=2r/m$ and check $z\\ge z_{min}$."
+        },
+        {
+          "label": "Kinematics",
+          "text": "Pitch-line speed $v=\\omega r$ with $\\omega=2\\pi n/60$. Transmission ratio $i=z_2/z_1=n_1/n_2$."
+        },
+        {
+          "label": "Tangential force",
+          "text": "$F_t=P/v$ (convert HP→W with 735.5 if the key uses CV)."
+        },
+        {
+          "label": "Other components",
+          "text": "$F_r=F_t\\tan\\alpha$ (use $\\alpha_t$ for helical); $F_a=F_t\\tan\\beta$ (helical) or split by $\\delta$ (bevel)."
+        },
+        {
+          "label": "Bearing reactions",
+          "text": "On the shaft, balance forces and moments in two perpendicular planes (tangential plane, radial plane). Add the axial-force moment $F_a r$ in the radial plane, then combine: $R=\\sqrt{R_t^2+R_r^2}$."
+        }
+      ]
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Two spur gears mesh. Gear 1 has $z_1=20$, gear 2 has $z_2=60$, module $m=4$ mm. What is the centre distance $a$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$80$ mm"
+          },
+          {
+            "id": "B",
+            "content": "$160$ mm"
+          },
+          {
+            "id": "C",
+            "content": "$320$ mm"
+          },
+          {
+            "id": "D",
+            "content": "$120$ mm"
+          }
+        ],
+        "correct": "B",
+        "explanation": "$r_1=mz_1/2=40$ mm, $r_2=mz_2/2=120$ mm, so $a=r_1+r_2=160$ mm.",
+        "source": "Gear geometry",
+        "theory": "Centre distance for external gears is $a=r_1+r_2$ with $r=mz/2$."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In a Cardan joint with misalignment $\\alpha=30°$ and constant output power, the input torque is maximum when…",
+        "options": [
+          {
+            "id": "A",
+            "content": "the input fork is in the plane of misalignment, giving $C_1^{max}=C_2/\\cos\\alpha$"
+          },
+          {
+            "id": "B",
+            "content": "the joint is straight, so torque is constant"
+          },
+          {
+            "id": "C",
+            "content": "the output speed is maximum"
+          },
+          {
+            "id": "D",
+            "content": "$C_1^{max}=C_2\\cos\\alpha$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "With $P$ constant, $C_1=C_2\\,\\omega_2/\\omega_1$. The ratio $\\omega_2/\\omega_1$ peaks at $1/\\cos\\alpha$ when the driving fork lies in the misalignment plane, so $C_1$ is maximum there: $C_2/\\cos\\alpha$.",
+        "source": "Cardan joint",
+        "theory": "Cardan speed ratio oscillates between $\\cos\\alpha$ and $1/\\cos\\alpha$; torque varies inversely."
+      }
+    }
+  ]
+}

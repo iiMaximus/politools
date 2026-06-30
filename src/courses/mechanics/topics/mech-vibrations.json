@@ -1,0 +1,210 @@
+{
+  "title": "Transients & vibrations",
+  "summary": "Transient machine dynamics (clutch engagement, motor-load start, reduction of inertia and torque to one shaft), flywheel sizing for periodic steady state, and single-DOF vibrations: equivalent stiffness, free undamped and damped oscillations, forced response, resonance and base-excitation transmissibility.",
+  "minutes": 55,
+  "objectives": [
+    "Reduce a motor-clutch-reducer-load chain to one shaft (reduced inertia J* and reduced torque) and integrate the Newton equation J*dω/dt = C",
+    "Solve a clutch engagement transient: slipping torque C*, common speed ω*, slip time t*, dissipated heat Q",
+    "Size a flywheel for periodic steady state: average-torque balance, surplus energy, fluctuation index i and ω_max/ω_min",
+    "Build equivalent stiffness for springs in series/parallel and for elements acting through a lever arm, and find ω_n = √(k/m)",
+    "Characterize free damped motion: damping ratio ζ, ω_d, and back out a damping coefficient from a required ζ",
+    "Compute steady-state forced response (amplitude and phase) for direct forcing and for imposed base motion (transmissibility)"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What this topic is about"
+    },
+    {
+      "kind": "prose",
+      "text": "This topic gathers the machine-dynamics problems that are not pure statics or kinematics: a system goes through a **transient** (a clutch engages, a motor spins up a load), or it **oscillates**. Three ideas cover almost everything:\n\n- **Reduction to one shaft.** Replace the whole motor-clutch-reducer-load chain with one equivalent rotor: a reduced inertia $J^*$ and a reduced torque, then write a single equation $J^*\\dot\\omega = C^*$.\n- **Periodic steady state / flywheel.** Over one cycle the average motor torque equals the resistant torque; the flywheel absorbs the surplus energy and limits the speed ripple.\n- **Single-DOF vibration.** Any spring-mass-damper (even a pivoted bar) reduces to $J\\ddot q + c_{eq}\\dot q + k_{eq}q = $ forcing. From there everything follows from $\\omega_n=\\sqrt{k/m}$, the damping ratio $\\zeta$, resonance and transmissibility."
+    },
+    {
+      "kind": "heading",
+      "text": "Reduction to one shaft"
+    },
+    {
+      "kind": "definition",
+      "term": "Reduced inertia and reduced torque",
+      "text": "Pick a reference shaft (usually the motor). A body on a shaft running at speed ratio $\\tau=\\omega/\\omega_{ref}$ contributes an **equivalent inertia** $J\\,\\tau^2$ to the reference shaft; a translating mass $m$ moving at $v=\\omega_{ref}\\rho$ contributes $m\\rho^2$. A torque $C$ on that shaft reflects as $C\\,\\tau$. The whole machine then obeys one equation $J^*\\dot\\omega_{ref}=C_{motor}-C_{res}^*$."
+    },
+    {
+      "kind": "formula",
+      "tex": "J^* = J_M + \\big(J_D + m\\,r_D^2\\big)\\,\\tau^2,\\qquad C_{res}^* = C_{load}\\,\\tau,\\qquad \\tau=\\frac{\\omega_{out}}{\\omega_{in}}=\\frac{z_1}{z_2}"
+    },
+    {
+      "kind": "prose",
+      "text": "Because $\\tau<1$ for a speed reducer, the big drum/load inertia is divided by the (large) reduction squared as seen from the motor — that is why a small motor can start a heavy load. When the motor torque is **linear in speed**, $C_M=C_0(1-\\omega/\\omega_{max})$, the reduced equation becomes first-order linear and the speed grows exponentially: $\\omega(t)=\\omega_\\infty\\,(1-e^{-t/\\mathcal{T}})$ with time constant $\\mathcal{T}=J^*/(C_0/\\omega_{max})$."
+    },
+    {
+      "kind": "heading",
+      "text": "Clutch engagement transient"
+    },
+    {
+      "kind": "prose",
+      "text": "During engagement the two sides **slip**, so the clutch transmits a constant friction torque $C^*$ (uniform-wear assumption, mean radius $r_m=(r_i+r_e)/2$, $N$ friction surfaces):"
+    },
+    {
+      "kind": "formula",
+      "tex": "C^* = N\\,f\\,F\\,r_m\\quad(\\text{flat disc}),\\qquad C^*=\\frac{f\\,F\\,r_m}{\\sin\\alpha}\\quad(\\text{cone, half-angle }\\alpha)"
+    },
+    {
+      "kind": "prose",
+      "text": "Motor side decelerates, $J_M\\dot\\omega_M = C_M-C^*$; driven side accelerates, $J_D\\dot\\omega_D=C^*-C_D$. Slipping ends when $\\omega_M=\\omega_D=\\omega^*$. After lock-up the two rotate together: $(J_M+J_D)\\dot\\omega=C_M-C_D$."
+    },
+    {
+      "kind": "formula",
+      "tex": "t^*=\\frac{\\omega_{M0}}{\\dot\\omega_D-\\dot\\omega_M},\\qquad \\omega^*=\\dot\\omega_D\\,t^*,\\qquad Q=C^*\\!\\int(\\omega_M-\\omega_D)\\,dt = C^*\\,\\frac{\\omega_{M0}\\,t^*}{2}"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Heat in a clutch = transmitted torque × **relative** slip angle. Since the relative speed falls linearly from $\\omega_{M0}$ to $0$ over $t^*$, the slip angle is the triangle area $\\tfrac12\\,\\omega_{M0}\\,t^*$. Convert with $1\\text{ kcal}=4186\\text{ J}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Flywheel for periodic steady state"
+    },
+    {
+      "kind": "definition",
+      "term": "Periodic steady state",
+      "text": "Over one full cycle the speed returns to its starting value, so the net work is zero: the **average** motor torque equals the constant resistant torque, $\\overline{C_M}=C_R=P/\\omega_m$. Within the cycle the instantaneous torques differ; the surplus/deficit energy $\\Delta E$ is stored in and released by the flywheel, producing a speed ripple."
+    },
+    {
+      "kind": "formula",
+      "tex": "i=\\frac{\\omega_{max}-\\omega_{min}}{\\omega_m}=\\frac{\\Delta E}{I\\,\\omega_m^2},\\qquad \\omega_{max,min}=\\omega_m\\Big(1\\pm\\frac{i}{2}\\Big)"
+    },
+    {
+      "kind": "prose",
+      "text": "$\\Delta E$ is the area between the $C_M(\\theta)$ curve and the horizontal line $C_R$ over the part of the cycle where the engine torque exceeds the resistance. Annular flywheel inertia: $I=\\tfrac12 m(R_e^2+R_i^2)$ with $m=\\rho\\,\\pi(R_e^2-R_i^2)\\,s$."
+    },
+    {
+      "kind": "heading",
+      "text": "Equivalent stiffness & free vibration"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\text{parallel: } k_{eq}=k_1+k_2,\\qquad \\text{series: } \\frac{1}{k_{eq}}=\\frac{1}{k_1}+\\frac{1}{k_2},\\qquad \\omega_n=\\sqrt{\\frac{k_{eq}}{m_{eq}}},\\quad T=\\frac{2\\pi}{\\omega_n}"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "When a spring (stiffness $k$) acts at distance $d$ from a pivot while you write the equation in the angle $\\theta$, its **rotational** stiffness is $k\\,d^2$. Likewise a damper $c$ at arm $b$ gives $c\\,b^2$, and a force $F$ at arm $a$ gives a torque $F a$. A spring attached at the top of a rolling disc (arm $2r$ from the contact point) referred to the centre behaves like $4k$."
+    },
+    {
+      "kind": "definition",
+      "term": "Free damped oscillation",
+      "text": "For $J\\ddot q + c_{eq}\\dot q + k_{eq}q=0$: natural frequency $\\omega_n=\\sqrt{k_{eq}/J}$, damping ratio $\\zeta=\\dfrac{c_{eq}}{2\\sqrt{k_{eq}J}}$, damped frequency $\\omega_d=\\omega_n\\sqrt{1-\\zeta^2}$, logarithmic decrement $\\delta=\\ln\\dfrac{q_n}{q_{n+1}}=\\dfrac{2\\pi\\zeta}{\\sqrt{1-\\zeta^2}}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Forced response & transmissibility"
+    },
+    {
+      "kind": "prose",
+      "text": "For $J\\ddot\\theta + c_{eq}\\dot\\theta + k_{eq}\\theta = M_0\\sin\\omega t$, the steady-state amplitude and phase lag are:"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\theta_0=\\frac{M_0}{\\sqrt{(k_{eq}-J\\omega^2)^2+(c_{eq}\\omega)^2}},\\qquad \\tan\\varphi=\\frac{c_{eq}\\omega}{k_{eq}-J\\omega^2}"
+    },
+    {
+      "kind": "prose",
+      "text": "If the excitation is an **imposed base motion** $x=x_0\\sin\\omega t$ entering through the spring, replace $M_0$ by $k_{eq}x_0$ (use $k\\,a\\,x_0$ if the spring sits at arm $a$). For a mass on a spring+damper driven by a moving base $y$ (suspension on a road), the transmitted amplitude follows the **transmissibility**:"
+    },
+    {
+      "kind": "formula",
+      "tex": "\\frac{z_0}{y_0}=\\sqrt{\\frac{k^2+(c\\omega)^2}{(k-m\\omega^2)^2+(c\\omega)^2}},\\qquad \\varphi=\\arctan\\frac{c\\omega}{k}-\\arctan\\frac{c\\omega}{k-m\\omega^2}"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic mistakes: (1) forgetting $N$ friction surfaces or using $r_e$ instead of the mean radius $r_m$ in clutch torque; (2) reflecting inertia with $\\tau$ instead of $\\tau^2$; (3) using peak-to-peak road height as the amplitude — the amplitude is **half** the peak-to-peak ($y_0=Y_s/2$); (4) in resonance/forced problems, writing $\\varphi=\\arctan(\\dots)$ without checking the quadrant — when $\\omega>\\omega_n$ the denominator $k-J\\omega^2$ is negative and $\\varphi>90^\\circ$ (use atan2)."
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Identify the regime",
+          "text": "Transient (clutch/start), periodic steady (flywheel), or vibration (free/forced)?"
+        },
+        {
+          "label": "Reduce to one DOF",
+          "text": "For drivelines compute $J^*$ (inertia $\\times\\tau^2$, mass $\\times\\rho^2$) and reduced torque ($\\times\\tau$). For levered springs/dampers use arm-squared: $k a^2$, $c b^2$."
+        },
+        {
+          "label": "Write ONE equation",
+          "text": "Newton/Euler: $J^*\\dot\\omega=C_{motor}-C_{res}^*$ for transients, or $J\\ddot q+c_{eq}\\dot q+k_{eq}q=$ forcing for vibration."
+        },
+        {
+          "label": "Solve the standard form",
+          "text": "Constant torque → linear ramp; linear motor torque → exponential with $\\mathcal T=J^*/(C_0/\\omega_{max})$; vibration → $\\omega_n,\\ \\zeta,\\ \\omega_d$ or the forced amplitude/phase formulas."
+        },
+        {
+          "label": "Energy / heat / fluctuation",
+          "text": "Clutch heat $=C^*\\times$ slip angle; flywheel $i=\\Delta E/(I\\omega_m^2)$."
+        },
+        {
+          "label": "Sanity-check units & quadrant",
+          "text": "rad/s, N, Nm, J; convert kcal with 4186 J; use atan2 for the phase."
+        }
+      ]
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A drum of inertia $J_D$ on a shaft running at $\\tau=\\omega_{out}/\\omega_{in}=1/5$ is reflected to the motor shaft. Its equivalent inertia there is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$J_D/5$"
+          },
+          {
+            "id": "B",
+            "content": "$J_D/25$"
+          },
+          {
+            "id": "C",
+            "content": "$5J_D$"
+          },
+          {
+            "id": "D",
+            "content": "$25J_D$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Inertia reflects with the square of the speed ratio: $J_D\\tau^2 = J_D(1/5)^2 = J_D/25$. (Torque, by contrast, reflects linearly with $\\tau$.)",
+        "theory": "Reduction to one shaft"
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A wheel rides over a sinusoidal road of wavelength $L_0$ at speed $v$. The excitation angular frequency of the vertical motion is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\omega = v/L_0$"
+          },
+          {
+            "id": "B",
+            "content": "$\\omega = 2\\pi v L_0$"
+          },
+          {
+            "id": "C",
+            "content": "$\\omega = 2\\pi v/L_0$"
+          },
+          {
+            "id": "D",
+            "content": "$\\omega = v/(2\\pi L_0)$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "The wheel meets one full wave every $L_0/v$ seconds, so the temporal frequency is $f=v/L_0$ and $\\omega=2\\pi f = 2\\pi v/L_0$. The road amplitude is half the peak-to-peak height.",
+        "theory": "Forced response & transmissibility"
+      }
+    }
+  ]
+}

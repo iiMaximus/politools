@@ -1,0 +1,147 @@
+{
+  "title": "Kinematics of mechanisms",
+  "summary": "A quick, focused lesson on planar mechanism kinematics: the rigid-body velocity and acceleration fields, the instantaneous-centre method, and relative motion with Coriolis. Then nine fully worked exam problems (rigid body in runners, four-bar, rolling wheels, slider-crank, suspension, cart-in-curve, quick-return, sliding vane, piston-crank) showing the standard velocity-then-acceleration recipe.",
+  "minutes": 55,
+  "objectives": [
+    "Apply the rigid-body velocity and acceleration fields $\\vec v_P=\\vec v_O+\\vec\\omega\\times(P-O)$ and $\\vec a_P=\\vec a_O+\\vec\\alpha\\times(P-O)-\\omega^2(P-O)$ to any point of a link",
+    "Locate the instantaneous centre of zero velocity by perpendiculars and use it to read off velocities (and recognise it cannot be used for accelerations)",
+    "Carry out a full velocity-then-acceleration analysis of a four-bar linkage and a slider-crank by coupling links at pin and slider joints",
+    "Handle rolling-without-slip wheels by placing the ICR at the ground contact point",
+    "Apply the relative-motion (moving-frame) method, including the Coriolis term $2\\vec\\omega\\times\\vec v_{rel}$, to quick-return guides, sliding vanes and radial-groove problems",
+    "Identify the centripetal, tangential and Coriolis contributions in an acceleration and combine them correctly by components"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What kinematics of mechanisms is about"
+    },
+    {
+      "kind": "prose",
+      "text": "A planar mechanism is a set of rigid bodies (links) joined so that the whole assembly has one degree of freedom: fix the input motion and **every** velocity and acceleration in the mechanism is determined. The exam problems all reduce to two skills: (1) write the **rigid-body velocity/acceleration field** for each link, and (2) glue links together at the joints (a pin shares position; a slider shares the cross-groove direction but allows sliding). Master those and four-bars, slider-cranks, rolling wheels and quick-returns are all the same recipe."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\vec v_P=\\vec v_O+\\vec\\omega\\times(P-O)\\qquad \\vec a_P=\\vec a_O+\\vec\\alpha\\times(P-O)-\\omega^2\\,(P-O)",
+      "text": "Rigid-body velocity and acceleration fields. O and P are two points of the SAME rigid body. The acceleration has a tangential part $\\vec\\alpha\\times(P-O)$ and a centripetal part $-\\omega^2(P-O)$ pointing from P toward O."
+    },
+    {
+      "kind": "definition",
+      "term": "Instantaneous Centre of zero velocity (ICR / point K)",
+      "text": "At any instant a planar rigid body rotates about a point K where $\\vec v_K=0$. Then for every point P, $\\vec v_P=\\vec\\omega\\times(P-K)$, so $v_P=\\omega\\,\\overline{KP}$ and $\\vec v_P\\perp KP$. K is found as the intersection of the lines drawn **perpendicular to the known velocity directions** of two points. (For a wheel rolling without slipping, K is the ground contact point.)"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "The ICR is a **velocity-only** trick. Accelerations are NOT zero at K, so never use $a_P=\\alpha\\cdot KP$ unless K is a truly fixed pivot. For accelerations always go back to the full field formula."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\vec v_{abs}=\\vec v_{drag}+\\vec v_{rel}\\qquad \\vec a_{abs}=\\vec a_{drag}+\\vec a_{rel}+\\underbrace{2\\,\\vec\\omega\\times\\vec v_{rel}}_{\\text{Coriolis}}",
+      "text": "Relative-motion (moving-frame) formulas, used whenever a pin slides inside a groove. The drag terms are the velocity/acceleration the point would have if rigidly attached to the moving link; $\\vec v_{rel}$, $\\vec a_{rel}$ are the sliding along the groove; the Coriolis term $2\\vec\\omega\\times\\vec v_{rel}$ appears ONLY in acceleration."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "Drag acceleration of a guide point at radius $r$ from a pivot rotating at $\\omega,\\alpha$: a centripetal part $\\omega^2 r$ (toward the pivot) plus a tangential part $\\alpha r$ (perpendicular). The Coriolis part $2\\omega v_{rel}$ is perpendicular to the groove."
+    },
+    {
+      "kind": "heading",
+      "text": "The standard solving recipe"
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "1 Sketch & data",
+          "text": "Redraw the mechanism in the given configuration. Mark fixed pivots, the input $\\omega_1$ (sense!), and all known angles. Convert units (rpm$\\to$rad/s: $\\omega=\\pi n/30$)."
+        },
+        {
+          "label": "2 Velocity of the driven point",
+          "text": "The input link rotates about a fixed pivot, so $v_A=\\omega_1\\,\\overline{OA}$, direction $\\perp OA$."
+        },
+        {
+          "label": "3 Join the next link",
+          "text": "For a pin joint use $\\vec v_B=\\vec v_A+\\vec\\omega_2\\times(B-A)$. Knowing the DIRECTION of $\\vec v_B$ (it is $\\perp$ to the next rocker, or along the slider line) gives two scalar equations for the two unknowns $\\omega_2$ and $v_B$."
+        },
+        {
+          "label": "3' Sliding joint",
+          "text": "If a pin slides in a groove, instead use $\\vec v_{abs}=\\vec v_{drag}+\\vec v_{rel}$: project the known absolute velocity onto the groove direction (=$v_{rel}$) and perpendicular to it (=$\\omega_{guide}\\cdot r$)."
+        },
+        {
+          "label": "4 ICR shortcut (optional)",
+          "text": "For a single link with two known velocity directions, locate K by perpendiculars and read $\\omega=v_A/\\overline{KA}$, then any other velocity $v_P=\\omega\\,\\overline{KP}$."
+        },
+        {
+          "label": "5 Accelerations",
+          "text": "Repeat with the acceleration field. Each link contributes a centripetal $\\omega^2 r$ (known once $\\omega$ is found) plus an unknown tangential $\\alpha r$. Add the Coriolis term for sliding joints. Project onto two directions to solve for the unknown $\\alpha$ and the slider/point acceleration."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic mistakes: (1) forgetting the Coriolis term $2\\omega v_{rel}$ in problems with a pin sliding in a groove (quick-return, vane, scotch-yoke). (2) Using $a=\\alpha\\,\\overline{KP}$ at the ICR. (3) Dropping the centripetal $-\\omega^2(P-O)$ in the acceleration of a coupler. (4) Mixing up the sense of $\\omega$, which flips every cross-product sign."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "Work with components on x,y axes and the operator $\\vec\\omega\\times\\vec r=\\omega(-r_y,\\,r_x)$ (for $\\omega$ out of the page). It is far more reliable than juggling angles, and the two scalar equations from $\\vec v_B$ or $\\vec a_B$ fall out automatically."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A disc rolls without slipping on the ground; its centre moves at $v_C$. Where is the instantaneous centre of zero velocity?",
+        "options": [
+          {
+            "id": "A",
+            "content": "At the centre C"
+          },
+          {
+            "id": "B",
+            "content": "At the top of the disc"
+          },
+          {
+            "id": "C",
+            "content": "At the ground contact point"
+          },
+          {
+            "id": "D",
+            "content": "At infinity (pure translation)"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Rolling without slip means the contact point has zero velocity instantaneously, so it is the ICR. Then $\\omega=v_C/r$ and the top point moves at $2v_C$.",
+        "source": "ICR of rolling wheel"
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In a quick-return mechanism the crank pin slides inside the oscillating guide. Which term MUST be added when computing the pin's absolute acceleration that is absent from the velocity equation?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The centripetal term $\\omega^2 r$"
+          },
+          {
+            "id": "B",
+            "content": "The Coriolis term $2\\omega v_{rel}$"
+          },
+          {
+            "id": "C",
+            "content": "The tangential term $\\alpha r$"
+          },
+          {
+            "id": "D",
+            "content": "The gravity term $g$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The Coriolis acceleration $2\\vec\\omega\\times\\vec v_{rel}$ exists only because a point slides ($v_{rel}\\neq0$) inside a rotating frame ($\\omega\\neq0$). It has no counterpart in the velocity composition.",
+        "source": "Relative motion / Coriolis"
+      }
+    }
+  ]
+}

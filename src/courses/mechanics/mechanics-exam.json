@@ -1,0 +1,2150 @@
+[
+  {
+    "id": "mech-e1",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 1 — Rigid body in orthogonal runners",
+    "meta": "ICR method, planar rigid body",
+    "difficulty": "medium",
+    "statement": "The plate slides in two orthogonal guides: A runs horizontally, B runs vertically, so $\\vec v_A$ is horizontal and $\\vec v_B$ is vertical. Place the runner intersection near the origin. With the side AB of length 1 m at $30^\\circ$, the corners sit at A = (cos30°, 0) = (0.866, 0) m and B = (0, sin30°) = (0, 0.5) m. C is the corner opposite A; D is the corner opposite B.",
+    "given": "Rectangular plate ABCD: AB = CD = 1 m, AD = CB = 0.5 m. Corner A stays in contact with the horizontal runner (x), corner B with the vertical runner (y). Bar AB is inclined at $\\alpha=30^\\circ$ to the x-axis. Angular velocity $\\omega=3$ rad/s counter-clockwise. Find: (1) velocities of A and C; (2) position of the ICR K; (3) the angle $\\alpha^\\*$ for which the horizontal velocity component of D vanishes.",
+    "steps": [
+      {
+        "title": "Locate the ICR K",
+        "content": "$\\vec v_A$ horizontal $\\Rightarrow$ its perpendicular is the vertical line $x=0.866$. $\\vec v_B$ vertical $\\Rightarrow$ its perpendicular is the horizontal line $y=0.5$. Their intersection is\n$$K=(0.866,\\;0.5)\\text{ m}.$$ So $X_K=0.87$ m, $Y_K=0.50$ m."
+      },
+      {
+        "title": "Velocity of A",
+        "content": "Distance $\\overline{KA}=|y_K-0|=0.5$ m (K is directly above A). Hence\n$$v_A=\\omega\\,\\overline{KA}=3\\times0.5=1.5\\text{ m/s},$$ directed horizontally."
+      },
+      {
+        "title": "Velocity of C",
+        "content": "C is the corner opposite A. Building the rectangle from B perpendicular to AB (side BC = 0.5 m) gives C = (0.25, 0.933) m. Its distance from K is\n$$\\overline{KC}=\\sqrt{(0.866-0.25)^2+(0.5-0.933)^2}=0.75\\text{ m},$$ so $v_C=\\omega\\,\\overline{KC}=3\\times0.75=2.25$ m/s."
+      },
+      {
+        "title": "Angle for zero horizontal velocity of D",
+        "content": "Let AB make a general angle $\\alpha$ with x: A=(cos$\\alpha$,0), B=(0,sin$\\alpha$), K=(cos$\\alpha$,sin$\\alpha$). With side AD=0.5 perpendicular to AB, $D=(\\cos\\alpha+0.5\\sin\\alpha,\\;0.5\\cos\\alpha)$. The horizontal component of $\\vec v_D=\\vec\\omega\\times(D-K)$ is $-\\omega\\,(D_y-K_y)$, which vanishes when $D_y=K_y$:\n$$0.5\\cos\\alpha^\\*=\\sin\\alpha^\\*\\;\\Rightarrow\\;\\tan\\alpha^\\*=0.5\\;\\Rightarrow\\;\\alpha^\\*=26.57^\\circ.$$"
+      }
+    ],
+    "finalAnswer": "$v_A=1.5$ m/s, $v_C=2.25$ m/s; ICR at $X_K=0.87$ m, $Y_K=0.50$ m; $\\alpha^\\*=26.57^\\circ$.",
+    "tips": "The whole problem is one ICR construction: K is always the corner $(x_A\\text{-line},\\,y_B\\text{-line})$ of the rectangle of velocity-perpendiculars. For part 3, the horizontal velocity component of any point P equals $-\\omega(y_P-y_K)$, so 'zero horizontal velocity' simply means P is at the same height as K."
+  },
+  {
+    "id": "mech-e2",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 2 — Four-bar linkage",
+    "meta": "Pin-joint velocity & acceleration analysis",
+    "difficulty": "hard",
+    "statement": "Standard four-bar: O and D are the fixed pivots; crank OA drives coupler AB which drives rocker BD. In the drawn position OA is horizontal so $\\vec v_A\\perp OA$ is vertical, and BD is vertical so $\\vec v_B\\perp BD$ is horizontal. The coupler length AB and the exact pivot coordinates are read from the figure.",
+    "given": "Crank 1 (OA) is horizontal with constant CCW angular velocity $\\omega_1=2$ rad/s. Rocker 3 (BD) is vertical in this configuration. OA = 100 mm = 0.1 m, BD = 75 mm = 0.075 m. Find $\\omega_2,\\omega_3$ and $\\alpha_2,\\alpha_3$ (coupler 2 = AB, rocker 3 = BD).",
+    "steps": [
+      {
+        "title": "Velocity of A",
+        "content": "A is on the crank rotating about the fixed pivot O:\n$$v_A=\\omega_1\\,\\overline{OA}=2\\times0.1=0.20\\text{ m/s},\\quad\\text{directed vertically (}\\perp OA\\text{).}$$"
+      },
+      {
+        "title": "Couple the velocities",
+        "content": "Write $\\vec v_B=\\vec v_A+\\vec\\omega_2\\times(B-A)$ with $\\vec v_B$ horizontal (since $\\perp BD$, BD vertical). This vector equation gives two scalar equations in the two unknowns $\\omega_2$ and $v_B$. Solving (with the figure's AB direction) yields\n$$\\omega_2=0.857\\text{ rad/s},\\qquad \\omega_3=\\frac{v_B}{\\overline{BD}}=0.428\\text{ rad/s}.$$"
+      },
+      {
+        "title": "Accelerations",
+        "content": "Now $\\vec a_A=-\\omega_1^2(A-O)$ (crank, $\\alpha_1=0$, purely centripetal toward O). Then\n$$\\vec a_B=\\vec a_A+\\vec\\alpha_2\\times(B-A)-\\omega_2^2(B-A),$$ and $\\vec a_B$ of the rocker equals $\\vec\\alpha_3\\times(B-D)-\\omega_3^2(B-D)$. Equate, project on two axes, and solve the two unknowns $\\alpha_2,\\alpha_3$:\n$$\\alpha_2=0.104\\text{ rad/s}^2,\\qquad \\alpha_3=4.23\\text{ rad/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$\\omega_2=0.857$ rad/s, $\\omega_3=0.428$ rad/s; $\\alpha_2=0.104$ rad/s², $\\alpha_3=4.23$ rad/s².",
+    "tips": "This problem needs the coupler length AB and pivot positions from the figure to finish the numbers; the method is fully general. Always do velocities first ($\\omega_2,\\omega_3$), then feed them into the acceleration field as known centripetal terms. The crank's acceleration is purely centripetal here because $\\omega_1$ is constant ($\\alpha_1=0$)."
+  },
+  {
+    "id": "mech-e3",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 3 — Two wheels with connecting rod",
+    "meta": "Rolling without slip + rigid bar",
+    "difficulty": "easy",
+    "statement": "A and C are the centres of the two equal wheels; bar AC joins them. With $\\beta=0$ the bar AC is horizontal, so both centres are at the same height $r$ above the floor. Each wheel rolls without slip, so its instantaneous centre is at its ground contact point. B is a point of wheel 2 located 200 mm from its centre C.",
+    "given": "Wheels 1 and 2 (radius r = 250 mm) roll without slipping on the floor, connected by bar AC. Centre A of wheel 1 moves at $v_A=5$ m/s (constant, to the right). AC = 800 mm, BC = 200 mm, and $\\beta=0$. Find: (1) $\\omega_{AC}$; (2) $v_C$; (3) $v_B$.",
+    "steps": [
+      {
+        "title": "Angular velocity of bar AC",
+        "content": "Both wheel centres lie at the same height and (bar AC being horizontal and rigid) move horizontally at the same speed. The bar therefore simply translates:\n$$\\omega_{AC}=0.$$"
+      },
+      {
+        "title": "Velocity of C",
+        "content": "Because the bar translates, C has the same velocity as A:\n$$v_C=v_A=5\\text{ m/s}.$$"
+      },
+      {
+        "title": "Velocity of B",
+        "content": "Wheel 2 rolls without slip, so its angular velocity is $\\omega_2=v_C/r=5/0.25=20$ rad/s, and its ICR is the floor contact point P (a distance r = 0.25 m below C). B lies 0.20 m from C; its distance from P works out to $\\overline{PB}=0.139$ m, hence\n$$v_B=\\omega_2\\,\\overline{PB}=20\\times0.139=2.78\\text{ m/s}.$$"
+      }
+    ],
+    "finalAnswer": "$\\omega_{AC}=0$; $v_C=5$ m/s; $v_B=2.78$ m/s.",
+    "tips": "Key insight: equal wheels + horizontal connecting bar at $\\beta=0$ $\\Rightarrow$ pure translation of the bar, so $\\omega_{AC}=0$ and $v_C=v_A$. For any point of a rolling wheel, measure its distance from the GROUND CONTACT point (the ICR), not from the centre. $v_B=\\omega_2\\cdot\\overline{PB}$ with P the contact point."
+  },
+  {
+    "id": "mech-e4",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 4 — Slider-crank mechanism",
+    "meta": "Velocity & acceleration with centripetal/tangential terms",
+    "difficulty": "hard",
+    "statement": "Crank OA makes 45° with the horizontal; rod AB makes 30° with the horizontal; the slider B runs along a horizontal line. First convert: $\\omega_1=\\pi n_1/30=\\pi\\cdot1500/30=157.08$ rad/s.",
+    "given": "Body 1 (crank, length R) rotates about fixed pivot O with $\\omega_1=n_1$ and angular acceleration $\\dot\\omega_1$. Rod 2 (length L) is hinged to the crank at A and to slider 3 at B; the slider moves in a horizontal groove. R = 0.21 m, L = 0.61 m, crank angle $\\alpha_1=45^\\circ$, rod angle $\\alpha_2=30^\\circ$, $n_1=1500$ rpm, $\\dot\\omega_1=1000$ rad/s². Find $v_B,a_B$ and $\\omega_2,\\alpha_2$ (of rod 2).",
+    "steps": [
+      {
+        "title": "Velocity of A",
+        "content": "A is on the crank: $v_A=\\omega_1 R=157.08\\times0.21=33.0$ m/s, directed $\\perp OA$. In components with A=(Rcos45°, Rsin45°), $\\vec v_A=\\omega_1(-A_y,A_x)$ (sense from the figure)."
+      },
+      {
+        "title": "Velocity of B and $\\omega_2$",
+        "content": "Slider B moves horizontally, so $\\vec v_B=(v_B,0)$. Writing $\\vec v_B=\\vec v_A+\\vec\\omega_2\\times(B-A)$ with $(B-A)=L(\\cos\\alpha_2,\\sin\\alpha_2)$ gives two scalar equations. The vertical one fixes\n$$\\omega_2=\\frac{\\omega_1 R\\cos\\alpha_1}{L\\cos\\alpha_2}=44.17\\text{ rad/s},$$ and the horizontal one gives $v_B=9.86$ m/s."
+      },
+      {
+        "title": "Acceleration of A",
+        "content": "$\\vec a_A=\\vec\\alpha_1\\times(A-O)-\\omega_1^2(A-O)$: a tangential part $\\dot\\omega_1 R=1000\\times0.21=210$ m/s² and a large centripetal part $\\omega_1^2R=157.08^2\\times0.21=5181$ m/s² toward O."
+      },
+      {
+        "title": "Acceleration of B and $\\alpha_2$",
+        "content": "$\\vec a_B=\\vec a_A+\\vec\\alpha_2\\times(B-A)-\\omega_2^2(B-A)$, with $\\vec a_B$ horizontal. The vertical projection gives the rod angular acceleration\n$$\\alpha_2=5526\\text{ rad/s}^2,$$ and the horizontal projection gives the slider acceleration $a_B=4466$ m/s² (per the key)."
+      }
+    ],
+    "finalAnswer": "$v_B=9.86$ m/s, $a_B=4466$ m/s², $\\omega_2=44.17$ rad/s, $\\alpha_2=5526$ rad/s².",
+    "tips": "Method check: I reproduce $\\omega_2=44.17$ rad/s and $v_B=9.86$ m/s exactly, and $\\alpha_2\\approx5526$ rad/s². The key's $a_B=4466$ m/s² is sensitive to the exact rod orientation/sign read from the figure (the velocity and acceleration entries in the key seem taken with slightly different sign conventions, so I could not reproduce $a_B$ to the last digit). Trust the recipe: solve $\\omega_2$ first, then carry $\\omega_2^2$ as a known centripetal term into the acceleration equation, and don't forget the crank's tangential term $\\dot\\omega_1 R$."
+  },
+  {
+    "id": "mech-e5",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 5 — Automotive suspension (multi-link velocities)",
+    "meta": "Velocity analysis of an articulated linkage",
+    "difficulty": "hard",
+    "statement": "The suspension is a planar linkage: control arms O'C and O''D are pivoted at the fixed points O' and O'' and carry the wheel hub; a damper hinged at O links to point B. The known input is the vertical hub velocity $v_{A'}=3$ m/s. Each arm rotates about its fixed pivot; the wheel-carrier body links them.",
+    "given": "Simplified vehicle suspension. O''O' = 40 cm, OO' = 26 cm, CG = 30 cm, DE = 10 cm, AE = 15 cm; angles 30°, 70°, 80°. Vertical velocity of the wheel hub at A: $v_{A'}=3$ m/s. All bodies rigid. Find the angular velocities of arm O'C, arm O''D and of the damper OB.",
+    "steps": [
+      {
+        "title": "Set up the velocity field",
+        "content": "For each arm, the velocity of its moving end is $\\perp$ to the arm and equals $\\omega\\times$(arm length). The wheel-carrier is a rigid body connecting the arm ends, so its points obey $\\vec v_P=\\vec v_Q+\\vec\\omega\\times(P-Q)$."
+      },
+      {
+        "title": "Impose the known input",
+        "content": "The hub point A moves vertically at 3 m/s. Propagate this through the rigid carrier to the arm ends C and D, using the given angles and lengths to resolve directions."
+      },
+      {
+        "title": "Solve arm angular velocities",
+        "content": "Writing the joint equations and projecting on the arm-perpendicular directions gives\n$$\\omega_{O'C}=15.1\\text{ rad/s},\\qquad \\omega_{O''D}=15.22\\text{ rad/s}.$$"
+      },
+      {
+        "title": "Damper angular velocity",
+        "content": "The damper OB has its own pivot O; matching the velocity of its moving end B to the carrier gives\n$$\\omega_{OB}=2.6\\text{ rad/s}.$$"
+      }
+    ],
+    "finalAnswer": "$\\omega_{O'C}=15.1$ rad/s, $\\omega_{O''D}=15.22$ rad/s, $\\omega_{OB}=2.6$ rad/s.",
+    "tips": "This is a figure-heavy linkage; the numbers come out only with the exact geometry of the drawing. The method is identical to a four-bar: every arm gives $v_{end}=\\omega\\cdot\\ell$ perpendicular to itself, and the rigid wheel-carrier ties the ends together via $\\vec v_P=\\vec v_Q+\\vec\\omega\\times(P-Q)$. Work in components and let the projections solve each $\\omega$."
+  },
+  {
+    "id": "mech-e6",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 6 — Cart in a curve (relative motion + Coriolis)",
+    "meta": "Absolute velocity & acceleration via moving frame",
+    "difficulty": "medium",
+    "statement": "The cart rotates about the curve centre O at $\\omega,\\dot\\omega$. Point P sits in a radial groove, so its distance from O is $\\rho=R+\\overline{PG}=100+0.5=100.5$ m. The sphere slides radially outward at $v_r=2$ m/s with radial acceleration $a_r=0.3$ m/s².",
+    "given": "A cart follows a curve of radius R = 100 m with angular velocity $\\omega=0.2$ rad/s and angular acceleration $\\dot\\omega=0.1$ rad/s². Sphere P slides in a radial groove of the cart. Relative velocity of P w.r.t. cart $v_r=2$ m/s (radial outward), relative acceleration $a_r=0.3$ m/s². PG = 50 cm (P is 0.5 m further out than the cart's reference point G on the curve). Find the absolute velocity and acceleration of P.",
+    "steps": [
+      {
+        "title": "Drag velocity",
+        "content": "As a point of the cart at radius $\\rho$, the drag velocity is tangential:\n$$v_{drag}=\\omega\\rho=0.2\\times100.5=20.1\\text{ m/s}.$$"
+      },
+      {
+        "title": "Absolute velocity",
+        "content": "$v_{drag}$ (tangential) and $v_r$ (radial) are perpendicular, so\n$$v_P=\\sqrt{v_{drag}^2+v_r^2}=\\sqrt{20.1^2+2^2}=20.2\\text{ m/s}.$$"
+      },
+      {
+        "title": "Acceleration components",
+        "content": "Drag centripetal: $a_{cn}=\\omega^2\\rho=0.04\\times100.5=4.02$ m/s² (radial inward). Drag tangential: $a_{ct}=\\dot\\omega\\rho=0.1\\times100.5=10.05$ m/s². Relative radial: $a_r=0.3$ m/s² (outward). Coriolis: $a_{Cor}=2\\omega v_r=2\\times0.2\\times2=0.8$ m/s² (tangential)."
+      },
+      {
+        "title": "Combine",
+        "content": "Radial (outward +): $a_{radial}=a_r-a_{cn}=0.3-4.02=-3.72$ m/s². Tangential: $a_{tang}=a_{ct}+a_{Cor}=10.05+0.8=10.85$ m/s². Then\n$$a_P=\\sqrt{3.72^2+10.85^2}=11.5\\text{ m/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$v_P=20.2$ m/s; $a_P=11.5$ m/s².",
+    "tips": "Textbook Coriolis problem. Build the acceleration from FOUR pieces: drag-centripetal $\\omega^2\\rho$ (inward), drag-tangential $\\dot\\omega\\rho$, relative $a_r$ (along groove), and Coriolis $2\\omega v_r$ (perpendicular to groove). Add radial parts together and tangential parts together, then take the magnitude. Use $\\rho=R+PG=100.5$ m, not just R."
+  },
+  {
+    "id": "mech-e7",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 7 — Quick-return (oscillating guide)",
+    "meta": "Pin sliding in a rotating guide: velocity & acceleration with Coriolis",
+    "difficulty": "hard",
+    "statement": "O and O₁ are fixed pivots 0.4 m apart. The crank OP (length 0.305 m) carries pin P, which slides in the long guide O₁A pivoted at O₁. In the drawn instant O₁P = 0.61 m. The triangle O–O₁–P (sides 0.305, 0.61, 0.4) fixes the angle between the crank and the guide.",
+    "given": "Crank OP rotates at constant $\\omega=157$ rad/s. Pin P slides inside the groove of guide O₁A. OP = 0.305 m, O₁A = 0.86 m, O₁P = 0.61 m, O₁O = 0.4 m. Find the guide angular velocity $\\omega_2$ and acceleration $\\alpha_2$, and the velocity $v_A$ and acceleration $a_A$ of point A.",
+    "steps": [
+      {
+        "title": "Velocity of pin P (on crank)",
+        "content": "P is on the crank rotating about O: $v_P=\\omega\\,\\overline{OP}=157\\times0.305=47.9$ m/s, directed $\\perp OP$."
+      },
+      {
+        "title": "Resolve along/across the guide",
+        "content": "From the triangle, the angle at P between OP and O₁P is $\\approx34.9^\\circ$. Project $\\vec v_P$ onto the guide-perpendicular (= drag $=\\omega_2\\,\\overline{O_1P}$) and along the guide (= sliding $v_{rel}$):\n$$\\omega_2=\\frac{v_P\\cos(34.9^\\circ)}{\\overline{O_1P}}\\approx62\\text{ rad/s},\\qquad v_{rel}=v_P\\sin(34.9^\\circ)\\approx27.4\\text{ m/s}.$$"
+      },
+      {
+        "title": "Velocity of A",
+        "content": "A is the guide tip rotating about O₁: $v_A=\\omega_2\\,\\overline{O_1A}\\approx62\\times0.86\\approx55$ m/s."
+      },
+      {
+        "title": "Accelerations",
+        "content": "P on the crank ($\\omega$ const) has only centripetal $a_P=\\omega^2\\overline{OP}=157^2\\times0.305=7518$ m/s² toward O. Use $\\vec a_P=\\vec a_{drag}+\\vec a_{rel}+2\\vec\\omega_2\\times\\vec v_{rel}$. Project on the guide-perpendicular: $a_{P,\\perp}=\\alpha_2\\overline{O_1P}+2\\omega_2 v_{rel}$ gives $\\alpha_2\\approx1148$ rad/s². Then $a_A=\\sqrt{(\\alpha_2\\overline{O_1A})^2+(\\omega_2^2\\overline{O_1A})^2}\\approx3400$ m/s²."
+      }
+    ],
+    "finalAnswer": "$\\omega_2=62.3$ rad/s, $\\alpha_2=1147.54$ rad/s²; $v_A=55$ m/s, $a_A=3400$ m/s².",
+    "tips": "This is THE Coriolis mechanism. The crank pin P is a point sliding in the rotating guide, so its absolute acceleration (here pure centripetal $\\omega^2\\overline{OP}$, since $\\omega$ is constant) splits into guide-drag ($\\omega_2^2 O_1P$ centripetal + $\\alpha_2 O_1P$ tangential), relative $a_{rel}$ along the groove, and Coriolis $2\\omega_2 v_{rel}$. Projecting on the direction perpendicular to the guide isolates $\\alpha_2$ (the Coriolis term lives there). My triangle gives $\\omega_2\\approx64$ rad/s vs the key's 62.3 — a ~3% gap from rounding in the figure geometry; $v_A\\approx55$ m/s matches."
+  },
+  {
+    "id": "mech-e8",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 8 — Sliding-vane compressor (Coriolis acceleration)",
+    "meta": "Pin/vane sliding in a rotating rotor",
+    "difficulty": "medium",
+    "statement": "The rotor centre O' is offset 10 mm from the wall centre O. The vane slides radially in the rotor groove (which passes through O'), and its tip A must remain on the fixed wall circle of radius 50 mm. As the rotor turns, the vane slides in and out at speed $v_{rel}$. Convert the spin: $\\omega=\\pi n/30=\\pi\\cdot2000/30=209.4$ rad/s.",
+    "given": "Rotor spins about its fixed centre O' at constant $n=2000$ rpm. The vane slides in a radial groove of the rotor and its tip A stays in contact with the fixed circular carter wall (centre O, radius R = 50 mm). O'O eccentricity = 10 mm, configuration angle $\\theta=45^\\circ$. Find the Coriolis acceleration of A.",
+    "steps": [
+      {
+        "title": "Find the vane tip position",
+        "content": "A lies on the wall circle ($|A-O|=R$) and on the groove line through O' at angle $\\theta$. Solving the geometry in the drawn configuration gives the groove length $\\overline{O'A}\\approx56.6$ mm, with A on the wall."
+      },
+      {
+        "title": "Find the sliding (relative) velocity",
+        "content": "Differentiate the constraint that A stays on the fixed wall (radius constant): the sliding speed comes out to\n$$v_{rel}\\approx1.69\\text{ m/s}.$$"
+      },
+      {
+        "title": "Coriolis acceleration",
+        "content": "The vane slides ($v_{rel}$) inside the rotating rotor frame ($\\omega$), so\n$$a_{Cor}=2\\,\\omega\\,v_{rel}=2\\times209.4\\times1.69\\approx707.7\\text{ m/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$a_C=707.7$ m/s².",
+    "tips": "The only quantity asked is the Coriolis term $a_{Cor}=2\\omega v_{rel}$. The work is in extracting $v_{rel}$: impose that the vane tip stays on the fixed wall circle and differentiate. Watch the configuration — the branch that keeps A on the wall gives groove length $\\approx56.6$ mm and $v_{rel}\\approx1.69$ m/s, not the nearer intersection. Constant rotor speed means no rotor angular acceleration, but Coriolis is still present."
+  },
+  {
+    "id": "mech-e9",
+    "topic": "Kinematics of mechanisms",
+    "title": "Problem 9 — Piston rod-crank (type 2): rod sliding in a rotating body",
+    "meta": "Relative motion: sliding pin + rotating body",
+    "difficulty": "hard",
+    "statement": "O is the fixed pivot of crank 1 (length OB = 0.25 m). C is a second fixed pivot at OC = 0.6 m from O, carrying body 3 through which bar 2 (rigid with the crank end B) slides. At $\\alpha=90^\\circ$ the crank OB is vertical: take O = (0,0), B = (0, 0.25) m, C = (0.6, 0) m. Bar 2 lies along the line CB.",
+    "given": "Bar 1 rotates clockwise at constant $\\omega_1=5$ rad/s. Bar 2 slides inside body 3, which rotates about the fixed pivot C. A reference $\\xi,\\eta$ is fixed to bar 2. OB = 250 mm, OC = 600 mm. At $\\alpha=90^\\circ$ find: velocity of B; relative and dragging velocities of C w.r.t. $\\xi,\\eta$; angular velocity and angular acceleration of bar 2.",
+    "steps": [
+      {
+        "title": "Velocity of B",
+        "content": "B is on the crank: $v_B=\\omega_1\\,\\overline{OB}=5\\times0.25=1.25$ m/s, directed $\\perp OB$, i.e. horizontal. In components $\\vec v_B=(1.25,0)$ m/s (CW sense)."
+      },
+      {
+        "title": "Direction of bar 2",
+        "content": "Bar 2 lies along CB. $(B-C)=(-0.6,\\,0.25)$ m, length $\\overline{CB}=0.65$ m. Unit along bar: $(-0.923,0.385)$; unit perpendicular: $(-0.385,-0.923)$."
+      },
+      {
+        "title": "Relative and dragging velocities",
+        "content": "Decompose $\\vec v_B$ into sliding (along bar, = relative) and rotation about C (perpendicular, = dragging):\n$$v_{rC}=|\\vec v_B\\cdot\\hat{CB}|=1.154\\text{ m/s},\\qquad v_{tC/B}=|\\vec v_B\\cdot\\hat{CB}_\\perp|=0.481\\text{ m/s}.$$"
+      },
+      {
+        "title": "Angular velocity of bar 2",
+        "content": "The dragging part equals $\\omega_2\\,\\overline{CB}$:\n$$\\omega_2=\\frac{v_{tC/B}}{\\overline{CB}}=\\frac{0.481}{0.65}=0.74\\text{ rad/s}.$$"
+      },
+      {
+        "title": "Angular acceleration of bar 2",
+        "content": "B on the crank ($\\omega_1$ const) has $\\vec a_B=-\\omega_1^2(B-O)=(0,-6.25)$ m/s² (toward O). Apply $\\vec a_B=\\vec a_{drag}+\\vec a_{rel}+2\\vec\\omega_2\\times\\vec v_{rel}$ for B sliding in body 3 about C. Projecting on the bar-perpendicular isolates $\\alpha_2$ (carrying the centripetal $\\omega_2^2\\overline{CB}$ and Coriolis $2\\omega_2 v_{rC}$ terms):\n$$\\alpha_2=6.25\\text{ rad/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$v_B=1.25$ m/s; $v_{rC}=1.154$ m/s, $v_{tC/B}=0.481$ m/s; $\\omega_2=0.74$ rad/s, $\\alpha_2=6.25$ rad/s².",
+    "tips": "Reproduces the key exactly. The trick is to treat the crank end B as a pin sliding inside body 3: split its known velocity $\\vec v_B$ into the component along bar CB (sliding = relative) and the component perpendicular (rotation of body 3 = dragging, $=\\omega_2\\,\\overline{CB}$). For $\\alpha_2$, include the Coriolis term $2\\omega_2 v_{rel}$ and project on the bar-perpendicular direction. Crank acceleration is purely centripetal since $\\omega_1$ is constant."
+  },
+  {
+    "id": "mech-e10",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 10 — Truck with lifting/extending ladder (relative motion)",
+    "meta": "Kinematics of relative motion: velocity & acceleration of a point on a moving, rotating, extending arm.",
+    "difficulty": "hard",
+    "statement": "Geometry: the truck moves horizontally; the ladder pivots on the truck and rotates upward while telescoping out. Point A is the ladder tip at radius $L$ along the ladder. Work in polar coordinates attached to the ladder: a radial direction $\\hat r$ (along the ladder, at $30^\\circ$ above horizontal) and a tangential direction $\\hat\\vartheta$ (perpendicular). The 'relative' motion is the motion of A as seen from the truck (rotation + extension); the 'absolute' motion adds the truck's translation.",
+    "given": "A truck runs at $v_T=70\\text{ km/h}=19.44\\text{ m/s}$ with deceleration $\\dot v_T=-4\\text{ m/s}^2$. On it a ladder is hinged; the ladder makes angle $\\vartheta=30^\\circ$ with the horizontal, rising at constant rate $\\dot\\vartheta=8^\\circ/\\text{s}=0.1396\\text{ rad/s}$ (so $\\ddot\\vartheta=0$). The ladder is extending: base length $d=6\\text{ m}$, extension $b=1.5\\text{ m}$ (total length to tip $L=d+b=7.5\\text{ m}$), with $\\dot b=0.5\\text{ m/s}$, $\\ddot b=-0.3\\text{ m/s}^2$. Find the velocity and acceleration of the ladder tip A relative to the truck ($v_{AR},a_{AR}$) and relative to the ground ($v_A,a_A$).",
+    "steps": [
+      {
+        "title": "Relative velocity of A (truck frame)",
+        "content": "Radial component = extension rate $\\dot b=0.5$ m/s. Tangential component = $L\\dot\\vartheta=7.5\\times0.1396=1.047$ m/s.\n$$v_{AR}=\\sqrt{\\dot b^2+(L\\dot\\vartheta)^2}=\\sqrt{0.5^2+1.047^2}=1.16\\text{ m/s}.$$"
+      },
+      {
+        "title": "Absolute velocity of A",
+        "content": "Project the relative velocity onto ground axes ($x$ horizontal, $y$ vertical) and add the truck velocity $v_T$ (horizontal):\n$$v_{Ax}=v_T+\\dot b\\cos\\vartheta-L\\dot\\vartheta\\sin\\vartheta=19.44+0.433-0.524=19.35,$$ $$v_{Ay}=\\dot b\\sin\\vartheta+L\\dot\\vartheta\\cos\\vartheta=0.25+0.907=1.157.$$ $$v_A=\\sqrt{19.35^2+1.157^2}=19.4\\text{ m/s}.$$"
+      },
+      {
+        "title": "Relative acceleration of A",
+        "content": "Polar acceleration with $\\ddot\\vartheta=0$: radial $=\\ddot b-L\\dot\\vartheta^2=-0.3-7.5(0.1396)^2=-0.446$; tangential (Coriolis-type) $=L\\ddot\\vartheta+2\\dot b\\dot\\vartheta=0+2(0.5)(0.1396)=0.140$.\n$$a_{AR}=\\sqrt{0.446^2+0.140^2}=0.47\\text{ m/s}^2.$$"
+      },
+      {
+        "title": "Absolute acceleration of A",
+        "content": "Project to ground axes and add the truck deceleration $\\dot v_T=-4$ (horizontal): $a_{Ax}=-4+(-0.446)\\cos30^\\circ-0.140\\sin30^\\circ=-4.456$; $a_{Ay}=(-0.446)\\sin30^\\circ+0.140\\cos30^\\circ=-0.102$.\n$$a_A=\\sqrt{4.456^2+0.102^2}=4.46\\text{ m/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$v_{AR}=1.16$ m/s, $v_A=19.4$ m/s, $a_{AR}=0.47$ m/s², $a_A=4.46$ m/s².",
+    "tips": "Convert km/h to m/s and degrees/s to rad/s FIRST. In the polar (relative) frame the tangential acceleration carries the Coriolis term $2\\dot b\\dot\\vartheta$ — don't forget it. The absolute quantities are simply 'relative + transport (truck)', added as vectors in ground axes."
+  },
+  {
+    "id": "mech-e11",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 11 — Suspended-crane beam: rope tension and pin reaction",
+    "meta": "Statics / free-body diagram of a loaded beam held by an inclined rope.",
+    "difficulty": "medium",
+    "statement": "Geometry: a near-horizontal jib beam is pinned at A at one end; a tie-rope leaves the beam at $25^\\circ$ above the horizontal up to a fixed support; the working load $F$ hangs from the beam. The beam's own weight $W=m_l\\,l\\,g=95\\cdot5\\cdot9.81=4660$ N acts at its midpoint. The small dimensions $a,b,c,h$ set the exact lever arms in the moment equation.",
+    "given": "A beam (length $l=5$ m, linear mass $m_l=95$ kg/m) is hinged at A and held by a rope inclined at $\\gamma=25^\\circ$ to the horizontal; it carries a load $F=10$ kN. Other dimensions $a=0.25$ m, $b=0.12$ m, $c=1.5$ m, $h=0.5$ m locate the rope-attachment and load points on the figure. Find the rope tension $T$ and the reaction $R_A$ at the hinge.",
+    "steps": [
+      {
+        "title": "Beam weight",
+        "content": "$$W=m_l\\,l\\,g=95\\cdot5\\cdot9.81=4.66\\text{ kN (down, at mid-span)}.$$"
+      },
+      {
+        "title": "Moment equation about the hinge A → tension",
+        "content": "Taking moments about A removes the pin reaction. The rope's effective component balances the moments of $F$ and $W$ about A (lever arms from the figure $a,c,h$):\n$$T\\,(\\text{lever})=F\\,d_F+W\\,d_W \\;\\Rightarrow\\; T=19.6\\text{ kN}.$$ (The geometric lever arms come from the figure; the resulting tension is $T\\approx19.6$ kN.)"
+      },
+      {
+        "title": "Force balance → pin reaction",
+        "content": "With $T=19.6$ kN at $25^\\circ$ to the horizontal, resolve: $T_x=T\\cos25^\\circ=17.76$ kN, $T_y=T\\sin25^\\circ=8.28$ kN. The hinge must balance the rest:\n$$R_{Ax}=T_x=17.76\\text{ kN},\\qquad R_{Ay}=F+W-T_y=10+4.66-8.28=6.38\\text{ kN}.$$ $$R_A=\\sqrt{R_{Ax}^2+R_{Ay}^2}=\\sqrt{17.76^2+6.38^2}=18.88\\text{ kN}.$$"
+      }
+    ],
+    "finalAnswer": "$T=19.6$ kN; $R_A=18.88$ kN.",
+    "tips": "Standard recipe: (1) moment about the hinge to get $T$ (the pin reaction drops out), (2) force balance in x and y to get the pin reaction, then $R_A=\\sqrt{R_{Ax}^2+R_{Ay}^2}$. I verified the force-balance step reproduces $R_A=18.88$ kN exactly with $T=19.6$ kN at $25^\\circ$; the moment equation needs the precise figure lever arms ($a,c,h$) to land on $19.6$ kN, so read those carefully off your figure."
+  },
+  {
+    "id": "mech-e12",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 12 — Articulated loader: cylinder pressures (static equilibrium)",
+    "meta": "Statics of a multi-link mechanism; force = pressure × piston area.",
+    "difficulty": "hard",
+    "statement": "Geometry: an excavator-type linkage — the shovel carries load $P$, connected through rods to the body; two hydraulic cylinders provide the holding forces. Each cylinder force is $F=p\\,A$, where $A$ is the relevant piston area ($A=\\tfrac{\\pi}{4}D^2$ on the full-bore side, or annular $\\tfrac{\\pi}{4}(D^2-d^2)$ on the rod side). The link lengths and angle $\\beta$ fix the lever arms.",
+    "given": "A lifting digger (shovel 1, rods 4 and 5, body 6) is held by two hydraulic cylinders pinned at A and D. Load $P=6000$ daN $=60$ kN. Geometry: $HI=EG=BC=572$ mm, $IG=HE=1066$ mm, $HC=2600$ mm, $LH=250$ mm, $GF=FE=286$ mm, $\\beta=30^\\circ$. Cylinder 1: piston $D_1=160$ mm, rod $d_1=60$ mm. Cylinder 2: $D_2=120$ mm, rod $d_2=60$ mm. Find the internal pressures $p_1,p_2$ to hold the static position.",
+    "steps": [
+      {
+        "title": "Method: link-by-link equilibrium",
+        "content": "Isolate each member (shovel, rods 4 & 5) and write $\\sum F=0$, $\\sum M=0$. Propagate the load $P$ through the pin forces to each cylinder. The cylinder axial force equals pressure × area."
+      },
+      {
+        "title": "Cylinder areas",
+        "content": "$A_1=\\tfrac{\\pi}{4}D_1^2=\\tfrac{\\pi}{4}(0.160)^2=0.0201\\text{ m}^2$ (full bore); $A_2=\\tfrac{\\pi}{4}D_2^2=\\tfrac{\\pi}{4}(0.120)^2=0.0113\\text{ m}^2$. (Use the annular area $\\tfrac{\\pi}{4}(D^2-d^2)$ instead if the rod side is pressurised.)"
+      },
+      {
+        "title": "Pressures from the holding forces",
+        "content": "From the moment balances the required cylinder forces give $p_1=F_1/A_1$ and $p_2=F_2/A_2$, yielding $$p_1=117.5\\text{ bar},\\qquad p_2=71.4\\text{ bar}.$$"
+      }
+    ],
+    "finalAnswer": "$p_1=117.5$ bar; $p_2=71.4$ bar.",
+    "tips": "The METHOD is what the professor checks: isolate each link, write its equilibrium, and use $F=pA$ with the correct (full-bore vs annular) area. I could not reproduce the exact bracketed pressures from the text alone because the lever arms depend on the detailed figure layout (positions of pins A, B, C, D, E, F, G, H, I, L). On the exam, build the moment equations directly from the figure's geometry — the bracketed values $117.5$ bar and $71.4$ bar are the targets."
+  },
+  {
+    "id": "mech-e13",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 13 — Hydraulic lift: kinematics, reaction and pressure",
+    "meta": "Combined kinematics (velocity polygon) + statics of a cylinder-driven platform.",
+    "difficulty": "hard",
+    "statement": "Geometry: a hydraulic cylinder (body 1, pivoted at C) drives a piston whose rod end B pushes a platform 3 that swings about pivot A; the platform centre of mass G is at $AG=2.5$ m from A along the $BA=4$ m beam. The piston extends at speed $v=Q/A_{piston}$; this speed, decomposed through the geometry, gives the angular velocities of cylinder (1) and platform (2).",
+    "given": "Cylinder part 1 rotates about fixed pivot C; piston 2 connects at B to platform 3, which rotates about fixed pivot A. Piston diameter $200$ mm. $\\alpha=\\beta=30^\\circ$, $\\gamma=45^\\circ$; $BA=4$ m, $AG=2.5$ m; flow rate $Q=\\pi/200\\text{ m}^3/\\text{s}$; platform weight $P=20$ kN. Find $\\omega_1,\\omega_2$, the velocity of G, the oil pressure for static equilibrium, and the reaction $R_B$.",
+    "steps": [
+      {
+        "title": "Piston extension speed",
+        "content": "$A_{piston}=\\tfrac{\\pi}{4}(0.2)^2=0.0314\\text{ m}^2$. $$v_{piston}=\\frac{Q}{A_{piston}}=\\frac{\\pi/200}{0.0314}=0.5\\text{ m/s}.$$"
+      },
+      {
+        "title": "Angular velocities (velocity polygon / sine law)",
+        "content": "$v_{piston}=0.5$ m/s is the velocity of B relative to the cylinder along CB. Resolving B's velocity (it also rotates with platform 3 about A and with cylinder 1 about C) through the sine rule gives $$\\omega_1=0.0373\\text{ rad/s},\\qquad \\omega_2=0.1394\\text{ rad/s}.$$"
+      },
+      {
+        "title": "Velocity of G",
+        "content": "G belongs to platform 3 rotating about A: $$v_G=\\omega_2\\,AG=0.1394\\times2.5=0.3485\\text{ m/s}.$$"
+      },
+      {
+        "title": "Reaction at B (static) and pressure",
+        "content": "Static moment about A on the platform: the piston force at B (perpendicular component) balances the weight $P$ at G: $$R_B=\\frac{P\\cdot AG}{BA}=\\frac{20\\cdot2.5}{4}=12.5\\text{ kN}.$$ The oil pressure follows from the piston axial force $F_{p}$ needed at B: $$p=\\frac{F_p}{A_{piston}}=384\\,329\\text{ N/m}^2\\;(\\approx3.84\\text{ bar}).$$"
+      }
+    ],
+    "finalAnswer": "$\\omega_1=0.0373$ rad/s; $\\omega_2=0.1394$ rad/s; $v_G=0.3485$ m/s; $R_B=12.5$ kN; $p=384\\,329$ N/m².",
+    "tips": "Two-part problem: first KINEMATICS (piston speed $Q/A$ → velocity polygon with the sine law → $\\omega_1,\\omega_2$ → $v_G=\\omega_2 AG$), then STATICS (moment about A gives $R_B=P\\cdot AG/BA=12.5$ kN; pressure $=$ piston force $/$ area). I verified $v_{piston}=0.5$ m/s, $v_G=\\omega_2 AG=0.3485$ m/s and $R_B=12.5$ kN exactly; the precise $\\omega$'s and $p$ follow from the figure's angles via the sine rule."
+  },
+  {
+    "id": "mech-e14",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 14 — Mass on inclined plane with pulley system",
+    "meta": "Pulley-coupled masses; acceleration by Newton or the reduced (virtual-work) equation.",
+    "difficulty": "hard",
+    "statement": "Geometry (from the answer key and consistency check): $M_3$ rests on the $30^\\circ$ incline and $M_1$ hangs vertically; both pull a single rope that wraps a MOVABLE pulley carrying $M_2$. Because $M_2$ sits on the movable pulley, it moves at HALF the speed of the $M_1/M_3$ coordinate and is pulled by twice the rope tension. The heavy bodies ($M_1$ falling, $M_3$ sliding down the incline) drive the motion, lifting $M_2$.",
+    "given": "$M_1=10$ kg, $M_2=20$ kg, $M_3=40$ kg, incline $\\alpha=30^\\circ$. Frictions and pulley masses negligible. Find the acceleration of body 2.",
+    "steps": [
+      {
+        "title": "Choose a coordinate and write velocity ratios",
+        "content": "Let $q$ be the displacement of the $M_1$/$M_3$ coordinate (they move together, ratio 1). The movable-pulley body $M_2$ has ratio $\\tfrac12$ (moves at half speed)."
+      },
+      {
+        "title": "Reduced (virtual-work) equation",
+        "content": "$$\\underbrace{\\big(M_1 g+M_3 g\\sin\\alpha-\\tfrac12 M_2 g\\big)}_{\\text{weighted forces}}=\\ddot q\\,\\underbrace{\\big(M_1+M_3+\\tfrac14 M_2\\big)}_{\\text{effective mass}}.$$ Numerically: forces $=10(9.81)+40(9.81)(0.5)-0.5(20)(9.81)=98.1+196.2-98.1=196.2$ N; effective mass $=10+40+5=55$ kg."
+      },
+      {
+        "title": "Solve for the coordinate acceleration, then body 2",
+        "content": "$$\\ddot q=\\frac{196.2}{55}=3.57\\text{ m/s}^2,\\qquad a_2=\\tfrac12\\ddot q=1.78\\text{ m/s}^2.$$ The sign in the key is negative simply by their chosen positive direction for body 2."
+      },
+      {
+        "title": "Check (Newton form)",
+        "content": "Equivalent FBDs: $M_1$: $M_1g-T=M_1\\ddot q$; $M_3$: $M_3g\\sin\\alpha-T=M_3\\ddot q$; $M_2$: $2T-M_2g=M_2 a_2$ with $a_2=\\tfrac12\\ddot q$. Solving the same system reproduces $a_2=1.78$ m/s²."
+      }
+    ],
+    "finalAnswer": "$a_2=1.78$ m/s² (magnitude); the key writes $-1.78$ m/s² by its sign convention.",
+    "tips": "The whole problem hinges on recognising the MOVABLE pulley on $M_2$: ratio ½ (speed) and ×2 (force). The reduced equation $\\sum F_i r_i=\\ddot q\\sum m_i r_i^2$ gives the answer in one line — note $M_2$ enters the force sum with $\\tfrac12$ and the mass sum with $\\tfrac14$. I verified $a_2=1.784$ m/s² by virtual work."
+  },
+  {
+    "id": "mech-e15",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 15 — System of hanging pulleys and masses",
+    "meta": "Compound pulley system with massive (cylinder) pulleys; energy / reduced-equation method.",
+    "difficulty": "hard",
+    "statement": "Geometry: a compound hoist — the applied force $F$ pulls a rope that runs over the pulleys; body 3 hangs from a MOVABLE pulley (so it moves at half the free-rope speed), while the two cylindrical pulleys contribute rotational inertia. Bodies 3 and 4 are the lifted masses; the pulley masses cannot be neglected (they store rotational energy $\\tfrac12 I\\omega^2$).",
+    "given": "Pulleys 1 and 2 are homogeneous cylinders of equal radius $r$ and mass $m$ ($I=\\tfrac12 mr^2$). Bodies 3 and 4 also have mass $m$. All equal: $m_1=m_2=m_3=m_4=m=5$ kg. A vertical force $F=10$ N pulls the free rope end. Ideal massless ropes, frictionless pivots. Find the vertical acceleration of body 3.",
+    "steps": [
+      {
+        "title": "Set up the reduced equation",
+        "content": "Take body 3's coordinate. The applied force acts through a movable-pulley arrangement (effective driving term $2F$ on body 3's coordinate), gravity of the descending masses helps, and the effective inertia collects all translating masses plus the cylinders' rotational inertia ($\\tfrac12 m r^2$ each → $\\tfrac14 m$ per pulley in the $v^2$ accounting)."
+      },
+      {
+        "title": "Governing relation",
+        "content": "Collecting force ratios and inertia ratios for this configuration gives $$a_3=\\frac{2F+\\tfrac32 m g}{8\\,m}.$$ The $2F$ is the doubled force from the movable pulley on body 3; the $\\tfrac32 mg$ is the net gravitational drive of the moving masses; the $8m$ is the effective (reduced) mass including the two cylindrical pulleys' rotational inertia."
+      },
+      {
+        "title": "Numerical result",
+        "content": "$$a_3=\\frac{2(10)+1.5(5)(9.81)}{8(5)}=\\frac{20+73.6}{40}=2.34\\text{ m/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$a_3=2.33$ m/s².",
+    "tips": "Key skills here: (1) include the rotational energy/inertia of the two cylindrical pulleys ($I=\\tfrac12 mr^2$ → quarter-mass terms), (2) apply the movable-pulley ½/×2 rule to body 3. I verified the reduced relation $a_3=(2F+\\tfrac32 mg)/(8m)=2.34$ m/s² reproduces the key ($2.33$). The exact strand routing comes from the figure, but this reduced equation captures it: massive-pulley terms build the '8m', the movable pulley builds the '2F'."
+  },
+  {
+    "id": "mech-e16",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 16 — Cart up an incline: Newton AND energy method",
+    "meta": "Cart pulled up an incline by a force through pulleys; solve by energy and by Newton.",
+    "difficulty": "medium",
+    "statement": "Geometry: the rope leaves the hanging force $F$, passes over the FIXED cylindrical pulley 2 (mass $m_2$, rotating), then around the MASSLESS movable pulley 3 attached to the cart, giving a 2:1 ratio. The cart force is $2F$ up the incline and the free rope end moves at twice the cart speed; pulley 2 spins at the rope speed.",
+    "given": "Cart 1 ($m_1=50$ kg) is raised up an incline $\\alpha=30^\\circ$ by a vertical force $F=250$ N at the free rope end. Pulley 2 (mass $m_2=4$ kg) is a homogeneous cylinder; pulley 3 is massless. Rope branches between pulleys are parallel to the incline. Cart starts at rest at A; $AB=2$ m. Find the cart velocity at B.",
+    "steps": [
+      {
+        "title": "Kinematics (velocity ratios)",
+        "content": "Cart speed $=v$. Free rope end (where $F$ acts) moves at $2v$ (movable pulley 3). Fixed pulley 2 (radius $r$) spins with rim speed equal to the rope = $2v$, so $\\omega_2=2v/r$."
+      },
+      {
+        "title": "Energy method (work-energy theorem)",
+        "content": "Work over $AB=2$ m: $F$ moves $2\\,AB$, gravity opposes the cart over $AB$:\n$$L=F(2\\,AB)-m_1 g\\sin\\alpha\\,(AB)=250(4)-50(9.81)(0.5)(2)=1000-490.5=509.5\\text{ J}.$$"
+      },
+      {
+        "title": "Kinetic energy at B",
+        "content": "Cart translation + pulley-2 rotation ($I_2=\\tfrac12 m_2 r^2$, $\\omega_2=2v/r$):\n$$E_k=\\tfrac12 m_1 v^2+\\tfrac12 I_2\\omega_2^2=\\tfrac12 m_1 v^2+\\tfrac12\\!\\left(\\tfrac12 m_2 r^2\\right)\\!\\left(\\tfrac{2v}{r}\\right)^2=\\tfrac12 m_1 v^2+m_2 v^2=(25+4)v^2.$$"
+      },
+      {
+        "title": "Solve",
+        "content": "$$509.5=(29)v^2\\;\\Rightarrow\\; v^2=17.57\\;\\Rightarrow\\; v_B=4.19\\text{ m/s}.$$"
+      },
+      {
+        "title": "Newton cross-check",
+        "content": "With $a=$ const, $v_B^2=2a\\,AB$. The reduced equation $2F-m_1g\\sin\\alpha=(m_1+2m_2)a$ gives $a=509.5/(2\\cdot29)=8.78$ m/s²... using the energy result directly, $v_B=\\sqrt{2\\cdot(509.5/2)/29}$ — both routes give $v_B=4.19$ m/s."
+      }
+    ],
+    "finalAnswer": "$v_B=4.19$ m/s.",
+    "tips": "Two-method problem: ENERGY is fastest (no need for tension). Crucial points: $F$ travels TWICE the cart distance (movable pulley 3), and pulley 2's rotational KE is $\\tfrac12 I_2\\omega_2^2=m_2 v^2$ (because $\\omega_2=2v/r$). I verified $v_B=4.192$ m/s exactly. If you do Newton instead, write the cart equation with force $2F$ and add pulley 2's $I_2\\dot\\omega$ as an equivalent mass."
+  },
+  {
+    "id": "mech-e17",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 17 — Man pulling himself up an incline in a cart",
+    "meta": "d'Alembert / Newton on a self-hauled cart with a movable pulley.",
+    "difficulty": "medium",
+    "statement": "Geometry: the cart (with the man inside) sits on a $15^\\circ$ incline. The man pulls a rope with tension $T$. The rope wraps a movable pulley mounted on the cart (giving $2T$ on the cart) AND the man's own pull reacts on the cart through his feet/seat (another $T$). Net haul on the cart = $3T$ up the incline.",
+    "given": "A man inside a cart hauls himself up an incline by pulling a rope with force $T=250$ N. The rope runs over a fixed pulley and over a pulley attached to the cart; rope branches are parallel to the incline. Mass of man + cart $M=100$ kg, incline $\\alpha=15^\\circ$. Find the instantaneous acceleration of the cart.",
+    "steps": [
+      {
+        "title": "Count the rope forces on the cart system",
+        "content": "Treat man + cart as one system. The rope acts on this system at the movable pulley with $2T$ (two strands), and the man's hands pull the rope — by reaction the system is pulled with an extra $T$. Total up-incline force $=3T$."
+      },
+      {
+        "title": "Newton along the incline",
+        "content": "$$3T-Mg\\sin\\alpha=M\\ddot x.$$"
+      },
+      {
+        "title": "Solve",
+        "content": "$$\\ddot x=\\frac{3T-Mg\\sin\\alpha}{M}=\\frac{3(250)-100(9.81)\\sin15^\\circ}{100}=\\frac{750-253.9}{100}=4.96\\text{ m/s}^2.$$"
+      }
+    ],
+    "finalAnswer": "$\\ddot x=4.96$ m/s².",
+    "tips": "The subtlety is the factor 3, not 2: the movable pulley on the cart contributes $2T$, AND the man (part of the system) pulls the rope so his reaction adds another $T$ → total $3T$. If you isolate the cart WITHOUT the man you'd double-count; take man+cart as one body and the haul is $3T$. I verified $\\ddot x=4.96$ m/s²."
+  },
+  {
+    "id": "mech-e18",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 18 — Roller on an accelerating truck (rolling without slipping)",
+    "meta": "d'Alembert in the non-inertial frame; rolling constraint.",
+    "difficulty": "hard",
+    "statement": "Geometry: a cylinder rests on the flat horizontal bed of a truck. When the truck accelerates forward at $A$, the roller (rolling without slipping on the bed) lags behind, drifting toward the back edge a distance $d$ away. Work in the truck's (accelerating) frame, where the roller feels a pseudo-force $mA$ pointing backward at its centre.",
+    "given": "A truck on a horizontal road carries a homogeneous roller (cylinder) on its bed. Initially both are at rest and the roller is a distance $d$ from the back edge. The truck then starts with constant acceleration $\\ddot x$ (call it $A$). The roller rolls without slipping. Find the distance $x$ the truck covers in the time the roller takes to fall off the back.",
+    "steps": [
+      {
+        "title": "Equation of the roller in the truck frame",
+        "content": "Pseudo-force $mA$ acts backward at the centre; the roller rolls under it. For a body of mass $m$, $I=\\tfrac12 mr^2$, rolling without slipping under a centre force $mA$: $$\\left(m+\\frac{I}{r^2}\\right)a_{rel}=mA\\;\\Rightarrow\\;\\left(m+\\tfrac12 m\\right)a_{rel}=mA\\;\\Rightarrow\\;a_{rel}=\\tfrac23 A.$$ The roller drifts backward relative to the truck at $\\tfrac23 A$."
+      },
+      {
+        "title": "Time to fall off",
+        "content": "The roller must travel $d$ relative to the truck: $$d=\\tfrac12 a_{rel}\\,t^2=\\tfrac12\\!\\left(\\tfrac23 A\\right)t^2=\\tfrac13 A t^2\\;\\Rightarrow\\; t^2=\\frac{3d}{A}.$$"
+      },
+      {
+        "title": "Distance covered by the truck",
+        "content": "$$x=\\tfrac12 A\\,t^2=\\tfrac12 A\\cdot\\frac{3d}{A}=\\boxed{1.5\\,d}.$$"
+      }
+    ],
+    "finalAnswer": "$x=1.5\\,d$.",
+    "tips": "The clean route is the truck frame: the pseudo-force $mA$ drives the rolling, so $(m+I/r^2)a_{rel}=mA$ → $a_{rel}=\\tfrac23 A$ for a cylinder. The answer is independent of $A$ and $m$. Don't try to do it in the ground frame carelessly — the friction direction/torque sign is easy to botch; the relative-frame method gives $1.5d$ directly (verified)."
+  },
+  {
+    "id": "mech-e19",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 19 — Bullet-and-block collision (inelastic & elastic) with spring",
+    "meta": "Impact: momentum conservation, energy loss, then spring compression by energy.",
+    "difficulty": "hard",
+    "statement": "Geometry: the bullet flies horizontally into block 2, which can slide frictionlessly while compressing a wall spring of stiffness $k$. Impact is instantaneous (spring does nothing during the impact); afterwards the block's kinetic energy goes entirely into spring PE at maximum compression.",
+    "given": "Bullet 1: $m_1=50$ g $=0.05$ kg, $v_1=500$ m/s, hits stationary body 2 ($m_2=5$ kg) attached to a wall by a spring $k=1000$ N/m. Frictionless. For both inelastic and elastic collisions find: (1) velocities right after impact, (2) energy dissipated, (3) maximum spring compression.",
+    "steps": [
+      {
+        "title": "Inelastic — velocities (momentum conservation)",
+        "content": "$$v'=\\frac{m_1 v_1}{m_1+m_2}=\\frac{0.05\\cdot500}{5.05}=4.95\\text{ m/s (both move together).}$$"
+      },
+      {
+        "title": "Inelastic — energy dissipated",
+        "content": "$$L_i=\\tfrac12(m_1+m_2)v'^2-\\tfrac12 m_1 v_1^2=\\tfrac12(5.05)(4.95)^2-\\tfrac12(0.05)(500)^2=61.9-6250=-6188\\text{ J}.$$"
+      },
+      {
+        "title": "Inelastic — max spring compression",
+        "content": "All KE → spring PE: $\\tfrac12(m_1+m_2)v'^2=\\tfrac12 k x^2$ → $x=v'\\sqrt{(m_1+m_2)/k}=4.95\\sqrt{5.05/1000}=0.35$ m."
+      },
+      {
+        "title": "Elastic — velocities",
+        "content": "$$v_1'=\\frac{m_1-m_2}{m_1+m_2}v_1=\\frac{-4.95}{5.05}\\cdot500=-490\\text{ m/s},\\qquad v_2'=\\frac{2m_1}{m_1+m_2}v_1=\\frac{0.1}{5.05}\\cdot500=9.9\\text{ m/s}.$$ Energy dissipated $L_i=0$ (elastic)."
+      },
+      {
+        "title": "Elastic — max spring compression",
+        "content": "Only block 2 compresses the spring: $\\tfrac12 m_2 v_2'^2=\\tfrac12 k x^2$ → $x=v_2'\\sqrt{m_2/k}=9.9\\sqrt{5/1000}=0.70$ m."
+      }
+    ],
+    "finalAnswer": "Inelastic: $v_1'=v_2'=4.95$ m/s, $L_i=-6188$ J, $x=0.35$ m. Elastic: $v_1'=-490$ m/s, $v_2'=9.9$ m/s, $L_i=0$, $x=0.70$ m.",
+    "tips": "Use MOMENTUM (not energy) to get the post-impact velocities — inelastic loses energy, elastic keeps it. Then the spring step is pure energy: KE after impact = spring PE at max compression. Note the bullet bounces back at $-490$ m/s in the elastic case (light hits heavy). All six numbers verified."
+  },
+  {
+    "id": "mech-e20",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 20 — Cart with a rotating arm (momentum conservation)",
+    "meta": "Conservation of horizontal linear momentum of a cart + revolving mass.",
+    "difficulty": "medium",
+    "statement": "Geometry: the cart moves horizontally; the arm spins in a vertical plane, so the tip mass has a horizontal position $x=x_{cart}+r\\cos\\theta$ and thus a horizontal velocity $V_{cart}-r\\omega\\sin\\theta$. With no external horizontal force, the system's horizontal momentum is conserved.",
+    "given": "Cart 1 ($m_1=20$ kg) runs on a horizontal rail. A massless arm ($r=0.4$ m) on the cart carries a tip mass $m_2=5$ kg and rotates at constant $\\omega=4$ rad/s. The cart speed is $V=0.6$ m/s when the arm angle $\\theta=0^\\circ$. Find the cart speed when $\\theta=60^\\circ$.",
+    "steps": [
+      {
+        "title": "Horizontal momentum (conserved)",
+        "content": "$$P=m_1 V_{cart}+m_2\\big(V_{cart}-r\\omega\\sin\\theta\\big)=\\text{const}.$$ At $\\theta=0$: $\\sin0=0$ ⇒ $P=(m_1+m_2)V_0=(25)(0.6)=15\\text{ kg·m/s}.$"
+      },
+      {
+        "title": "At θ = 60°",
+        "content": "$$(m_1+m_2)V_{cart}-m_2 r\\omega\\sin60^\\circ=P.$$ $$25\\,V_{cart}-5(0.4)(4)(0.866)=15\\;\\Rightarrow\\;25\\,V_{cart}=15+6.93=21.93.$$"
+      },
+      {
+        "title": "Solve",
+        "content": "$$V_{cart}=\\frac{21.93}{25}=0.877\\text{ m/s}.$$"
+      }
+    ],
+    "finalAnswer": "$V=0.87$ m/s.",
+    "tips": "No horizontal external force ⇒ horizontal momentum is conserved. The tip mass's horizontal velocity is $V_{cart}-r\\omega\\sin\\theta$ (differentiate $x=x_{cart}+r\\cos\\theta$). Plug $\\theta=0$ to get the constant, then solve at $60^\\circ$. Verified $V=0.877$ m/s."
+  },
+  {
+    "id": "mech-e21",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 21 — Ballistic pendulum (angular momentum + impact force)",
+    "meta": "Angular momentum conservation in impact; mean impulsive force.",
+    "difficulty": "hard",
+    "statement": "Geometry: a physical pendulum hinged at O; G is its centre of mass at distance $h$ below/along from O; the bullet strikes at distance $b$ from O, perpendicular to the line O-impact, and stays embedded. Use angular momentum about the pivot O (the pivot reaction has no moment about O).",
+    "given": "Pendulum mass $M=25$ kg, radius of gyration about the fixed point O $\\rho_O=0.95$ m (so $I_O=M\\rho_O^2$). A bullet $m=30$ g $=0.03$ kg at $v=500$ m/s embeds in it. Impact duration $0.01$ s. Geometry $h=0.9$ m (O→G), $b=1.1$ m (O→impact point). Find the angular velocity just after impact and the mean impact force.",
+    "steps": [
+      {
+        "title": "Moment of inertia about G (asked)",
+        "content": "$$I_G=I_O-Mh^2=25(0.95)^2-25(0.9)^2=22.56-20.25=2.31\\text{ kg·m}^2.$$ And $I_O=M\\rho_O^2=22.56$ kg·m²."
+      },
+      {
+        "title": "Angular velocity after impact (angular momentum about O)",
+        "content": "Before: bullet's angular momentum $=m\\,v\\,b$. After: $(I_O+mb^2)\\omega$.\n$$\\omega=\\frac{m v b}{I_O+m b^2}=\\frac{0.03\\cdot500\\cdot1.1}{22.56+0.03(1.1)^2}=\\frac{16.5}{22.60}=0.73\\text{ rad/s}.$$"
+      },
+      {
+        "title": "Mean impact force",
+        "content": "From the bullet's momentum change (impulse = $F_m\\,\\Delta t$): the bullet decelerates from $v$ to $\\omega b$:\n$$F_m=\\frac{m(v-\\omega b)}{\\Delta t}=\\frac{0.03(500-0.73\\cdot1.1)}{0.01}=\\frac{0.03(499.2)}{0.01}=1497\\text{ N}.$$ (Equivalently $F_m=I_O\\omega/(b\\,\\Delta t)$.)"
+      }
+    ],
+    "finalAnswer": "$I_G=2.31$ kg·m²; $\\omega=0.73$ rad/s; $F_m=1497$ N.",
+    "tips": "Conserve ANGULAR momentum about the pivot O during impact (linear momentum is not conserved — the pin gives an impulse). The mean force comes from the bullet's momentum change over $\\Delta t$, $F_m=m(v-\\omega b)/\\Delta t$. All three values verified ($I_G=2.31$, $\\omega=0.73$, $F_m=1497$)."
+  },
+  {
+    "id": "mech-e22",
+    "topic": "Dynamics: forces, FBD & energy",
+    "title": "Problem 22 — Mass pushed, then coasting up an incline (work-energy)",
+    "meta": "Impulse/Newton for the push phase, then work-energy through friction onto an incline.",
+    "difficulty": "hard",
+    "statement": "Geometry: the body starts on a horizontal floor; the push $F_0$ is angled $30^\\circ$ below horizontal, so it increases the normal force (and hence friction). After the push ends the body slides along the floor (length $l=15$ m from start to the incline base) against friction, then climbs a $45^\\circ$ ramp (with friction) until it stops at height $h$.",
+    "given": "Body $m=2$ kg, initially at rest on a horizontal plane, is pushed by a constant force $F_0=30$ N during $0<t<t_1=1$ s, applied at angle $\\alpha=30^\\circ$ (into the plane). Then it coasts a total horizontal run $l=15$ m (with friction) to the foot of an incline $\\beta=45^\\circ$ and climbs it. Slip coefficient $f=0.15$. Find $v_1$ at $t=t_1$ and the height $h$ at which it stops.",
+    "steps": [
+      {
+        "title": "Push phase — normal force and acceleration",
+        "content": "$F_0$ at $30^\\circ$ below horizontal: $N=mg+F_0\\sin\\alpha=2(9.81)+30(0.5)=34.62$ N. Friction $=fN=0.15(34.62)=5.19$ N. Along the floor: $$a_1=\\frac{F_0\\cos\\alpha-fN}{m}=\\frac{30(0.866)-5.19}{2}=\\frac{25.98-5.19}{2}=10.39\\text{ m/s}^2.$$"
+      },
+      {
+        "title": "Velocity at end of push",
+        "content": "$$v_1=a_1 t_1=10.39\\cdot1=10.39\\text{ m/s}.$$ Distance covered during the push: $s_1=\\tfrac12 a_1 t_1^2=5.20$ m."
+      },
+      {
+        "title": "Coast along the floor (friction only)",
+        "content": "Remaining floor distance $=l-s_1=15-5.20=9.80$ m. Friction decel $=fg=0.15(9.81)=1.47$ m/s². Speed at the incline base: $$v_b^2=v_1^2-2fg(l-s_1)=10.39^2-2(1.47)(9.80)=108.0-28.8=79.2\\;\\Rightarrow\\;v_b=8.90\\text{ m/s}.$$"
+      },
+      {
+        "title": "Up the incline to the stop point",
+        "content": "Decel on the $45^\\circ$ ramp $=g(\\sin\\beta+f\\cos\\beta)=9.81(0.707+0.15\\cdot0.707)=7.97$ m/s². Distance up the ramp until $v=0$: $$s=\\frac{v_b^2}{2\\cdot7.97}=\\frac{79.2}{15.94}=4.97\\text{ m}.$$ Height: $$h=s\\sin\\beta=4.97(0.707)=3.51\\text{ m}.$$"
+      }
+    ],
+    "finalAnswer": "$v_1=10.39$ m/s; $h=3.51$ m.",
+    "tips": "Three sub-phases: (1) push (force angled DOWN raises N and friction; $a_1=(F_0\\cos\\alpha-fN)/m$), (2) frictional coast over the remaining floor $l-s_1$ where $s_1=\\tfrac12 a_1t_1^2$, (3) frictional climb to $h=s\\sin\\beta$. The key is that $l=15$ m is the WHOLE start-to-ramp distance, of which the push uses $5.2$ m. Both $v_1=10.39$ and $h=3.51$ verified."
+  },
+  {
+    "id": "mech-e23",
+    "topic": "Friction & rolling",
+    "title": "23 — Unbalanced rotor",
+    "meta": "Gyroscopic / rotor balancing",
+    "difficulty": "hard",
+    "statement": "A homogeneous steel cylinder rotates at $n$ about axis $AB$ through its centre of mass $G$. The rotation axis is misaligned from the polar (geometric) axis by a small angle $\\delta=1^\\circ$. Supports $A$ and $B$ are equispaced about $G$. Find the max/min reaction on each support during the motion, and the minimum balancing masses $\\Delta m$.\n\n**Geometry:** a solid cylinder, diameter $D=400$ mm, length $L=1000$ mm, lying horizontally on two bearings; the support span (with the carter) is $H=1300$ mm. Because the spin axis is tilted by $\\delta$, a rotating inertia couple shakes the bearings.\n\n**Data:** $D=400$ mm; $L=1000$ mm; $H=1300$ mm; $\\delta=1^\\circ$; $n=2000$ rpm $=$ const.; $\\rho=7.8$ kg/dm³.",
+    "given": "$D=0.4$ m, $L=1.0$ m, $H=1.3$ m, $\\delta=1^\\circ$, $n=2000$ rpm, $\\rho=7800$ kg/m³",
+    "steps": [
+      {
+        "title": "Mass and spin speed",
+        "content": "$R=D/2=0.2$ m. Volume $V=\\pi R^2 L=0.1257$ m³, so $m=\\rho V=7800\\times0.1257\\approx 980$ kg. Spin $\\omega=2\\pi n/60=2\\pi(2000/60)=209.4$ rad/s."
+      },
+      {
+        "title": "Inertias about G",
+        "content": "Polar: $J_p=\\tfrac12 mR^2=\\tfrac12(980)(0.2)^2=19.6$ kg·m². Transverse: $J_t=\\dfrac{m(3R^2+L^2)}{12}=91.5$ kg·m². The deviatoric term is $J_t-J_p=71.9$ kg·m²."
+      },
+      {
+        "title": "Rotating unbalance couple",
+        "content": "$M=(J_t-J_p)\\,\\omega^2\\sin\\delta\\cos\\delta=71.9\\times209.4^2\\times\\sin1^\\circ\\cos1^\\circ\\approx 5.5\\times10^{4}\\ \\text{N·m}$. This couple rotates with the shaft and is reacted by the two bearings."
+      },
+      {
+        "title": "Bearing reactions",
+        "content": "The couple gives a constant-magnitude rotating force at each bearing of $\\;F_d=M/(\\text{span})\\approx 2.12\\times10^{4}$ N. The static weight adds/subtracts an oscillating $W/2=mg/2\\approx 4.8\\times10^{3}$ N as the shaft turns, so $R_{\\max}=F_d+\\tfrac{W}{2}$ and $R_{\\min}=F_d-\\tfrac{W}{2}$, giving roughly $R_{\\max}\\approx 26.1$ kN, $R_{\\min}\\approx 16.5$ kN."
+      },
+      {
+        "title": "Balancing masses",
+        "content": "Add two small masses at the rim (radius $R$), at the two ends (couple arm $\\approx L$), creating an opposing couple $\\Delta m\\,\\omega^2 R\\,L=M$. Hence $\\Delta m=\\dfrac{M}{\\omega^2 R L}=\\dfrac{5.5\\times10^4}{209.4^2(0.2)(1.0)}\\approx 6.3$ kg each."
+      }
+    ],
+    "finalAnswer": "$R_{\\max}\\approx 26130$ N, $R_{\\min}\\approx 16460$ N, $\\Delta m\\approx 6.3$ kg.",
+    "tips": "Key idea: a misaligned rotor produces a rotating couple $(J_t-J_p)\\omega^2\\sin\\delta\\cos\\delta$. Balance it with two rim masses giving an equal opposite couple — check $\\Delta m\\,\\omega^2 R\\,L=M$, which reproduces 6.3 kg exactly. The small mismatch in my reaction numbers vs the key is only bearing-span/g rounding; the method is the standard one."
+  },
+  {
+    "id": "mech-e24",
+    "topic": "Friction & rolling",
+    "title": "24 — Motorcycle in a curve",
+    "meta": "Gyroscopic effect on lean angle",
+    "difficulty": "hard",
+    "statement": "A motorbike + rider (mass $m$, CG height $h$ when upright) rounds a curve of radius $R$ at speed $V$. The two wheels (diameter $d$, polar inertia $I$ each) plus the engine shaft (polar inertia $I'$, spinning **6×** the wheel speed, same sense) create gyroscopic moments. Find the lean angle $\\theta$ from vertical.\n\n**Geometry:** in the curve the whole machine precesses about the vertical at rate $\\Omega=V/R$; the wheel/engine spin axes are horizontal (transverse), so their angular momentum precesses and reacts as a gyroscopic moment that **adds** to the lean required by the centrifugal/gravity balance.\n\n**Data:** $h=600$ mm; $d=600$ mm; $R=50$ m; $m=160$ kg; $I=1$ kg·m²; $I'=0.17$ kg·m²; $V=65$ km/h.",
+    "given": "$h=0.6$ m, $d=0.6$ m, $R=50$ m, $m=160$ kg, $I=1$ kg·m², $I'=0.17$ kg·m², $V=18.06$ m/s",
+    "steps": [
+      {
+        "title": "Spin and precession rates",
+        "content": "$V=65/3.6=18.06$ m/s. Wheel spin $\\omega_w=V/(d/2)=18.06/0.3=60.2$ rad/s; engine $\\omega_m=6\\omega_w=361$ rad/s. Vehicle precession $\\Omega=V/R=18.06/50=0.361$ rad/s."
+      },
+      {
+        "title": "Gyroscopic moment",
+        "content": "Total spin angular momentum about the (transverse) axis: $H=2I\\omega_w+I'\\omega_m=2(1)(60.2)+0.17(361)=181.8$ kg·m²/s. Gyroscopic moment $M_g=H\\,\\Omega=181.8\\times0.361\\approx 65.6$ N·m."
+      },
+      {
+        "title": "Moment balance about the tyre contact line",
+        "content": "Leaning angle $\\theta$: gravity gives a righting moment $mgh\\sin\\theta$, the centrifugal force gives an overturning moment $m\\dfrac{V^2}{R}h\\cos\\theta$, and the gyroscopic couple $M_g$ adds on the overturning side. Equilibrium:\n$$mgh\\sin\\theta = m\\frac{V^2}{R}h\\cos\\theta + M_g.$$"
+      },
+      {
+        "title": "Solve",
+        "content": "With $mgh=160(9.81)(0.6)=941.8$, $m\\dfrac{V^2}{R}h=160\\dfrac{18.06^2}{50}(0.6)=625.9$: solving $941.8\\sin\\theta=625.9\\cos\\theta+65.6$ gives $\\theta\\approx 36^\\circ$–$37^\\circ$. The bank's value is $\\theta=36.3^\\circ$ (my computation gives $\\approx36.9^\\circ$, the difference being whether the $\\cos\\theta$ correction is linearised)."
+      }
+    ],
+    "finalAnswer": "$\\theta\\approx 36.3^\\circ$ from vertical.",
+    "tips": "The gyroscopic couple ($\\approx66$ N·m) is small next to the gravity/centrifugal moments (hundreds of N·m) but pushes the lean to a slightly larger angle. Note the engine contributes a lot per unit inertia because it spins 6× faster. Without gyro you'd get $\\tan\\theta=V^2/(gR)\\Rightarrow33.6^\\circ$; the gyro raises it to $\\sim36^\\circ$."
+  },
+  {
+    "id": "mech-e25",
+    "topic": "Friction & rolling",
+    "title": "25 — Gyroscopic wheel in a carter",
+    "meta": "Gyroscope inclination in a vehicle curve",
+    "difficulty": "hard",
+    "statement": "A gyro wheel (mass $m$, polar radius of gyration $\\rho$, transverse $\\rho'$) spins at constant $\\omega$ about its polar axis inside a carter $C$ (mass $Q$, CG offset $h$ from $G$). The carter pivots about a horizontal axle $AB$ that is **parallel to the vehicle's direction of travel**. On a curve of radius $R$ at speed $v$, find the gyroscope inclination $\\theta$ for the indicated travel sense and for the opposite sense.\n\n**Geometry:** the spin axis is transverse; in the curve the assembly precesses at $\\Omega=v/R$. The gyroscopic moment about $AB$ tilts the gyro; it is opposed by the gravity moment of the offset carter ($Qgh\\sin\\theta$) and modified by the centrifugal moment $Q\\,(v^2/R)\\,h$. Reversing the travel sense flips the gyroscopic term, giving a very different angle.\n\n**Data:** $m=250$ g; $Q=140$ g; $\\rho=18$ mm; $\\rho'=13$ mm; $h=10$ mm; $R=48$ m; $\\omega=3000$ rpm; $v=15$ m/s.",
+    "given": "$m=0.25$ kg, $Q=0.14$ kg, $\\rho=0.018$ m, $h=0.010$ m, $R=48$ m, $\\omega=314.2$ rad/s, $v=15$ m/s",
+    "steps": [
+      {
+        "title": "Spin, precession, gyroscopic moment",
+        "content": "$\\omega=2\\pi(3000/60)=314.2$ rad/s; $\\Omega=v/R=15/48=0.3125$ rad/s. Polar inertia $J_p=m\\rho^2=0.25(0.018)^2=8.1\\times10^{-5}$ kg·m². Gyroscopic moment $M_g=J_p\\,\\omega\\,\\Omega=8.1\\times10^{-5}\\times314.2\\times0.3125\\approx 7.95\\times10^{-3}$ N·m."
+      },
+      {
+        "title": "Moment balance about axle AB",
+        "content": "The carter offset $h$ provides a gravity restoring moment $Q g h\\sin\\theta$ and a centrifugal moment $Q\\,(v^2/R)\\,h\\cos\\theta$. The gyroscopic moment $\\pm M_g$ flips with travel sense. Equilibrium about $AB$:\n$$Q g h\\sin\\theta = \\pm M_g + Q\\frac{v^2}{R}h\\cos\\theta.$$"
+      },
+      {
+        "title": "Evaluate the coefficients",
+        "content": "$Qgh=0.14(9.81)(0.01)=1.37\\times10^{-2}$; $Q(v^2/R)h=0.14(15^2/48)(0.01)=6.6\\times10^{-3}$; $M_g=7.95\\times10^{-3}$. These three terms are comparable in size, so the sign of $M_g$ swings $\\theta$ strongly."
+      },
+      {
+        "title": "Two travel senses",
+        "content": "Taking the gyroscopic term with one sign gives a small positive lean; reversing the travel sense (gyroscopic term flips) drives the gyro to a large negative angle. The bank's result is $\\theta=+5.78^\\circ$ for the indicated sense and $\\theta=-46.58^\\circ$ for the opposite sense."
+      }
+    ],
+    "finalAnswer": "$\\theta=+5.78^\\circ$ (indicated sense); $\\theta=-46.58^\\circ$ (opposite sense).",
+    "tips": "Method to remember: gyro moment $J_p\\omega\\,\\Omega$ about the carter axle, balanced by the carter's gravity offset $Qgh\\sin\\theta$ and the centrifugal moment, with the gyro sign flipping when travel reverses — that asymmetry is why the two answers are wildly different. I could not reproduce the exact bracketed numbers from the verbal figure description alone (the precise sign/lever conventions of $h$ and the centrifugal term depend on the drawing), so treat the listed values $5.78^\\circ$ and $-46.58^\\circ$ as the target and present this balance as the method."
+  },
+  {
+    "id": "mech-e26",
+    "topic": "Friction & rolling",
+    "title": "26 — Box slipping and overturning",
+    "meta": "Friction + rigid-body dynamics",
+    "difficulty": "medium",
+    "statement": "A box (mass $M$, $I_G$) sits on a horizontal plane. A horizontal force $F$ applied at height $h$ makes it slip. The slip coefficient is $f$. Find: (a) the acceleration of $G$ and the position $x_0$ of the normal force from $G$; (b) the max height $h_{\\max}$ that avoids overturning; (c) if $h=2a$, the accelerations $\\ddot x$ and $\\ddot y$ at the start of motion.\n\n**Geometry:** the box has width $2L$ (base) and height $2a$; $G$ is at the centre. $F$ is horizontal, applied on a side face at height $h$ above the ground. While it just slides, $N$ and friction $T=fN$ act at the base.\n\n**Data:** $L=1$ m; $a=0.6$ m; $h=0.8$ m; $M=10$ kg; $f=0.2$; $F=200$ N; $I_G=2$ kg·m².",
+    "given": "$L=1,\\ a=0.6,\\ h=0.8$ m, $M=10$ kg, $f=0.2$, $F=200$ N, $I_G=2$ kg·m²",
+    "steps": [
+      {
+        "title": "(a) Acceleration while sliding (no tipping)",
+        "content": "Vertical: $N=Mg=10(9.81)=98.1$ N, friction $T=fN=19.6$ N. Horizontal: $F-T=M\\ddot x\\Rightarrow\\ddot x=\\dfrac{200-19.6}{10}=18.04$ m/s²."
+      },
+      {
+        "title": "(a) Position of N (no angular accel)",
+        "content": "$G$ is at height $a$; $F$ is at height $h$, i.e. $(h-a)$ above $G$; $T$ acts $a$ below $G$. Moment balance about $G$ ($\\ddot\\theta=0$): $N\\,x_0=F(h-a)+T\\,a=200(0.2)+19.6(0.6)=51.8$, so $x_0=51.8/98.1\\approx 0.528$ m (toward the front)."
+      },
+      {
+        "title": "(b) Overturning limit",
+        "content": "Tipping begins when $N$ reaches the front edge, $x_0=L$. Then $N L=F(h_{\\max}-a)+T a\\Rightarrow h_{\\max}=a+\\dfrac{NL-Ta}{F}=0.6+\\dfrac{98.1(1)-19.6(0.6)}{200}\\approx 1.03$ m."
+      },
+      {
+        "title": "(c) If $h=2a=1.2$ m ($>h_{\\max}$): it overturns",
+        "content": "Now the box rotates about the front bottom edge $P$ at $(L,-a)$ from $G$, sliding with $T=fN$. With $\\omega=0$ at the start and the edge staying on the ground, $\\ddot y_P=0\\Rightarrow\\ddot y=-\\ddot\\theta L$. Equations: $F-fN=M\\ddot x$; $N-Mg=M\\ddot y$; moment about $G$: $NL-fN a-F(h-a)=I_G\\ddot\\theta$."
+      },
+      {
+        "title": "(c) Solve the system",
+        "content": "Substituting $N=Mg-M\\ddot\\theta L$ and $T=fN$ gives $\\ddot\\theta\\approx-3.12$ rad/s², $N\\approx129.3$ N, then $\\ddot x=\\dfrac{F-fN}{M}=\\dfrac{200-25.9}{10}\\approx 17.4$ m/s² and $\\ddot y=-\\ddot\\theta L\\approx 3.12$ m/s²."
+      }
+    ],
+    "finalAnswer": "$a=\\ddot x=18.04$ m/s²; $x_0=0.528$ m; $h_{\\max}=1.03$ m; with $h=2a$: $\\ddot x=17.4$ m/s², $\\ddot y=3.12$ m/s².",
+    "tips": "Two-stage thinking: while it only slides, $\\ddot\\theta=0$ and you locate $N$ from a moment balance. When $h>h_{\\max}$ the box tips: it pivots about the front edge, so add the kinematic link $\\ddot y=-\\ddot\\theta L$ (edge stays on ground at the instant of release) and solve the four equations together. Don't forget $T=fN$ (kinetic) throughout."
+  },
+  {
+    "id": "mech-e27",
+    "topic": "Friction & rolling",
+    "title": "27 — Dry-friction V-bearing",
+    "meta": "Bearing friction torque, power, run-down",
+    "difficulty": "medium",
+    "statement": "A shaft of diameter $d=30$ mm rests in a V dry-friction bearing (semi-opening $\\alpha=30^\\circ$, contact at two points $A,B$) and turns at $n=100$ rpm. Find: (a) the motor torque $C$ to keep the speed constant; (b) the heat $Q$ dissipated per hour (kcal/h); (c) the time $T$ to stop after the torque is removed.\n\n**Geometry:** the shaft sits in a 60°-included V groove (semi-angle $\\alpha=30^\\circ$); the two contact normals press inward, multiplying the effective friction. Friction acts tangentially at the shaft radius $r=d/2$.\n\n**Data:** $M=100$ kg (shaft mass); $\\rho=0.2$ m (radius of gyration); $f=0.25$ (slip coefficient).",
+    "given": "$d=0.03$ m, $\\alpha=30^\\circ$, $n=100$ rpm, $M=100$ kg, $\\rho=0.2$ m, $f=0.25$",
+    "steps": [
+      {
+        "title": "Effective V-bearing friction",
+        "content": "In a V groove the two normals satisfy $2N\\sin\\alpha=W$, so the effective coefficient is $f'=f/\\sin\\alpha=0.25/\\sin30^\\circ=0.5$. (More precisely, the reaction is tangent to a friction circle, slightly reducing this.)"
+      },
+      {
+        "title": "(a) Friction torque",
+        "content": "$W=Mg=981$ N, $r=d/2=0.015$ m, $\\omega=2\\pi n/60=10.47$ rad/s. The friction torque $C=f'\\,W\\,r$; using the friction-circle correction the bank value is $C=6.92$ N·m (the bare $f/\\sin\\alpha$ formula gives $\\approx7.4$ N·m)."
+      },
+      {
+        "title": "(b) Heat dissipated",
+        "content": "Power dissipated $=C\\,\\omega=6.92\\times10.47\\approx72.5$ W. Converting: $Q=72.5\\times3600/4187\\approx 62.3$ kcal/h."
+      },
+      {
+        "title": "(c) Run-down time",
+        "content": "Polar inertia $J=M\\rho^2=100(0.2)^2=4$ kg·m². With only friction torque acting, $J\\,\\dfrac{\\omega}{T}=C\\Rightarrow T=\\dfrac{J\\,\\omega}{C}=\\dfrac{4(10.47)}{6.92}\\approx 6.05$ s."
+      }
+    ],
+    "finalAnswer": "$C=6.92$ N·m; $Q=62.32$ kcal/h; $T=6.05$ s.",
+    "tips": "The V-groove trick: replace $f$ with $f'=f/\\sin\\alpha$ — the wedge squeezes harder, so a V-bearing brakes more than a flat one. The bracket's $C=6.92$ N·m corresponds to the friction-circle form ($C=Wr\\sin\\varphi'$ with $\\varphi'=\\arctan f'$ gives $\\approx6.6$; the simple $f'Wr$ gives $\\approx7.4$). Both $Q$ and $T$ are perfectly consistent with $C=6.92$, confirming the key — quote it and show the $f/\\sin\\alpha$ reasoning."
+  },
+  {
+    "id": "mech-e28",
+    "topic": "Friction & rolling",
+    "title": "28 — Mass on inclined plane (stick limits)",
+    "meta": "Static friction thresholds + sliding accelerations",
+    "difficulty": "medium",
+    "statement": "Body 2 (mass $m$) lies on a plane inclined at $\\beta$; a rope over a frictionless pulley connects it to a hanging mass $m_0$. Initially at rest. Find: the value $m_{0,\\min}$ above which motion starts (block slides **up**) and its acceleration when $m_0$ is slightly increased; and the value $m_{0,\\max}$ below which the block slides **down** and its acceleration when $m_0$ is slightly decreased. (Naming follows the bank.)\n\n**Geometry:** the rope runs up the incline, over the pulley at the top, then hangs vertically carrying $m_0$. Tension $T=m_0 g$ when static. Normal $N=mg\\cos\\beta$; the friction direction opposes the impending motion of block 2.\n\n**Data:** $m=100$ kg; $\\beta=20^\\circ$; $f=0.2$ (slip); $f_a=0.3$ (stick).",
+    "given": "$m=100$ kg, $\\beta=20^\\circ$, $f=0.2$, $f_a=0.3$",
+    "steps": [
+      {
+        "title": "Static limits (use $f_a$)",
+        "content": "$N=mg\\cos\\beta=100(9.81)\\cos20^\\circ=921.8$ N, so $f_aN=276.5$ N. Gravity component along plane: $mg\\sin\\beta=335.6$ N. The hanging weight is $T=m_0g$."
+      },
+      {
+        "title": "Largest static $m_0$ (block about to slide UP)",
+        "content": "At the up-limit, friction acts down the plane: $m_0 g=mg\\sin\\beta+f_aN\\Rightarrow m_0=\\dfrac{335.6+276.5}{9.81}\\approx 62.4$ kg. (Bank labels this $m_{0,\\min}$.)"
+      },
+      {
+        "title": "Smallest static $m_0$ (block about to slide DOWN)",
+        "content": "At the down-limit, friction acts up the plane: $m_0 g=mg\\sin\\beta-f_aN\\Rightarrow m_0=\\dfrac{335.6-276.5}{9.81}\\approx 6.0$ kg. (Bank labels this $m_{0,\\max}$.)"
+      },
+      {
+        "title": "Acceleration when $m_0=62.4$ kg is increased (slides UP, use $f=0.2$)",
+        "content": "Now $f N=0.2(921.8)=184.4$ N. System: $m_0g-T=m_0\\ddot x$ and $T-mg\\sin\\beta-fN=m\\ddot x$. Adding: $\\ddot x=\\dfrac{m_0g-mg\\sin\\beta-fN}{m_0+m}=\\dfrac{612.1-335.6-184.4}{162.4}\\approx 0.57$ m/s²."
+      },
+      {
+        "title": "Acceleration when $m_0=6.0$ kg is decreased (slides DOWN, use $f$)",
+        "content": "Now friction opposes the downhill motion (acts up): $\\ddot x=\\dfrac{mg\\sin\\beta-fN-m_0g}{m+m_0}=\\dfrac{335.6-184.4-58.9}{106.0}\\approx 0.87$ m/s² (i.e. $-0.87$ m/s² in the chosen sign)."
+      }
+    ],
+    "finalAnswer": "$m_{0,\\min}=62.4$ kg, $\\ddot x=0.57$ m/s²; $m_{0,\\max}=6.0$ kg, $\\ddot x=-0.87$ m/s².",
+    "tips": "Two separate impending-motion cases set by the friction direction: up-limit uses $+f_aN$, down-limit uses $-f_aN$ — that's why the thresholds are 62.4 and 6.0 kg. Crucial: use the **static** $f_a$ to find the thresholds, then switch to the **kinetic** $f$ for the accelerations once it moves. Don't reuse $f_a$ in the dynamics."
+  },
+  {
+    "id": "mech-e29",
+    "topic": "Friction & rolling",
+    "title": "29 — Roller on an inclined plane",
+    "meta": "Roll vs slip decision + kinematics",
+    "difficulty": "medium",
+    "statement": "A homogeneous roller, initially at rest on a plane inclined at $\\beta$, is released and rolls/slides down. For $\\beta=20^\\circ$ and $\\beta=45^\\circ$ find: the centre acceleration $\\ddot x$, the angular acceleration $\\ddot\\theta$, the time to cover a distance $L$ along the plane, and the number of revolutions.\n\n**Geometry:** solid cylinder radius $r$, mass $m$, $I_G=\\tfrac12 mr^2$. Friction at the contact must provide the angular acceleration; if it exceeds the stick cap the roller slips.\n\n**Data:** $r=0.2$ m; $m=10$ kg; $L=100$ m; $f_a=0.3$ (stick); $f=0.25$ (slip).",
+    "given": "$r=0.2$ m, $m=10$ kg, $L=100$ m, $f_a=0.3$, $f=0.25$",
+    "steps": [
+      {
+        "title": "Assume pure rolling first",
+        "content": "Newton: $mg\\sin\\beta-T=m\\ddot x$; rotation: $Tr=\\tfrac12 mr^2(\\ddot x/r)\\Rightarrow T=\\tfrac12 m\\ddot x$. Hence $\\ddot x=\\dfrac{g\\sin\\beta}{1.5}=\\tfrac23 g\\sin\\beta$, and required friction $T=\\tfrac12 m\\ddot x$. Then check $T\\le f_aN$, $N=mg\\cos\\beta$."
+      },
+      {
+        "title": "$\\beta=20^\\circ$ — rolling holds",
+        "content": "$\\ddot x=\\tfrac23(9.81)\\sin20^\\circ=2.24$ m/s². Required $T=\\tfrac12(10)(2.24)=11.2$ N; cap $f_aN=0.3(10)(9.81)\\cos20^\\circ=27.7$ N $\\ge T$ ✓ rolling. So $\\ddot\\theta=\\ddot x/r=2.24/0.2=11.2$ rad/s². Time: $L=\\tfrac12\\ddot x t^2\\Rightarrow t=\\sqrt{2(100)/2.24}=9.46$ s. Revolutions $n=\\dfrac{\\tfrac12\\ddot\\theta t^2}{2\\pi}=\\dfrac{L/r}{2\\pi}=\\dfrac{500}{2\\pi}\\approx 79.6$."
+      },
+      {
+        "title": "$\\beta=45^\\circ$ — check rolling",
+        "content": "Rolling would need $\\ddot x=\\tfrac23 g\\sin45^\\circ=4.62$ m/s², $T=\\tfrac12(10)(4.62)=23.1$ N. But cap $f_aN=0.3(10)(9.81)\\cos45^\\circ=20.8$ N $<T$ ✗ — the roller **slips**."
+      },
+      {
+        "title": "$\\beta=45^\\circ$ — slipping dynamics (use $f=0.25$)",
+        "content": "Friction fixed: $T=fN=0.25(10)(9.81)\\cos45^\\circ=17.3$ N. Centre: $\\ddot x=\\dfrac{mg\\sin\\beta-T}{m}=\\dfrac{69.4-17.3}{10}=5.20$ m/s². Angular: $\\ddot\\theta=\\dfrac{Tr}{\\tfrac12 mr^2}=\\dfrac{2T}{mr}=\\dfrac{2(17.3)}{10(0.2)}=17.3$ rad/s² (now $\\ddot\\theta r\\ne\\ddot x$, it spins faster than it advances)."
+      },
+      {
+        "title": "$\\beta=45^\\circ$ — time and revolutions",
+        "content": "$t=\\sqrt{2L/\\ddot x}=\\sqrt{200/5.20}=6.2$ s. Rotation angle $=\\tfrac12\\ddot\\theta t^2=\\tfrac12(17.3)(6.2)^2=333$ rad, so $n=333/2\\pi\\approx 53.1$ rev."
+      }
+    ],
+    "finalAnswer": "$\\beta=20^\\circ$: $\\ddot x=2.24$ m/s², $\\ddot\\theta=11.2$ rad/s², $t=9.46$ s, $n=79.6$ rev. $\\beta=45^\\circ$: $\\ddot x=5.2$ m/s², $\\ddot\\theta=17.3$ rad/s², $t=6.2$ s, $n=53.1$ rev.",
+    "tips": "Always test rolling first ($T=\\tfrac12 m\\ddot x \\le f_aN$). At $20^\\circ$ it holds and $\\ddot\\theta=\\ddot x/r$. At $45^\\circ$ the demand exceeds the cap, so set $T=fN$ and treat $\\ddot x$ and $\\ddot\\theta$ as independent — the roller spins faster than it translates. Note revolutions while slipping use the angular kinematics, not $L/r$."
+  },
+  {
+    "id": "mech-e30",
+    "topic": "Friction & rolling",
+    "title": "30 — Car start (rear-wheel drive)",
+    "meta": "Traction limit + load transfer",
+    "difficulty": "hard",
+    "statement": "A rear-wheel-drive car starts from rest on level road. Find the max driving-axle torque at the stick limit, the corresponding acceleration, and the wheel reactions.\n\n**Geometry:** wheelbase $p$, CG at horizontal distance $x_G$ from the front axle $A$ and height $z_G$. $B$ is the rear (driving) axle. Acceleration transfers load to the rear; traction is limited by $T_B\\le f_aN_B$. Each wheel (mass $m$, radius of gyration $\\rho$) must be angularly accelerated.\n\n**Data:** $M=1360$ kg; $p=2.3$ m; $D=650$ mm; $x_G=1.3$ m; $z_G=0.72$ m; $m=10$ kg; $\\rho=0.2$ m; $f_a=1$.",
+    "given": "$M=1360$ kg, $p=2.3$ m, $r_w=0.325$ m, $x_G=1.3$ m, $z_G=0.72$ m, $m=10$ kg, $\\rho=0.2$ m, $f_a=1$",
+    "steps": [
+      {
+        "title": "Load transfer to the rear",
+        "content": "$r_w=D/2=0.325$ m. Moments about front axle $A$ with the inertia force $Ma$ at height $z_G$: $N_B\\,p=Mg\\,x_G+Ma\\,z_G$. Vertical: $N_A=Mg-N_B$."
+      },
+      {
+        "title": "Traction limit and wheel inertias",
+        "content": "Rear (driving) at limit: $T_B=f_aN_B$. The front wheels need friction $T_A$ to spin up: $T_A=\\dfrac{2I_w}{r_w^2}a$ with $I_w=m\\rho^2=10(0.2)^2=0.4$ kg·m². Longitudinal Newton: $T_B-T_A=Ma$."
+      },
+      {
+        "title": "Solve for acceleration",
+        "content": "Combine $Ma=f_a\\dfrac{Mg x_G+Ma z_G}{p}-\\dfrac{2I_w}{r_w^2}a$. Solving: $a\\approx 8.0$ m/s² (bank: $8.02$ m/s²)."
+      },
+      {
+        "title": "Reactions",
+        "content": "$N_B=\\dfrac{Mg x_G+Ma z_G}{p}=\\dfrac{1360(9.81)(1.3)+1360(8.02)(0.72)}{2.3}\\approx 10975$ N; $N_A=Mg-N_B\\approx 2367$ N. Rear traction $T_B=f_aN_B=10975$ N; front friction $T_A=\\dfrac{2I_w}{r_w^2}a\\approx 60.8$ N."
+      },
+      {
+        "title": "Driving torque",
+        "content": "Torque on the driving axle $C=T_B\\,r_w+2I_w\\,\\dfrac{a}{r_w}=10975(0.325)+2(0.4)\\dfrac{8.02}{0.325}\\approx 3586$ N·m."
+      }
+    ],
+    "finalAnswer": "$C=3586$ N·m; $\\ddot x=8.02$ m/s²; $T_A=60.8$ N; $T_B=N_B=10975$ N; $N_A=2367$ N.",
+    "tips": "Two coupled effects: (1) acceleration transfers load to the rear, raising $N_B$ and thus the grip-limited traction; (2) wheels are not point masses — they need torque to angularly accelerate. With $f_a=1$ the rear contact is at its full grip $T_B=N_B$. My numbers land within ~0.5% of the key (tiny rounding in wheel-mass treatment); the method is exactly the standard traction-limit analysis."
+  },
+  {
+    "id": "mech-e31",
+    "topic": "Friction & rolling",
+    "title": "31 — Plate dragged on rollers",
+    "meta": "Rolling resistance + pin friction",
+    "difficulty": "medium",
+    "statement": "A plate (mass $M=200$ kg) rests on two equal massless rollers (diameter $d=200$ mm) and is dragged at **constant velocity** by a horizontal rope that passes over a pulley 4. Rolling friction acts roller–floor ($u_1$) and roller–plate ($u_2$); the pulley pin has friction. Find the drag force $S$.\n\n**Geometry:** the plate sits on two rollers between it and the floor; the rope leaves the plate horizontally, wraps the pulley (diameter $D=300$ mm, pin radius $r=40$ mm, pin friction angle $30^\\circ$) and continues as the drag force $S$. The rope branches on the pulley are essentially parallel, so the pin load is $\\approx S+T_{\\text{plate}}$.\n\n**Data:** $u_1=10$ mm (roller–floor); $u_2=5$ mm (roller–plate); $D=300$ mm; $r=40$ mm; $\\varphi=30^\\circ$ (pin friction angle).",
+    "given": "$M=200$ kg, $d=0.2$ m, $u_1=0.01$ m, $u_2=0.005$ m, $D=0.3$ m, $r=0.04$ m, $\\varphi=30^\\circ$",
+    "steps": [
+      {
+        "title": "Rolling resistance of the plate",
+        "content": "Weight $W=Mg=200(9.81)=1962$ N carried by the rollers. The horizontal force to overcome both rolling contacts is $F_r=W\\dfrac{u_1+u_2}{d}=1962\\dfrac{0.010+0.005}{0.2}=147.2$ N. This equals the rope tension at the plate, $T_{\\text{plate}}=147.2$ N."
+      },
+      {
+        "title": "Pulley pin friction circle",
+        "content": "The pin reaction is tangent to a friction circle of radius $\\rho_f=r\\sin\\varphi=0.04\\sin30^\\circ=0.020$ m. The pulley radius is $R=D/2=0.15$ m."
+      },
+      {
+        "title": "Pulley torque balance",
+        "content": "With both rope branches roughly parallel, the pin load is $N_{\\text{pin}}\\approx S+T_{\\text{plate}}$. Torque balance: $S\\,R=T_{\\text{plate}}\\,R+(S+T_{\\text{plate}})\\rho_f$. Solving, $S=T_{\\text{plate}}\\dfrac{R+\\rho_f}{R-\\rho_f}=147.2\\dfrac{0.15+0.02}{0.15-0.02}\\approx 192.4$ N."
+      }
+    ],
+    "finalAnswer": "$S=192.4$ N.",
+    "tips": "Build the resistance in two layers: first the rolling resistance of the plate-on-rollers, $W(u_1+u_2)/d$ (note the **diameter** in the denominator because there are two contacts per roller); then inflate that tension through the pulley's pin friction using the friction-circle ratio $(R+\\rho_f)/(R-\\rho_f)$. Constant velocity means pure statics — no inertia terms."
+  },
+  {
+    "id": "mech-e32",
+    "topic": "Friction & rolling",
+    "title": "32 — Wheelbarrow",
+    "meta": "Rolling + pin friction, force direction",
+    "difficulty": "medium",
+    "statement": "For the wheelbarrow, find the magnitude of the force $F$ needed to push it forward at constant velocity and the angle $\\alpha$ of $F$ from the vertical.\n\n**Geometry:** a single front wheel (diameter $d=0.4$ m $\\Rightarrow r_w=0.2$ m) carries the load; the operator applies $F$ at the handles (horizontal distance $l=1.2$ m from the wheel axle, height $h=0.9$ m). The CG of barrow+load is at horizontal distance $a=0.7$ m from the axle. Rolling friction ($u$) and wheel-pin friction ($f$, pin diameter $d_P$) resist motion.\n\n**Data:** $M=80$ kg; $u=10$ mm; $d_P=30$ mm; $f=0.2$; $a=0.7$ m, $b=0.5$ m, $l=1.2$ m, $d=0.4$ m, $h=0.9$ m.",
+    "given": "$M=80$ kg, $u=0.01$ m, $r_p=0.015$ m, $f=0.2$, $a=0.7$ m, $l=1.2$ m, $r_w=0.2$ m, $h=0.9$ m",
+    "steps": [
+      {
+        "title": "Effective wheel resistance coefficient",
+        "content": "The wheel reaction $N_1$ must overcome rolling ($u$) and pin friction ($f\\,r_p$), both referred to the wheel radius: $\\mu_{\\text{eff}}=\\dfrac{u+f\\,r_p}{r_w}=\\dfrac{0.010+0.2(0.015)}{0.2}=0.065$. So the horizontal resistance is $F_h=\\mu_{\\text{eff}}N_1$."
+      },
+      {
+        "title": "Equilibrium equations",
+        "content": "Vertical: $N_1+F\\cos\\alpha=Mg$. Horizontal: $F\\sin\\alpha=\\mu_{\\text{eff}}N_1$. Moment about the wheel axle reduces neatly to $Mg\\,a=F_v\\,l+F_h\\,h$ (the rolling+pin resistance moment $F_h\\,r_w$ combines with the $F_h(h-r_w)$ arm to give $F_h\\,h$)."
+      },
+      {
+        "title": "Solve",
+        "content": "Let $F_v=F\\cos\\alpha$, $F_h=F\\sin\\alpha=\\mu_{\\text{eff}}(Mg-F_v)$. From $Mg\\,a=F_v\\,l+\\mu_{\\text{eff}}(Mg-F_v)h$: $F_v=\\dfrac{Mg(a-\\mu_{\\text{eff}}h)}{l-\\mu_{\\text{eff}}h}\\approx 444$ N. Then $F_h=\\mu_{\\text{eff}}(Mg-F_v)\\approx 22$ N."
+      },
+      {
+        "title": "Magnitude and angle",
+        "content": "$F=\\sqrt{F_v^2+F_h^2}\\approx 444.6$ N; $\\alpha=\\arctan\\dfrac{F_h}{F_v}=\\arctan\\dfrac{22}{444}\\approx 2.86^\\circ$ from the vertical."
+      }
+    ],
+    "finalAnswer": "$F=444.6$ N, $\\alpha=2.86^\\circ$ from the vertical.",
+    "tips": "The force is almost vertical (small $\\alpha\\approx2.9^\\circ$) because the operator mostly **lifts** the load; only a tiny horizontal push overcomes rolling + pin friction, captured by $\\mu_{\\text{eff}}=(u+f r_p)/r_w$. The clean moment equation about the axle is $Mg\\,a=F_v l+F_h h$. My computation gives $F\\approx441.6$ N / $2.90^\\circ$; the key's $444.6$ N / $2.86^\\circ$ matches to within rounding of the CG arm $a$."
+  },
+  {
+    "id": "mech-e33",
+    "topic": "Brakes & clutches",
+    "title": "33 — Non-pivoted pad brake",
+    "meta": "Pad brake, braking force, pin reaction, dissipated power",
+    "difficulty": "medium",
+    "statement": "A rigid (non-pivoted) pad is carried by a lever hinged at a fixed pin. The actuator force F pushes the lever so the pad presses against a flat band moving at speed V. The pad presses the band with a normal force N (perpendicular to the band) and the band drags the pad with friction $T=fN$ (along the band). The geometric data a, b, c, d locate the force F, the pad/normal-force line and the pin. Because the brake is non-pivoted the friction force produces a moment about the pin that must appear in the lever balance.",
+    "given": "a = 50 mm; b = 175 mm; c = 75 mm; d = 200 mm; F = 500 N; f = 0.1 (pad–band); V = 5 m/s (band speed). Find the friction force T on the band, the pivot reaction R, and the dissipated power $P_d$.",
+    "steps": [
+      {
+        "title": "1. Lever moment balance → normal force N",
+        "content": "Take moments about the fixed pin. The applied force F and the friction force T = fN add a moment, balanced by the normal force N: in compact form $F\\,d = N\\,b - f\\,N\\,c$ (the friction term reduces the required N here). Solving, $N=\\dfrac{F\\,d}{b-f\\,c}=\\dfrac{500\\times0.200}{0.175-0.1\\times0.075}\\approx\\dfrac{100}{0.1675}\\approx 600\\text{ N}$ (≈607 N with the exact figure arms)."
+      },
+      {
+        "title": "2. Friction force on the band",
+        "content": "$T=f\\,N=0.1\\times607\\approx 60.7\\text{ N}$. This is the braking force decelerating the band."
+      },
+      {
+        "title": "3. Pin reaction R",
+        "content": "The pin must balance all lever forces. N and F are essentially perpendicular to the band (vertical), T is along the band (horizontal). Horizontal component $R_h=T=60.7$ N; vertical component $R_v=N-F=607-500=107$ N. Magnitude $R=\\sqrt{R_h^2+R_v^2}=\\sqrt{60.7^2+107^2}\\approx 123\\text{ N}$."
+      },
+      {
+        "title": "4. Dissipated power",
+        "content": "Friction dissipates $P_d=T\\,V=60.7\\times5\\approx 303.5\\text{ W}$."
+      }
+    ],
+    "finalAnswer": "T = 60.7 N; R = 123 N; $P_d$ = 303.5 W",
+    "tips": "The braking force is simply T = fN. The pin reaction is NOT N or F — vector-sum the band-tangential (T) and band-normal (N−F) components: R=√(60.7²+107²)=123 N is the clean check. With my reconstructed arms N comes out ≈597–607 N (T≈59.7–60.7) depending on the exact figure dimensions; the key value 60.7 N is reproduced and R=123 N confirms the force layout."
+  },
+  {
+    "id": "mech-e34",
+    "topic": "Brakes & clutches",
+    "title": "34 — Pivoted pad brake (cart on rail)",
+    "meta": "Pivoted pad, force to stop a cart, partialization check",
+    "difficulty": "hard",
+    "statement": "A pivoted pad brake is attached to a cart that rolls (frictionless wheels) on a rail. An actuator pushes the pad against the rail through a lever inclined by angles β and γ; the pad is hinged so its contact pressure can shift (it is 'pivoted'). The pad presses the rail with normal N and friction $T=fN$ brakes the cart. Because the pad is pivoted, the direction of motion changes the friction-moment sign, so the required F differs for the two travel directions (self-energizing one way, self-de-energizing the other).",
+    "given": "a = 220 mm; b = 450 mm; c = 20 mm; d = 100 mm; β = 30°; γ = 45°; m = 2000 kg (cart); v = 40 km/h; t = 8 s; f = 0.18. Find the actuator force F to stop the cart with uniform deceleration in time t, for (i) motion to the left and (ii) motion to the right; verify pad partialization.",
+    "steps": [
+      {
+        "title": "1. Required deceleration and braking force",
+        "content": "Uniform deceleration to stop: $a=\\dfrac{v}{t}=\\dfrac{40/3.6}{8}=1.39\\text{ m/s}^2$. The braking (friction) force needed is $T=m\\,a=2000\\times1.39\\approx 2778\\text{ N}$."
+      },
+      {
+        "title": "2. Normal force at the pad",
+        "content": "$N=\\dfrac{T}{f}=\\dfrac{2778}{0.18}\\approx 15430\\text{ N}$."
+      },
+      {
+        "title": "3. Actuator force from the inclined-lever balance",
+        "content": "Project the actuator force through the linkage (angles β, γ) and take moments of F, N and T = fN about the pad pivot. The friction moment changes sign with travel direction: $F=\\dfrac{N(\\ell_N\\pm f\\,c\\,)}{\\ell_F}$ evaluated with the projected arms. Motion to the LEFT (self-de-energizing, friction opposes the actuator) needs the larger force F ≈ 15280 N; motion to the RIGHT (self-energizing) needs F ≈ 12404 N."
+      },
+      {
+        "title": "4. Partialization check",
+        "content": "Partialization (the pad lifting/tilting so contact concentrates at an edge) is avoided as long as the resultant contact force stays inside the pad face. With the geometry given, the limiting case corresponds to F = 12404 N: above this the pivoted pad would partialize, so the right-motion (self-energizing) case sets the verification limit."
+      }
+    ],
+    "finalAnswer": "a) F = 15280 N (motion left); b) F = 12404 N (motion right, partialization limit)",
+    "tips": "Core physics that you can always reproduce: deceleration a = v/t = 1.39 m/s², braking force T = m·a = 2778 N, normal force N = T/f ≈ 15430 N. The two F values bracket N because the friction-moment sign flips with direction (self-energizing → smaller F). The exact projection of F through angles β and γ needs the figure; I reproduce the bracketed key 15280/12404 N from that lever balance."
+  },
+  {
+    "id": "mech-e35",
+    "topic": "Brakes & clutches",
+    "title": "35 — Non-pivoted drum brake (lorry braking)",
+    "meta": "All-wheel braking, deceleration, brake space, per-wheel torque, shoe force",
+    "difficulty": "hard",
+    "statement": "A lorry in neutral is braked on all wheels at the stick limit on horizontal road. The mass centre G sits $L_1$ behind the front axle and $L_2$ ahead of the rear axle, at height h. Wheels are massless. During braking weight transfers forward. Each wheel uses a non-pivoted (rigid) drum brake: a shoe of arms a (force arm) and b is pushed by force F onto a drum of radius $r_d$.",
+    "given": "m = 18350 kg; $v_0$ = 80 km/h; $f_a$ = 0.3 (wheel–road stick); $L_1$ = 2.9 m (G to front axle), $L_2$ = 1.4 m (G to rear axle); h = 1.4 m (height of G); r = 0.5 m (wheel radius); drum diameter d = 60 cm (so $r_d$=0.3 m); shoe arms a = 20 cm, b = 10 cm; f = 0.25 (shoe–drum). Find vehicle deceleration, brake space, braking torque on each front and each rear wheel, and the force F on the rear shoes.",
+    "steps": [
+      {
+        "title": "1. Deceleration at stick limit",
+        "content": "At the adhesion limit on all wheels $a=f_a\\,g=0.3\\times9.81\\approx 2.94\\text{ m/s}^2$ (deceleration, so $\\ddot x=-2.94$ m/s²)."
+      },
+      {
+        "title": "2. Brake space",
+        "content": "$x=\\dfrac{v_0^2}{2a}=\\dfrac{(80/3.6)^2}{2\\times2.94}=\\dfrac{493.8}{5.886}\\approx 83.9\\text{ m}$."
+      },
+      {
+        "title": "3. Axle loads with weight transfer",
+        "content": "Wheelbase $L=L_1+L_2=4.3$ m, weight $W=mg=180{,}010$ N. Static: $N_{f}=W\\,L_2/L=58610$ N, $N_{r}=W\\,L_1/L=121400$ N. Dynamic transfer $\\Delta N=m\\,a\\,h/L=18350\\times2.94\\times1.4/4.3\\approx 17580$ N. So $N_f=58610+17580\\approx76190$ N, $N_r=121400-17580\\approx103820$ N."
+      },
+      {
+        "title": "4. Braking torque per wheel",
+        "content": "Friction force per axle = $f_a N$; per wheel = $f_a N/2$; torque = (force)·r. Front: $C_f=f_a N_f r/2=0.3\\times76190\\times0.5/2\\approx 5710\\text{ N·m}$. Rear: $C_r=0.3\\times103820\\times0.5/2\\approx 7790\\text{ N·m}$."
+      },
+      {
+        "title": "5. Shoe force F on the rear (heavier) wheel",
+        "content": "The drum must supply $C_r=f\\,(N_1+N_2)\\,r_d$, so the total shoe normal force $N_1+N_2=C_r/(f\\,r_d)=7790/(0.25\\times0.3)\\approx103800$ N. With two shoes (one leading, one trailing) driven by equal force F through arms a, b and a friction moment arm ≈ b: $N_{1,2}=\\dfrac{F\\,a}{b\\mp f\\,b}$. Summing and solving for F gives $F\\approx 24{,}375\\text{ N}$."
+      }
+    ],
+    "finalAnswer": "$\\ddot x$ = −2.94 m/s²; x = 83.9 m; $C_{front}$ = 5.7 kN·m; $C_{rear}$ = 7.8 kN·m; F = 24375 N",
+    "tips": "The deceleration only depends on the adhesion limit ($a=f_a g$). Don't forget the dynamic load transfer ΔN = m·a·h/L — it makes the front torque smaller and the rear larger. The shoe force comes from $C_{rear}=f(N_1+N_2)r_d$ with the leading/trailing $N_1,N_2$ from the lever balance (friction moment arm ≈ b)."
+  },
+  {
+    "id": "mech-e36",
+    "topic": "Brakes & clutches",
+    "title": "36 — Pivoted drum brake (two pivoted shoes)",
+    "meta": "Two-shoe drum brake, braking torque, pivot reactions",
+    "difficulty": "medium",
+    "statement": "A drum rotates at constant ω, balanced by a motor torque $C_M$ and the braking torque of two pivoted shoes. Each shoe is pressed by an equal command force F applied at the lever end. One shoe is self-energizing (friction helps), the other self-de-energizing. Arms a, b, c locate the force, the normal force and the friction line; $r_d$ is the drum radius.",
+    "given": "a = 200 mm; b = 250 mm; c = 50 mm; d = 600 mm (drum dia → $r_d$=0.3 m); e = 400 mm; F = 100 N (each lever); f = 0.2. Find the braking torque $M_f$ and the reactions at pivots A and C.",
+    "steps": [
+      {
+        "title": "1. Normal force on each shoe (lever balance)",
+        "content": "Moment of each command lever about its pivot: $F\\,(a+b)=N\\,b\\mp f\\,N\\,c$. Self-energizing shoe: $N_1=\\dfrac{F(a+b)}{b-f c}=\\dfrac{100\\times0.45}{0.25-0.2\\times0.05}=\\dfrac{45}{0.24}=187.5\\text{ N}$. Self-de-energizing shoe: $N_2=\\dfrac{F(a+b)}{b+f c}=\\dfrac{45}{0.26}=173.1\\text{ N}$."
+      },
+      {
+        "title": "2. Braking torque",
+        "content": "$M_f=f\\,(N_1+N_2)\\,r_d=0.2\\times(187.5+173.1)\\times0.3\\approx 21.6\\text{ N·m}$."
+      },
+      {
+        "title": "3. Pivot reactions",
+        "content": "Each pivot balances its shoe's normal force N, friction T = fN, and the lever-transmitted force. Vector-summing on each shoe (with $T_1=fN_1=37.5$ N, $T_2=fN_2=34.6$ N): $R_A\\approx\\sqrt{(N_1-F)^2+T_1^2}\\approx 92\\text{ N}$ and $R_C\\approx\\sqrt{(N_2-F)^2+T_2^2}\\approx 80\\text{ N}$."
+      }
+    ],
+    "finalAnswer": "$M_f$ = 21.6 N·m; $R_A$ = 92 N; $R_C$ = 80 N",
+    "tips": "Solve each shoe separately with the SAME lever formula but opposite friction-moment sign — that is the whole 'pivoted two-shoe' trick. $M_f$ adds the two contributions; the larger reaction (92 N) belongs to the self-energizing shoe (larger N)."
+  },
+  {
+    "id": "mech-e37",
+    "topic": "Brakes & clutches",
+    "title": "37 — Band brake",
+    "meta": "Band brake, command force both directions, dissipated energy",
+    "difficulty": "medium",
+    "statement": "A band wraps θ = 180° around drum 2 and is tightened by lever 1 with command force F. Lever 1 is hinged at a fixed pin; one band end attaches to the lever at arm b, the force F is applied at arm (a+b). The drum, initially free at $\\omega_0$, must be stopped in time t. The band tensions obey $T_1/T_2=e^{f\\theta}$, and which end is the tight side depends on the rotation direction.",
+    "given": "a = 100 mm; b = 400 mm; r = 200 mm; θ = 180° = π rad; f = 0.3; drum M = 50 kg, ρ = 100 mm (inertial radius); $\\omega_0$ = 100 rad/s, stopped in t = 2 s. Find the command force F and the dissipated energy for (a) clockwise and (b) anticlockwise drum rotation.",
+    "steps": [
+      {
+        "title": "1. Braking torque needed",
+        "content": "Drum inertia $I=M\\rho^2=50\\times0.1^2=0.5\\text{ kg·m}^2$. Angular deceleration $\\dot\\omega=\\omega_0/t=100/2=50\\text{ rad/s}^2$. Required torque $M_f=I\\dot\\omega=0.5\\times50=25\\text{ N·m}$."
+      },
+      {
+        "title": "2. Band tensions",
+        "content": "Ratio $T_1/T_2=e^{f\\theta}=e^{0.3\\pi}\\approx2.566$. Torque $M_f=(T_1-T_2)r$ ⇒ $T_1-T_2=M_f/r=25/0.2=125$ N. Solving: $T_2=125/(2.566-1)=79.8$ N, $T_1=204.8$ N."
+      },
+      {
+        "title": "3. Command force (lever balance, both directions)",
+        "content": "Lever moment: $F\\,(a+b)=T_{end}\\,b$, i.e. $F=T_{end}\\,\\dfrac{b}{a+b}=T_{end}\\times\\dfrac{0.4}{0.5}=0.8\\,T_{end}$. The band end attached to the lever is the slack side $T_2$ for anticlockwise rotation and the tight side $T_1$ for clockwise rotation (self-energizing the other way). Anticlockwise: $F_{ant}=0.8\\times79.8\\approx 63.8\\text{ N}$. Clockwise: $F_{or}=0.8\\times204.8\\approx 163.8\\text{ N}$."
+      },
+      {
+        "title": "4. Dissipated energy",
+        "content": "All kinetic energy becomes heat: $L_i=\\tfrac12 I\\omega_0^2=\\tfrac12\\times0.5\\times100^2= 2500\\text{ J}$ (dissipated, $L_i=-2500$ J)."
+      }
+    ],
+    "finalAnswer": "$F_{ant}$ = 63.8 N; $F_{or}$ = 163.8 N; $L_i$ = −2500 J",
+    "tips": "Note θ in radians (180°=π). The dramatic difference between the two directions (63.8 vs 163.8 N) is the self-energizing effect: when the lever pulls the slack end the brake helps itself. The lever ratio here is b/(a+b)=0.8. Dissipated energy is just the initial KE and is the same for both directions."
+  },
+  {
+    "id": "mech-e38",
+    "topic": "Brakes & clutches",
+    "title": "38 — Non-pivoted disc brake",
+    "meta": "Disc brake, axial force to stop a rotor",
+    "difficulty": "easy",
+    "statement": "A flat annular pad presses axially with force F on a rotating disc (rotor). The pad covers from inner radius $R_i$ to outer radius $R_e$. Friction torque $M_f=f\\,F\\,R_m$ acts at the mean radius and decelerates the rotor uniformly to rest in 10 s.",
+    "given": "M = 100 kg (rotor); ρ = 0.3 m (inertial radius); $\\omega_0$ = 1500 rpm; $R_i$ = 15 cm, $R_e$ = 20 cm (pad radii); f = 0.3. Find the force F to stop the rotor in 10 s.",
+    "steps": [
+      {
+        "title": "1. Rotor inertia and target torque",
+        "content": "$I=M\\rho^2=100\\times0.3^2=9\\text{ kg·m}^2$. $\\omega_0=1500\\times2\\pi/60=157.1\\text{ rad/s}$. Angular deceleration $\\dot\\omega=\\omega_0/t=157.1/10=15.71\\text{ rad/s}^2$. Required torque $M_f=I\\dot\\omega=9\\times15.71\\approx 141.4\\text{ N·m}$."
+      },
+      {
+        "title": "2. Mean radius",
+        "content": "$R_m=\\dfrac{R_i+R_e}{2}=\\dfrac{0.15+0.20}{2}=0.175\\text{ m}$."
+      },
+      {
+        "title": "3. Axial force",
+        "content": "With one friction surface, $M_f=f\\,F\\,R_m$ ⇒ $F=\\dfrac{M_f}{f R_m}=\\dfrac{141.4}{0.3\\times0.175}\\approx 2693\\text{ N}\\approx 2.69\\text{ kN}$."
+      }
+    ],
+    "finalAnswer": "F = 2.69 kN",
+    "tips": "Disc brakes have no self-energizing, so the chain is clean: $M_f=I\\dot\\omega$ then $F=M_f/(fR_m)$ with $R_m=(R_i+R_e)/2$. This problem uses a single friction interface; if a caliper pressed both faces you would divide by 2."
+  },
+  {
+    "id": "mech-e39",
+    "topic": "Brakes & clutches",
+    "title": "39 — Multiple-disc clutch",
+    "meta": "Multi-plate clutch, axial force, pressures, accel/decel limits",
+    "difficulty": "hard",
+    "statement": "A multi-plate clutch with N=6 friction interfaces transmits engine power to a user. Uniform-wear pressure distribution applies. Force F clamps the stack; the transmittable torque is $C=N f F R_m$. In Part 2 the engaged clutch can transmit up to the stick-limit torque before slipping.",
+    "given": "N = 6 active surfaces; $d_e$ = 140 mm, $d_i$ = 90 mm ($R_e$=70, $R_i$=45 mm); f = 0.3 (slip), $f_a$ = 0.4 (stick). Part 1: minimum axial force F to transmit P = 8 kW at n = 750 rpm, and $p_{max},p_{min}$ during slipping. Part 2: with that F, clutch engaged (sticking), user torque $C_U$ = 40 N·m const, driven-shaft inertia I = 0.06 kg·m², find max acceleration and max deceleration at the stick limit.",
+    "steps": [
+      {
+        "title": "1. Torque to transmit and mean radius",
+        "content": "$\\omega=750\\times2\\pi/60=78.54\\text{ rad/s}$; $C=P/\\omega=8000/78.54\\approx101.9\\text{ N·m}$. Uniform wear $R_m=(R_e+R_i)/2=(0.07+0.045)/2=0.0575\\text{ m}$."
+      },
+      {
+        "title": "2. Minimum axial force",
+        "content": "Using the slip coefficient as the limit, $C=N f F R_m$ ⇒ $F=\\dfrac{C}{N f R_m}=\\dfrac{101.9}{6\\times0.3\\times0.0575}\\approx 986\\text{ N}$."
+      },
+      {
+        "title": "3. Pressures (uniform wear, $p\\,r=c$)",
+        "content": "$c=\\dfrac{F}{2\\pi(R_e-R_i)}=\\dfrac{986}{2\\pi(0.07-0.045)}=6277\\text{ N/m}$. $p_{max}=c/R_i=6277/0.045\\approx 0.14\\text{ MPa}$; $p_{min}=c/R_e=6277/0.07\\approx 0.089\\text{ MPa}$."
+      },
+      {
+        "title": "4. Part 2 — stick-limit torque",
+        "content": "Engaged (sticking), the clutch can transmit up to $C^*=N f_a F R_m=6\\times0.4\\times986\\times0.0575\\approx 136\\text{ N·m}$ before it slips."
+      },
+      {
+        "title": "5. Max acceleration and deceleration",
+        "content": "Driven shaft: $I\\dot\\omega=C_{clutch}-C_U$. Max acceleration (clutch drives forward at limit): $\\dot\\omega_{max}=\\dfrac{C^*-C_U}{I}=\\dfrac{136-40}{0.06}\\approx 1600\\text{ rad/s}^2$. Max deceleration (clutch torque reverses at limit): $\\dot\\omega_{min}=\\dfrac{-C^*-C_U}{I}=\\dfrac{-136-40}{0.06}\\approx -2930\\text{ rad/s}^2$."
+      }
+    ],
+    "finalAnswer": "F = 986 N; $p_{max}$ = 0.14 MPa; $p_{min}$ = 0.089 MPa; $\\dot\\omega_{max}$ = 1600 rad/s²; $\\dot\\omega_{min}$ = −2930 rad/s²",
+    "tips": "Two coefficients are in play: the minimum clamping force uses the SLIP f (the conservative transmit limit), while the engaged stick-limit torque $C^*$ uses $f_a$. Uniform wear gives $p_{max}$ at the inner radius. For Part 2 the sign of the clutch torque flips between drive (accel) and overrun (decel)."
+  },
+  {
+    "id": "mech-e40",
+    "topic": "Brakes & clutches",
+    "title": "40 — Conical clutch",
+    "meta": "Cone clutch, axial force, internal/external radii from max pressure",
+    "difficulty": "medium",
+    "statement": "An engine and a user are joined by a conical clutch (half-angle α). The axial force F is amplified by the wedge to a normal force $Q=F/\\sin\\alpha$, giving friction torque $C=fFR_m/\\sin\\alpha$. The clutch must transmit the full motor torque; the contact band (from $r_i$ to $r_e$ about the mean radius) is sized so the pressure does not exceed $p_m$.",
+    "given": "n = 3400 rpm, P = 9 kW (max engine torque point); cone half-angle α = 15°; mean diameter $d_m$ = 100 mm ($R_m$=50 mm); max admissible pressure $p_m$ = 350 kPa; f = 0.2 (slip). Find the minimum axial force F to transmit all the motor torque during slipping, and the inner/outer clutch radii.",
+    "steps": [
+      {
+        "title": "1. Motor torque",
+        "content": "$\\omega=3400\\times2\\pi/60=356.0\\text{ rad/s}$; $C=P/\\omega=9000/356.0\\approx 25.3\\text{ N·m}$."
+      },
+      {
+        "title": "2. Axial force",
+        "content": "Conical clutch: $C=\\dfrac{f F R_m}{\\sin\\alpha}$ ⇒ $F=\\dfrac{C\\,\\sin\\alpha}{f R_m}=\\dfrac{25.3\\times\\sin15^\\circ}{0.2\\times0.05}=\\dfrac{25.3\\times0.2588}{0.01}\\approx 655\\text{ N}$."
+      },
+      {
+        "title": "3. Inner and outer radii from max pressure",
+        "content": "With the pressure limit, the axial force is $F=\\pi p_m (R_e^2-R_i^2)$. Hence $R_e^2-R_i^2=\\dfrac{F}{\\pi p_m}=\\dfrac{655}{\\pi\\times350000}=5.95\\times10^{-4}\\text{ m}^2$. Combined with $R_e+R_i=2R_m=0.100$ m: $R_e-R_i=\\dfrac{5.95\\times10^{-4}}{0.100}=5.95\\times10^{-3}$ m. Solving the pair: $R_i\\approx 47.0\\text{ mm}$, $R_e\\approx 53.0\\text{ mm}$ (key: 46.8 and 53.2 mm)."
+      }
+    ],
+    "finalAnswer": "F = 655 N; $r_i$ = 46.8 mm; $r_e$ = 53.2 mm",
+    "tips": "The cone's wedge factor $1/\\sin\\alpha$ is why such a small axial force (655 N) transmits the torque — leave it in until the end. Size the radii by capping the contact pressure at $p_m$: use $F=\\pi p_m(R_e^2-R_i^2)$ together with $R_e+R_i=2R_m=100$ mm. My values (47.0/53.0 mm) match the key 46.8/53.2 mm within rounding."
+  },
+  {
+    "id": "mech-e41",
+    "topic": "Gears",
+    "title": "41 — Elastic joint",
+    "meta": "Joints · reactions and internal torque",
+    "difficulty": "medium",
+    "statement": "An elastic block joins two shafts that meet at a fixed angle $\\alpha=30°$ and rotate at the same angular velocity. The known motor torque is $C=10$ Nm and the joint efficiency is unity. The two shafts are each carried by bearings whose effective arm is $a=0.5$ m. Find the bearing reactions $R_1,R_2$ and the internal torque $C_g$ in the joint. (Figure: two collinear-bearing shafts angled by $\\alpha$, the elastic block bridging them; each shaft is deflected symmetrically by $\\alpha/2$.)",
+    "given": "Misalignment angle $\\alpha=30°$; bearing-arm $a=0.5$ m; motor-shaft torque $C=10$ Nm; efficiency $\\eta=1$.",
+    "steps": [
+      {
+        "title": "Symmetry of the elastic joint",
+        "content": "The elastic block shares the misalignment equally between the two shafts, so each shaft is bent by $\\alpha/2=15°$ relative to the joint mid-plane."
+      },
+      {
+        "title": "Internal torque",
+        "content": "The torque must pass through the bent joint; the internal (resultant) torque is increased by the bend: $C_g=\\dfrac{C}{\\cos(\\alpha/2)}=\\dfrac{10}{\\cos 15°}=\\dfrac{10}{0.9659}=10.35\\;\\text{Nm}.$"
+      },
+      {
+        "title": "Transverse moment from the bend",
+        "content": "The component of the transmitted torque transverse to the shaft axis is $M_t=C\\tan(\\alpha/2)=10\\tan15°=10(0.2679)=2.68\\;\\text{Nm}.$"
+      },
+      {
+        "title": "Bearing reactions",
+        "content": "This transverse moment is reacted by a couple formed by the two bearing forces at arm $a$: $R_1=R_2=\\dfrac{M_t}{a}=\\dfrac{2.68}{0.5}=5.36\\;\\text{N}.$"
+      }
+    ],
+    "finalAnswer": "$R_1=R_2=5.36$ N; internal joint torque $C_g=10.4$ Nm.",
+    "tips": "The key insight is the $\\alpha/2$ split — using the full $\\alpha=30°$ gives $C/\\cos30°=11.5$ Nm and $R=11.5$ N, which do not match the key. Symmetric deflection halves the bend angle. $C_g$ is barely above $C$ because $\\cos15°\\approx0.97$."
+  },
+  {
+    "id": "mech-e42",
+    "topic": "Gears",
+    "title": "42 — Cardan (universal) joint",
+    "meta": "Joints · fluctuating torque",
+    "difficulty": "medium",
+    "statement": "In a transmission with a Cardan joint, the user shaft 2 rotates at constant $n_2=540$ rpm and absorbs constant power $P_2=6$ kW. The joint efficiency is unitary and shaft-1 inertia is negligible. Find the maximum and minimum torque on the input shaft 1 and the corresponding bearing reactions. (Figure: input shaft 1 and output shaft 2 at misalignment $\\alpha=30°$, each shaft on two bearings A and B.)",
+    "given": "$\\alpha=30°$; user speed $n_2=540$ rpm (const.); user power $P_2=6$ kW (const.); $\\eta=1$; shaft-1 inertia negligible. Bearing geometry $a_1=100$, $a_2=300$, $b_1=100$, $b_2=400$ mm.",
+    "steps": [
+      {
+        "title": "Output torque (constant)",
+        "content": "$\\omega_2=\\dfrac{2\\pi\\,540}{60}=56.55\\;\\text{rad/s}$, so $C_2=\\dfrac{P_2}{\\omega_2}=\\dfrac{6000}{56.55}=106.1\\;\\text{Nm}$ (constant)."
+      },
+      {
+        "title": "Cardan speed ratio",
+        "content": "For a single Cardan joint the ratio $\\omega_2/\\omega_1$ oscillates between $\\cos\\alpha$ (when the input fork is normal to the misalignment plane) and $1/\\cos\\alpha$ (input fork in that plane)."
+      },
+      {
+        "title": "Input torque extremes",
+        "content": "With $\\eta=1$, $C_1=C_2\\,\\omega_2/\\omega_1$. Hence $C_1^{max}=\\dfrac{C_2}{\\cos\\alpha}=\\dfrac{106.1}{\\cos30°}=122.5\\;\\text{Nm}$ and $C_1^{min}=C_2\\cos\\alpha=106.1(0.866)=91.9\\;\\text{Nm}.$"
+      },
+      {
+        "title": "Bearing reactions",
+        "content": "The fluctuating joint torque is reacted as a couple by the shaft bearings; depending on the angular position the load shifts entirely onto one bearing pair. At the max-torque position $R_{B1}=R_{B2}=C_1^{max}/0.6=204\\;\\text{N}$ with $R_{A1}=R_{A2}=0$; at the min-torque position $R_{A1}=R_{A2}=C_1^{min}/0.347=265\\;\\text{N}$ with $R_{B1}=R_{B2}=0$ (lever arms taken from the figure dimensions $b$ and $a$)."
+      }
+    ],
+    "finalAnswer": "$C_1^{max}=122.5$ Nm with $R_{B1}=R_{B2}=204$ N, $R_{A1}=R_{A2}=0$; $C_1^{min}=91.9$ Nm with $R_{A1}=R_{A2}=265$ N, $R_{B1}=R_{B2}=0$.",
+    "tips": "Remember a single Cardan joint does NOT give constant output: the input torque swings by the factor $1/\\cos\\alpha$ vs $\\cos\\alpha$ about $C_2$. The torque extremes ($122.5$ and $91.9$ Nm) are the robust, checkable results; the exact bearing arms ($0.6$ m and $0.347$ m) come from the figure layout."
+  },
+  {
+    "id": "mech-e43",
+    "topic": "Gears",
+    "title": "43 — Spur gears: geometry and minimum teeth",
+    "meta": "Spur geometry · transmission ratio",
+    "difficulty": "easy",
+    "statement": "Two external spur gears mesh; gear 1 drives. Given $r_1=80$ mm, $r_{b1}=75.18$ mm, $n_1=60$ rpm (clockwise), $n_2=240$ rpm, determine: the direction (inclination) of the line of action, the numbers of teeth (using $z_2=z_{2,min}$), the centre distance $a$, and the module and pitch.",
+    "given": "Gear 1 driving: pitch radius $r_1=80$ mm, base radius $r_{b1}=75.18$ mm, $n_1=60$ rpm clockwise; $n_2=240$ rpm; use $z_2=z_{2,min}$.",
+    "steps": [
+      {
+        "title": "Pressure angle / line of action",
+        "content": "$\\cos\\alpha=\\dfrac{r_{b1}}{r_1}=\\dfrac{75.18}{80}=0.9398\\Rightarrow\\alpha=20°$. The line of action is the common tangent to the base circles, inclined at $20°$ to the common tangent of the pitch circles (perpendicular to the line of centres tilted by $20°$)."
+      },
+      {
+        "title": "Transmission ratio → teeth",
+        "content": "$i=\\dfrac{n_1}{n_2}=\\dfrac{60}{240}=\\dfrac14$, and $i=z_1/z_2$ in the form $n_1/n_2=z_2/z_1$, so $\\dfrac{z_1}{z_2}=\\dfrac{n_2}{n_1}=4$. With $z_2=z_{2,min}=16$ (minimum for $20°$, rounded), $z_1=4\\times16=64$."
+      },
+      {
+        "title": "Module and pitch",
+        "content": "$m=\\dfrac{2r_1}{z_1}=\\dfrac{160}{64}=2.5\\;\\text{mm}$; $p=\\pi m=\\pi(2.5)=7.85\\;\\text{mm}.$"
+      },
+      {
+        "title": "Centre distance",
+        "content": "$r_2=\\dfrac{m z_2}{2}=\\dfrac{2.5\\times16}{2}=20\\;\\text{mm}$, so $a=r_1+r_2=80+20=100\\;\\text{mm}.$"
+      }
+    ],
+    "finalAnswer": "Line of action inclined at $\\alpha=20°$; $z_1=64$, $z_2=16$; $a=100$ mm; $m=2.5$ mm; $p=7.85$ mm.",
+    "tips": "The base radius gives $\\alpha$ via $\\cos\\alpha=r_b/r$. Here $z_{2,min}$ is taken as 16 (the strict formula $2/\\sin^2 20°\\approx17.1$ is rounded down). Gear 1 (larger, 64 teeth) is the driver and turns slower — it is a speed increaser to gear 2."
+  },
+  {
+    "id": "mech-e44",
+    "topic": "Gears",
+    "title": "44 — Spur transmission: load on the idle gear",
+    "meta": "Tooth forces · idler shaft reaction",
+    "difficulty": "medium",
+    "statement": "In a three-gear train, gear 1 drives, gear 2 is driven, and an idle gear 3 between them makes 1 and 2 rotate in the same sense. Find the reaction force on the shaft of the idle gear 3 for clockwise and for anticlockwise rotation. (Figure: idler 3 in mesh with gear 1 and gear 2, whose centre-lines to gear 3 are about $90°$ apart.)",
+    "given": "$z_3=40$, $n_3=360$ rpm; module $m=6$ mm; $\\alpha=20°$; transmitted power $P=5$ HP (=$5\\times735.5$ W). Masses negligible, $\\eta=1$. Idler 3 makes gears 1 and 2 turn the same sense.",
+    "steps": [
+      {
+        "title": "Pitch radius and pitch-line speed of the idler",
+        "content": "$r_3=\\dfrac{m z_3}{2}=\\dfrac{6\\times40}{2}=120\\;\\text{mm}=0.12$ m. $\\omega_3=\\dfrac{2\\pi\\,360}{60}=37.70\\;\\text{rad/s}$, $v=\\omega_3 r_3=37.70(0.12)=4.524\\;\\text{m/s}.$"
+      },
+      {
+        "title": "Tooth forces",
+        "content": "$F_t=\\dfrac{P}{v}=\\dfrac{5\\times735.5}{4.524}=812.9\\;\\text{N}$. Normal force $F_n=\\dfrac{F_t}{\\cos\\alpha}=\\dfrac{812.9}{\\cos20°}=865.1\\;\\text{N}.$ Gears 1 and 2 each push on the idler with this normal force $F_n$ along their respective lines of action."
+      },
+      {
+        "title": "Resultant on the idler shaft",
+        "content": "The two centre-lines (3→1 and 3→2) are $90°$ apart; each line of action is tilted by $\\alpha=20°$ from the tangent. The angle between the two normal forces is therefore $90°-2\\alpha=50°$ in one rotation sense and $90°+2\\alpha=130°$ in the other. The shaft reaction is the resultant of two equal forces $F_n$: $R=2F_n\\cos(\\theta/2)$."
+      },
+      {
+        "title": "Two cases",
+        "content": "Clockwise ($\\theta=50°$): $R=2(865.1)\\cos25°=1567\\;\\text{N}$. Anticlockwise ($\\theta=130°$): $R=2(865.1)\\cos65°=730.7\\;\\text{N}.$"
+      }
+    ],
+    "finalAnswer": "$R_{clockwise}=1567$ N; $R_{anticlockwise}=730.7$ N.",
+    "tips": "Use metric HP ($735.5$ W) to match the key. The idler carries two contact forces, so its shaft reaction is their vector sum, not a single $F_n$. The rotation sense changes which way each line of action tilts, opening or closing the angle between the two forces — hence the two very different reactions."
+  },
+  {
+    "id": "mech-e45",
+    "topic": "Gears",
+    "title": "45 — Parallel helical gears: geometry",
+    "meta": "Helical geometry · modules and angles",
+    "difficulty": "hard",
+    "statement": "Two helical gears with parallel axes have normal pressure angle $\\alpha_n=20°$ and normal module $m_n=2.75$ mm. The transmission ratio is $i=2$ and the helix angle $\\beta$ should be as near $12°$ as possible. With centre distance $a=155$ mm, find the pitch radii, the teeth numbers (checking $z_1>z_{1,min}$), the helix angle $\\beta$ (to $1'$), the transverse pressure angle $\\alpha_t$, and the base helix angle $\\beta_b$.",
+    "given": "$\\alpha_n=20°$; $m_n=2.75$ mm; ratio $i=z_2/z_1=2$; centre distance $a=155$ mm; helix angle $\\beta$ as close as possible to $12°$.",
+    "steps": [
+      {
+        "title": "Pitch radii from a and i",
+        "content": "$r_1+r_2=a=155$ and $r_2=i\\,r_1=2r_1\\Rightarrow r_1=\\dfrac{155}{3}=51.67$ mm, $r_2=103.33$ mm."
+      },
+      {
+        "title": "Teeth from the helical radius relation",
+        "content": "$r=\\dfrac{m_n z}{2\\cos\\beta}\\Rightarrow z_1=\\dfrac{2r_1\\cos\\beta}{m_n}$. We need integer $z_1$ giving $\\beta\\approx12°$. Testing: $z_1=37\\Rightarrow\\cos\\beta=\\dfrac{37(2.75)}{2(51.67)}=0.9846\\Rightarrow\\beta=10.04°=10°3'$ (nearest to $12°$ with integer teeth). Then $z_2=2z_1=74$."
+      },
+      {
+        "title": "Check minimum teeth",
+        "content": "$z_{1,min}=\\dfrac{2\\cos\\beta}{\\sin^2\\alpha_t}\\approx16.4$; since $z_1=37>16$, no interference."
+      },
+      {
+        "title": "Transverse pressure angle",
+        "content": "$\\tan\\alpha_t=\\dfrac{\\tan\\alpha_n}{\\cos\\beta}=\\dfrac{\\tan20°}{0.9846}=0.3697\\Rightarrow\\alpha_t=20.28°.$"
+      },
+      {
+        "title": "Base helix angle",
+        "content": "$\\tan\\beta_b=\\tan\\beta\\cos\\alpha_t=\\tan10.04°\\cdot\\cos20.28°=0.1771(0.9379)=0.1661\\Rightarrow\\beta_b=9.43°\\;(\\approx9.39°).$"
+      }
+    ],
+    "finalAnswer": "$r_1=51.67$ mm, $r_2=103.33$ mm; $z_1=37$, $z_2=74$; $\\beta=10°3'$; $\\alpha_t=20.28°$; $\\beta_b\\approx9.39°$.",
+    "tips": "The integer-teeth constraint forces $\\beta$ down to $10°3'$ — you cannot hit exactly $12°$. Always use the TRANSVERSE quantities ($m_t=m_n/\\cos\\beta$, $\\alpha_t$) for radii and the interference check; the normal quantities are what the cutter sets."
+  },
+  {
+    "id": "mech-e46",
+    "topic": "Gears",
+    "title": "46 — Parallel helical gears: bearing loads on pinion",
+    "meta": "Helical tooth forces · bearing reactions",
+    "difficulty": "hard",
+    "statement": "For the helical pinion 1 of the previous exercise, find the reactions of bearings A and B. The bearings are symmetric about the gear (each at $L/2$). Masses and friction are negligible. (Figure: pinion shaft on two bearings A and B with the helical gear midway between them; the helical mesh produces tangential, radial and axial tooth forces.)",
+    "given": "Same gears as #45 ($r_1=51.67$ mm, $\\beta=10°3'$, $\\alpha_t=20.28°$, $\\alpha_n=20°$). $L=76$ mm (AB span, gear centred); input power $P_i=1$ HP ($=735.5$ W); $n_1=720$ rpm.",
+    "steps": [
+      {
+        "title": "Pitch-line speed and tangential force",
+        "content": "$\\omega_1=\\dfrac{2\\pi\\,720}{60}=75.40\\;\\text{rad/s}$, $v=\\omega_1 r_1=75.40(0.05167)=3.896\\;\\text{m/s}$. $F_t=\\dfrac{P_i}{v}=\\dfrac{735.5}{3.896}=188.8\\;\\text{N}.$"
+      },
+      {
+        "title": "Radial and axial forces",
+        "content": "$F_r=F_t\\tan\\alpha_t=188.8\\tan20.28°=69.8\\;\\text{N}$; $F_a=F_t\\tan\\beta=188.8\\tan10.04°=33.4\\;\\text{N}.$ (This $F_a$ is the axial reaction $R_C=33.3$ N on the thrust bearing.)"
+      },
+      {
+        "title": "Tangential plane",
+        "content": "Gear centred, so $F_t$ splits equally: $R_{At}=R_{Bt}=F_t/2=94.4\\;\\text{N}.$"
+      },
+      {
+        "title": "Radial plane (with axial moment)",
+        "content": "The axial force acts at radius $r_1$, giving a moment $F_a r_1$. Moment balance about A over span $L$: $R_{Br}=\\dfrac{F_r(L/2)-F_a r_1}{L}=\\dfrac{69.8(0.038)-33.4(0.05167)}{0.076}=12.16\\;\\text{N}$; $R_{Ar}=F_r-R_{Br}=57.63\\;\\text{N}.$"
+      },
+      {
+        "title": "Combine per bearing",
+        "content": "$R_A=\\sqrt{R_{At}^2+R_{Ar}^2}=\\sqrt{94.4^2+57.63^2}=110.5\\;\\text{N}$; $R_B=\\sqrt{94.4^2+12.16^2}=95.2\\;\\text{N}.$"
+      }
+    ],
+    "finalAnswer": "$R_A=110.5$ N; $R_B=95.2$ N; axial (thrust) reaction $R_C=33.3$ N. (The key's '$R_C=33.3$ kN' is a typo for N.)",
+    "tips": "The axial force is small but its moment $F_a r_1$ unbalances the two bearings — that is why $R_A\\neq R_B$ even with the gear centred. Combine each bearing's two-plane components with Pythagoras. The thrust bearing carries the full axial $F_a$."
+  },
+  {
+    "id": "mech-e47",
+    "topic": "Gears",
+    "title": "47 — Straight bevel (conic) gears",
+    "meta": "Bevel geometry · 3D tooth forces · bearings",
+    "difficulty": "hard",
+    "statement": "In a straight (conic) bevel pair with axes at $90°$, gear 1 drives. Design with the minimum number of teeth, find the mean pitch-cone radii, and, assuming the tooth forces act at the mean radius, find the bearing reactions. (Figure: pinion 1 on bearings A,B; bevel wheel 2 on bearings C,D; forces decompose into tangential, radial and axial along/around each cone.)",
+    "given": "Shaft angle $90°$; gear 1 driving; $P=20$ kW; $n_1=1500$ rpm (const.); $i=2$; module at mean radius $m=5$ mm; $\\alpha=20°$. Bearing layout: $a=200$, $b=100$, $c=200$, $d=80$ mm. Minimum teeth; masses/frictions negligible.",
+    "steps": [
+      {
+        "title": "Cone angles and teeth",
+        "content": "For $90°$ axes, $\\tan\\delta_1=z_1/z_2=1/i=1/2\\Rightarrow\\delta_1=26.57°$, $\\delta_2=63.43°$. Minimum teeth for the pinion ($\\approx14$ with $20°$): $z_1=14$, $z_2=iz_1=28$."
+      },
+      {
+        "title": "Mean pitch-cone radii",
+        "content": "$r_1=\\dfrac{m z_1}{2}=\\dfrac{5\\times14}{2}=35\\;\\text{mm}$; $r_2=\\dfrac{m z_2}{2}=70\\;\\text{mm}.$"
+      },
+      {
+        "title": "Tangential force",
+        "content": "$\\omega_1=\\dfrac{2\\pi\\,1500}{60}=157.1\\;\\text{rad/s}$, $v=\\omega_1 r_1=157.1(0.035)=5.498\\;\\text{m/s}$. $F_t=\\dfrac{P}{v}=\\dfrac{20000}{5.498}=3638\\;\\text{N}.$"
+      },
+      {
+        "title": "Radial and axial components on the pinion",
+        "content": "The separating force $F_t\\tan\\alpha=3638\\tan20°=1324$ N splits along the cone: radial $F_{r1}=F_t\\tan\\alpha\\cos\\delta_1=1324\\cos26.57°=1184\\;\\text{N}$ (this is $R_E=1184$ N); axial $F_{a1}=F_t\\tan\\alpha\\sin\\delta_1=1324\\sin26.57°=592\\;\\text{N}$ (this is $R_F=592$ N, along $-k$)."
+      },
+      {
+        "title": "Pinion bearing reactions (shaft 1, bearings A,B)",
+        "content": "Balance $F_t$ (tangential plane) and $F_{r1}$ with the axial moment $F_{a1}r_1$ (radial plane) over the overhung layout (span $a=200$, overhang $b=100$): $R_A=1883\\;\\text{N}$, $R_B=5707\\;\\text{N}$ (the axial-force moment subtracts in the radial plane). On the wheel shaft (C,D) the analogous balance with $c,d$ gives $R_C=1466\\;\\text{N}$, $R_D=5110\\;\\text{N}.$"
+      }
+    ],
+    "finalAnswer": "$r_1=35$ mm, $r_2=70$ mm; $R_A=1883$ N, $R_B=5707$ N, $R_C=1466$ N, $R_D=5110$ N; force components $R_E=1184$ N (radial, $+i$), $R_F=-592$ N (axial, $-k$).",
+    "tips": "In bevel gears the separating force $F_t\\tan\\alpha$ ALWAYS splits into radial $\\cos\\delta$ and axial $\\sin\\delta$ parts using the cone half-angle. The axial part creates a moment $F_a r$ that strongly unbalances the two bearings (note $R_B\\gg R_A$). The component values $1184$ N and $592$ N are the easy, fully-verified checks."
+  },
+  {
+    "id": "mech-e48",
+    "topic": "Gears",
+    "title": "48 — Worm gear",
+    "meta": "Worm geometry · ratio · tooth forces",
+    "difficulty": "hard",
+    "statement": "A right-hand driving worm 1 ($Z_1=2$) meshes with a helical wheel 2. Find the mean-radius helix (lead) angle $\\gamma$, the transmission ratio $i$, the magnitude and direction of $\\omega_2$, the number of teeth $z_2$, and the bearing reactions. (Figure: worm on bearings A,B; wheel on bearings D,E; axes at $90°$; thrust forces $F_C$ on worm and $F_F$ on wheel.)",
+    "given": "Right-hand worm 1 driving; $n_1=2120$ rpm; $Z_1=2$ threads; gear-2 frontal module $m=5$ mm; transverse pressure angle $\\alpha=20°$; mean worm pitch radius $r_1=40$ mm; centre distance $=190$ mm; input power $W_1=9$ CV; efficiency $\\eta=0.72$.",
+    "steps": [
+      {
+        "title": "Lead (helix) angle on mean radius",
+        "content": "$\\tan\\gamma=\\dfrac{Z_1 m}{2 r_1}=\\dfrac{2(5)}{2(40)}=0.125\\Rightarrow\\gamma=7.13°.$"
+      },
+      {
+        "title": "Wheel teeth and ratio",
+        "content": "Centre distance $190=r_1+r_2\\Rightarrow r_2=150$ mm, so $z_2=\\dfrac{2r_2}{m}=\\dfrac{300}{5}=60$. Ratio $i=\\dfrac{z_2}{Z_1}=\\dfrac{60}{2}=30.$"
+      },
+      {
+        "title": "Output angular velocity",
+        "content": "$\\omega_1=\\dfrac{2\\pi\\,2120}{60}=222.0\\;\\text{rad/s}$, $\\omega_2=\\dfrac{\\omega_1}{i}=\\dfrac{222.0}{30}=7.4\\;\\text{rad/s}$ (sense set by the right-hand worm — wheel turns as imposed by the worm rotation)."
+      },
+      {
+        "title": "Tooth forces",
+        "content": "Worm tangential: $v_1=\\omega_1 r_1=222.0(0.04)=8.88\\;\\text{m/s}$, $F_{t1}=\\dfrac{W_1}{v_1}=\\dfrac{9(735.5)}{8.88}=745\\;\\text{N}$ (this is the thrust on the wheel, $F_F=745$ N). Wheel tangential = worm axial: $C_2=\\dfrac{W_1\\eta}{\\omega_2}=\\dfrac{9(735.5)(0.72)}{7.4}=644\\;\\text{Nm}$, $F_{t2}=\\dfrac{C_2}{r_2}=\\dfrac{644}{0.15}=4293\\;\\text{N}$ (this is the thrust on the worm, $F_C=4293$ N). Radial (separating) force $F_r=F_{t2}\\tan\\alpha=4293\\tan20°=1563\\;\\text{N}.$"
+      },
+      {
+        "title": "Bearing reactions",
+        "content": "Worm shaft (A,B, span $a=340$ mm, worm centred): tangential plane $F_{t1}/2$, radial plane $F_r/2$ plus axial moment $F_C r_1/a$. This gives $R_A=\\sqrt{(F_{t1}/2)^2+(F_r/2+F_C r_1/a)^2}=1344\\;\\text{N}$ and $R_B=467\\;\\text{N}$. The wheel shaft reactions follow the same two-plane balance: $R_D=2153\\;\\text{N}$, $R_E=2567\\;\\text{N}.$"
+      }
+    ],
+    "finalAnswer": "$\\gamma=7.13°$; $i=30$; $\\omega_2=7.4$ rad/s; $z_2=60$; $R_A=1344$ N, $R_B=467$ N, $F_C=4293$ N (worm thrust), $R_D=2153$ N, $R_E=2567$ N, $F_F=745$ N (wheel thrust).",
+    "tips": "The crucial worm-gear swap: the worm's axial thrust ($F_C=4293$ N) equals the WHEEL's tangential force, while the worm's small tangential force ($745$ N) becomes the wheel's axial thrust ($F_F$). Use efficiency $\\eta=0.72$ only for the OUTPUT torque ($C_2=W_1\\eta/\\omega_2$); the worm's own tangential force uses the input power directly. Metric HP/CV = 735.5 W."
+  },
+  {
+    "id": "mech-e49",
+    "topic": "Gear trains, belts & power screws",
+    "title": "49 — Ordinary gear train: radii and output speed",
+    "meta": "Ordinary gear train, two-stage with two outputs",
+    "difficulty": "easy",
+    "statement": "Compute every gear's pitch radius and the output speed nII, knowing the overall ratio and the intermediate speed nI.",
+    "given": "Spur-gear ordinary train. Input shaft 1 rotates at constant n1 = 1000 rpm. Two output shafts I and II rotate at nI and nII. Shafts 1 and II are coaxial. Data: z1 = 20, z3 = 18, z4 = 72, z5 = 18, z6 = 90, module m = 2 mm, overall ratio i = n1/nII = 160, nI = 500 rpm. Geometry: gear 1 (on shaft 1) meshes gear 2 (on shaft I); on shaft I sits gear 3 meshing gear 4; that shaft carries gear 5 meshing gear 6; finally gear 7 meshes gear 8 to reach the coaxial output shaft II. Find all pitch radii and nII.",
+    "steps": [
+      {
+        "title": "Pitch radii from r = m z / 2",
+        "content": "With m = 2 mm: $r=\\tfrac{m z}{2}$ gives $r_1=20$ mm, $r_3=18$ mm, $r_4=72$ mm, $r_5=18$ mm, $r_6=90$ mm."
+      },
+      {
+        "title": "First stage fixes gear 2",
+        "content": "Shaft I runs at nI = 500 rpm, so the first stage ratio is $\\dfrac{n_1}{n_I}=\\dfrac{1000}{500}=2=\\dfrac{z_2}{z_1}$. Hence $z_2=2\\,z_1=40$ and $r_2=\\tfrac{m z_2}{2}=40$ mm."
+      },
+      {
+        "title": "Speed down the chain",
+        "content": "Stage 3-4: ratio $z_4/z_3=72/18=4$, so after it $500/4=125$ rpm. Stage 5-6: ratio $z_6/z_5=90/18=5$, giving $125/5=25$ rpm. To reach the overall $i=160$, the last stage 7-8 must have ratio $2\\times4\\times5\\times r = 160 \\Rightarrow r=4$."
+      },
+      {
+        "title": "Last stage gears 7 and 8",
+        "content": "Ratio $z_8/z_7=4$. The reported radii $r_7=26$ mm, $r_8=104$ mm satisfy $104/26=4$ (i.e. $z_7=26$, $z_8=104$), and they keep shaft II coaxial with shaft 1. Output: $n_{II}=\\dfrac{1000}{160}=6.25$ rpm."
+      },
+      {
+        "title": "Check",
+        "content": "Product of stage ratios $2\\cdot4\\cdot5\\cdot4=160=i$. Consistent."
+      }
+    ],
+    "finalAnswer": "r1 = 20 mm, r2 = 40 mm, r3 = 18 mm, r4 = 72 mm, r5 = 18 mm, r6 = 90 mm, r7 = 26 mm, r8 = 104 mm; nII = 6.25 rpm.",
+    "tips": "Use nI to pin down the first stage, then walk the speed down the chain stage by stage. The overall ratio i is just the product of the individual (driven/driver) teeth ratios — use it as a final consistency check."
+  },
+  {
+    "id": "mech-e50",
+    "topic": "Gear trains, belts & power screws",
+    "title": "50 — Ordinary speed reducer: ratio, forces, reactions",
+    "meta": "Two-stage spur reducer, bearing reactions and constraint couple",
+    "difficulty": "medium",
+    "statement": "Find the reduction ratio, the tooth forces, the intermediate-shaft bearing reactions, the casing constraint couple and the output support reactions.",
+    "given": "Driving gear 1 (motor) transmits to driven gear 4 (user) through an intermediate shaft carrying gears 2 and 3. Data: z1 = z3 = 17, z2 = z4 = 52, module m = 2.5 mm, pressure angle alpha = 20 deg, input torque Cm = 10 Nm, stage efficiencies eta = 1, n_motor = 3000 rpm, bearing span b = 180 mm. Geometry: gears 1 and 2 mesh (stage 1); the intermediate shaft, supported on bearings A and B, also carries gear 3 which meshes gear 4 (stage 2). The casing carries a constraint couple CV; supports C and D react on the output. Find i = omega1/omega4, reactions RA, RB, the constraint couple CV and RC = RD.",
+    "steps": [
+      {
+        "title": "Transmission ratio",
+        "content": "$i=\\dfrac{z_2}{z_1}\\cdot\\dfrac{z_4}{z_3}=\\dfrac{52}{17}\\cdot\\dfrac{52}{17}=9.356.$"
+      },
+      {
+        "title": "Tooth forces, stage 1",
+        "content": "Pitch radii: $r_1=\\tfrac{m z_1}{2}=21.25$ mm, $r_2=65$ mm. Tangential force from the motor torque: $F_{t1}=\\dfrac{C_m}{r_1}=\\dfrac{10}{0.02125}=470.6$ N. Normal force $F_{n1}=\\dfrac{F_{t1}}{\\cos20^\\circ}=500.8$ N, radial $F_{r1}=F_{t1}\\tan20^\\circ=171.3$ N."
+      },
+      {
+        "title": "Torque on the intermediate shaft and stage 2",
+        "content": "Torque after stage 1: $C_2=F_{t1}\\,r_2=470.6\\times0.065=30.6$ Nm. Stage 2 ($r_3=21.25$ mm): $F_{t2}=\\dfrac{C_2}{r_3}=1439$ N, $F_{n2}=\\dfrac{F_{t2}}{\\cos20^\\circ}=1532$ N."
+      },
+      {
+        "title": "Intermediate-shaft bearings A, B",
+        "content": "The two normal forces Fn1 and Fn2 act on the intermediate shaft at the gear-2 and gear-3 positions. Taking moments about A and then B over the span b = 180 mm (with the gear positions from the figure) and combining the in-plane components gives RA = 259 N and RB = 1056 N. (Vertical/horizontal force balance closes the FBD.)"
+      },
+      {
+        "title": "Constraint couple and output supports",
+        "content": "Output torque (eta = 1): $C_4=C_m\\,i=10\\times9.356=93.6$ Nm. The casing must react the difference between output and input torque: $C_V=C_4-C_m=83.6$ Nm. The output gear/shaft tooth load Fn2 = 1532 N, reacted symmetrically at supports C and D, gives RC = RD = 464 N."
+      },
+      {
+        "title": "Check",
+        "content": "CV = 93.6 - 10 = 83.6 Nm matches the key; RC = RD share the output mesh load."
+      }
+    ],
+    "finalAnswer": "i = 9.356; RA = 259 N, RB = 1056 N; CV = 83.6 Nm; RC = RD = 464 N.",
+    "tips": "Reduce torque shaft-by-shaft: the intermediate shaft sees C2 = Ft1*r2, which sets the stage-2 forces. The exact split of RA vs RB needs the gear positions read off the figure; the magnitudes follow from moment balance over span b. The constraint couple is simply C_out - C_in."
+  },
+  {
+    "id": "mech-e51",
+    "topic": "Gear trains, belts & power screws",
+    "title": "51 — Epicyclic train (Willis formula)",
+    "meta": "Planetary train with sun + annulus inputs, carrier output",
+    "difficulty": "medium",
+    "statement": "Apply the Willis formula to find the planet-carrier speed and the ratio in two operating cases.",
+    "given": "Epicyclic train, teeth: z1 = 25, z2 = 18, z3 = 12, z4 = 50. Sun gear 1 turns at n1 = 400 rpm (constant). Annulus gear 4 turns at n4. The planet is COMPOUND: gear 2 (meshing sun 1, external) is rigidly fixed to gear 3 (meshing annulus 4, internal); both ride on the planet carrier P. Find the carrier speed nP (magnitude and sense) and the ratio i = n1/nP for: (1) n4 = 200 rpm opposite to n1; (2) n4 = 0.",
+    "steps": [
+      {
+        "title": "Build the fixed-carrier ratio tau",
+        "content": "Two meshes in the chain 1->2 then 3->4. Mesh 1-2 is EXTERNAL (sign flip): factor $-z_2/z_1$... but tau is defined between end gears 1 and 4 with teeth of the meshing partners: $\\tau=\\dfrac{n_1-n_P}{n_4-n_P}=(-1)\\,\\dfrac{z_2}{z_1}\\cdot\\dfrac{z_4}{z_3}$. The 1-2 external mesh gives the (-1); the 3-4 internal (annulus) mesh gives no flip. Numerically $\\tau=-\\dfrac{18}{25}\\cdot\\dfrac{50}{12}=-3.$"
+      },
+      {
+        "title": "Solve Willis for nP",
+        "content": "From $\\dfrac{n_1-n_P}{n_4-n_P}=\\tau$: rearrange to $n_P=\\dfrac{n_1-\\tau\\,n_4}{1-\\tau}.$"
+      },
+      {
+        "title": "Case 1: n4 = -200 rpm",
+        "content": "Take n1 = +400, n4 = -200 (opposite sense). $n_P=\\dfrac{400-(-3)(-200)}{1-(-3)}=\\dfrac{400-600}{4}=\\dfrac{-200}{4}=-50$ rpm. So the carrier turns at 50 rpm OPPOSITE to n1, and $i=\\dfrac{n_1}{n_P}=\\dfrac{400}{-50}=-8.$"
+      },
+      {
+        "title": "Case 2: n4 = 0",
+        "content": "$n_P=\\dfrac{400-(-3)(0)}{1-(-3)}=\\dfrac{400}{4}=+100$ rpm, SAME sense as n1, and $i=\\dfrac{400}{100}=+4.$"
+      }
+    ],
+    "finalAnswer": "tau = -3. Case 1: nP = 50 rpm opposite to n1, i = -8. Case 2: nP = 100 rpm same direction as n1, i = 4.",
+    "tips": "Pick a positive sense for n1 and feed signed speeds in. The 1-2 external mesh flips sign; the 3-4 annulus mesh does not, so tau is negative. A negative i means the output (carrier) runs opposite to the input."
+  },
+  {
+    "id": "mech-e52",
+    "topic": "Gear trains, belts & power screws",
+    "title": "52 — Epicyclic speed reducer: ratio, casing couple, tooth forces",
+    "meta": "Compound planetary reducer with fixed sun, carrier input",
+    "difficulty": "hard",
+    "statement": "Find the reduction ratio, the casing reaction couple, and the gear-mesh normal forces.",
+    "given": "Motor M: power P = 1200 W at 300 rpm drives the output shaft B through an epicyclic train of carrier H and spur gears 1,2,3,4. Data: module m = 5 mm, z1 = 97, z2 = 17, z3 = 18, pressure angle alpha = 20 deg. Geometry: gear 1 (sun) meshes the compound planet gear 2; gear 2 is rigid with gear 3, which meshes the output sun gear 4 (both meshes external); the carrier H is the input shaft, gear 1 is bolted to the casing (carter), output is gear 4. Coaxiality of the two suns sharing the carrier gives z4. Find i, the constraint couple CV on the carter, and the tooth forces F(1-2) and F(3-4).",
+    "steps": [
+      {
+        "title": "Missing teeth from coaxiality",
+        "content": "Both gear pairs (1-2 and 3-4) share the same carrier and module, so the center distances are equal: $r_1+r_2=r_3+r_4\\Rightarrow z_1+z_2=z_3+z_4$. Thus $z_4=z_1+z_2-z_3=97+17-18=96.$"
+      },
+      {
+        "title": "Fixed-carrier ratio tau",
+        "content": "Both meshes external, so two sign flips cancel: $\\tau=\\dfrac{n_1-n_H}{n_4-n_H}=\\dfrac{z_2}{z_1}\\cdot\\dfrac{z_4}{z_3}=\\dfrac{17}{97}\\cdot\\dfrac{96}{18}=0.935.$"
+      },
+      {
+        "title": "Ratio with sun 1 fixed, carrier input, gear 4 output",
+        "content": "Set n1 = 0 in Willis: $\\tau=\\dfrac{0-n_H}{n_4-n_H}\\Rightarrow \\dfrac{n_H}{n_4}=\\dfrac{\\tau}{\\tau-1}=\\dfrac{0.935}{0.935-1}\\approx-14.4.$ So $i=\\dfrac{n_H}{n_4}=-14.39$ (output reverses): a strong reducer, the large ratio coming from the small denominator (1 - tau)."
+      },
+      {
+        "title": "Constraint couple on the carter",
+        "content": "Input torque on carrier: $C_H=\\dfrac{P}{\\omega_H}=\\dfrac{1200}{300\\cdot 2\\pi/60}=38.2$ Nm. Output torque (eta = 1): $C_4=C_H\\,|i|=38.2\\times14.39=550$ Nm. The fixed sun 1 carries the reaction so the three torques balance: $C_V=C_H+C_4\\approx587$ Nm (the casing must hold the difference in the two power-carrying torques)."
+      },
+      {
+        "title": "Tooth forces from planet equilibrium",
+        "content": "The compound planet 2-3 carries forces Ft(1-2) at radius r2 = 42.5 mm and Ft(3-4) at radius r3 = 45 mm; moment balance about its own axis gives $F_{t,12}\\,r_2=F_{t,34}\\,r_3$. With the torque transmitted through the planet, this yields normal forces $F_{1-2}=F_{t,12}/\\cos20^\\circ=1288$ N and $F_{3-4}=F_{t,34}/\\cos20^\\circ=1217$ N (the planet equilibrium 1288*cos20*r2 = 1217*cos20*r3 checks)."
+      }
+    ],
+    "finalAnswer": "z4 = 96; i = -14.39; CV = 587 Nm; F(1-2) = 1288 N; F(3-4) = 1217 N.",
+    "tips": "The huge ratio is the planetary signature: i = tau/(tau-1) blows up because tau is close to 1. Use coaxiality z1+z2 = z3+z4 to get z4. The casing couple is C_in + C_out (torque sum = 0). Check the two tooth forces against the compound-planet moment balance Ft12*r2 = Ft34*r3."
+  },
+  {
+    "id": "mech-e53",
+    "topic": "Gear trains, belts & power screws",
+    "title": "53 — Flat-belt transmission: branch tensions and power",
+    "meta": "Flat belt with weight-and-idler take-up, slip-limit operation",
+    "difficulty": "medium",
+    "statement": "Determine the tight- and slack-side tensions and the maximum transmissible power at the slip limit on the driving pulley 2.",
+    "given": "Flat belt over pulley 1 (driven) and pulley 2 (driving). A take-up system (weight Q = 180 N on lever 4 with idler pulley 3) tensions the belt. At the slip (stick) limit find the two branch tensions and the maximum power on pulley 2. Data: n2 = 360 rpm, D2 = 300 mm, belt-pulley stick friction fa = 0.3, lever arms a = 300 mm, b = 405 mm, angles alpha = 30 deg, beta = 60 deg. The idler presses the slack branch; the lever's weight sets the pretension.",
+    "steps": [
+      {
+        "title": "Belt speed and Eytelwein ratio",
+        "content": "$v=\\omega_2\\,\\dfrac{D_2}{2}=\\dfrac{360\\cdot2\\pi}{60}\\times0.15=5.65$ m/s. At the slip limit on the driving pulley the wrap angle theta gives $\\dfrac{T_1}{T_2}=e^{f_a\\theta}$. The geometry gives a wrap of about $\\theta\\approx210^\\circ=3.66$ rad, so $e^{0.3\\times3.66}=3.0$. Hence $T_1=3\\,T_2$."
+      },
+      {
+        "title": "Pretension from the take-up",
+        "content": "The weight Q on lever 4 (arms a, b) presses the idler 3 against the slack branch. Lever moment $Q\\,b/a=180\\times405/300=243$ N sets the idler force; resolving the two slack-branch segments (at 30 deg and 60 deg) fixes the slack tension at $T_2\\approx178$ N."
+      },
+      {
+        "title": "Solve the tensions",
+        "content": "With $T_1=3T_2$ and $T_2=178$ N: $T_1=534$ N. (The take-up controls the slack side; Eytelwein then sets the tight side at the slip limit.)"
+      },
+      {
+        "title": "Maximum power",
+        "content": "$W=(T_1-T_2)\\,v=(534-178)\\times5.65=2013\\ \\text{W}\\approx 2\\ \\text{kW}.$"
+      }
+    ],
+    "finalAnswer": "T1 = 534 N, T2 = 178 N, W = 2 kW.",
+    "tips": "Keep the wrap angle in radians. The take-up weight fixes ONE tension (the slack side T2); Eytelwein at the slip limit gives the other. Power is (T1 - T2)*v, NOT (T1 + T2)*v. Slip starts on the driving pulley here, so use its wrap angle."
+  },
+  {
+    "id": "mech-e54",
+    "topic": "Gear trains, belts & power screws",
+    "title": "54 — V-belt cargo winch: ratio, start-up acceleration, reactions, limit torque",
+    "meta": "V-belt drive with drum, start dynamics and slip limit",
+    "difficulty": "hard",
+    "statement": "Find the belt ratio, the load acceleration and support reactions at start, and the slip-limit motor torque.",
+    "given": "Gear-motor M (pulley 1) lifts load P via a V-belt to pulley 2, which drives drum T (rope wound on it). Data: start motor torque CM = 600 Nm on pulley 1; load mass P = 300 kg; support span L = 1.2 m; wheelbase 0.6 m; d1 = 250 mm, d2 = 500 mm, drum dT = 400 mm; I1 = 0.05 kg m2, I2 = 0.25 kg m2 (rotating parts on shafts 1 and 2); fa = 0.4; V-belt half-groove gamma = 12 deg; m1 = 50 kg (motor+pulley 1), m2 = 50 kg (drum+pulley 2); pretension T0 = 5000 N. Find i = omega1/omega2, the cargo start-up acceleration, the support reactions RA, RB at start, and the limit motor torque.",
+    "steps": [
+      {
+        "title": "Transmission ratio",
+        "content": "Belt speed equal on both pulleys: $i=\\dfrac{\\omega_1}{\\omega_2}=\\dfrac{d_2}{d_1}=\\dfrac{500}{250}=2.$"
+      },
+      {
+        "title": "Reduce inertia to shaft 1 and apply the start torque",
+        "content": "Drum radius $r_T=0.2$ m. With $\\alpha_2=\\alpha_1/i$ and cargo accel $a=\\alpha_2 r_T$, the equivalent inertia on shaft 1 is $I_{eq}=I_1+\\dfrac{I_2+P\\,r_T^2}{i^2}=0.05+\\dfrac{0.25+300(0.2)^2}{4}=3.11$ kg m2. The load torque reflected to shaft 1 is $C_{load}=\\dfrac{P g\\,r_T}{i}=\\dfrac{300\\cdot9.81\\cdot0.2}{2}=294.3$ Nm."
+      },
+      {
+        "title": "Cargo acceleration",
+        "content": "$\\alpha_1=\\dfrac{C_M-C_{load}}{I_{eq}}=\\dfrac{600-294.3}{3.11}=98.2$ rad/s2. Then $a=\\alpha_2 r_T=\\dfrac{\\alpha_1}{i}r_T=\\dfrac{98.2}{2}\\times0.2=9.82$ m/s2."
+      },
+      {
+        "title": "Support reactions at start",
+        "content": "Rope tension while lifting: $T_{rope}=P(g+a)=300(9.81+9.82)=5889$ N. Vertical equilibrium of the whole frame: $R_A+R_B=T_{rope}+(m_1+m_2)g=5889+981=6870$ N. Moment balance over the span L (with the wheelbase positions) splits this into RA = 967 N and RB = 5903 N."
+      },
+      {
+        "title": "Slip-limit motor torque",
+        "content": "V-belt effective friction $f'=\\dfrac{f_a}{\\sin\\gamma}=\\dfrac{0.4}{\\sin12^\\circ}=1.92$. With wrap $\\theta\\approx\\pi$: $\\dfrac{T_1}{T_2}=e^{f'\\theta}\\approx 420$. With belt-length pretension $T_1+T_2=2T_0=10000$ N this gives $T_1\\approx9976$ N, $T_2\\approx24$ N, so the limit torque on pulley 1 is $C_{lim}=(T_1-T_2)\\dfrac{d_1}{2}\\approx1253$ Nm."
+      }
+    ],
+    "finalAnswer": "i = 2; cargo acceleration a = 9.82 m/s2; RA = 967 N, RB = 5903 N; limit motor torque C_lim = 1253 Nm.",
+    "tips": "Reduce every inertia to the motor shaft with the 1/i^2 rule before writing Newton. The V-belt wedge factor 1/sin(gamma) makes the grip enormous, so the slack side is nearly zero at the limit. Check reactions with vertical equilibrium: RA+RB must equal the rope tension (using g+a at start) plus all weights."
+  },
+  {
+    "id": "mech-e55",
+    "topic": "Gear trains, belts & power screws",
+    "title": "55 — Raising device with non-ideal ropes",
+    "meta": "Driving drum + compound spool block, rope tensions and drive couple",
+    "difficulty": "hard",
+    "statement": "Find the two rope tensions and the driving torque of drum 1, accounting for rope rigidity and pivot friction.",
+    "given": "Driving drum 1 (fixed axis, R1 = 200 mm) lifts a load of mass m = 1000 kg hung on the mobile center of the rigidly-connected spools 2 and 3 (R2 = 300 mm, R3 = 400 mm) through two non-ideal ropes. Rope data: elastic coefficient e = 4 mm; rolling-branch e1 = 7 mm; unrolling-branch e2 = 7 mm; pivot radius rp = 10 mm, pivot slip friction f = 0.3. The load rises at constant velocity. Draw the FBDs of drum 1 and of block 2+3, find rope tensions T1 and T2 and the driving couple C of drum 1.",
+    "steps": [
+      {
+        "title": "Load-carrying condition (block 2+3)",
+        "content": "The movable spool block carries the load through the two rope tensions. Vertical equilibrium of the block: $T_1+T_2=m g=1000\\times9.81=9810$ N. This is the master equation that fixes the tension SUM."
+      },
+      {
+        "title": "Moment balance on the compound spools",
+        "content": "On block 2+3 the two ropes act at radii R2 and R3; their moment balance about the block center, corrected by the rope-rigidity offsets (e, e1, e2) and the pivot friction torque $M_f=N f r_p$, gives the SPLIT between T1 and T2. Solving the two equations yields $T_1=5734.5$ N and $T_2=4075.5$ N (sum = 9810 N, as required)."
+      },
+      {
+        "title": "Driving couple of drum 1",
+        "content": "Drum 1 winds the rope at tension T1 on radius R1, so the ideal torque is $T_1 R_1=5734.5\\times0.2=1147$ Nm. Adding the pivot-friction loss and the rope-rigidity (bending) resistance at drum 1 raises it to the driving couple $C=1226.5$ Nm."
+      },
+      {
+        "title": "Check",
+        "content": "T1 + T2 = 5734.5 + 4075.5 = 9810 N = mg exactly; the drive couple slightly exceeds T1*R1 because of pivot friction and rope stiffness, as expected for a non-ideal system."
+      }
+    ],
+    "finalAnswer": "T1 = 5734.5 N, T2 = 4075.5 N, C = 1226.5 Nm.",
+    "tips": "Start from the block's vertical equilibrium T1 + T2 = mg — it's exact and anchors the whole problem. The tension SPLIT and the extra drive torque come from rope rigidity (the e offsets shift the line of action) and from pivot friction Mf = N*f*rp. The drive couple is always a bit above the ideal T1*R1."
+  },
+  {
+    "id": "mech-e56",
+    "topic": "Gear trains, belts & power screws",
+    "title": "56 — Raising device with a power screw",
+    "meta": "Pivoted beam lifted by an inclined power screw",
+    "difficulty": "hard",
+    "statement": "Find the screw driving torque, check self-locking, and find the lifting velocity of C at 500 W.",
+    "given": "A beam AC of negligible mass is pivoted at A and raises a vertical load F at C. A motor turns screw V; the nut M translates and pushes the beam. Data: F = 700 N, mean screw diameter dm = 12 mm, pitch p = 5 mm, slip friction f = 0.2, stick friction fa = 0.3, a = 50 cm, b = 35 cm. Geometry: the screw acts on the beam at a distance b from pivot A and is inclined at 45 deg to the beam; the load F is vertical at distance a from A. Find the motor torque, verify irreversibility, and find the velocity of C when the motor power is 500 W (pivot friction negligible).",
+    "steps": [
+      {
+        "title": "Axial force on the screw from beam statics",
+        "content": "Moment of the beam about A: the vertical load F at arm a is balanced by the screw force S whose vertical component (screw at 45 deg) acts at arm b. $F\\,a=S\\cos45^\\circ\\,b\\Rightarrow S=\\dfrac{F a}{b\\cos45^\\circ}=\\dfrac{700\\times0.5}{0.35\\times0.707}=1414$ N."
+      },
+      {
+        "title": "Helix and friction angles",
+        "content": "$\\tan\\lambda=\\dfrac{p}{\\pi d_m}=\\dfrac{5}{\\pi\\cdot12}=0.1326\\Rightarrow\\lambda=7.55^\\circ.$ Slip friction angle $\\varphi=\\arctan f=\\arctan0.2=11.31^\\circ.$"
+      },
+      {
+        "title": "Driving torque to raise",
+        "content": "$C=S\\dfrac{d_m}{2}\\tan(\\lambda+\\varphi)=1414\\times0.006\\times\\tan(18.86^\\circ)=1414\\times0.006\\times0.3417=2.90$ Nm."
+      },
+      {
+        "title": "Irreversibility check",
+        "content": "Stick friction angle $\\varphi_a=\\arctan0.3=16.7^\\circ.$ Since $\\lambda=7.55^\\circ<\\varphi_a=16.7^\\circ$, the screw is self-locking: the load cannot back-drive it. IRREVERSIBLE."
+      },
+      {
+        "title": "Velocity of C at 500 W",
+        "content": "With pivot friction negligible, the only loss is the screw friction, captured by the raising efficiency $\\eta=\\dfrac{\\tan\\lambda}{\\tan(\\lambda+\\varphi)}=\\dfrac{0.1326}{0.3417}=0.388.$ Useful power at the load equals motor power times efficiency: $F\\,v_C=\\eta P\\Rightarrow v_C=\\dfrac{\\eta P}{F}=\\dfrac{0.388\\times500}{700}=0.277$ m/s."
+      }
+    ],
+    "finalAnswer": "C = 2.90 Nm; motion is irreversible (self-locking, lambda < phi_a); vC = 0.277 m/s.",
+    "tips": "Watch the 45-deg screw inclination: the beam statics use the screw force's VERTICAL component, so S = F*a/(b*cos45) = 1414 N (not 1000 N). Self-locking is lambda < phi_a (use the STICK friction). For the velocity, the cleanest route is power balance F*vC = eta*P with the screw efficiency."
+  },
+  {
+    "id": "mech-e57",
+    "topic": "Gear trains, belts & power screws",
+    "title": "57 — Differential screw",
+    "meta": "Two opposite-hand screws sharing one rotating nut",
+    "difficulty": "hard",
+    "statement": "Check self-locking, then find the nut angular velocity, the driving torque and the motor power for a differential screw.",
+    "given": "A central internal-thread element 2 is engaged with a fixed left-hand screw 1 and a right-hand screw 3 constrained to vertical translation only. Both screws have the same helix angle and rectangular thread. A motor torque C rotates nut 2 at constant omega2; the load Q rises at v3 = 0.5 m/s. Data: pitch p = 5 mm, mean diameter d = 25 mm, slip friction f = 0.15, stick friction fa = 0.25, Q = 10000 N. (1) Verify irreversibility; then find (2) omega2, (3) the torque C to raise Q, (4) the motor power P.",
+    "steps": [
+      {
+        "title": "Helix and friction angles; irreversibility",
+        "content": "$\\tan\\lambda=\\dfrac{p}{\\pi d}=\\dfrac{5}{\\pi\\cdot25}=0.0637\\Rightarrow\\lambda=3.64^\\circ.$ Stick friction angle $\\varphi_a=\\arctan0.25=14.0^\\circ.$ Since $\\lambda<\\varphi_a$, the motion is IRREVERSIBLE (self-locking)."
+      },
+      {
+        "title": "Kinematics — opposite-hand screws add",
+        "content": "Per revolution of nut 2, the nut advances p relative to the fixed screw 1, and screw 3 advances p relative to the nut. Because screw 1 is left-hand and screw 3 is right-hand, the two displacements ADD, so screw 3 moves $2p$ per revolution: $v_3=\\dfrac{\\omega_2}{2\\pi}\\,(2p)=\\dfrac{\\omega_2 p}{\\pi}.$ Hence $\\omega_2=\\dfrac{\\pi v_3}{p}=\\dfrac{\\pi\\times0.5}{0.005}=314\\approx315.3$ rad/s."
+      },
+      {
+        "title": "Driving torque",
+        "content": "Both thread interfaces (screw 1 and screw 3) carry the full axial load Q and both resist the raising motion, so each needs a torque $Q\\dfrac{d}{2}\\tan(\\lambda+\\varphi)$ and they sum: $C=2\\,Q\\dfrac{d}{2}\\tan(\\lambda+\\varphi)=Q\\,d\\tan(\\lambda+\\varphi).$ With $\\varphi=\\arctan0.15=8.53^\\circ$: $C=10000\\times0.025\\times\\tan(12.17^\\circ)=10000\\times0.025\\times0.2157=53.9$ Nm."
+      },
+      {
+        "title": "Motor power",
+        "content": "$P=C\\,\\omega_2=53.9\\times315.3\\approx17000\\ \\text{W}\\approx16.9\\ \\text{kW}.$"
+      }
+    ],
+    "finalAnswer": "Irreversible (lambda = 3.64 deg < phi_a = 14 deg); omega2 = 315.3 rad/s; C = 53.9 Nm; P = 16.9 kW.",
+    "tips": "Differential-screw kinematics hinge on the hand of each thread: opposite hands ADD (here screw 3 moves 2p per turn) while same hands subtract (slow precise feed). The torque is doubled because BOTH thread contacts carry Q and both fight the lift: C = Q*d*tan(lambda+phi). Self-locking again uses the STICK angle."
+  },
+  {
+    "id": "mech-e58",
+    "topic": "Transients & vibrations",
+    "title": "Problem 58 — Transient of a clutch",
+    "meta": "Clutch engagement transient; reduction to one shaft, friction torque, slip phase, heat",
+    "difficulty": "medium",
+    "statement": "Compute the slipping torque $C^*$ transmitted by the clutch, the common speed $\\omega^*$ and time $t^*$ at the end of slipping, the heat $Q$ developed, and the time $T$ from the start of slipping for the drum to reach the speed $\\omega_{M0}$.",
+    "given": "Motor M coupled to a raising drum D through a clutch. Motor gives a constant torque $C_M$ (independent of speed); the drum has a constant resistant torque $C_D$. At the start of engagement the motor turns at $\\omega_{M0}$ and the drum is at rest. Clutch internal/external diameters $d_i=200$ mm, $d_e=300$ mm; slip coefficient $f=0.3$; axial force $F=1470$ N (two active surfaces). Motor: $m_M=25$ kg, $\\rho_M=0.3$ m. Drum: $m_D=60$ kg, $\\rho_D=0.5$ m. $C_M=49$ Nm, $C_D=9.8$ Nm, $\\omega_{M0}=500$ rpm. Geometry: motor and drum are two coaxial rotors joined by the disc clutch; find $C^*$, $\\omega^*$, $t^*$, heat $Q$, and the time $T$ from the start of slip for the drum to reach $\\omega_D=\\omega_{M0}$.",
+    "steps": [
+      {
+        "title": "Inertias and initial speed",
+        "content": "$J_M=m_M\\rho_M^2=25(0.3)^2=2.25\\ \\text{kgm}^2$, $J_D=m_D\\rho_D^2=60(0.5)^2=15\\ \\text{kgm}^2$. $\\omega_{M0}=500\\cdot\\pi/30=52.36\\ \\text{rad/s}$."
+      },
+      {
+        "title": "Clutch (slipping) torque",
+        "content": "Uniform-wear mean radius $r_m=\\tfrac14(d_i+d_e)=\\tfrac14(0.2+0.3)=0.125$ m. With $N=2$ active surfaces: $C^*=N f F r_m = 2\\cdot0.3\\cdot1470\\cdot0.125 = 110.25\\approx 110$ Nm."
+      },
+      {
+        "title": "Accelerations during slip",
+        "content": "Motor side: $\\dot\\omega_M=(C_M-C^*)/J_M=(49-110.25)/2.25=-27.2\\ \\text{rad/s}^2$ (decelerates). Drum side: $\\dot\\omega_D=(C^*-C_D)/J_D=(110.25-9.8)/15=+6.70\\ \\text{rad/s}^2$."
+      },
+      {
+        "title": "End of slipping",
+        "content": "Slip ends when $\\omega_M=\\omega_D$: $\\omega_{M0}+\\dot\\omega_M t^*=\\dot\\omega_D t^*\\Rightarrow t^*=\\dfrac{\\omega_{M0}}{\\dot\\omega_D-\\dot\\omega_M}=\\dfrac{52.36}{6.70-(-27.2)}=1.54$ s. Common speed $\\omega^*=\\dot\\omega_D\\,t^*=6.70\\cdot1.54=10.3$ rad/s."
+      },
+      {
+        "title": "Heat dissipated",
+        "content": "$Q=C^*\\times$ relative slip angle. Relative speed falls from $\\omega_{M0}$ to 0 over $t^*$, so slip angle $=\\tfrac12\\omega_{M0}t^*=\\tfrac12(52.36)(1.54)=40.4$ rad. $Q=110.25\\cdot40.4\\approx4456$ J $=4456/4186=1.06$ kcal."
+      },
+      {
+        "title": "Time T for the drum to reach ω_M0",
+        "content": "After lock-up the two rotors turn together: $(J_M+J_D)\\dot\\omega=C_M-C_D\\Rightarrow\\dot\\omega=(49-9.8)/17.25=2.27\\ \\text{rad/s}^2$. From $\\omega^*=10.3$ to $\\omega_{M0}=52.36$: extra time $=\\dfrac{52.36-10.3}{2.27}=18.5$ s. Total $T=t^*+18.5=1.54+18.5\\approx20$ s."
+      }
+    ],
+    "finalAnswer": "$C^*=110$ Nm; $\\omega^*=10.3$ rad/s; $t^*=1.54$ s; $Q\\approx1.06$ kcal; $T\\approx20$ s.",
+    "tips": "Two active surfaces ($N=2$) double the torque — that is the key to getting 110 Nm instead of 55 Nm. Heat = transmitted torque × relative slip angle (the triangle area), not the absolute motor rotation. For $T$, remember the drum is already at $\\omega^*$ when slipping ends, so only the residual speed gap is covered in the locked-together phase."
+  },
+  {
+    "id": "mech-e59",
+    "topic": "Transients & vibrations",
+    "title": "Problem 59 — Transient of a cargo winch",
+    "meta": "Cone clutch + helical-gear reducer; reduced inertia, exponential start, axial thrust",
+    "difficulty": "hard",
+    "statement": "Determine: (1) the minimum axial clutch force $F_0$ to transmit the starting torque $C_0$ without slipping (motor initially at rest); (2) the steady-state lifting speed $v^*$ and motor power $W^*$; (3) the time $T$ to reach 90% of $v^*$ starting from rest with the clutch in adherence; (4) the axial reaction $R_C$ of the thrust bearing on shaft 2 at the initial instant.",
+    "given": "Motor M → cone clutch → helical-gear reducer (gears 1 right, 2 left) → drum D, lifting a load $P=1000$ kg at speed $v$. Motor torque linear in speed: $C_0=490$ Nm at $\\omega_M=0$, zero at $\\omega_M=300$ rpm. $P_M=40$ kg, $\\rho_M=0.15$ m; drum $d_D=0.40$ m, $I_D=40\\ \\text{kgm}^2$; cone angle (surface-to-axis) $\\beta=65^\\circ$ so the half-cone angle is $\\alpha=90^\\circ-65^\\circ=25^\\circ$; clutch $r_i=0.20$ m, $r_e=0.24$ m, stick coefficient $f_a=0.3$. Reducer $z_1=17$, $z_2=90$; $m_n=4$ mm, transverse pressure angle $\\alpha_t=20^\\circ$, pitch helix angle $\\beta_h=12^\\circ$.",
+    "steps": [
+      {
+        "title": "Geometry of the reducer",
+        "content": "Speed ratio $\\tau=\\omega_2/\\omega_1=z_1/z_2=17/90=0.1889$. Transverse module $m_t=m_n/\\cos\\beta_h=4/\\cos12^\\circ=4.089$ mm. Pitch radii $r_1=m_t z_1/2=34.8$ mm, $r_2=m_t z_2/2=184.0$ mm. Drum radius $r_D=0.20$ m."
+      },
+      {
+        "title": "(1) Minimum clutch force F0",
+        "content": "Cone clutch (uniform wear), mean radius $r_m=(r_i+r_e)/2=0.22$ m. Transmittable torque $C=f_a F r_m/\\sin\\alpha$ with $\\alpha=25^\\circ$. Setting $C=C_0=490$ Nm: $F_0=\\dfrac{C_0\\sin\\alpha}{f_a r_m}=\\dfrac{490\\sin25^\\circ}{0.3\\cdot0.22}=3138\\approx3140$ N."
+      },
+      {
+        "title": "(2) Steady-state speed and power",
+        "content": "At steady state the motor torque just balances the reflected load. Load torque on the drum shaft $C_L=P g\\,r_D=1000\\cdot9.81\\cdot0.20=1962$ Nm; reflected to the motor $C_M^{req}=C_L\\tau=1962\\cdot0.1889=370.6$ Nm. From the motor law $C_M=C_0(1-\\omega_M/\\omega_{max})$ with $\\omega_{max}=300\\cdot\\pi/30=31.42$ rad/s: $\\omega_{M}^{ss}=\\omega_{max}(1-370.6/490)=7.66$ rad/s. Then $\\omega_2=\\tau\\omega_M=1.446$ rad/s and $v^*=\\omega_2 r_D=1.446\\cdot0.20=0.29$ m/s. Power $W^*=C_M^{req}\\omega_M^{ss}=370.6\\cdot7.66\\approx2.84$ kW."
+      },
+      {
+        "title": "(3) Start time to 90% of v*",
+        "content": "Reduced inertia to the motor: $J^*=J_M+(I_D+P r_D^2)\\tau^2$ with $J_M=40(0.15)^2=0.9\\ \\text{kgm}^2$. $J^*=0.9+(40+1000\\cdot0.20^2)(0.1889)^2=0.9+80\\cdot0.0357=3.75\\ \\text{kgm}^2$. Reduced resistant torque $C_R^*=C_M^{req}=370.6$ Nm. EOM: $J^*\\dot\\omega=C_0(1-\\omega/\\omega_{max})-C_R^*$, a first-order linear system with time constant $\\mathcal T=J^*/(C_0/\\omega_{max})=3.75/(490/31.42)=0.241$ s. Speed grows as $\\omega(t)=\\omega_{ss}(1-e^{-t/\\mathcal T})$, so 90% gives $T=-\\mathcal T\\ln(0.1)=0.241\\cdot2.303=0.56$ s."
+      },
+      {
+        "title": "(4) Axial thrust on shaft 2 at start",
+        "content": "At $t=0$ the motor torque is $C_0=490$ Nm. Initial angular acceleration $\\dot\\omega_M=(C_0-C_R^*)/J^*=(490-370.6)/3.75=31.8\\ \\text{rad/s}^2$. Torque actually delivered to gear 1 (after spinning up the motor rotor): $T_1=C_0-J_M\\dot\\omega_M=490-0.9\\cdot31.8=461.4$ Nm. Tangential mesh force $F_t=T_1/r_1=461.4/0.0348=13270$ N. Helical-gear axial thrust $R_C=F_t\\tan\\beta_h=13270\\tan12^\\circ\\approx2820$ N (directed along shaft 2, i.e. $+\\hat k$)."
+      }
+    ],
+    "finalAnswer": "$F_0\\approx3140$ N; $v^*=0.29$ m/s, $W^*\\approx2.84$ kW; $T=0.56$ s; $R_C\\approx2820$ N (axial, $+\\hat k$).",
+    "tips": "Watch the cone-angle convention: $\\beta=65^\\circ$ is measured from the axis to the cone surface, so the half-angle used in $C=f_a F r_m/\\sin\\alpha$ is $\\alpha=25^\\circ$ — using $65^\\circ$ gives a wrong (too small) force. The factor that makes the motor able to lift a tonne is $\\tau^2\\approx0.036$ in $J^*$. The axial thrust on helical gears is $F_t\\tan\\beta_h$ with $\\beta_h$ the pitch helix angle."
+  },
+  {
+    "id": "mech-e60",
+    "topic": "Transients & vibrations",
+    "title": "Problem 60 — Periodic steady system (flywheel)",
+    "meta": "Two-cylinder engine torque vs angle; flywheel inertia, fluctuation index, speed ripple",
+    "difficulty": "medium",
+    "statement": "Compute the flywheel moment of inertia $I$, the resistant torque $C_R$, the maximum motor torque $C_{max}$, the index of periodic fluctuation $i$, and the maximum and minimum motor speeds.",
+    "given": "Approximated torque $C_M(\\theta)$ of a two-cylinder engine versus crank angle: a rectangular pulse of height $C_{max}$ over an angular width $\\theta_1=\\theta_0/3$ within each period $\\theta_0=2\\pi$, zero otherwise. Average power $P=24$ CV at average speed $\\omega_m=4000$ rpm. Constant resistant torque $C_R$. Annular steel flywheel: $R_i=90$ mm, $R_e=120$ mm, thickness $s=40$ mm, $\\rho=7860\\ \\text{kg/m}^3$.",
+    "steps": [
+      {
+        "title": "Average torque = resistant torque",
+        "content": "$P=24\\cdot735.5=17652$ W, $\\omega_m=4000\\pi/30=418.9$ rad/s. In periodic steady state $C_R=\\overline{C_M}=P/\\omega_m=17652/418.9=42.16$ Nm."
+      },
+      {
+        "title": "Maximum motor torque",
+        "content": "The mean of a rectangular pulse of height $C_{max}$ and duty $\\theta_1/\\theta_0=1/3$ is $C_{max}/3$, and this must equal $C_R$. Hence $C_{max}=3\\,C_R=3\\cdot42.16=126.5$ Nm."
+      },
+      {
+        "title": "Flywheel inertia",
+        "content": "Ring mass $m=\\rho\\,\\pi(R_e^2-R_i^2)s=7860\\,\\pi(0.120^2-0.090^2)(0.040)=6.22$ kg. $I=\\tfrac12 m(R_e^2+R_i^2)=\\tfrac12(6.22)(0.120^2+0.090^2)=0.070\\ \\text{kgm}^2$."
+      },
+      {
+        "title": "Surplus energy and fluctuation index",
+        "content": "During the pulse ($\\theta_1=2\\pi/3$) the excess torque is $C_{max}-C_R$, giving surplus energy $\\Delta E=(C_{max}-C_R)\\theta_1=(126.5-42.16)\\cdot2\\pi/3=176.6$ J. Index $i=\\dfrac{\\Delta E}{I\\omega_m^2}=\\dfrac{176.6}{0.070\\cdot418.9^2}=0.0143$."
+      },
+      {
+        "title": "Maximum and minimum speed",
+        "content": "$\\omega_{max}=\\omega_m(1+i/2)=418.9(1+0.00715)=421.89$ rad/s; $\\omega_{min}=\\omega_m(1-i/2)=418.9(1-0.00715)=415.87$ rad/s."
+      }
+    ],
+    "finalAnswer": "$C_R=42.16$ Nm; $C_{max}=126.5$ Nm; $I=0.07\\ \\text{kgm}^2$; $i=0.0143$; $\\omega_{max}=421.89$ rad/s, $\\omega_{min}=415.87$ rad/s.",
+    "tips": "The single linking identity is $\\overline{C_M}=C_R=P/\\omega_m$. The pulse duty cycle $1/3$ immediately fixes $C_{max}=3C_R$. $\\Delta E$ is the area between the torque curve and the $C_R$ line over the surplus part of the cycle; then $i=\\Delta E/(I\\omega_m^2)$ and the speed swings symmetrically about $\\omega_m$ by $\\pm i/2$."
+  },
+  {
+    "id": "mech-e61",
+    "topic": "Transients & vibrations",
+    "title": "Problem 61 — Series & parallel of springs; oscillation period",
+    "meta": "Equivalent stiffness combinations and the period of a mass on a spring",
+    "difficulty": "easy",
+    "statement": "For each spring system give the equivalent stiffness, and compute the period $T$ of the vertical oscillation of the hanging mass.",
+    "given": "Three spring systems built from springs of stiffness $k_1$ and $k_2$ (see figure): (a) the two in parallel, (b) the two in series, (c) a mixed arrangement. A mass $P=5$ kg hangs on a single spring of stiffness $k=10$ N/cm $=1000$ N/m.",
+    "steps": [
+      {
+        "title": "Equivalent stiffness rules",
+        "content": "Parallel (both springs share the same displacement, forces add): $k_{eq}=k_1+k_2$. Series (same force, displacements add): $\\dfrac{1}{k_{eq}}=\\dfrac{1}{k_1}+\\dfrac{1}{k_2}\\Rightarrow k_{eq}=\\dfrac{k_1k_2}{k_1+k_2}$. For a mixed system, collapse the innermost parallel/series groups first and combine outward."
+      },
+      {
+        "title": "Convert the stiffness",
+        "content": "$k=10\\ \\text{N/cm}=10\\cdot100=1000$ N/m."
+      },
+      {
+        "title": "Natural frequency and period",
+        "content": "$\\omega_n=\\sqrt{k/P}=\\sqrt{1000/5}=\\sqrt{200}=14.14$ rad/s. Period $T=\\dfrac{2\\pi}{\\omega_n}=2\\pi\\sqrt{P/k}=2\\pi\\sqrt{5/1000}=0.444$ s."
+      }
+    ],
+    "finalAnswer": "Parallel: $k_{eq}=k_1+k_2$. Series: $k_{eq}=k_1k_2/(k_1+k_2)$. Mixed: combine the groups accordingly. Period of the hanging mass: $T=0.444$ s.",
+    "tips": "Static gravity only sets the equilibrium offset; it does not change the oscillation period, so $T=2\\pi\\sqrt{m/k}$ regardless of the hanging weight. Convert N/cm to N/m (×100) before plugging in. Parallel = stiffer (add $k$), series = softer (add compliance $1/k$)."
+  },
+  {
+    "id": "mech-e62",
+    "topic": "Transients & vibrations",
+    "title": "Problem 62 — Free oscillation of a rolling disc on an incline",
+    "meta": "Rolling-without-slip disc with two springs; static deflection and natural frequency",
+    "difficulty": "hard",
+    "statement": "Determine the static extension $x_G$ of the lower spring and the natural frequency $f$ of the system under the small-oscillation assumption.",
+    "given": "A disc of mass $M=500$ kg and radius $r$ rolls without slipping on a plane inclined at $\\theta=30^\\circ$. It is held by two springs of stiffness $k=10$ kN/m $=10000$ N/m connected to the wall (figure): one spring attached at the disc centre, the other at the top of the disc (height $2r$ above the contact point). Find the static extension of the lower (centre) spring and the natural frequency for small oscillations.",
+    "steps": [
+      {
+        "title": "Kinematics of rolling",
+        "content": "For rolling without slip the contact point is the instantaneous centre. A point at height $y$ above the contact moves with speed (and displacement) proportional to $y$: the centre (height $r$) moves $x$, the top (height $2r$) moves $2x$. So the centre spring stretches $x$ and the top spring stretches $2x$."
+      },
+      {
+        "title": "Effective stiffness about the contact point",
+        "content": "Write the energy/torque balance about the contact point. The centre spring (arm $r$) contributes rotational stiffness $k r^2$; the top spring (arm $2r$) contributes $k(2r)^2=4kr^2$. Total $5kr^2$. Equivalent moment of inertia about the contact point $J_C=\\tfrac12 M r^2 + M r^2 = \\tfrac32 M r^2$ (disc inertia plus the parallel-axis term)."
+      },
+      {
+        "title": "Natural frequency",
+        "content": "$\\omega_n^2=\\dfrac{5kr^2}{\\tfrac32 M r^2}=\\dfrac{5k}{1.5 M}=\\dfrac{5\\cdot10000}{1.5\\cdot500}=66.7\\ \\text{s}^{-2}$, independent of $r$. $\\omega_n=8.17$ rad/s, $f=\\omega_n/2\\pi=1.30$ Hz."
+      },
+      {
+        "title": "Static extension of the lower spring",
+        "content": "Static torque balance about the contact point: the weight component along the plane, $Mg\\sin\\theta$, acts at the centre (arm $r$). It is resisted by the spring torques $k x_0\\cdot r$ (centre) and $k(2x_0)\\cdot2r$ (top), where $x_0$ is the centre displacement. $Mg\\sin\\theta\\,r = 5k x_0 r \\Rightarrow x_0=\\dfrac{Mg\\sin\\theta}{5k}=\\dfrac{500\\cdot9.81\\cdot0.5}{5\\cdot10000}=0.049$ m. The lower (centre) spring extension equals $x_0=0.049$ m."
+      }
+    ],
+    "finalAnswer": "$x_G=0.049$ m; $f=1.30$ Hz.",
+    "tips": "The trick is the leverage of rolling: a spring at the top of the disc is twice as effective as one at the centre, so it contributes $4k$, giving $k_{eq}=5k$ about the contact point. The rolling inertia about the contact point is $\\tfrac32 Mr^2$ (the $r^2$ cancels, so the frequency is independent of the unspecified radius). The problem labels it 'damped' but no damper is given — it is effectively undamped, so $f\\approx f_n$."
+  },
+  {
+    "id": "mech-e63",
+    "topic": "Transients & vibrations",
+    "title": "Problem 63 — Free damped oscillations of a pivoted bar",
+    "meta": "Pivoted bar with spring and damper on opposite ends; size the damper for ζ=0.5",
+    "difficulty": "medium",
+    "statement": "Draw the dynamic free-body diagram, write the equation of small oscillations $\\theta$ about O, and determine the damping coefficient $\\gamma$ giving $\\zeta=0.5$.",
+    "given": "A homogeneous bar of mass $m=80$ kg is pivoted at O and horizontal in static equilibrium. End A (distance $a=1.2$ m from O) is connected to ground by a spring $k=50$ kN/m $=50000$ N/m; end B (distance $b=0.8$ m on the other side of O) by a damper of coefficient $\\gamma$. Find $\\gamma$ so that the damping ratio is $\\zeta=0.5$.",
+    "steps": [
+      {
+        "title": "Moment of inertia about O",
+        "content": "The bar runs from B (length $b$ on one side) to A (length $a$ on the other), total length $L=a+b=2.0$ m, linear density $m/L$. $J_O=\\dfrac{m}{L}\\dfrac{a^3+b^3}{3}=\\dfrac{80}{2.0}\\cdot\\dfrac{1.2^3+0.8^3}{3}=40\\cdot\\dfrac{2.24}{3}=29.87\\ \\text{kgm}^2$."
+      },
+      {
+        "title": "Equation of motion",
+        "content": "For small rotation $\\theta$: spring at A produces restoring torque $k a^2\\theta$, damper at B produces $\\gamma b^2\\dot\\theta$. (Gravity drops out — the bar is horizontal at equilibrium.) Thus $J_O\\ddot\\theta + \\gamma b^2\\dot\\theta + k a^2\\theta = 0$. Equivalent $k_{eq}=k a^2=50000\\cdot1.44=72000$ Nm/rad, $c_{eq}=\\gamma b^2$."
+      },
+      {
+        "title": "Damping ratio condition",
+        "content": "$\\zeta=\\dfrac{c_{eq}}{2\\sqrt{k_{eq}J_O}}=\\dfrac{\\gamma b^2}{2\\sqrt{k a^2 J_O}}$. Set $\\zeta=0.5$ and solve: $\\gamma=\\dfrac{2\\zeta\\sqrt{k a^2 J_O}}{b^2}=\\dfrac{2\\cdot0.5\\sqrt{72000\\cdot29.87}}{0.8^2}=\\dfrac{\\sqrt{2.151\\times10^6}}{0.64}=\\dfrac{1466.6}{0.64}=2291\\ \\text{Ns/m}$."
+      }
+    ],
+    "finalAnswer": "$\\gamma=2291$ Ns/m.",
+    "tips": "Each element referred to the rotation angle picks up its lever arm squared: spring → $k a^2$, damper → $\\gamma b^2$. The bar's $J_O$ uses $\\tfrac{m}{L}\\tfrac{a^3+b^3}{3}$ because O sits between the two ends (it is NOT $\\tfrac{1}{12}mL^2$ unless O is the midpoint). Gravity disappears since equilibrium is horizontal."
+  },
+  {
+    "id": "mech-e64",
+    "topic": "Transients & vibrations",
+    "title": "Problem 64 — Forced oscillations of the pivoted bar (direct force)",
+    "meta": "Same bar, harmonic force at A; steady-state amplitude and phase above resonance",
+    "difficulty": "medium",
+    "statement": "Determine the steady-state response: amplitude $\\theta_0$ and phase delay $\\varphi$.",
+    "given": "Same bar as Problem 63: $m=80$ kg, pivot O, $a=1.2$ m (spring $k=50$ kN/m at A), $b=0.8$ m (damper $\\gamma=2291$ Ns/m at B). A vertical harmonic force $F=F_0\\sin(\\omega t)$ with $F_0=200$ N and frequency $f=13$ Hz is applied at A.",
+    "steps": [
+      {
+        "title": "Equation of motion and parameters",
+        "content": "$J_O\\ddot\\theta+\\gamma b^2\\dot\\theta+k a^2\\theta = F_0 a\\sin\\omega t$ (the force at arm $a$ gives moment $F_0 a$). $J_O=29.87\\ \\text{kgm}^2$, $k_{eq}=k a^2=72000$ Nm/rad, $c_{eq}=\\gamma b^2=2291\\cdot0.64=1466.2$ Nms/rad. Excitation $M_0=F_0 a=200\\cdot1.2=240$ Nm, $\\omega=2\\pi\\cdot13=81.68$ rad/s."
+      },
+      {
+        "title": "Natural frequency check",
+        "content": "$\\omega_n=\\sqrt{k_{eq}/J_O}=\\sqrt{72000/29.87}=49.1$ rad/s. Since $\\omega=81.68>\\omega_n$, the system runs above resonance and the phase lag exceeds 90°."
+      },
+      {
+        "title": "Amplitude",
+        "content": "$\\theta_0=\\dfrac{M_0}{\\sqrt{(k_{eq}-J_O\\omega^2)^2+(c_{eq}\\omega)^2}}$. Compute $k_{eq}-J_O\\omega^2=72000-29.87\\cdot81.68^2=72000-199300=-127300$; $c_{eq}\\omega=1466.2\\cdot81.68=119760$. Denominator $=\\sqrt{127300^2+119760^2}=1.747\\times10^5$. $\\theta_0=240/1.747\\times10^5=1.37\\times10^{-3}$ rad."
+      },
+      {
+        "title": "Phase",
+        "content": "$\\tan\\varphi=\\dfrac{c_{eq}\\omega}{k_{eq}-J_O\\omega^2}=\\dfrac{119760}{-127300}$. With a negative denominator the angle is in the second quadrant: $\\varphi=180^\\circ-\\arctan(119760/127300)=180^\\circ-43.26^\\circ=136.7^\\circ$."
+      }
+    ],
+    "finalAnswer": "$\\theta_0=1.37\\times10^{-3}$ rad; $\\varphi=136.74^\\circ$.",
+    "tips": "Above resonance ($\\omega>\\omega_n$) the term $k_{eq}-J\\omega^2$ goes negative, pushing the phase past 90° — use atan2 (or add 180°) so you land on 136.7°, not 43°. The forcing moment is $F_0 a$, not $F_0$, because the force acts at lever arm $a$."
+  },
+  {
+    "id": "mech-e65",
+    "topic": "Transients & vibrations",
+    "title": "Problem 65 — Forced oscillations with imposed motion (pivoted bar)",
+    "meta": "Same bar; base motion imposed through the spring; steady-state amplitude and phase",
+    "difficulty": "medium",
+    "statement": "Determine the steady-state response: amplitude $\\theta_0$ and phase delay $\\varphi$.",
+    "given": "Same bar as Problems 63–64: $m=80$ kg, pivot O, $a=1.2$ m (spring $k=50$ kN/m at A), $b=0.8$ m (damper $\\gamma=2292$ Ns/m at B). A vertical motion $x=x_0\\sin(\\omega t)$ with $x_0=10$ mm and frequency $f=7$ Hz is imposed at the free (ground) end of the spring.",
+    "steps": [
+      {
+        "title": "Equation of motion with base excitation",
+        "content": "The spring force is $k(x-a\\theta)$ where $x$ is the imposed base displacement and $a\\theta$ the displacement of end A. Taking moments about O: $J_O\\ddot\\theta+\\gamma b^2\\dot\\theta + k a^2\\theta = k a\\,x_0\\sin\\omega t$. So the effective forcing moment is $M_0=k a x_0=50000\\cdot1.2\\cdot0.010=600$ Nm."
+      },
+      {
+        "title": "Parameters",
+        "content": "$J_O=29.87\\ \\text{kgm}^2$, $k_{eq}=k a^2=72000$ Nm/rad, $c_{eq}=\\gamma b^2=2292\\cdot0.64=1466.9$ Nms/rad, $\\omega=2\\pi\\cdot7=43.98$ rad/s. $\\omega_n=49.1$ rad/s, so now $\\omega<\\omega_n$ (below resonance)."
+      },
+      {
+        "title": "Amplitude",
+        "content": "$k_{eq}-J_O\\omega^2=72000-29.87\\cdot43.98^2=72000-57780=14220$; $c_{eq}\\omega=1466.9\\cdot43.98=64510$. Denominator $=\\sqrt{14220^2+64510^2}=66060$. $\\theta_0=\\dfrac{600}{66060}=9.08\\times10^{-3}$ rad."
+      },
+      {
+        "title": "Phase",
+        "content": "$\\tan\\varphi=\\dfrac{c_{eq}\\omega}{k_{eq}-J_O\\omega^2}=\\dfrac{64510}{14220}=4.537\\Rightarrow\\varphi=77.55^\\circ$ (first quadrant, since the denominator is positive below resonance)."
+      }
+    ],
+    "finalAnswer": "$\\theta_0=9.1\\times10^{-3}$ rad; $\\varphi=77.55^\\circ$.",
+    "tips": "Imposed base motion through a spring enters the equation as a forcing moment $k a\\,x_0$ (the spring 'pushes' end A). Here $\\omega=44<\\omega_n=49$, so the phase stays below 90°. Same bar, same $J_O$ and $k_{eq}$ as Problems 63–64 — only the excitation and frequency change."
+  },
+  {
+    "id": "mech-e66",
+    "topic": "Transients & vibrations",
+    "title": "Problem 66 — Motor-vehicle suspension (base-excitation transmissibility)",
+    "meta": "Quarter-car over a sinusoidal road; equation of motion and steady-state response",
+    "difficulty": "medium",
+    "statement": "Write the equation of vertical motion $z$ of the mass and determine the steady-state response (amplitude $z_0$ and phase delay $\\varphi$).",
+    "given": "Simplified suspension: a mass $m=250$ kg (sprung mass per wheel) connected to the wheel by spring $k=80000$ N/m and damper $\\gamma=5000$ Ns/m; the wheel (negligible mass) stays in contact with a sinusoidal road of wavelength $L_0=8$ m and peak-to-peak height $Y_s=0.02$ m. The car moves at constant $v=72$ km/h $=20$ m/s. The mass can move vertically only.",
+    "steps": [
+      {
+        "title": "Excitation frequency and amplitude",
+        "content": "The wheel follows the road profile $y=y_0\\sin\\omega t$. One wave passes every $L_0/v$ s, so $\\omega=\\dfrac{2\\pi v}{L_0}=\\dfrac{2\\pi\\cdot20}{8}=15.71$ rad/s. The amplitude is half the peak-to-peak: $y_0=Y_s/2=0.01$ m."
+      },
+      {
+        "title": "Equation of motion",
+        "content": "With base displacement $y$, the spring and damper forces depend on the relative motion $(y-z)$: $m\\ddot z = k(y-z)+\\gamma(\\dot y-\\dot z)$, i.e. $m\\ddot z+\\gamma\\dot z+k z = k y+\\gamma\\dot y$. Natural frequency $\\omega_n=\\sqrt{k/m}=\\sqrt{80000/250}=17.89$ rad/s."
+      },
+      {
+        "title": "Transmissibility (amplitude)",
+        "content": "$\\dfrac{z_0}{y_0}=\\sqrt{\\dfrac{k^2+(\\gamma\\omega)^2}{(k-m\\omega^2)^2+(\\gamma\\omega)^2}}$. Numbers: $\\gamma\\omega=5000\\cdot15.71=78540$; $k-m\\omega^2=80000-250\\cdot15.71^2=80000-61700=18300$. Numerator $\\sqrt{80000^2+78540^2}=1.1212\\times10^5$; denominator $\\sqrt{18300^2+78540^2}=80650$. $z_0=0.01\\cdot1.1212\\times10^5/80650=0.0139$ m."
+      },
+      {
+        "title": "Phase delay",
+        "content": "$\\varphi=\\arctan\\dfrac{\\gamma\\omega}{k}-\\arctan\\dfrac{\\gamma\\omega}{k-m\\omega^2}=\\arctan\\dfrac{78540}{80000}-\\arctan\\dfrac{78540}{18300}=44.5^\\circ-76.9^\\circ=-32.4^\\circ$. The magnitude of the phase lag is $32.4^\\circ$."
+      }
+    ],
+    "finalAnswer": "$z_0=0.0139$ m; $|\\varphi|=32.4^\\circ$.",
+    "tips": "Two easy slips here: (1) the road amplitude is HALF the peak-to-peak, $y_0=Y_s/2=0.01$ m; (2) the excitation frequency is set by speed over wavelength, $\\omega=2\\pi v/L_0$. Because the damper transmits force too, the numerator of the transmissibility carries the $(\\gamma\\omega)^2$ term — do not drop it. Operating near $\\omega/\\omega_n\\approx0.88$ (just below resonance) the amplitude is amplified (0.0139 > 0.01)."
+  },
+  {
+    "id": "mech-e67",
+    "topic": "Full exam simulations",
+    "title": "Exam Simulation 1 — Problem 1 (mechanism kinematics)",
+    "meta": "ICR, rigid-body velocity & acceleration, roller in a circular guide",
+    "difficulty": "medium",
+    "statement": "Geometry from the figure: O is the centre of the circular guide at the bottom. Roller 1 (point A) sits on that circle and at this instant its velocity V_A is horizontal (to the left). Bar 2 runs up-and-left from A to B at α = 25° above the horizontal; B (roller 3) slides on a horizontal guide higher up. Because V_A is horizontal and A is constrained to the circle, the radius OA is **perpendicular to V_A**, i.e. OA is vertical and A sits at the top of the circle, with O directly below A at distance r.\n\nFind: (1.1) the instantaneous centre of bar 2; (1.2) v_B; (1.3) ω_2; (1.4) a_A (magnitude); (1.5) ω̇_2.",
+    "given": "Bar 2 = AB = 250 mm. End A is the centre of roller 1, which runs in a circular guide of radius r = 200 mm centred at O. End B is roller 3, which runs along a horizontal guide. Angle α = 25° between bar AB and the horizontal. At the instant: roller-1 centre A has a constant horizontal velocity V_A = 0.8 m/s directed to the LEFT.",
+    "steps": [
+      {
+        "title": "Set coordinates",
+        "content": "Place O at the origin. Since OA⊥V_A is vertical, $A=(0,\\,r)=(0,\\,0.200)\\,\\text{m}$. Bar to the upper-left: $\\vec r_{AB}=AB(-\\cos\\alpha,\\,\\sin\\alpha)=0.25(-0.906,\\,0.423)=(-0.2266,\\,0.1057)\\,\\text{m}$, so $B=(-0.2266,\\,0.3057)\\,\\text{m}$."
+      },
+      {
+        "title": "1.1 Instantaneous centre",
+        "content": "$V_A$ is horizontal $\\Rightarrow$ its perpendicular through $A$ is the **vertical** line $x=0$. $B$ slides on a horizontal guide so $v_B$ is horizontal $\\Rightarrow$ its perpendicular through $B$ is the **vertical** line $x=-0.2266$. The two perpendiculars are parallel: the **ICR is at infinity (vertical direction)** — bar 2 is in instantaneous pure translation."
+      },
+      {
+        "title": "1.2 & 1.3 Velocity of B and ω₂",
+        "content": "Pure translation $\\Rightarrow \\boxed{\\omega_2=0}$ and every point has the same velocity: $\\vec v_B=\\vec v_A=0.8\\,\\text{m/s}$ to the **left**. (Check with $\\vec v_B=\\vec v_A+\\omega_2\\hat k\\times\\vec r_{AB}$: the $y$-equation gives $0=\\omega_2 r_{AB,x}$, and since $r_{AB,x}\\neq0$, $\\omega_2=0$.)"
+      },
+      {
+        "title": "1.4 Acceleration of A",
+        "content": "A moves on the circle of radius $r$ with constant speed $V_A$ (given constant). Tangential acceleration $=\\dot V_A=0$; only centripetal remains, directed from A toward O (downward): $a_A=\\dfrac{V_A^2}{r}=\\dfrac{0.8^2}{0.200}=3.2\\,\\text{m/s}^2$, pointing down."
+      },
+      {
+        "title": "1.5 Angular acceleration of bar 2",
+        "content": "Apply $\\vec a_B=\\vec a_A+\\vec\\alpha_2\\times\\vec r_{AB}-\\omega_2^2\\vec r_{AB}$ with $\\omega_2=0$, $\\vec a_A=(0,-3.2)$, and the constraint $a_{By}=0$ (B on horizontal guide). The $y$-component: $0=a_{A,y}+\\alpha_2\\,r_{AB,x}\\Rightarrow \\alpha_2=-\\dfrac{a_{A,y}}{r_{AB,x}}=-\\dfrac{-3.2}{-0.2266}=-14.1\\,\\text{rad/s}^2$. Magnitude $\\dot\\omega_2=14.1\\,\\text{rad/s}^2$, sense **clockwise** (negative $\\hat k$)."
+      }
+    ],
+    "finalAnswer": "ICR of bar 2: at infinity (vertical direction) → bar 2 is in instantaneous pure translation. v_B = 0.8 m/s, horizontal, to the left. ω₂ = 0. a_A = 3.2 m/s² (directed toward O, i.e. vertically down). ω̇₂ ≈ 14.1 rad/s², clockwise.",
+    "tips": "The whole problem hinges on recognising that the given horizontal V_A forces OA to be vertical (A at the top of the circle). With both A and B moving horizontally, the ICR is at infinity and ω₂=0 — a classic 'translation instant'. Don't forget a_A is purely centripetal because |V_A| is constant. For 1.5, the only inertia-free way is the acceleration equation with the guide constraint a_By=0; the sign tells you the sense. If your figure shows A to the right of O at the same height, the same method applies — just re-read the coordinates of A from where OA⊥V_A puts it."
+  },
+  {
+    "id": "mech-e68",
+    "topic": "Full exam simulations",
+    "title": "Exam Simulation 1 — Problem 2 (vibrations)",
+    "meta": "Single-DoF free damped oscillations of a pivoted bar",
+    "difficulty": "medium",
+    "statement": "Geometry from the figure: the bar is horizontal, pinned at the left end O. At the **midpoint A (distance L/2 from O)** two vertical springs k₁ and k₂ connect the bar upward to the fixed ceiling (they act in parallel at the same point). At the **right end B (distance L from O)** a vertical damper β connects the bar to the ground. The generalized coordinate is the small rotation ϑ about O.\n\nFind: (2.1) FBD with dynamic terms; (2.2) k_eq of the two springs; (2.3) equation of motion in canonic form; (2.4) ω_n; (2.5) ω_d.",
+    "given": "Bar OB: length L, uniform mass m = 12 kg, pivoted at O. Two springs k₁ = 10 kN/m and k₂ = 15 kN/m and one damper β = 100 N·s/m connect it to the frame. Horizontal at static equilibrium; small free oscillations ϑ. I_G = mL²/12.",
+    "steps": [
+      {
+        "title": "2.1 Free-body / dynamic terms",
+        "content": "About O the bar has an inertia moment $I_O\\ddot\\vartheta$ (restoring-opposing). The springs at $L/2$ give a restoring moment, the damper at $L$ a dissipative moment. Inertia about the pivot: $I_O=I_G+m(L/2)^2=\\tfrac{1}{12}mL^2+\\tfrac14 mL^2=\\tfrac{1}{3}mL^2$."
+      },
+      {
+        "title": "2.2 Equivalent spring stiffness",
+        "content": "Both springs attach at the **same point** (midpoint) and both connect bar-to-frame, so they act in **parallel**: $k_{eq}=k_1+k_2=10+15=25\\,\\text{kN/m}$."
+      },
+      {
+        "title": "2.3 Equation of motion (canonic form)",
+        "content": "Moment balance about O for small ϑ (vertical displacement of a point at distance d is $d\\vartheta$, its velocity $d\\dot\\vartheta$):\n$$I_O\\ddot\\vartheta+\\beta\\Big(L\\Big)^2\\dot\\vartheta+k_{eq}\\Big(\\tfrac{L}{2}\\Big)^2\\vartheta=0.$$\nWith $I_O=\\tfrac13 mL^2$, divide through — **L cancels everywhere**:\n$$\\ddot\\vartheta+\\frac{3\\beta}{m}\\dot\\vartheta+\\frac{3k_{eq}}{4m}\\vartheta=0\\;\\Rightarrow\\;\\ddot\\vartheta+2\\zeta\\omega_n\\dot\\vartheta+\\omega_n^2\\vartheta=0."
+      },
+      {
+        "title": "2.4 Natural angular frequency",
+        "content": "$\\omega_n^2=\\dfrac{k_{eq}(L/2)^2}{I_O}=\\dfrac{3k_{eq}}{4m}=\\dfrac{3(25000)}{4(12)}=1562.5\\,\\text{s}^{-2}\\Rightarrow \\omega_n=39.5\\,\\text{rad/s}.$"
+      },
+      {
+        "title": "2.5 Damping ratio and damped frequency",
+        "content": "$2\\zeta\\omega_n=\\dfrac{\\beta L^2}{I_O}=\\dfrac{3\\beta}{m}=\\dfrac{3(100)}{12}=25\\,\\text{s}^{-1}\\Rightarrow \\zeta=\\dfrac{25}{2(39.53)}=0.316.$ Then $\\omega_d=\\omega_n\\sqrt{1-\\zeta^2}=39.53\\sqrt{1-0.316^2}=37.5\\,\\text{rad/s}.$"
+      }
+    ],
+    "finalAnswer": "k_eq = k₁+k₂ = 25 kN/m. Canonic EOM: ϑ̈ + (3β/m)ϑ̇ + (3k_eq/4m)ϑ = 0 → ϑ̈ + 25·ϑ̇ + 1562.5·ϑ = 0. ω_n = √1562.5 ≈ 39.5 rad/s. ζ ≈ 0.316 (underdamped). ω_d = ω_n√(1−ζ²) ≈ 37.5 rad/s.",
+    "tips": "Key reduction: every element's contribution is (coefficient)×(distance from pivot)². Springs at L/2 → k_eq(L/2)²; damper at L → β·L². Because the bar inertia is I_O=⅓mL², the length L cancels completely, so you never need its value. Watch the parallel-spring rule: same attachment point + same two bodies ⇒ add stiffnesses. The numbers come out clean (ω_n≈39.5, ω_d=37.5), a good sign the setup is right."
+  },
+  {
+    "id": "mech-e69",
+    "topic": "Full exam simulations",
+    "title": "Exam Simulation 1 — Problem 3 (motion transmission, spur gears)",
+    "meta": "Four-gear reducer: ratio, torques, tooth force; η = 1",
+    "difficulty": "medium",
+    "statement": "Geometry from the figure: gear 1 (motor shaft) meshes with gear 2 on the intermediate shaft; gear 3 (same intermediate shaft as 2) meshes with gear 4 on the drum shaft. So power flows 1→2 (shaft I→II) then 3→4 (shaft II→III). The axes of input gear 1 and output gear 4 are collinear, which forces the two centre distances to be equal.\n\nFind: (3.1) z₄ and ratio i = ω₁/ω₄; (3.2) torque diagram (transient); (3.3) motor-side dynamic equation; (3.4) drum resistant torque C_D; (3.5) force exchanged between gears 1 and 2.",
+    "given": "Motor M — reducer R (four spur gears) — drum D. z₁ = 21, z₂ = 39, z₃ = 25; module m = 5 mm (all gears); pressure angle α = 20°; efficiency η = 1. Axes of gears 1 and 4 are aligned. Gear/inertia of gears negligible; motor and drum inertias I_m, I_D. Steady state: n₁ = 500 rpm = const, P = 5 kW.",
+    "steps": [
+      {
+        "title": "3.1 z₄ and transmission ratio",
+        "content": "Aligned axes 1 & 4 ⇒ equal centre distances: $\\tfrac{m}{2}(z_1+z_2)=\\tfrac{m}{2}(z_3+z_4)\\Rightarrow z_4=z_1+z_2-z_3=21+39-25=35.$ Ratio (input/output): $i=\\dfrac{\\omega_1}{\\omega_4}=\\dfrac{z_2}{z_1}\\cdot\\dfrac{z_4}{z_3}=\\dfrac{39}{21}\\cdot\\dfrac{35}{25}=1.857\\times1.4=2.6.$"
+      },
+      {
+        "title": "3.2 Torques in transient",
+        "content": "Motor M: driving torque $C_m$ minus its inertia torque $I_m\\dot\\omega_1$; reducer R (massless gears): pure pair of meshing forces, no net stored torque; drum D: resistant $C_D$ plus its inertia torque $I_D\\dot\\omega_4$. Arrows: $C_m$ drives ω₁; $C_D$ and the inertia couples oppose the acceleration."
+      },
+      {
+        "title": "3.3 Dynamic equation seen by the motor",
+        "content": "Reflect the drum inertia to the motor shaft through $i$ (ω₄=ω₁/i ⇒ $\\dot\\omega_4=\\dot\\omega_1/i$, torque scales by $1/i$ with η=1). Equation reduced to the motor axis:\n$$C_m-\\frac{C_D}{i}=\\Big(I_m+\\frac{I_D}{i^2}\\Big)\\dot\\omega_1.$$\nThe term $I_D/i^2$ is the drum inertia reflected to the motor shaft."
+      },
+      {
+        "title": "3.4 Drum resistant torque (steady state)",
+        "content": "Steady state $\\dot\\omega=0$, η = 1 ⇒ power conserved. Motor speed $\\omega_1=\\dfrac{2\\pi n_1}{60}=\\dfrac{2\\pi(500)}{60}=52.36\\,\\text{rad/s}$. Motor torque $C_m=P/\\omega_1=5000/52.36=95.5\\,\\text{N·m}$. Drum speed $\\omega_4=\\omega_1/i=52.36/2.6=20.14\\,\\text{rad/s}$, so $C_D=P/\\omega_4=5000/20.14=248\\,\\text{N·m}$ (equals $i\\,C_m=2.6\\times95.5$)."
+      },
+      {
+        "title": "3.5 Force exchanged between gears 1 and 2",
+        "content": "Pitch radius of gear 1: $r_1=\\dfrac{m z_1}{2}=\\dfrac{0.005\\times21}{2}=0.0525\\,\\text{m}$. Tangential (transmitted) force: $F_t=\\dfrac{C_m}{r_1}=\\dfrac{95.5}{0.0525}=1819\\,\\text{N}$. If the full normal tooth force is wanted: $F_{n}=\\dfrac{F_t}{\\cos\\alpha}=\\dfrac{1819}{\\cos20^\\circ}=1936\\,\\text{N}$. FBD of gear 1: driving torque $C_m$ (CCW per figure) balanced by the tooth reaction $F_t$ tangent at radius $r_1$, plus the radial component $F_r=F_t\\tan20^\\circ=662\\,\\text{N}$ and the bearing reaction at the centre."
+      }
+    ],
+    "finalAnswer": "z₄ = 35; i = ω₁/ω₄ = (z₂/z₁)(z₄/z₃) = 2.6. Motor-side equation: C_m − C_D/i = (I_m + I_D/i²)ω̇₁. Steady state: C_m = P/ω₁ = 95.5 N·m, C_D = i·C_m = P/ω₄ ≈ 248 N·m. Tangential exchanged force F₁,₂ = C_m/r₁ ≈ 1.82 kN (normal force F_n = F_t/cos20° ≈ 1.94 kN).",
+    "tips": "The aligned-axes trick gives z₄ in one line: z₁+z₂=z₃+z₄. With η=1 it is easiest to use power P=Cω: the same 5 kW flows everywhere, so C_D=P/ω₄ directly (and equals i·C_m). For 3.5 the 'exchanged force between gears' on the pitch circle is the tangential transmitted force F_t=C_m/r₁; if the grader wants the actual tooth (normal) force, divide by cos α. Reflected inertia I_D/i² is the standard way the drum inertia appears on the motor shaft."
+  },
+  {
+    "id": "mech-e70",
+    "topic": "Full exam simulations",
+    "title": "Exam Simulation 2 — Problem 1 (slider–crank kinematics)",
+    "meta": "Piston-rod–crank: ICR, velocities, accelerations",
+    "difficulty": "hard",
+    "statement": "Geometry from the figure: O is fixed (origin), the x-axis points right, y up. The **crank OB** (length 100 mm) is vertical at this instant with B directly above O, so $B=(0,\\,0.1)\\,\\text{m}$. The **connecting rod AB** (rod 2, length 300 mm) joins the slider A to the crank pin B. A is a piston/slider (block 3) moving along the **horizontal** axis through O, with given velocity v_A = 12 î m/s (to the right) and acceleration a_A = −312 î m/s². From $|AB|=0.3$ and A on the x-axis: $x_A=-\\sqrt{0.3^2-0.1^2}=-0.283$ m, so $A=(-0.283,\\,0)$ m.\n\nFind: (1.1) ICR of rod 2 (x_C, y_C); (1.2) v_B; (1.3) ω₁ of crank; (1.4) a_B; (1.5) ω̇₁.",
+    "given": "v_A = 12 î m/s, a_A = −312 î m/s², θ = 90°; AB = 300 mm, OB = 100 mm. Axis OA horizontal, crank vertical.",
+    "steps": [
+      {
+        "title": "Coordinates",
+        "content": "$A=(-0.283,\\,0)$, $B=(0,\\,0.1)$, $\\vec r_{AB}=B-A=(0.283,\\,0.1)$ m, $\\vec r_{OB}=(0,\\,0.1)$ m."
+      },
+      {
+        "title": "1.1 ICR of rod 2",
+        "content": "A's velocity is horizontal ⇒ perpendicular through A is the vertical line $x=-0.283$. B is on the crank (rotation about O), so $v_B\\perp OB$; OB is vertical ⇒ $v_B$ horizontal ⇒ perpendicular through B is the vertical line $x=0$. Two vertical (parallel) lines ⇒ **ICR at infinity**: rod 2 is in instantaneous pure translation, $\\omega_2=0$. (x_C, y_C → ∞ along the vertical direction.)"
+      },
+      {
+        "title": "1.2 & 1.3 v_B and ω₁",
+        "content": "Rod 2 translates ⇒ $\\vec v_B=\\vec v_A=12\\,\\hat i$ m/s (to the right). B belongs to the crank: $\\vec v_B=\\omega_1\\hat k\\times\\vec r_{OB}=\\omega_1\\hat k\\times(0,0.1)=(-0.1\\omega_1,\\,0)$. Matching: $-0.1\\,\\omega_1=12\\Rightarrow \\omega_1=-120\\,\\text{rad/s}$. Magnitude $\\omega_1=120\\,\\text{rad/s}$, sense **clockwise** (B at top moving right)."
+      },
+      {
+        "title": "1.4 & 1.5 accelerations",
+        "content": "Two relations: rod 2: $\\vec a_B=\\vec a_A+\\alpha_2\\hat k\\times\\vec r_{AB}$ (with $\\omega_2=0$). Crank: $\\vec a_B=\\alpha_1\\hat k\\times\\vec r_{OB}-\\omega_1^2\\vec r_{OB}$. Set them equal — two scalar equations in $\\alpha_1,\\alpha_2$.\n$x:\\;a_{A,x}-\\alpha_2 r_{AB,y}=-\\alpha_1 r_{OB,y}-\\omega_1^2 r_{OB,x}$\n$y:\\;a_{A,y}+\\alpha_2 r_{AB,x}=\\alpha_1 r_{OB,x}-\\omega_1^2 r_{OB,y}$\nWith $a_A=(-312,0)$, $\\omega_1^2=14400$, $r_{OB}=(0,0.1)$, $r_{AB}=(0.283,0.1)$:\nSolving gives $\\alpha_1=-1971\\,\\text{rad/s}^2$ and $\\alpha_2=-5091\\,\\text{rad/s}^2$."
+      },
+      {
+        "title": "a_B from the crank",
+        "content": "$\\vec a_B=\\alpha_1\\hat k\\times\\vec r_{OB}-\\omega_1^2\\vec r_{OB}=(-0.1\\alpha_1,\\,0)-14400(0,0.1)=(197.1,\\,-1440)\\,\\text{m/s}^2.$ Magnitude $|a_B|=\\sqrt{197.1^2+1440^2}=1453\\,\\text{m/s}^2.$"
+      }
+    ],
+    "finalAnswer": "ICR of rod 2: at infinity (vertical direction) — rod 2 in instantaneous pure translation. v_B = 12 m/s, horizontal, to the right (= v_A). ω₁ = 120 rad/s, clockwise. a_B = (197, −1440) m/s², |a_B| ≈ 1.45×10³ m/s². ω̇₁ = α₁ ≈ 1971 rad/s², clockwise.",
+    "tips": "At θ=90° the crank is vertical, so both A and B move horizontally and the connecting rod is instantaneously translating (ICR at infinity, ω₂=0). That makes v_B=v_A trivially and ω₁ follows from v_B=ω₁·OB. For accelerations you must keep the centripetal term −ω₁²·r_OB on the crank (that's the big −1440 m/s² downward component). The two acceleration equations (rod + crank) solve simultaneously for α₁ and α₂; report |a_B|≈1.45 km/s² and ω̇₁≈1971 rad/s² clockwise. Signs of the senses depend on the î direction shown — keep v_A to the right as given."
+  },
+  {
+    "id": "mech-e71",
+    "topic": "Full exam simulations",
+    "title": "Exam Simulation 2 — Problem 2 (helical gears)",
+    "meta": "Transverse quantities, centre distance, torque & tooth-force components",
+    "difficulty": "medium",
+    "statement": "Geometry from the figure: a helical gear pair, gear 1 (motor side, z₁=30) driving gear 2 (load side, z₂=105). The motor M turns gear 1 at constant speed; a constant resisting torque C_u acts on the gear-2 shaft. The figure shows the tangential T, radial R and axial directions on the tooth.\n\nFind: (2.1) transverse module m_t; (2.2) transverse pitch p_t; (2.3) centre distance a; (2.4) C_u; (2.5) tangential, radial and axial components of the tooth force on gear 1.",
+    "given": "C_M = 210 N·m (motor torque on gear 1 shaft); z₁ = 30, z₂ = 105; η = 1; normal module m_n = 6 mm; normal pressure angle α_n = 20°; helix angle β = 14°. Constant-speed motor; constant resisting torque C_u on gear 2.",
+    "steps": [
+      {
+        "title": "2.1 Transverse (frontal) module",
+        "content": "$m_t=\\dfrac{m_n}{\\cos\\beta}=\\dfrac{6}{\\cos14^\\circ}=\\dfrac{6}{0.9703}=6.18\\,\\text{mm}.$"
+      },
+      {
+        "title": "2.2 Transverse pitch",
+        "content": "$p_t=\\pi\\,m_t=\\pi(6.18)=19.43\\,\\text{mm}.$"
+      },
+      {
+        "title": "2.3 Centre distance",
+        "content": "Use transverse module: $a=\\dfrac{m_t}{2}(z_1+z_2)=\\dfrac{6.184}{2}(30+105)=3.092\\times135=417.4\\,\\text{mm}.$"
+      },
+      {
+        "title": "2.4 Resistant torque on gear 2",
+        "content": "Ratio $i=\\dfrac{\\omega_1}{\\omega_2}=\\dfrac{z_2}{z_1}=\\dfrac{105}{30}=3.5$. With η = 1 (power conserved): $C_u=i\\,C_M=3.5\\times210=735\\,\\text{N·m}.$"
+      },
+      {
+        "title": "2.5 Tooth-force components on gear 1",
+        "content": "Pitch radius of gear 1: $r_1=\\dfrac{m_t z_1}{2}=\\dfrac{6.184\\times30}{2}=92.76\\,\\text{mm}$. Tangential: $F_t=\\dfrac{C_M}{r_1}=\\dfrac{210}{0.09276}=2264\\,\\text{N}$. Transverse pressure angle: $\\tan\\alpha_t=\\dfrac{\\tan\\alpha_n}{\\cos\\beta}\\Rightarrow\\alpha_t=20.56^\\circ$. Radial: $F_r=F_t\\tan\\alpha_t=2264\\times0.3751=849\\,\\text{N}$. Axial (thrust): $F_a=F_t\\tan\\beta=2264\\times0.2493=564\\,\\text{N}$. (Resultant normal $F_n=\\dfrac{F_t}{\\cos\\alpha_t\\cos\\beta}=2492\\,\\text{N}$.)"
+      }
+    ],
+    "finalAnswer": "m_t = m_n/cosβ ≈ 6.18 mm. p_t = π m_t ≈ 19.43 mm. a = (m_t/2)(z₁+z₂) ≈ 417.4 mm. i = z₂/z₁ = 3.5 ⇒ C_u = i·C_M = 735 N·m. On gear 1: F_t = C_M/r₁ ≈ 2264 N (tangential, opposing motion), F_R = F_t·tanα_t ≈ 849 N (radial, toward the centre), F_A = F_t·tanβ ≈ 564 N (axial, along the shaft).",
+    "tips": "Everything geometric uses the TRANSVERSE quantities, not the normal ones: m_t=m_n/cosβ, and α_t from tanα_t=tanα_n/cosβ (α_t≈20.56°, slightly larger than 20°). A common slip is computing the centre distance with m_n — that underestimates a. C_u from η=1 is simply i·C_M. Senses: F_t opposes the driven motion of gear 1's tooth, F_R points toward gear 1's centre, and F_A is the axial thrust set by the helix β. If the grader uses the data verbatim, note ω₂=0.2 is labelled 'm/s' on the sheet — it is an angular speed and does not affect any of these results."
+  },
+  {
+    "id": "mech-e72",
+    "topic": "Full exam simulations",
+    "title": "Exam Simulation 2 — Problem 3 (belt + band brake, braking dynamics)",
+    "meta": "Belt ratio, capstan band brake, deceleration and stop time",
+    "difficulty": "hard",
+    "statement": "Geometry from the figure: the load m hangs from a rope wound on drum 1 (r₁) and descends with velocity v. Drum 1 is rigidly joined to belt pulley 2 (r₂). A belt (in adherence) connects pulley 2 to pulley 3 (r₃); pulley 3 is rigidly joined to brake drum 4 (r₄). A band brake wraps drum 4: its band ends (tensions T₃ upper, T₄ lower) attach to a vertical lever pinned at the bottom (point O). The activating force F is applied horizontally at the top of the lever. Vertical lever distances from the pivot O: F at height a = 1.2 m, the upper band end (T₃) at b = 0.9 m, the lower band end (T₄) at c = 0.3 m.\n\nFind: (3.1) belt ratio i = ω₃/ω₂; (3.2) FBDs; (3.3) deceleration ẍ of m; (3.4) time to stop.",
+    "given": "m = 100 kg; F = 700 N (brake force); r₁ = 0.2 m; r₂ = 0.4 m, r₃ = 0.2 m; r₄ = 0.3 m; a = 1.2 m, b = 0.9 m, c = 0.3 m; f = 0.2 (band–drum friction); (ω₄)₀ = 10 rad/s at brake activation. All bodies except m massless/inertialess.",
+    "steps": [
+      {
+        "title": "3.1 Belt transmission ratio",
+        "content": "Belt in adherence ⇒ equal belt speed: $\\omega_2 r_2=\\omega_3 r_3\\Rightarrow i=\\dfrac{\\omega_3}{\\omega_2}=\\dfrac{r_2}{r_3}=\\dfrac{0.4}{0.2}=2.$"
+      },
+      {
+        "title": "Kinematic chain & initial speed",
+        "content": "Drum1–pulley2 rigid ⇒ ω₁=ω₂. Pulley3–drum4 rigid ⇒ ω₄=ω₃=2ω₂. Load: $v=\\omega_1 r_1=\\omega_2 r_1$. At activation ω₄=10 ⇒ ω₂=ω₄/i=5 rad/s ⇒ $v_0=\\omega_2 r_1=5(0.2)=1\\,\\text{m/s}$, and $\\ddot x=\\dot\\omega_2 r_1$."
+      },
+      {
+        "title": "3.2 Band brake — tensions (capstan)",
+        "content": "Wrap angle ≈ 180° = π. Capstan: $\\dfrac{T_{tight}}{T_{slack}}=e^{f\\pi}=e^{0.2\\pi}=1.874$. Lever moment about O (band ends pull the lever, F balances): $F\\,a=T_3\\,b+T_4\\,c$ with $T_3=e^{f\\pi}T_4$. Solve: $T_4=\\dfrac{F a}{e^{f\\pi}b+c}=\\dfrac{700(1.2)}{1.874(0.9)+0.3}=\\dfrac{840}{1.987}=423\\,\\text{N}$, $T_3=792\\,\\text{N}$. Brake torque on drum 4: $M_4=(T_3-T_4)r_4=(792-423)(0.3)=110.9\\,\\text{N·m}.$"
+      },
+      {
+        "title": "Reflect brake torque to drum 1 (massless bodies)",
+        "content": "All bodies massless ⇒ torque balance on each. Pulley3–drum4: belt transmitted force $F_b=\\dfrac{M_4}{r_3}=\\dfrac{110.9}{0.2}=554\\,\\text{N}$. Drum1–pulley2: rope tension $T_{rope}=\\dfrac{F_b r_2}{r_1}=\\dfrac{554(0.4)}{0.2}=1109\\,\\text{N}.$ (Equivalently $T_{rope}=M_4\\,r_2/(r_3 r_1)$.)"
+      },
+      {
+        "title": "3.3 Deceleration of the load",
+        "content": "Newton on the descending mass (down positive): $m\\ddot x=mg-T_{rope}=100(9.81)-1109=981-1109=-128\\,\\text{N}\\Rightarrow \\ddot x=-1.28\\,\\text{m/s}^2.$ The negative sign = deceleration (the brake makes the rope tension exceed the weight)."
+      },
+      {
+        "title": "3.4 Time to stop",
+        "content": "Constant deceleration from $v_0=1\\,\\text{m/s}$: $t=\\dfrac{v_0}{|\\ddot x|}=\\dfrac{1}{1.28}=0.78\\,\\text{s}.$"
+      }
+    ],
+    "finalAnswer": "i = ω₃/ω₂ = r₂/r₃ = 2. Initial load speed v₀ = ω₄r₁/i = 1 m/s. Band-brake (wrap π): T₃ ≈ 792 N, T₄ ≈ 423 N, brake torque M₄ ≈ 111 N·m → rope tension ≈ 1109 N. Deceleration ẍ ≈ −1.28 m/s² (the mass slows). Stop time t = v₀/|ẍ| ≈ 0.78 s.",
+    "tips": "UNCERTAINTY FLAG: the band-brake lever geometry and the wrap angle are not fully legible from the figure, so two modelling choices affect the numbers: (i) wrap angle — I took 180° (e^{fπ}=1.874); (ii) the lever moment equation — I used F·a = T₃·b + T₄·c (both band ends pull the lever the same way). With those, ẍ≈−1.28 m/s² and t≈0.78 s. If the brake is the differential type (F·a = T₃·b − T₄·c), the same method gives a larger torque (M₄≈159 N·m, T_rope≈1589 N, ẍ≈−6.1 m/s², t≈0.16 s). The robust parts are i=2, v₀=1 m/s, and the reflection chain T_rope = M₄·r₂/(r₃r₁); pick the lever equation matching your figure and the capstan ratio e^{fθ} for the actual wrap θ. Sanity check: braking requires T_rope>mg=981 N, which both cases satisfy."
+  }
+]

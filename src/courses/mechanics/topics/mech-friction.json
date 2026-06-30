@@ -1,0 +1,167 @@
+{
+  "title": "Friction & rolling",
+  "summary": "Dry (Coulomb) friction in stick vs slip regimes, the friction cone ($f=\\tan\\varphi$), and the standard assume-stick-then-check-the-cap method. Covers rolling resistance ($F=Nu/r$), pin/bearing friction (friction circle, V-bearing $f'=f/\\sin\\alpha$), gyroscopic effects ($M=J_p\\omega\\Omega$ and rotor unbalance), and vehicle traction/overturning. Ten fully worked exam problems (23-32) on rollers, plates, inclines, bearings, car start and wheelbarrow, each verified against the answer key.",
+  "minutes": 45,
+  "objectives": [
+    "Distinguish static (stick, $f_a$) from kinetic (slip, $f$) friction and apply the friction cone $f=\\tan\\varphi$",
+    "Use the assume-stick / check-the-cap method to decide whether a body slides, sticks, rolls or tips",
+    "Compute rolling resistance $F=Nu/r$ and bearing/pin friction (friction circle, V-bearing $f'=f/\\sin\\alpha$)",
+    "Evaluate gyroscopic moments $M=J_p\\omega\\Omega$ and balance an unbalanced (misaligned) rotor",
+    "Analyse vehicle start with load transfer and the traction limit $T\\le f_aN$, and find overturning limits",
+    "Solve the standard friction/rolling exam problems (rollers, plates, inclines, brakes-of-motion) end to end"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Dry friction: the essentials"
+    },
+    {
+      "kind": "prose",
+      "text": "Dry (Coulomb) friction is the tangential force at a contact that opposes (or tends to oppose) relative sliding. Two regimes matter: **static/stick** (no sliding) and **dynamic/kinetic/slip** (sliding). The normal force $N$ presses the surfaces together; friction is proportional to it."
+    },
+    {
+      "kind": "formula",
+      "tex": "T_{\\text{slip}} = f\\,N \\qquad T_{\\text{stick}} \\le f_a\\,N \\qquad f = \\tan\\varphi"
+    },
+    {
+      "kind": "definition",
+      "term": "Stick vs slip coefficient",
+      "text": "$f_a$ (static/adherence) governs the **threshold** of motion; $f$ (kinetic/slip) governs the force **while sliding**. Usually $f_a > f$. While stuck, friction is whatever the equilibrium needs, up to the cap $f_a N$. Once it slips, friction snaps to the fixed value $fN$ opposing the velocity."
+    },
+    {
+      "kind": "prose",
+      "text": "The **friction cone** has half-angle $\\varphi=\\arctan f$ about the normal. The total contact reaction (normal + friction) stays inside the cone while sticking and lies **on** the cone surface while sliding. This is the geometric way to spot the slip limit."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "The standard decision tree: **assume stick**, solve statics for the required friction $T$, then check $T\\le f_a N$. If it violates the cap, the body **slides**: set $T=fN$ opposing the motion and re-solve the dynamics."
+    },
+    {
+      "kind": "heading",
+      "text": "Rolling resistance"
+    },
+    {
+      "kind": "prose",
+      "text": "A wheel/roller of radius $r$ rolling without slip still meets resistance because the normal pressure shifts forward by a small distance $u$ (the rolling-friction parameter, in mm). The equivalent horizontal resistive force at the axle is:"
+    },
+    {
+      "kind": "formula",
+      "tex": "F_{\\text{roll}} = N\\,\\frac{u}{r}\\qquad\\Big(\\text{a roller between plate and floor: } F = N\\,\\frac{u_1+u_2}{d}\\Big)"
+    },
+    {
+      "kind": "definition",
+      "term": "Pin / bearing friction (friction circle)",
+      "text": "A loaded pin of radius $r_p$ with friction angle $\\varphi$ (or coefficient $f$) makes the reaction line tangent to a **friction circle** of radius $\\rho=r_p\\sin\\varphi\\approx r_p f$. The friction moment is $M=N\\,r_p\\sin\\varphi$. For a **V-bearing** of semi-angle $\\alpha$ the effective coefficient grows: $f'=f/\\sin\\alpha$, so the friction torque is $C=f'\\,W\\,r=\\dfrac{f\\,W\\,r}{\\sin\\alpha}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Gyroscopic effects"
+    },
+    {
+      "kind": "prose",
+      "text": "A spinning rotor (angular momentum $H=J_p\\,\\omega$ along its polar axis) that is forced to **precess** at rate $\\Omega$ reacts with a gyroscopic moment perpendicular to both:"
+    },
+    {
+      "kind": "formula",
+      "tex": "M_{\\text{gyro}} = J_p\\,\\omega\\,\\Omega \\qquad(\\Omega = V/R \\text{ for a vehicle in a curve of radius } R)"
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "For a **misaligned rotor** (polar axis at small angle $\\alpha$ to the spin axis), the unbalance couple is $M=(J_t-J_p)\\,\\omega^2\\sin\\alpha\\cos\\alpha$. This rotating couple loads the bearings; balance it with two small masses giving an equal, opposite couple: $m\\,\\omega^2 r\\,\\ell = M$."
+    },
+    {
+      "kind": "heading",
+      "text": "Vehicle start / traction & overturning"
+    },
+    {
+      "kind": "prose",
+      "text": "Traction at a driven wheel is capped by stick: $T\\le f_a N$. During acceleration, load transfers to the rear (driving) axle, which **raises** $N_{\\text{rear}}$ and the available grip. Solve longitudinal Newton, vertical equilibrium, and a moment equation about the CG (with the inertia force $Ma$ at height $z_G$). For a body pushed high up, check **overturning**: the normal force shifts toward the front edge; if it would pass the edge, the body tips ($\\ddot\\theta\\ne0$, $\\ddot y\\ne0$)."
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "1 Free-body",
+          "text": "Draw every contact: normal $N$, friction $T$, weight, applied forces, and inertia terms $ma$, $J\\ddot\\theta$ for dynamics."
+        },
+        {
+          "label": "2 Assume stick",
+          "text": "Write equilibrium/Newton with $T$ as an unknown $\\le f_a N$. For rolling, add the no-slip link $a=\\alpha r$ and the friction is also unknown."
+        },
+        {
+          "label": "3 Check the cap",
+          "text": "Compute required $T$ and compare to $f_a N$. If $T\\le f_aN$ it sticks/rolls; otherwise it slides."
+        },
+        {
+          "label": "4 If slipping",
+          "text": "Set $T=fN$ opposing the actual relative velocity, drop the no-slip constraint, and re-solve for $a$ and $\\alpha$ independently."
+        },
+        {
+          "label": "5 Moments for N-position / tipping",
+          "text": "Take moments about the CG (or contact edge) to locate $N$ or to find the tipping limit $h_{\\max}$ (N at the edge)."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Classic mistakes: (1) using $f_a$ instead of $f$ once the body is **moving** (kinetic friction governs accelerations); (2) forgetting that a rolling body needs friction to provide angular acceleration — friction is an unknown, not $fN$, until you prove it slips; (3) sign of the gyroscopic moment — it can either increase or decrease a lean angle depending on spin/travel sense; (4) on inclines, $N=mg\\cos\\beta$, not $mg$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A block rests on a plane with $f_a=0.3$. The applied tangential force needs a friction reaction of $T=0.25\\,N$ to stay in equilibrium. What happens?",
+        "options": [
+          {
+            "id": "A",
+            "content": "It slides, and friction becomes $0.3N$"
+          },
+          {
+            "id": "B",
+            "content": "It stays stuck; friction is exactly $0.25N$"
+          },
+          {
+            "id": "C",
+            "content": "It stays stuck; friction is $0.3N$"
+          },
+          {
+            "id": "D",
+            "content": "Not enough information"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Required friction $0.25N \\le f_aN=0.3N$, so the block sticks and friction supplies exactly what equilibrium demands ($0.25N$), not the maximum. Friction only equals $fN$ when actually sliding."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A homogeneous cylinder ($J=\\tfrac12 mr^2$) released on an incline rolls without slipping. Its centre acceleration is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$g\\sin\\beta$"
+          },
+          {
+            "id": "B",
+            "content": "$\\tfrac12 g\\sin\\beta$"
+          },
+          {
+            "id": "C",
+            "content": "$\\tfrac{2}{3}g\\sin\\beta$"
+          },
+          {
+            "id": "D",
+            "content": "$f g\\cos\\beta$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Newton: $mg\\sin\\beta-T=ma$; rotation: $Tr=\\tfrac12 mr^2\\,(a/r)\\Rightarrow T=\\tfrac12 ma$. Substituting gives $g\\sin\\beta=\\tfrac32 a$, so $a=\\tfrac{2}{3}g\\sin\\beta$ (provided the required $T\\le f_aN$)."
+      }
+    }
+  ]
+}

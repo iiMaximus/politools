@@ -1,0 +1,155 @@
+{
+  "title": "Dynamics: forces, FBD & energy",
+  "summary": "The complete dynamics toolkit for the Applied Mechanics exam: Newton-Euler cardinal equations and free-body diagrams, d'Alembert inertia forces, the work-energy theorem and power, linear/angular momentum and impacts, plus the kinematic constraints of pulley/cart systems. Thirteen fully worked exam problems (10-22) cover crane statics, hydraulic actuators, masses on inclines with pulleys solved by both Newton and energy, a roller on an accelerating truck, bullet collisions, a cart with a revolving mass, and a ballistic pendulum.",
+  "minutes": 55,
+  "objectives": [
+    "Draw correct free-body diagrams and apply the two cardinal equations (ΣF=ma, ΣM=Iα) to any rigid-body or multi-body system",
+    "Use the work-energy theorem and power/efficiency to find velocities after a finite displacement, including the rotational KE of massive pulleys",
+    "Write the kinematic constraints of pulley systems correctly — especially the ½-speed / ×2-force rule of a movable pulley — and apply the one-line reduced equation",
+    "Apply d'Alembert inertia forces in accelerating (non-inertial) frames, e.g. a roller rolling without slipping on an accelerating truck",
+    "Solve impact problems with linear and angular momentum conservation and quantify the energy dissipated (inelastic vs elastic)",
+    "Decide between Newton and energy methods and combine static equilibrium with kinematics for actuator/crane problems"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What this topic is about"
+    },
+    {
+      "kind": "prose",
+      "text": "In the **dynamics** problems of the exam you are given masses, forces and a geometry, and you must find an **acceleration, a velocity, a force or a pressure**. There are only two master tools, and almost every problem is one of them:\n\n- **Newton-Euler (cardinal equations)** plus a **free-body diagram** for each body — best when you want forces/reactions or an instantaneous acceleration.\n- **Work-energy / momentum theorems** — best when you want a velocity after a finite displacement, or a velocity after an impact.\n\nThe trick is choosing the right one and writing the **kinematic constraint** (how the bodies' motions are linked by ropes and pulleys) correctly."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\sum \\vec F = m\\,\\vec a_G \\qquad\\qquad \\sum M_G = I_G\\,\\dot\\omega",
+      "caption": "The two cardinal equations of dynamics: resultant force = mass × acceleration of the centre of mass; resultant moment about G = central moment of inertia × angular acceleration."
+    },
+    {
+      "kind": "definition",
+      "term": "Free-body diagram (FBD)",
+      "text": "Isolate ONE body, draw every external force on it: weight $mg$ (down, at G), rope tensions $T$ (along the rope, pulling away), normal reactions $N$ (perpendicular to surfaces), friction $f\\,N$ (opposing relative sliding), applied forces. Then write $\\sum F=ma$ in two directions and $\\sum M=I\\dot\\omega$."
+    },
+    {
+      "kind": "definition",
+      "term": "d'Alembert (inertia force/torque)",
+      "text": "Add to each body a fictitious **inertia force** $-m\\,a_G$ and **inertia torque** $-I_G\\dot\\omega$, then treat the problem as **static** ($\\sum F=0$, $\\sum M=0$). Very handy on accelerating platforms: a body on a cart accelerating at $A$ feels a pseudo-force $-mA$."
+    },
+    {
+      "kind": "formula",
+      "tex": "L_{1\\to2}=\\Delta E_k=\\tfrac12 m v_2^2-\\tfrac12 m v_1^2 \\qquad E_k^{rot}=\\tfrac12 I\\omega^2 \\qquad P=\\vec F\\cdot\\vec v=C\\,\\omega",
+      "caption": "Work-energy theorem (sum of work of ALL forces = change of kinetic energy), rotational kinetic energy, and power. For a rolling cylinder $I_G=\\tfrac12 m r^2$."
+    },
+    {
+      "kind": "definition",
+      "term": "Pulley constraints (the part everyone gets wrong)",
+      "text": "- **Fixed pulley** (massless): just redirects the rope; same tension both sides, same rope speed. If it has mass $m_p$, add $\\tfrac12 I_p\\omega^2=\\tfrac14 m_p v^2$ to the energy, or torque $I_p\\dot\\omega$ to its FBD.\n- **Movable pulley**: the body on its axle moves at **half** the speed of the free rope end, and the rope pulls it with **2T** (two strands). This is the source of the factor-2 forces and factor-½ velocities."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\text{Movable pulley: } v_{body}=\\tfrac12 v_{rope},\\quad F_{on\\,body}=2T \\qquad\\Rightarrow\\qquad \\sum_i F_i\\frac{dx_i}{dq}=\\ddot q\\sum_i m_i\\!\\left(\\frac{dx_i}{dq}\\right)^{\\!2}",
+      "caption": "Reduced (virtual-work / Lagrange-like) equation: pick one coordinate q, weight every force by its velocity ratio dx/dq and every mass by the ratio squared. This solves any pulley system in one line."
+    },
+    {
+      "kind": "definition",
+      "term": "Momentum & impact",
+      "text": "- **Linear momentum** $\\vec p=m\\vec v$ is conserved along any direction with no external impulse (e.g. cart on a horizontal rail: horizontal momentum const).\n- **Impact:** during the short collision, momentum (and angular momentum about a pivot) is conserved. **Inelastic:** bodies stick, $v'=\\frac{m_1v_1}{m_1+m_2}$, energy is lost. **Elastic:** both momentum AND kinetic energy conserved."
+    },
+    {
+      "kind": "steps",
+      "title": "Reliable solving recipe",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Read what is asked: a velocity after a displacement/impact → energy or momentum; an instantaneous acceleration or a reaction → Newton/d'Alembert."
+        },
+        {
+          "label": "2",
+          "text": "Draw an FBD of every body (or the relevant subsystem). Mark $mg$, $T$, $N$, $fN$, applied forces, and (Newton) the acceleration arrow."
+        },
+        {
+          "label": "3",
+          "text": "Write the kinematic constraint: relate the accelerations/velocities through the ropes and pulleys (watch the ½ and ×2 of movable pulleys)."
+        },
+        {
+          "label": "4",
+          "text": "Newton path: write $\\sum F=ma$ (two axes) and $\\sum M=I\\dot\\omega$ for each body; solve the linear system for the unknowns (a, T, N…). Energy path: $\\sum L=\\Delta E_k$ with all kinetic terms (translational + rotational), solve for v."
+        },
+        {
+          "label": "5",
+          "text": "Check signs and magnitudes; convert units (km/h→m/s, daN→N, bar→Pa); sanity-check against limiting cases."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Classic mistakes:** (1) forgetting the movable-pulley factors — body speed is HALF the rope, force is 2T. (2) Dropping the rotational energy $\\tfrac12 I\\omega^2$ of a non-negligible pulley/cylinder. (3) On an accelerating cart, forgetting the d'Alembert pseudo-force $-mA$, or mis-handling the rolling constraint $a_{center}-r\\dot\\omega=a_{surface}$. (4) In impacts, using energy conservation for an INELASTIC collision (energy is NOT conserved — only momentum)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Reduced-equation shortcut** for any rope/pulley/incline system: $\\big[\\sum F_i\\,(\\text{velocity ratio}_i)\\big]=\\ddot q\\big[\\sum m_i\\,(\\text{velocity ratio}_i)^2\\big]$. Weights enter as $\\pm mg$ (or $\\pm mg\\sin\\alpha$ on an incline), the applied force as $F$, and a body on a movable pulley has ratio ½. One equation, no FBD bookkeeping."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "**When a body rolls without slipping on a moving support** (roller on an accelerating truck): work in the support's frame. The pseudo-force $mA$ at the centre drives the rolling, so $(m+I/r^2)\\,a_{rel}=mA$. With a cylinder $I/r^2=\\tfrac12 m$, giving $a_{rel}=\\tfrac23 A$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A body hangs from a **movable** pulley. The free end of the rope is pulled so it moves at 2 m/s with tension $T$. What is the speed of the body and the upward force on it?",
+        "options": [
+          {
+            "id": "A",
+            "content": "4 m/s and $T$"
+          },
+          {
+            "id": "B",
+            "content": "1 m/s and $2T$"
+          },
+          {
+            "id": "C",
+            "content": "2 m/s and $2T$"
+          },
+          {
+            "id": "D",
+            "content": "1 m/s and $T$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "A movable pulley halves the velocity (body at ½ of rope speed = 1 m/s) and doubles the force (two strands support it, so $2T$). This factor-of-2 pair is the heart of almost every pulley dynamics problem.",
+        "theory": "Pulley constraints"
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A bullet embeds itself in a block (perfectly inelastic). Which quantity is conserved through the impact?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Kinetic energy only"
+          },
+          {
+            "id": "B",
+            "content": "Both momentum and kinetic energy"
+          },
+          {
+            "id": "C",
+            "content": "Linear momentum only"
+          },
+          {
+            "id": "D",
+            "content": "Neither — both are lost to heat"
+          }
+        ],
+        "correct": "C",
+        "explanation": "In an inelastic (or any) impact, linear momentum (and angular momentum about a fixed pivot) is conserved because the impulsive forces are internal. Kinetic energy is NOT conserved in an inelastic impact — part of it becomes heat/deformation. Only a perfectly elastic impact conserves kinetic energy too.",
+        "theory": "Momentum & impact"
+      }
+    }
+  ]
+}
