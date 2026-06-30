@@ -1,0 +1,68 @@
+{"kind":"workbook","id":"wb/bg069i","sheets":3,"tables":3}
+{"kind":"sheet","id":"ws/e0ehwe","name":"Data Analysis","index":0,"range":"A1:J21","address":"A1:J21","tables":1,"formulas":15}
+{"kind":"table","sheet":"Data Analysis","address":"A1:J21","rows":21,"cols":10,"values":[["EXPERIMENTAL DATA ANALYSIS",null,null,null,null,null,null,null,null,null],["Hypothesis test on the means",null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],["Measurement","Cond. 1","Cond. 2","Cond. 3","Cond. 4","Cond. 5",null,null,null,null],[1,9,10.1,8.2,9.9,7.3,null,null,null,null],[2,10,8.9,8,8.9,8.2,null,null,null,null],[3,7.9,10.4,7.8,11.3,11.3,null,null,null,null],[4,9.7,9.8,7.3,9.7,11,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],["Test on the systematic effect of the Conditions",null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],["Condition averages are compared with reference distribution",null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],["Distribution of the sample averages",null,null,null,null,null,null,null,null,null],[null,null,null,null,null,"Averages",null,null,null,null],["Number of averaged data",null,null,4,null,"#NAME?","#NAME?","#NAME?","#NAME?","#NAME?"],["Average",null,null,9.235000000000001,null,9.149999999999999,9.8,7.825,9.95,9.45],["Std dev of average",null,null,0.6366596628621785,null,null,null,null,null,null],["Confidence level",null,null,0.802,null,null,null,null,null,null],["Lower boundary",null,null,8.415446757279293,null,null,null,null,null,null],["Upper boundary",null,null,10.05455324272071,null,null,null,null,null,null]]}
+{"kind":"formula","sheet":"Data Analysis","address":"D16","formula":"=COUNT(B5:B8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"F16","formula":"=[3]Dati!D8"}
+{"kind":"formula","sheet":"Data Analysis","address":"G16","formula":"=[3]Dati!E8"}
+{"kind":"formula","sheet":"Data Analysis","address":"H16","formula":"=[3]Dati!F8"}
+{"kind":"formula","sheet":"Data Analysis","address":"I16","formula":"=[3]Dati!G8"}
+{"kind":"formula","sheet":"Data Analysis","address":"J16","formula":"=[3]Dati!H8"}
+{"kind":"formula","sheet":"Data Analysis","address":"D17","formula":"=AVERAGE(B5:F8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"F17","formula":"=AVERAGE(B5:B8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"G17","formula":"=AVERAGE(C5:C8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"H17","formula":"=AVERAGE(D5:D8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"I17","formula":"=AVERAGE(E5:E8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"J17","formula":"=AVERAGE(F5:F8)"}
+{"kind":"formula","sheet":"Data Analysis","address":"D18","formula":"=_xlfn.STDEV.S(B5:F8)/SQRT(D16)"}
+{"kind":"formula","sheet":"Data Analysis","address":"D20","formula":"=_xlfn.NORM.INV((1-D19)/2,D17,D18)"}
+{"kind":"formula","sheet":"Data Analysis","address":"D21","formula":"=_xlfn.NORM.INV(1-(1-D19)/2,D17,D18)"}
+{"kind":"sheet","id":"ws/3rnyur","name":"Uncertainty","index":1,"range":"A1:Q31","address":"A1:Q31","tables":1,"formulas":43}
+{"kind":"table","sheet":"Uncertainty","address":"A1:Q31","rows":31,"cols":17,"values":[[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["Mathematical model",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["Numeric results MUST be in base units of the International System of Quantities (multiples and submultiples are not allowed).",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["Variable xj",null,null,"Statistical",null,null,null,null,"Non Statistical",null,"Parameters estimated",null,null,null,null,null,null],["Symbol","Value","Note","Uj","Pdj","ndj","kdj","sj","aj","ka","nj","nd","nr","u²(xj)","cj=Dyj/Dxj","uj²(y)","uj4(y)/nj"],["k",410,"Bias",15,0.9973,100,3.0767308989178375,4.875304501045532,null,null,5,1,1,23.768593977914826,0.011,0.0028759998713276938,0.0000016542750519753824],["x",0.011,"Bias",null,null,null,null,null,0.00023,3,5,1,1,1.7633333333333336e-8,410,0.0029641633333333337,0.000001757252853335556],[null,null,"Resol",null,null,null,null,null,0.00005,3,100,1,7,1.1904761904761905e-10,410,0.000020011904761904762,4.004763321995465e-12],[null,null,"Reprod",null,null,null,null,0.00046,null,null,6,1,7,3.022857142857143e-8,410,0.005081422857142858,0.000004303476375515647],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["F",4.51,"N",null,null,null,null,null,null,null,null,null,"Variance of y, u²(y)",null,null,0.01094159796656579,0.000007715008285589908],[null,null,null,null,null,null,null,null,null,0.00013279056191361393,null,null,"Standard uncertainty of y, u(y)",null,null,0.10460209350947901,null],[null,null,null,null,null,null,null,null,null,0.000028867513459481293,null,null,"Degrees of freedom of y, n(y)",null,null,15,null],[null,null,null,null,null,null,null,null,null,null,null,null,"Confidence level",null,null,0.95,null],[null,null,null,null,null,null,null,null,null,null,null,null,"Coverage factor (Student t)",null,null,2.131449545559774,null],[null,null,null,null,null,null,null,null,null,null,null,null,"Expanded uncertainty U(y)",null,null,0.22295408467538003,"N"],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["Calcolo dei coefficienti di sensibilità",null,null,null,null,null,null,null,null,"Show the main factors to be considered to reduce the uncertainty (most impacting) ",null,null,null,null,null,null,null],[null,"Dxj","xj+Dxj","y(xj+Dxj)","Dyj","Dyj/Dxj",null,"Analytical derivative",null,"Reproducibility of x",null,null,null,null,null,null,null],["k",0.04875304501045532,410.04875304501047,4.510536283495115,0.0005362834951148088,0.010999999999995904,null,0.011,null,null,null,null,null,null,null,null,null],["x",0.0000021904554864445976,0.011002190455486444,4.510898086749442,0.0008980867494425837,410.00000000013637,null,410,null,"Show the main factors to be considered to reduce the costs (least impacting)",null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,"Resolution of x",null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,"Make the hypothesis of a change in the main uncertainty factor and evaluate its effect",null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,"Halving reproducibility of x, expanded uncertainty of F reduces to 1.82e-1 N",null,null,null,null,null,null,null]]}
+{"kind":"formula","sheet":"Uncertainty","address":"B10","formula":"=0.41*10^3"}
+{"kind":"formula","sheet":"Uncertainty","address":"D10","formula":"=0.015*10^3"}
+{"kind":"formula","sheet":"Uncertainty","address":"G10","formula":"=_xlfn.T.INV(1-(1-E10)/2,F10)"}
+{"kind":"formula","sheet":"Uncertainty","address":"H10","formula":"=D10/G10"}
+{"kind":"formula","sheet":"Uncertainty","address":"N10","formula":"=(H10^2)*L10/M10"}
+{"kind":"formula","sheet":"Uncertainty","address":"O10","formula":"=H26"}
+{"kind":"formula","sheet":"Uncertainty","address":"P10","formula":"=O10^2*N10"}
+{"kind":"formula","sheet":"Uncertainty","address":"Q10","formula":"=P10^2/K10"}
+{"kind":"formula","sheet":"Uncertainty","address":"B11","formula":"=11*10^-3"}
+{"kind":"formula","sheet":"Uncertainty","address":"I11","formula":"=0.23*10^-3"}
+{"kind":"formula","sheet":"Uncertainty","address":"N11","formula":"=(I11^2/J11)*L11/M11"}
+{"kind":"formula","sheet":"Uncertainty","address":"O11","formula":"=H27"}
+{"kind":"formula","sheet":"Uncertainty","address":"P11","formula":"=O11^2*N11"}
+{"kind":"formula","sheet":"Uncertainty","address":"Q11","formula":"=P11^2/K11"}
+{"kind":"formula","sheet":"Uncertainty","address":"I12","formula":"=(0.1/2)*10^-3"}
+{"kind":"formula","sheet":"Uncertainty","address":"N12","formula":"=(I12^2/J12)*L12/M12"}
+{"kind":"formula","sheet":"Uncertainty","address":"O12","formula":"=O11"}
+{"kind":"formula","sheet":"Uncertainty","address":"P12","formula":"=O12^2*N12"}
+{"kind":"formula","sheet":"Uncertainty","address":"H13","formula":"=0.46*10^-3"}
+{"kind":"formula","sheet":"Uncertainty","address":"K13","formula":"=7-1"}
+{"kind":"formula","sheet":"Uncertainty","address":"N13","formula":"=(H13^2)*L13/M13"}
+{"kind":"formula","sheet":"Uncertainty","address":"O13","formula":"=O11"}
+{"kind":"formula","sheet":"Uncertainty","address":"B15","formula":"=B10*B11"}
+{"kind":"formula","sheet":"Uncertainty","address":"P15","formula":"=SUM(P10:P13)"}
+{"kind":"formula","sheet":"Uncertainty","address":"Q15","formula":"=SUM(Q10:Q13)"}
+{"kind":"formula","sheet":"Uncertainty","address":"J16","formula":"=I11/SQRT(J11)"}
+{"kind":"formula","sheet":"Uncertainty","address":"P16","formula":"=SQRT(P15)"}
+{"kind":"formula","sheet":"Uncertainty","address":"J17","formula":"=I12/SQRT(J12)"}
+{"kind":"formula","sheet":"Uncertainty","address":"P17","formula":"=INT(P15^2/Q15)"}
+{"kind":"formula","sheet":"Uncertainty","address":"P19","formula":"=_xlfn.T.INV(1-(1-P18)/2,P17)"}
+{"kind":"formula","sheet":"Uncertainty","address":"P20","formula":"=P19*P16"}
+{"kind":"formula","sheet":"Uncertainty","address":"B26","formula":"=SQRT(N10)/100"}
+{"kind":"formula","sheet":"Uncertainty","address":"C26","formula":"=B10+B26"}
+{"kind":"formula","sheet":"Uncertainty","address":"D26","formula":"=C26*B11"}
+{"kind":"formula","sheet":"Uncertainty","address":"E26","formula":"=D26-$B$15"}
+{"kind":"formula","sheet":"Uncertainty","address":"F26","formula":"=E26/B26"}
+{"kind":"formula","sheet":"Uncertainty","address":"H26","formula":"=B11"}
+{"kind":"formula","sheet":"Uncertainty","address":"B27","formula":"=SQRT(SUM(N11:N13))/100"}
+{"kind":"formula","sheet":"Uncertainty","address":"C27","formula":"=B11+B27"}
+{"kind":"formula","sheet":"Uncertainty","address":"D27","formula":"=B10*C27"}
+{"kind":"formula","sheet":"Uncertainty","address":"E27","formula":"=D27-$B$15"}
+{"kind":"formula","sheet":"Uncertainty","address":"F27","formula":"=E27/B27"}
+{"kind":"formula","sheet":"Uncertainty","address":"H27","formula":"=B10"}
+{"kind":"sheet","id":"ws/0po29j","name":"Prob","index":2,"range":"A1:F20","address":"A1:F20","tables":1,"formulas":3}
+{"kind":"table","sheet":"Prob","address":"A1:F20","rows":20,"cols":6,"values":[[null,null,null,null,null,null],["Let us consider two devices D1 and D2.  ",null,null,null,null,null],["The device D1 is made by three critical pieces a, b and c, such that even if only one of them is defective, then the device does not work. If the piece a is defective with probability Pa, and similarly Pb for piece b and Pc for piece c, what is the probability that the device D1 does not work?",null,null,null,null,null],["The device D2 is made by two critical pieces v and w, such that if at least one of them works, then the device works. If the piece v is defective with probability Pv, and similarly Pw for piece w, what is the probability that the device D2 does not work? ",null,null,null,null,null],["What is the maximum value of the probability of defects for piece a such that the probability that the device D1 does not work is lower or equal than the target probability Pt?",null,null,null,null,null],[null,null,null,null,null,null],["Pa",0.029,null,null,null,null],["Pb",0.0034,null,null,null,null],["Pc",0.0044,null,null,null,null],[null,null,null,null,null,null],["Probability that the device D1 does not work",null,null,null,null,0.03655927384000002],[null,null,null,null,null,null],["Pv",0.149,null,null,null,null],["Pw",0.127,null,null,null,null],[null,null,null,null,null,null],["Probability that the device D2 does not work",null,null,null,null,0.018923],[null,null,null,null,null,null],["Pt",0.02,null,null,null,null],[null,null,null,null,null,null],["Maximum value of the probability of defects for piece a such that the probability that the device D1 does not work is lower or equal than the target probability Pt?",null,null,null,null,0.012310800070984729]]}
+{"kind":"formula","sheet":"Prob","address":"F11","formula":"=1-(1-B7)*(1-B8)*(1-B9)"}
+{"kind":"formula","sheet":"Prob","address":"F16","formula":"=B13*B14"}
+{"kind":"formula","sheet":"Prob","address":"F20","formula":"=1+(B18-1)/((1-B8)*(1-B9))"}

@@ -1,0 +1,250 @@
+{
+  "title": "Eigenvalues, eigenspaces & diagonalization",
+  "summary": "Eigenvectors are nonzero directions $v$ that a matrix only scales: $Av=\\lambda v$. Eigenvalues are the real roots of the characteristic polynomial $p(x)=\\det(A-xI)$, and each eigenvalue $\\lambda$ owns an eigenspace $E_\\lambda=\\ker(A-\\lambda I)$. The key tension is between **algebraic multiplicity** (how many times $\\lambda$ is a root) and **geometric multiplicity** ($\\dim E_\\lambda$): they always satisfy $1\\le\\dim E_\\lambda\\le\\operatorname{mult}(\\lambda)$, and $A$ is **diagonalizable** over $\\mathbb{R}$ exactly when all roots are real and these two numbers agree for every eigenvalue. Diagonalizing means writing $A=PDP^{-1}$ with $D$ diagonal and $P$ the matrix of eigenvectors.",
+  "minutes": 45,
+  "objectives": [
+    "Define eigenvalues/eigenvectors and recognise that $\\lambda=0$ is allowed but $v=0$ is not",
+    "Compute the characteristic polynomial $p(x)=\\det(A-xI)$ and find all real eigenvalues, using $\\det$ and $\\operatorname{tr}$ shortcuts",
+    "Compute each eigenspace $E_\\lambda=\\ker(A-\\lambda I)$ and its dimension via rank",
+    "Distinguish algebraic from geometric multiplicity and apply $1\\le\\dim E_\\lambda\\le\\operatorname{mult}(\\lambda)$",
+    "State and apply the diagonalizability criterion (all roots real and $\\operatorname{mult}(\\lambda)=\\dim E_\\lambda$ for every repeated root)",
+    "Diagonalize a matrix: build $P$ and $D$ so that $P^{-1}AP=D$, and use similarity",
+    "Recognise that similar matrices share characteristic polynomial, eigenvalues, determinant and trace"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What this topic is about"
+    },
+    {
+      "kind": "prose",
+      "text": "Given a square matrix $A\\in\\mathbb{R}^{n,n}$ (or a linear map $f:V\\to V$ on an $n$-dimensional space), we ask: are there special directions that $A$ only **stretches**, without rotating them? A nonzero vector $v$ with $Av=\\lambda v$ is an **eigenvector**, and the scalar $\\lambda$ is its **eigenvalue**. Finding these lets us replace $A$ by a much simpler **diagonal** matrix in a clever basis. This is one of the most heavily tested parts of the written exam: both as theory (true/false about rank, multiplicities, diagonalizability) and as the open exercise (compute eigenvalues, eigenspaces, and diagonalize)."
+    },
+    {
+      "kind": "definition",
+      "term": "Eigenvector and eigenvalue",
+      "text": "A **nonzero** vector $v$ is an eigenvector of $A\\in\\mathbb{R}^{n,n}$ if there is a scalar $\\lambda$ with\n$$Av=\\lambda v.$$\nThe scalar $\\lambda$ is the eigenvalue associated to $v$. The same definition applies to an endomorphism $f:V\\to V$: $f(v)=\\lambda v$. If $v$ is an eigenvector then so is $av$ for any $a\\neq 0$, with the same eigenvalue."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The zero vector is never an eigenvector",
+      "text": "Although $A\\,0=0=\\lambda\\,0$ holds for every $\\lambda$, the null vector $0$ is **excluded** by definition (its eigenvalue would be undetermined). But $\\lambda=0$ **can** be a genuine eigenvalue: it just needs a nonzero $v$ with $Av=0$, i.e. $v\\in\\ker A$. So 'eigenvalue $0$' and 'the vector $0$' are completely different things — and $A$ has eigenvalue $0$ exactly when $A$ is **not** invertible."
+    },
+    {
+      "kind": "heading",
+      "text": "The characteristic polynomial"
+    },
+    {
+      "kind": "prose",
+      "text": "Rewrite $Av=\\lambda v$ as $(A-\\lambda I)v=0$. A nonzero solution $v$ exists exactly when $A-\\lambda I$ is **not** invertible, i.e. when its determinant vanishes. This turns the search for eigenvalues into solving a single polynomial equation."
+    },
+    {
+      "kind": "formula",
+      "tex": "p(x)=\\det(A-xI)",
+      "caption": "The characteristic polynomial: a degree-$n$ polynomial whose real roots are exactly the eigenvalues of $A$."
+    },
+    {
+      "kind": "definition",
+      "term": "Characteristic polynomial — key facts",
+      "text": "For $A\\in\\mathbb{R}^{n,n}$, $p(x)=\\det(A-xI)$ has degree $n$ and:\n- its **real roots are exactly the eigenvalues** of $A$;\n- $p(0)=\\det A$ (constant term);\n- the leading term is $(-1)^n x^n$;\n- the coefficient of $x^{n-1}$ is $(-1)^{n-1}\\operatorname{tr}A$ (sum of diagonal entries).\nFor a $2\\times2$ matrix $\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$ this gives $p(x)=x^2-(a+d)x+(ad-bc)$."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Trace and determinant shortcut",
+      "text": "The eigenvalues $\\lambda_1,\\dots,\\lambda_n$ (counted with multiplicity) always satisfy\n$$\\lambda_1+\\cdots+\\lambda_n=\\operatorname{tr}A,\\qquad \\lambda_1\\cdots\\lambda_n=\\det A.$$\nIf you can spot one eigenvalue (e.g. a row of zeros in $A-\\lambda I$ means $\\lambda$ is an eigenvalue), use trace and determinant to get the others without expanding the whole polynomial. This is exactly how the lecture finds $\\lambda=1,2,4$ for a $3\\times3$ matrix."
+    },
+    {
+      "kind": "heading",
+      "text": "Eigenspaces and how to compute them"
+    },
+    {
+      "kind": "definition",
+      "term": "Eigenspace",
+      "text": "For an eigenvalue $\\lambda$, the **eigenspace** is\n$$E_\\lambda=\\ker(A-\\lambda I).$$\nIt is a subspace of $\\mathbb{R}^n$. Every nonzero vector of $E_\\lambda$ is an eigenvector with eigenvalue $\\lambda$ (the only non-eigenvector in $E_\\lambda$ is $0$). Its dimension is found by rank-nullity:\n$$\\dim E_\\lambda=n-r(A-\\lambda I).$$"
+    },
+    {
+      "kind": "steps",
+      "text": "Standard method to find all eigenvalues and eigenspaces of a matrix $A$:",
+      "steps": [
+        {
+          "label": "Characteristic polynomial",
+          "text": "Compute $p(x)=\\det(A-xI)$. Expand along the row/column with most zeros, or use Sarrus for $3\\times3$."
+        },
+        {
+          "label": "Eigenvalues",
+          "text": "Solve $p(x)=0$. Keep only the **real** roots (over $\\mathbb{R}$). Record each $\\operatorname{mult}(\\lambda)$ = how many times $(x-\\lambda)$ divides $p(x)$."
+        },
+        {
+          "label": "Eigenspaces",
+          "text": "For each $\\lambda$, form $A-\\lambda I$, row-reduce it, and solve the homogeneous system $(A-\\lambda I)v=0$. A basis of the solution space is a basis of $E_\\lambda$."
+        },
+        {
+          "label": "Geometric multiplicity",
+          "text": "Read off $\\dim E_\\lambda=n-r(A-\\lambda I)$ = number of free variables = number of basis eigenvectors."
+        },
+        {
+          "label": "Check",
+          "text": "Verify $1\\le\\dim E_\\lambda\\le\\operatorname{mult}(\\lambda)$; the dimensions over all distinct real eigenvalues sum to at most $n$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked 2×2 eigenspace computation",
+      "text": "Let $A=\\begin{pmatrix}-6&9\\\\-4&7\\end{pmatrix}$.\n\n**Step 1.** $p(x)=(-6-x)(7-x)+36=x^2-x-6=(x+2)(x-3)$.\n\n**Step 2.** Eigenvalues $\\lambda_1=-2,\\ \\lambda_2=3$ (both simple, real).\n\n**Step 3 ($\\lambda=-2$).** $A+2I=\\begin{pmatrix}-4&9\\\\-4&9\\end{pmatrix}\\sim\\begin{pmatrix}1&-\\tfrac94\\\\0&0\\end{pmatrix}$, so $E_{-2}=L\\{(9,4)\\}$.\n\n**Step 3 ($\\lambda=3$).** $A-3I=\\begin{pmatrix}-9&9\\\\-4&4\\end{pmatrix}\\sim\\begin{pmatrix}1&-1\\\\0&0\\end{pmatrix}$, so $E_{3}=L\\{(1,1)\\}$.\n\nTwo distinct real eigenvalues in $\\mathbb{R}^2$ $\\Rightarrow$ a basis of eigenvectors exists $\\Rightarrow$ $A$ is diagonalizable."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "For $A=\\begin{pmatrix}-6&9\\\\-4&7\\end{pmatrix}$ above, what is $\\dim E_{-2}$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$0$"
+          },
+          {
+            "id": "B",
+            "content": "$1$"
+          },
+          {
+            "id": "C",
+            "content": "$2$"
+          },
+          {
+            "id": "D",
+            "content": "It is undefined"
+          }
+        ],
+        "correct": "B",
+        "explanation": "$A+2I$ has rank $1$, so $\\dim E_{-2}=2-1=1$. Every eigenspace has dimension at least $1$ (an eigenvalue must own a nonzero eigenvector) and here at most $1$ since the eigenvalue is simple. Option C would require $A+2I$ to be the zero matrix; A contradicts that $-2$ is an eigenvalue; D is wrong because eigenspaces always have a well-defined dimension.",
+        "theory": "$\\dim E_\\lambda = n - r(A-\\lambda I)$.",
+        "source": "Notes 19, L19.1 example"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Algebraic vs geometric multiplicity"
+    },
+    {
+      "kind": "definition",
+      "term": "The two multiplicities",
+      "text": "For an eigenvalue $\\lambda$:\n- **Algebraic multiplicity** $\\operatorname{mult}(\\lambda)$ = the highest power of $(x-\\lambda)$ dividing $p(x)$.\n- **Geometric multiplicity** $\\dim E_\\lambda$ = dimension of the eigenspace = $n-r(A-\\lambda I)$.\nThey are linked by the fundamental inequality."
+    },
+    {
+      "kind": "formula",
+      "tex": "1\\;\\le\\;\\dim E_\\lambda\\;\\le\\;\\operatorname{mult}(\\lambda)",
+      "caption": "The geometric multiplicity is at least 1 and never exceeds the algebraic multiplicity."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Why this inequality is the heart of the topic",
+      "text": "A simple eigenvalue ($\\operatorname{mult}=1$) automatically has $\\dim E_\\lambda=1$ — no problem. The danger is only with **repeated** eigenvalues: there $\\dim E_\\lambda$ might be strictly less than $\\operatorname{mult}(\\lambda)$, and then you cannot collect enough independent eigenvectors. That gap is precisely what blocks diagonalizability."
+    },
+    {
+      "kind": "example",
+      "title": "A repeated root with full eigenspace",
+      "text": "$A=\\begin{pmatrix}-2&1&1\\\\1&-2&1\\\\1&1&-2\\end{pmatrix}$ has $p(x)=-x(x+3)^2$, so $\\operatorname{mult}(0)=1$, $\\operatorname{mult}(-3)=2$. For $\\lambda=-3$, $A+3I=\\begin{pmatrix}1&1&1\\\\1&1&1\\\\1&1&1\\end{pmatrix}\\sim\\begin{pmatrix}1&1&1\\\\0&0&0\\\\0&0&0\\end{pmatrix}$ has rank $1$, so $\\dim E_{-3}=3-1=2=\\operatorname{mult}(-3)$. Here the geometric multiplicity reaches the algebraic one, so this matrix **is** diagonalizable."
+    },
+    {
+      "kind": "heading",
+      "text": "The diagonalizability criterion"
+    },
+    {
+      "kind": "definition",
+      "term": "Similar and diagonalizable",
+      "text": "- $A,B\\in\\mathbb{R}^{n,n}$ are **similar** if there is an invertible $P$ with $A=PBP^{-1}$ (equivalently $P^{-1}AP=B$).\n- $A$ is **diagonalizable** if it is similar to a diagonal matrix $D$.\nAn endomorphism $f$ is called **simple** when some basis of $V$ consists of eigenvectors of $f$ — equivalently its matrix is diagonalizable."
+    },
+    {
+      "kind": "formula",
+      "tex": "A \\text{ diagonalizable over }\\mathbb{R}\\iff \\text{all roots of }p(x)\\text{ real, and }\\operatorname{mult}(\\lambda)=\\dim E_\\lambda\\ \\forall\\lambda",
+      "caption": "The diagonalizability criterion (Theorem, Notes 20)."
+    },
+    {
+      "kind": "prose",
+      "text": "Equivalently: $A$ is diagonalizable over $\\mathbb{R}$ iff $\\mathbb{R}^n$ has a **basis of eigenvectors** of $A$. The criterion gives two practical shortcuts. (1) If $A\\in\\mathbb{R}^{n,n}$ has $n$ **distinct real** eigenvalues, it is automatically diagonalizable (each simple eigenvalue contributes one independent eigenvector, and eigenvectors of distinct eigenvalues are linearly independent). (2) You only need to check the geometric-vs-algebraic test on **repeated** roots."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "Two classic exam mistakes",
+      "text": "- **Diagonalizable does NOT mean invertible.** $\\begin{pmatrix}1&2\\\\2&4\\end{pmatrix}$ has eigenvalues $0,5$ — diagonalizable but $\\det=0$ (not invertible). And $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ is invertible ($\\det=1$) but NOT diagonalizable ($\\lambda=1$ has $\\operatorname{mult}=2$, $\\dim E_1=1$). The two properties are independent.\n- **Complex roots block real diagonalizability.** $\\begin{pmatrix}0&1\\\\-1&0\\end{pmatrix}$ has $p(x)=x^2+1$, roots $\\pm i$: diagonalizable over $\\mathbb{C}$ but NOT over $\\mathbb{R}$."
+    },
+    {
+      "kind": "steps",
+      "text": "Standard method to diagonalize a matrix $A$ (find $P,D$ with $P^{-1}AP=D$):",
+      "steps": [
+        {
+          "label": "Eigenvalues",
+          "text": "Find all real roots of $p(x)=\\det(A-xI)$, with their algebraic multiplicities. If any root is non-real, $A$ is not diagonalizable over $\\mathbb{R}$ — stop."
+        },
+        {
+          "label": "Eigenspaces",
+          "text": "For each $\\lambda$, compute a basis of $E_\\lambda=\\ker(A-\\lambda I)$ and its dimension."
+        },
+        {
+          "label": "Criterion",
+          "text": "Check $\\dim E_\\lambda=\\operatorname{mult}(\\lambda)$ for every repeated $\\lambda$. If it fails anywhere, $A$ is not diagonalizable — stop."
+        },
+        {
+          "label": "Build P",
+          "text": "Put the eigenvectors (all of them, from every eigenspace) as the **columns** of $P$, in any order."
+        },
+        {
+          "label": "Build D",
+          "text": "$D$ is diagonal with the eigenvalues on the diagonal, in the **same order** as the corresponding columns of $P$. Then $AP=PD$, hence $P^{-1}AP=D$ and $A=PDP^{-1}$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Full diagonalization (3×3)",
+      "text": "$A=\\begin{pmatrix}5&3&-3\\\\0&1&0\\\\1&2&1\\end{pmatrix}$. Since $A-I$ has a zero row, $1$ is an eigenvalue. With $\\det A=8$ and $\\operatorname{tr}A=7$: $1\\cdot\\lambda_2\\lambda_3=8$ and $1+\\lambda_2+\\lambda_3=7$ give $\\lambda_2=2,\\lambda_3=4$, so $p(x)=-(x-1)(x-2)(x-4)$.\n\nSolving each $(A-\\lambda I)v=0$:\n- $E_1=L\\{(-6,3,-5)\\}$, $E_2=L\\{(1,0,1)\\}$, $E_4=L\\{(3,0,1)\\}$.\n\nThree distinct real eigenvalues $\\Rightarrow$ diagonalizable. Take\n$$P=\\begin{pmatrix}-6&1&3\\\\3&0&0\\\\-5&1&1\\end{pmatrix},\\qquad D=\\begin{pmatrix}1&0&0\\\\0&2&0\\\\0&0&4\\end{pmatrix}.$$\nThen $AP=PD$, and since $\\operatorname{rank}P=3$, $P^{-1}AP=D$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Similar matrices share invariants",
+      "text": "If $A=PBP^{-1}$ then $A,B$ have the **same characteristic polynomial** (because $\\det(xI-P^{-1}AP)=\\det(P^{-1}(xI-A)P)=\\det(xI-A)$), hence the **same eigenvalues, determinant and trace**. Warning: row-equivalent matrices do NOT generally share the characteristic polynomial — only similar ones do."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A matrix $A\\in\\mathbb{R}^{3,3}$ has characteristic polynomial $p(x)=-(x-2)^2(x-5)$, and you compute $\\dim E_2=1$. Is $A$ diagonalizable over $\\mathbb{R}$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Yes, because all roots are real"
+          },
+          {
+            "id": "B",
+            "content": "Yes, because it has two distinct eigenvalues"
+          },
+          {
+            "id": "C",
+            "content": "No, because $\\dim E_2=1\\neq 2=\\operatorname{mult}(2)$"
+          },
+          {
+            "id": "D",
+            "content": "Cannot be decided without $\\dim E_5$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "For the repeated eigenvalue $2$ we need $\\dim E_2=\\operatorname{mult}(2)=2$, but it is only $1$, so the criterion fails and $A$ is not diagonalizable. A and B are wrong: real roots and 'two distinct eigenvalues' are not enough when a repeated root is deficient. D is wrong because $\\lambda=5$ is simple, so $\\dim E_5=1$ automatically; the failure at $\\lambda=2$ already decides it.",
+        "theory": "Diagonalizable $\\iff$ all roots real and $\\dim E_\\lambda=\\operatorname{mult}(\\lambda)$ for every $\\lambda$.",
+        "source": "Notes 20, L20.2"
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Exam strategy",
+      "text": "On the open exercise: (1) always state the eigenvalues with their algebraic multiplicities first; (2) only the **repeated** eigenvalues need a geometric-multiplicity check — distinct real ones are free; (3) when asked for $P$ and $D$, double-check by verifying $AP=PD$ column by column (cheaper than computing $P^{-1}$). The relation $P^{-1}AP=D$ never requires you to actually invert $P$ to justify the answer."
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

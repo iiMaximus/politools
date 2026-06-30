@@ -1,0 +1,272 @@
+{
+  "title": "Orthogonality & quadratic forms",
+  "summary": "Inner products and orthonormal bases, the Gram-Schmidt algorithm, orthogonal matrices, the Spectral Theorem for real symmetric matrices, classifying quadratic forms by eigenvalue signs, and Cayley-Hamilton for powers and inverses.",
+  "minutes": 45,
+  "objectives": [
+    "State the Spectral Theorem and explain why real symmetric matrices are always orthogonally diagonalizable",
+    "Verify when a matrix is orthogonal and use the column/row orthonormality and det = +/-1 properties",
+    "Orthogonally diagonalize a symmetric matrix: find eigenvalues, orthogonalize eigenvectors, build the orthogonal P",
+    "Run the Gram-Schmidt algorithm to produce an orthonormal basis of a span or solution space",
+    "Write the symmetric matrix of a quadratic form and classify its signature (definite/indefinite/semidefinite) from eigenvalue signs",
+    "Apply the Cayley-Hamilton theorem to express powers and the inverse of a matrix as low-degree polynomials in the matrix"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "title": "Why symmetric matrices are special"
+    },
+    {
+      "kind": "prose",
+      "text": "This topic ties together three closely related ideas from lectures 21-22 (plus the quadratic-form classification of lecture 23). The central object is the **symmetric matrix** $S$ (one with $S^\\top = S$). Symmetric matrices are the best-behaved matrices in the whole course: their eigenvalues are always real, eigenvectors from different eigenvalues are automatically orthogonal, and they can always be diagonalized by an **orthogonal** matrix. This is the **Spectral Theorem**.\n\nFrom there we get the practical machinery: building **orthonormal (ON) bases** with the **Gram-Schmidt algorithm**, and using the signs of eigenvalues to classify **quadratic forms** as positive/negative definite, indefinite, or semidefinite."
+    },
+    {
+      "kind": "definition",
+      "term": "Dot product, norm, orthonormal basis",
+      "text": "For column vectors $v,w\\in\\mathbb{R}^{n}$ the **dot product** is $v\\cdot w = v^\\top w$, and the **norm** is $\\|v\\|=\\sqrt{v\\cdot v}$.\n\nA basis $\\{v_1,\\dots,v_m\\}$ of a subspace $V\\subseteq\\mathbb{R}^n$ is **orthonormal (ON)** if:\n- $v_i\\cdot v_i = 1$ for all $i$ (unit length),\n- $v_i\\cdot v_j = 0$ for all $i\\neq j$ (mutually orthogonal)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Pairwise orthogonal nonzero vectors are automatically linearly independent.** If $a_1v_1+\\cdots+a_mv_m=0$, dotting with $v_j$ gives $a_j(v_j\\cdot v_j)=0$, and since $v_j\\neq 0$ we get $a_j=0$. So orthogonality is a free certificate of independence — you never have to row-reduce."
+    },
+    {
+      "kind": "definition",
+      "term": "Orthogonal matrix",
+      "text": "A matrix $P\\in\\mathbb{R}^{n,n}$ is **orthogonal** if any one (hence all) of these equivalent conditions holds:\n- $P^\\top P = I_n$,\n- $PP^\\top = I_n$,\n- $P$ is invertible and $P^{-1}=P^\\top$.\n\nCondition $P^\\top P=I_n$ says exactly that the **columns of $P$ are an orthonormal basis** of $\\mathbb{R}^n$; $PP^\\top=I_n$ says the **rows** are. So orthogonal $\\iff$ rows (and columns) form an ON basis."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\det(P)=\\pm 1 \\quad\\text{for any orthogonal } P",
+      "caption": "From $1=\\det I = \\det(P^\\top P)=(\\det P)^2$ via Binet's theorem. Determinant $+1$ matrices are rotations; $-1$ are reflections/improper."
+    },
+    {
+      "kind": "prose",
+      "text": "**Lemma (orthogonal eigenvectors).** If $v_1,v_2$ are eigenvectors of a symmetric $S$ for distinct eigenvalues $\\lambda_1\\neq\\lambda_2$, then $v_1\\cdot v_2=0$.\n\nProof idea: $(Sv_1)\\cdot v_2 = v_1^\\top S^\\top v_2 = v_1^\\top(Sv_2)=v_1\\cdot(Sv_2)$ because $S^\\top=S$. So $\\lambda_1\\,v_1\\cdot v_2 = \\lambda_2\\,v_1\\cdot v_2$, and since $\\lambda_1\\neq\\lambda_2$ the dot product must vanish."
+    },
+    {
+      "kind": "heading",
+      "title": "The Spectral Theorem"
+    },
+    {
+      "kind": "definition",
+      "term": "Spectral Theorem (real symmetric matrices)",
+      "text": "Let $S\\in\\mathbb{R}^{n,n}$ be symmetric. Then:\n- (i) all eigenvalues of $S$ are **real**;\n- (ii) there exists an **orthogonal** matrix $P$ such that $$P^{-1}SP = P^\\top S P = D$$ is diagonal, with the eigenvalues of $S$ on the diagonal.\n\nConsequence: **every real symmetric matrix is diagonalizable**, and for every eigenvalue the algebraic multiplicity equals the geometric multiplicity."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "\"Symmetric\" must mean **real** symmetric. The complex symmetric matrix $S=\\begin{pmatrix}0&i\\\\ i&0\\end{pmatrix}$ is symmetric but NOT real, and $\\begin{pmatrix}1&i\\\\ i&-1\\end{pmatrix}$ is symmetric yet not diagonalizable even over $\\mathbb{C}$. The Spectral Theorem applies only to $S^\\top=S$ with real entries."
+    },
+    {
+      "kind": "steps",
+      "title": "Orthogonally diagonalizing a symmetric matrix S",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Find the eigenvalues from $\\det(S-\\lambda I)=0$ (all will be real)."
+        },
+        {
+          "label": "2",
+          "text": "For each eigenvalue compute an eigenvector basis of its eigenspace $\\ker(S-\\lambda I)$."
+        },
+        {
+          "label": "3",
+          "text": "Eigenvectors from different eigenvalues are already orthogonal. Within a repeated eigenvalue's eigenspace, run Gram-Schmidt to make them orthogonal."
+        },
+        {
+          "label": "4",
+          "text": "Normalize every eigenvector to unit length; these are the columns of $P$."
+        },
+        {
+          "label": "5",
+          "text": "Then $P$ is orthogonal and $P^\\top S P = D$, the diagonal matrix of eigenvalues (in the same column order)."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "A 2x2 symmetric matrix",
+      "text": "Take $A=\\begin{pmatrix}5&2\\\\ 2&8\\end{pmatrix}$. Characteristic polynomial: $(5-\\lambda)(8-\\lambda)-4=\\lambda^2-13\\lambda+36=(\\lambda-9)(\\lambda-4)$, so eigenvalues $9$ and $4$.\n\nEigenvectors: for $\\lambda=9$, $v_1=(1,2)$; for $\\lambda=4$, $v_2=(-2,1)$. Check $v_1\\cdot v_2 = -2+2 = 0$ (as the Lemma guarantees). Normalize: $f_1=\\tfrac{1}{\\sqrt5}(1,2)$, $f_2=\\tfrac{1}{\\sqrt5}(-2,1)$.\n\nThen $P=\\tfrac{1}{\\sqrt5}\\begin{pmatrix}1&-2\\\\ 2&1\\end{pmatrix}$ is orthogonal ($P^\\top P=I_2$) and $P^{-1}AP=\\begin{pmatrix}9&0\\\\ 0&4\\end{pmatrix}$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Eigenvectors $v_1,v_2$ of a real symmetric matrix belong to eigenvalues $3$ and $7$. What is $v_1\\cdot v_2$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$0$, necessarily"
+          },
+          {
+            "id": "B",
+            "content": "$1$, since they are normalized"
+          },
+          {
+            "id": "C",
+            "content": "$21$ (the product of the eigenvalues)"
+          },
+          {
+            "id": "D",
+            "content": "Cannot be determined"
+          }
+        ],
+        "correct": "A",
+        "explanation": "Distinct eigenvalues of a symmetric matrix force their eigenvectors to be orthogonal, so $v_1\\cdot v_2=0$. They need not be normalized, so B is wrong; the eigenvalues don't enter the dot product, so C and D are wrong."
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "Gram-Schmidt algorithm"
+    },
+    {
+      "kind": "definition",
+      "term": "Orthogonal projection",
+      "text": "The **orthogonal projection** of $u$ onto $v$ is $$\\mathrm{pr}_v(u)=\\frac{u\\cdot v}{\\|v\\|^2}\\,v.$$ The leftover $u-\\mathrm{pr}_v(u)$ is orthogonal to $v$. This is the engine of Gram-Schmidt: subtract off the components along the vectors you already have."
+    },
+    {
+      "kind": "formula",
+      "tex": "u_0 = u - \\mathrm{pr}_{v_1}(u) - \\mathrm{pr}_{v_2}(u) - \\cdots - \\mathrm{pr}_{v_k}(u),\\qquad v_{\\text{new}}=\\frac{u_0}{\\|u_0\\|}",
+      "caption": "Given an ON set $\\{v_1,\\dots,v_k\\}$ and a new independent vector $u$, this produces a unit vector orthogonal to all the $v_i$, extending the ON set."
+    },
+    {
+      "kind": "steps",
+      "title": "Gram-Schmidt: ON basis of a span",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Normalize the first generator: $v_1 = u_1/\\|u_1\\|$."
+        },
+        {
+          "label": "2",
+          "text": "Subtract its projection from the second: $u_0 = u_2-\\mathrm{pr}_{v_1}(u_2)$, then normalize $v_2=u_0/\\|u_0\\|$."
+        },
+        {
+          "label": "3",
+          "text": "For each later generator $u_k$, subtract projections onto ALL previous $v_1,\\dots,v_{k-1}$, then normalize."
+        },
+        {
+          "label": "4",
+          "text": "If some $u_0$ comes out $=0$, that generator was dependent — discard it (the dimension is smaller)."
+        },
+        {
+          "label": "5",
+          "text": "Shortcut: if a new generator is already orthogonal to all previous $v_i$ (all dot products $0$), just normalize it directly."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Gram-Schmidt in R^4",
+      "text": "ON basis of $V=L\\{u_1=(1,1,0,0),\\,u_2=(1,0,1,0),\\,u_3=(0,0,0,1)\\}$.\n\n$v_1=\\tfrac{1}{\\sqrt2}(1,1,0,0)$.\n\n$u_0=u_2-\\mathrm{pr}_{v_1}(u_2)=(1,0,1,0)-\\tfrac{1}{2}(1,1,0,0)=(\\tfrac12,-\\tfrac12,1,0)$, with $\\|u_0\\|^2=\\tfrac32$, so $v_2=\\tfrac{1}{\\sqrt6}(1,-1,2,0)$.\n\nFor $u_3=(0,0,0,1)$: $u_3\\cdot v_1=u_3\\cdot v_2=0$, so it is already orthogonal — just normalize: $v_3=(0,0,0,1)$.\n\nThus $\\{v_1,v_2,v_3\\}$ is an ON basis of $V$."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "You may rescale a vector by any positive constant before normalizing — e.g. replace $(\\tfrac12,-\\tfrac12,1,0)$ by $(1,-1,2,0)$ to avoid fractions. The final unit vector is the same. This keeps the arithmetic clean on the exam."
+    },
+    {
+      "kind": "heading",
+      "title": "Quadratic forms and their signature"
+    },
+    {
+      "kind": "definition",
+      "term": "Quadratic form",
+      "text": "A **quadratic form** in $x_1,\\dots,x_n$ is a homogeneous degree-2 polynomial $q(v)=v^\\top A v=\\sum_{i,j}a_{ij}x_ix_j$. We always take $A$ **symmetric**: the diagonal entry $a_{ii}$ is the coefficient of $x_i^2$, and the off-diagonal $a_{ij}=a_{ji}$ is **half** the coefficient of the mixed term $x_ix_j$."
+    },
+    {
+      "kind": "example",
+      "title": "Building the matrix of a form",
+      "text": "For $q(x,y,z)=2x^2+y^2+5z^2+6xy+2yz$: diagonal $=2,1,5$; halve the mixed coefficients $6xy\\to 3$, $2yz\\to 1$, $0\\,xz\\to 0$. So $$A=\\begin{pmatrix}2&3&0\\\\ 3&1&1\\\\ 0&1&5\\end{pmatrix}.$$"
+    },
+    {
+      "kind": "definition",
+      "term": "Character / signature of a form",
+      "text": "A quadratic form $q$ (equivalently its symmetric matrix $A$) is:\n- **positive definite** if $q(v)>0$ for all $v\\neq 0$;\n- **negative definite** if $q(v)<0$ for all $v\\neq 0$;\n- **indefinite** if $q$ takes both positive and negative values;\n- **positive (negative) semidefinite** if $q(v)\\ge 0$ (resp. $\\le 0$) for all $v$, with equality for some $v\\neq 0$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\text{classify } q \\text{ by the signs of the eigenvalues } \\lambda_i \\text{ of its symmetric matrix } A",
+      "caption": "Diagonalizing orthogonally turns $q$ into $\\lambda_1 X_1^2+\\cdots+\\lambda_n X_n^2$, so the signs of the $\\lambda_i$ decide everything."
+    },
+    {
+      "kind": "definition",
+      "term": "Eigenvalue criterion",
+      "text": "By the Spectral Theorem, $q$ is:\n- **positive definite** $\\iff$ all $\\lambda_i>0$;\n- **negative definite** $\\iff$ all $\\lambda_i<0$;\n- **indefinite** $\\iff$ there is a positive AND a negative eigenvalue;\n- **positive semidefinite** $\\iff$ all $\\lambda_i\\ge 0$ (with at least one $=0$); **negative semidefinite** $\\iff$ all $\\lambda_i\\le 0$ (with at least one $=0$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "A handy shortcut for the sign pattern without solving for eigenvalues: for a $2\\times2$ symmetric $A$, positive definite $\\iff a_{11}>0$ and $\\det A>0$; indefinite $\\iff \\det A<0$ (eigenvalues of opposite sign). This is the leading-minors idea, but on this exam the eigenvalue signs are the official tool — always trust them."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A symmetric $3\\times3$ matrix has eigenvalues $2,\\,5,\\,0$. Its quadratic form is:",
+        "options": [
+          {
+            "id": "A",
+            "content": "positive definite"
+          },
+          {
+            "id": "B",
+            "content": "positive semidefinite (not definite)"
+          },
+          {
+            "id": "C",
+            "content": "indefinite"
+          },
+          {
+            "id": "D",
+            "content": "negative definite"
+          }
+        ],
+        "correct": "B",
+        "explanation": "All eigenvalues are $\\ge 0$ but one is exactly $0$, so $q(v)\\ge0$ always yet $q(v)=0$ for a nonzero eigenvector of the $0$ eigenvalue. That is positive semidefinite, not definite (A wrong). No negative eigenvalue, so not indefinite (C) or negative definite (D)."
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "Cayley-Hamilton (powers and inverses)"
+    },
+    {
+      "kind": "definition",
+      "term": "Cayley-Hamilton Theorem",
+      "text": "Every square matrix satisfies its own characteristic polynomial: if $p(x)=a_0+a_1x+\\cdots+(-1)^nx^n$ is the characteristic polynomial of $A$, then $$p(A)=a_0I+a_1A+\\cdots+(-1)^nA^n=0.$$ This lets you rewrite high powers $A^k$ and the inverse $A^{-1}$ as low-degree polynomials in $A$."
+    },
+    {
+      "kind": "example",
+      "title": "Inverse and a power via Cayley-Hamilton",
+      "text": "For $A=\\begin{pmatrix}1&2\\\\ 3&4\\end{pmatrix}$, $p(x)=x^2-5x-2$, so $A^2-5A-2I=0$, i.e. $A^2=5A+2I$. From $2I=A^2-5A=A(A-5I)$ we get $A^{-1}=\\tfrac12(A-5I)$.\n\nFor a matrix with $p(x)=(x-2)^2$ (so $A^2=4A-4I$): $A^3=A(4A-4I)=4A^2-4A=4(4A-4I)-4A=12A-16I$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "$A$ is $2\\times2$ with $A^2=5A-2I$. Then $A^{-1}$ equals:",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\tfrac12(5I-A)$"
+          },
+          {
+            "id": "B",
+            "content": "$5I-A$"
+          },
+          {
+            "id": "C",
+            "content": "$2A-5I$"
+          },
+          {
+            "id": "D",
+            "content": "$\\tfrac12(A-5I)$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "From $A^2-5A+2I=0$ we get $2I=5A-A^2=A(5I-A)$, so $A^{-1}=\\tfrac12(5I-A)$ (option A). B drops the factor $\\tfrac12$; C and D have the wrong sign."
+      }
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

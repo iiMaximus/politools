@@ -1,0 +1,213 @@
+{
+  "title": "Lines & planes in space",
+  "summary": "A plane in $\\mathbb{R}^3$ is one linear equation $ax+by+cz=d$ with normal $\\vec n=(a,b,c)$; a line is the intersection of two planes, with direction $\\vec p=\\vec n_1\\times\\vec n_2$. This topic builds the Cartesian and parametric forms of both, the parallelism/orthogonality conditions (comparing normals and direction vectors), and the method for every intersection — plane∩plane, line∩plane, line∩line — including the uniquely 3D case of skew lines and orthogonal projection of a point onto a plane.",
+  "minutes": 45,
+  "objectives": [
+    "Write planes and lines in $\\mathbb{R}^3$ in both Cartesian and parametric form, and convert between them",
+    "Identify the normal vector of a plane and the direction vector of a line, and use the cross product $\\vec n_1\\times\\vec n_2$ for a line of intersection",
+    "Apply the six parallelism/orthogonality conditions for plane–plane, line–plane, and line–line pairs",
+    "Determine the mutual position of two planes, a line and a plane, or two lines (including detecting skew lines)",
+    "Decide whether a line lies in a plane or is strictly parallel to it",
+    "Compute intersections by solving the appropriate linear system or by parametric substitution",
+    "Find the orthogonal projection of a point onto a plane"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why lines and planes need different equations"
+    },
+    {
+      "kind": "prose",
+      "text": "In $\\mathbb{R}^3$ a **plane** is a flat 2-dimensional surface, and a **line** is 1-dimensional. The professor's key principle: a plane is the solution set of **one** linear equation, while a line is the solution set of a **system of two** independent linear equations. The notes warn: *thinking that a line in three-space is given by one equation is one of the worst things you can do in this class!* One equation always gives a plane; you need two to pin down a line."
+    },
+    {
+      "kind": "definition",
+      "term": "Cartesian (implicit) equation of a plane",
+      "text": "A plane $\\pi$ is the set of points $(x,y,z)$ satisfying a single linear equation\n$$ax+by+cz=d,$$\nwith $a,b,c$ not all zero. The vector $\\vec n=(a,b,c)$ is the **normal vector**: it is orthogonal to the whole plane."
+    },
+    {
+      "kind": "prose",
+      "text": "Writing the plane equation as $\\vec v\\cdot\\vec n=d$ (where $\\vec v=(x,y,z)$) shows its meaning. If $\\vec v_0$ is one fixed point of the plane, then $\\vec v_0\\cdot\\vec n=d$, so $(\\vec v-\\vec v_0)\\cdot\\vec n=0$: every displacement inside the plane is perpendicular to $\\vec n$. That is why a plane through $P_0$ with normal $\\vec n$ is exactly the set of points $P$ with $\\overrightarrow{P_0P}\\perp\\vec n$."
+    },
+    {
+      "kind": "definition",
+      "term": "Parametric equation of a plane",
+      "text": "A plane can also be written with **two** free parameters $s,t\\in\\mathbb{R}$:\n$$\\vec v=\\vec v_0+s\\,\\vec p+t\\,\\vec q,$$\nwhere $\\vec v_0$ is a point of the plane and $\\vec p,\\vec q$ are two non-proportional vectors **parallel** to the plane. As $s,t$ range over $\\mathbb{R}$ you sweep out the whole plane."
+    },
+    {
+      "kind": "definition",
+      "term": "Equation of a line in space",
+      "text": "A line $r$ is the solution set of a system of two independent plane equations (its **Cartesian** form):\n$$r:\\begin{cases}a_1x+b_1y+c_1z=d_1\\\\ a_2x+b_2y+c_2z=d_2\\end{cases}$$\nIts **parametric** form uses one parameter $t$:\n$$\\vec v=\\vec v_0+t\\,\\vec p,\\qquad \\vec p\\neq\\vec 0,$$\nwhere $\\vec v_0$ is a point on the line and $\\vec p$ is the **direction vector**."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\vec p=\\vec n_1\\times\\vec n_2",
+      "caption": "The direction of a line $r=\\pi_1\\cap\\pi_2$ is the cross product of the two plane normals: since $r$ lies in both planes it is perpendicular to both normals, so $\\vec p$ is a multiple of $\\vec n_1\\times\\vec n_2$."
+    },
+    {
+      "kind": "steps",
+      "title": "From Cartesian to parametric (line as intersection of two planes)",
+      "steps": [
+        {
+          "label": "Direction",
+          "text": "Compute $\\vec p=\\vec n_1\\times\\vec n_2$ where $\\vec n_1,\\vec n_2$ are the two plane normals. (Equivalently, solve the system by elimination and read off the direction.)"
+        },
+        {
+          "label": "One point",
+          "text": "Find one point $\\vec v_0$ on the line, e.g. set $z=0$ and solve the remaining $2\\times2$ system for $x,y$."
+        },
+        {
+          "label": "Write it",
+          "text": "$\\vec v=\\vec v_0+t\\,\\vec p$. Note a line has no unique parametric form: different valid choices of point/direction give different-looking answers."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Line as intersection of two planes",
+      "text": "Find the parametric form of $r:\\begin{cases}x+y+z=1\\\\ x+2y+3z=4\\end{cases}$.\n\n**Direction:** $\\vec p=(1,1,1)\\times(1,2,3)=(1,-2,1)$.\n\n**Point:** set $z=0$: $x+y=1$, $x+2y=4\\Rightarrow y=3,\\ x=-2$. So $\\vec v_0=(-2,3,0)$.\n\n**Answer:** $\\vec v=(-2,3,0)+t(1,-2,1)$, i.e. $x=-2+t,\\ y=3-2t,\\ z=t$.\n\n(Check by elimination: subtracting the equations gives $y+2z=3$, so $y=-2z+3$ and $x=z-2$; setting $z=t$ reproduces the same line.)"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "To go the **other way** (parametric to Cartesian for a plane): take the two direction vectors $\\vec p,\\vec q$, set $\\vec n=\\vec p\\times\\vec q$, write $ax+by+cz=d$ with $(a,b,c)=\\vec n$, and find $d$ by plugging in the known point $\\vec v_0$."
+    },
+    {
+      "kind": "heading",
+      "text": "Parallelism and orthogonality"
+    },
+    {
+      "kind": "prose",
+      "text": "Everything reduces to comparing **normals** (planes) and **direction vectors** (lines), using $\\parallel$ for \"proportional\" and $\\perp$ for \"dot product zero\". This is the heart of every exam question on mutual position."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\begin{aligned}&\\alpha\\parallel\\beta \\iff \\vec n_\\alpha\\parallel\\vec n_\\beta &&\\alpha\\perp\\beta \\iff \\vec n_\\alpha\\perp\\vec n_\\beta\\\\ &\\alpha\\parallel r \\iff \\vec n_\\alpha\\perp\\vec v_r &&\\alpha\\perp r \\iff \\vec n_\\alpha\\parallel\\vec v_r\\\\ &r\\parallel s \\iff \\vec v_r\\parallel\\vec v_s &&r\\perp s \\iff \\vec v_r\\perp\\vec v_s\\end{aligned}",
+      "caption": "The six parallelism/orthogonality conditions. Note the swap for a line vs a plane: a line is parallel to a plane when its direction is perpendicular to the normal."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Plane vs line is reversed.** Two planes are parallel when their normals are parallel, but a line is parallel to a plane when its direction is **perpendicular** to the normal ($\\vec n_\\alpha\\cdot\\vec v_r=0$). A line is perpendicular to a plane when its direction is **parallel** to the normal. Mixing these up is the most common mistake on these problems."
+    },
+    {
+      "kind": "definition",
+      "term": "Line lies in a plane vs is parallel to it",
+      "text": "If $\\vec n_\\alpha\\cdot\\vec v_r=0$ (direction $\\perp$ normal), the line is either **parallel to** the plane or **contained in** it. To decide: test whether one point of the line satisfies the plane equation. If yes $\\Rightarrow$ the line lies **in** the plane; if no $\\Rightarrow$ the line is **strictly parallel** (no intersection)."
+    },
+    {
+      "kind": "heading",
+      "text": "Intersections and the size of the system"
+    },
+    {
+      "kind": "prose",
+      "text": "Intersecting objects means solving the combined system of their equations. The number of equations tells you the system size, and the geometry tells you how many solutions to expect."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\begin{array}{ll}\\pi_1\\cap\\pi_2: & 2\\times3\\ \\text{system (line, or empty/coincident if }\\vec n_1\\parallel\\vec n_2)\\\\ \\alpha\\cap r: & 3\\times3\\ \\text{system (a point, unless }\\vec n_\\alpha\\perp\\vec v_r)\\\\ r\\cap s: & 4\\times3\\ \\text{system (point if coplanar, empty if skew)}\\end{array}",
+      "caption": "System sizes for the three basic intersections."
+    },
+    {
+      "kind": "prose",
+      "text": "**Plane $\\cap$ plane:** if normals are proportional the planes are parallel (no solution) or coincide (a whole plane of solutions); otherwise the intersection is a line. **Plane $\\cap$ line:** if $\\vec n_\\alpha\\perp\\vec v_r$ then either no point (parallel) or the line lies in the plane (infinitely many); if $\\vec n_\\alpha\\cdot\\vec v_r\\neq0$ there is exactly **one** intersection point. **Line $\\cap$ line:** if directions are proportional the lines are parallel; if not, they either meet in one point (coplanar) or never meet — **skew lines**, a feature unique to $\\mathbb{R}^3$."
+    },
+    {
+      "kind": "steps",
+      "title": "Efficient line–plane intersection (substitution)",
+      "steps": [
+        {
+          "label": "Parametrize the line",
+          "text": "Write $r$ as $(x,y,z)=\\vec v_0+t\\,\\vec p$, giving $x,y,z$ in terms of one parameter $t$."
+        },
+        {
+          "label": "Substitute",
+          "text": "Plug those expressions into the single plane equation $ax+by+cz=d$. You get one equation in $t$."
+        },
+        {
+          "label": "Solve and back-substitute",
+          "text": "Solve for $t$; if there is a unique $t$, put it back into the line to get the point. No solution $\\Rightarrow$ parallel; identity $0=0$ $\\Rightarrow$ line lies in the plane."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Line meets a plane in one point",
+      "text": "Plane $\\alpha:x+y+z=0$ and line $r:\\begin{cases}y-x=1\\\\ z-y=1\\end{cases}$.\n\nSet $y=t$: then $x=t-1$ and $z=t+1$, so $(x,y,z)=(-1,0,1)+t(1,1,1)$.\n\nSubstitute into $\\alpha$: $(t-1)+(t)+(t+1)=0\\Rightarrow 3t=0\\Rightarrow t=0$.\n\nIntersection point: $(-1,0,1)$. (Here $\\vec n_\\alpha\\cdot\\vec p=(1,1,1)\\cdot(1,1,1)=3\\neq0$, confirming a single point.)"
+    },
+    {
+      "kind": "definition",
+      "term": "Skew lines",
+      "text": "Two lines are **skew** if they are neither parallel (directions not proportional) nor intersecting (system has no solution). They do not lie in a common plane. In $\\mathbb{R}^2$ this is impossible — two lines in the plane are always either parallel or intersecting — so skewness is a genuinely 3-dimensional phenomenon."
+    },
+    {
+      "kind": "example",
+      "title": "Detecting a skew pair",
+      "text": "Lines $l:x=y=z$, direction $\\vec p_l=(1,1,1)$, and $s:(x,y,z)=t(6,3,2)+(1,2,3)$, direction $\\vec p_s=(6,3,2)$.\n\nDirections are not proportional, so they are not parallel. Intersect using $x=y=z$ on $s$: $6t+1=3t+2=2t+3$. From $6t+1=3t+2$ we get $t=\\tfrac13$; from $3t+2=2t+3$ we get $t=1$. Contradiction $\\Rightarrow$ no common point.\n\nNot parallel and not intersecting $\\Rightarrow$ **$l$ and $s$ are skew.**"
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Decision tree for two lines: (1) directions proportional? $\\to$ **parallel** (or coincident). (2) Not proportional but system solvable? $\\to$ **intersecting** (coplanar). (3) Not proportional and system unsolvable? $\\to$ **skew**."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "How many independent linear equations are needed to describe a line in $\\mathbb{R}^3$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "One"
+          },
+          {
+            "id": "B",
+            "content": "Two"
+          },
+          {
+            "id": "C",
+            "content": "Three"
+          },
+          {
+            "id": "D",
+            "content": "It depends on the line"
+          }
+        ],
+        "correct": "B",
+        "explanation": "A single linear equation always describes a plane (2-dimensional). A line is 1-dimensional and needs the intersection of two independent planes, i.e. two equations. Three would generically over-determine to a point or be empty.",
+        "theory": "Cartesian equation of a line.",
+        "source": "Carlini Notes 4, L4.1"
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A line $r$ has direction $\\vec v_r=(1,2,1)$ and a plane $\\alpha$ has normal $\\vec n=(1,-1,1)$. What is the relation between $r$ and $\\alpha$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$r$ is perpendicular to $\\alpha$"
+          },
+          {
+            "id": "B",
+            "content": "$r$ is parallel to or contained in $\\alpha$"
+          },
+          {
+            "id": "C",
+            "content": "$r$ meets $\\alpha$ in exactly one point"
+          },
+          {
+            "id": "D",
+            "content": "Cannot be determined from this data"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Compute $\\vec n\\cdot\\vec v_r=(1)(1)+(-1)(2)+(1)(1)=1-2+1=0$. Direction is perpendicular to the normal, so the line is parallel to the plane (or lies inside it — a point test would decide). A is wrong (that needs $\\vec v_r\\parallel\\vec n$); C is wrong (that needs $\\vec n\\cdot\\vec v_r\\neq0$); the relation IS determined, so D is wrong.",
+        "theory": "Parallelism of a line and a plane.",
+        "source": "Carlini Notes 4, L4.1"
+      }
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

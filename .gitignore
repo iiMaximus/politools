@@ -11,3 +11,6 @@ course_material
 
 # transient engine bundle from verify scripts
 scripts/.excel-engine*.mjs
+
+# scratch / working caches (210M, not part of the app)
+tmp

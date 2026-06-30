@@ -1,0 +1,186 @@
+{
+  "title": "Geometric vectors & the dot/cross product",
+  "summary": "Geometric vectors in the plane and space: components $\\vec v=v_x\\vec i+v_y\\vec j+v_z\\vec k$, sum, scalar multiple, and norm. The dot product computes angles and tests orthogonality ($\\vec u\\cdot\\vec w=0$); the cross product tests parallelism ($\\vec u\\times\\vec w=\\vec 0$) and gives areas; the mixed product gives volumes and tests coplanarity ($\\vec u\\times\\vec v\\cdot\\vec w=0$). These products are exactly the linear-(in)dependence detectors for two and three geometric vectors, and drive triangle classification, collinearity, projection, and parametric exam problems.\"",
+  "minutes": 35,
+  "objectives": [
+    "Write 2D/3D geometric vectors in components and compute sums, scalar multiples, and norms",
+    "Use the dot product to find angles, test orthogonality, and project one vector onto another",
+    "Use the cross product to test parallelism and compute parallelogram and triangle areas",
+    "Use the mixed (triple) product to compute box volumes and test coplanarity",
+    "Translate parallel/coplanar conditions into linear (in)dependence of geometric vectors",
+    "Classify triangles and test collinearity of points from coordinates",
+    "Solve parametric coplanarity and cross-product equations as on the written exam"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why geometric vectors?"
+    },
+    {
+      "kind": "prose",
+      "text": "A **geometric (free) vector** $\\vec v$ carries three pieces of information: a **direction** (the line it lies on), a **verse** (which way along that line), and a **magnitude** (length) $\\lVert\\vec v\\rVert$. An **applied vector** is a free vector plus an application point. From two points $A$ and $B$ we build the applied vector $\\overrightarrow{AB} = B - A$; the reverse $\\overrightarrow{BA}$ has the same direction and length but opposite verse. The whole topic reduces geometry (lengths, angles, areas, volumes) to simple component arithmetic."
+    },
+    {
+      "kind": "definition",
+      "term": "Components",
+      "text": "Fixing orthogonal axes gives three unit vectors $\\vec i,\\vec j,\\vec k$. Every free vector in space writes uniquely as $$\\vec v = v_x\\,\\vec i + v_y\\,\\vec j + v_z\\,\\vec k,$$ and the numbers $v_x,v_y,v_z$ are its **components**. In the plane there is simply no $z$-component. If $\\vec v$ is applied at the origin, its head sits at the point $(v_x,v_y,v_z)$."
+    },
+    {
+      "kind": "formula",
+      "tex": "a\\vec v + b\\vec w = (av_x+bw_x)\\vec i + (av_y+bw_y)\\vec j + (av_z+bw_z)\\vec k",
+      "caption": "Sum and scalar multiple act component by component. Scalar $c$ scales length by $|c|$ and flips verse when $c<0$; the sum follows the parallelogram (or tip-to-tail) rule."
+    },
+    {
+      "kind": "definition",
+      "term": "Norm (length) and versor",
+      "text": "The **norm** is $\\lVert\\vec v\\rVert = \\sqrt{v_x^2+v_y^2+v_z^2}$, recovered from the dot product as $\\lVert\\vec v\\rVert=\\sqrt{\\vec v\\cdot\\vec v}$. A vector of length one is a **versor** (unit vector); for any $\\vec v\\neq\\vec 0$, $\\dfrac{\\vec v}{\\lVert\\vec v\\rVert}$ is the versor with the same direction and verse."
+    },
+    {
+      "kind": "heading",
+      "text": "The dot (scalar) product"
+    },
+    {
+      "kind": "definition",
+      "term": "Dot product",
+      "text": "For vectors $\\vec u,\\vec w$ with angle $\\alpha$ between them ($0\\le\\alpha\\le\\pi$): $$\\vec u\\cdot\\vec w = \\lVert\\vec u\\rVert\\,\\lVert\\vec w\\rVert\\cos\\alpha.$$ The result is a **scalar** (a number), not a vector. It is symmetric, linear in each argument, and positive: $\\vec u\\cdot\\vec u=\\lVert\\vec u\\rVert^2\\ge 0$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\vec v\\cdot\\vec w = v_xw_x + v_yw_y + v_zw_z, \\qquad \\cos\\alpha = \\frac{\\vec u\\cdot\\vec w}{\\lVert\\vec u\\rVert\\,\\lVert\\vec w\\rVert}",
+      "caption": "Component formula for the dot product, and the angle it computes. The orthogonal projection of $\\vec u$ onto $\\vec w$ is the vector $\\dfrac{\\vec u\\cdot\\vec w}{\\lVert\\vec w\\rVert^2}\\,\\vec w$."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Orthogonality test.** For non-zero $\\vec u,\\vec w$: $\\;\\vec u\\perp\\vec w \\iff \\vec u\\cdot\\vec w = 0$. This single equation is the workhorse for checking right angles, rectangles, and perpendicularity throughout the course."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "The dot product returns a **number**, the cross product returns a **vector**. Writing $\\vec u\\cdot\\vec w = \\vec 0$ (a vector) or $\\vec u\\times\\vec w = 0$ (a scalar) is a type error that costs marks. Also $\\vec u\\cdot\\vec w=0$ means *orthogonal*, while $\\vec u\\times\\vec w=\\vec 0$ means *parallel* — do not swap them."
+    },
+    {
+      "kind": "heading",
+      "text": "The cross (vector) product"
+    },
+    {
+      "kind": "definition",
+      "term": "Cross product",
+      "text": "$\\vec u\\times\\vec w$ is the unique vector that is (i) **orthogonal** to both $\\vec u$ and $\\vec w$, (ii) has magnitude $\\lVert\\vec u\\times\\vec w\\rVert = \\lVert\\vec u\\rVert\\,\\lVert\\vec w\\rVert\\sin\\alpha$, and (iii) has verse given by the **right-hand rule** (fingers sweep $\\vec u$ onto $\\vec w$, thumb points along $\\vec u\\times\\vec w$). It is **skew-symmetric**: $\\vec u\\times\\vec w = -\\,\\vec w\\times\\vec u$, and $\\vec u\\times\\vec u = \\vec 0$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\vec v\\times\\vec w = (v_yw_z - v_zw_y)\\,\\vec i - (v_xw_z - v_zw_x)\\,\\vec j + (v_xw_y - v_yw_x)\\,\\vec k",
+      "caption": "Component formula. Note the MINUS sign on the $\\vec j$ component — this is the most common arithmetic slip. The basis relations are $\\vec i\\times\\vec j=\\vec k,\\ \\vec j\\times\\vec k=\\vec i,\\ \\vec k\\times\\vec i=\\vec j$ (cyclic)."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Parallelism + area.** For non-zero $\\vec u,\\vec w$: $\\;\\vec u\\parallel\\vec w \\iff \\vec u\\times\\vec w=\\vec 0$. And $\\lVert\\vec u\\times\\vec w\\rVert = \\text{area of the parallelogram}$ on $\\vec u,\\vec w = 2\\cdot\\text{area of the triangle}$. So three points $A,B,C$ are collinear $\\iff \\overrightarrow{AB}\\times\\overrightarrow{AC}=\\vec 0$."
+    },
+    {
+      "kind": "heading",
+      "text": "The triple (mixed) product"
+    },
+    {
+      "kind": "definition",
+      "term": "Mixed product and volume",
+      "text": "For three vectors, $\\;\\vec u\\times\\vec v\\cdot\\vec w\\;$ (no parentheses needed — the cross must come first). Its absolute value $|\\vec u\\times\\vec v\\cdot\\vec w|$ is the **volume of the box** (parallelepiped) on $\\vec u,\\vec v,\\vec w$. Swapping two vectors flips the sign; cyclic shifts leave it unchanged."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Coplanarity test.** For non-zero $\\vec u,\\vec v,\\vec w$: $\\;\\vec u\\times\\vec v\\cdot\\vec w = 0 \\iff$ the three vectors are **coplanar** (lie in one plane), equivalently the box is flat / they are **linearly dependent**. This is the standard way the exam asks you to find a parameter $t$."
+    },
+    {
+      "kind": "prose",
+      "text": "**Linear (in)dependence**, the geometric reading: two vectors are dependent $\\iff$ parallel $\\iff$ $\\vec u\\times\\vec w=\\vec 0$. Three vectors are dependent $\\iff$ coplanar $\\iff$ $\\vec u\\times\\vec v\\cdot\\vec w=0$. So the cross and mixed products are exactly the dependence detectors for 2 and 3 geometric vectors."
+    },
+    {
+      "kind": "steps",
+      "title": "Standard method: classify a triangle $A,B,C$",
+      "steps": [
+        {
+          "label": "Build edges",
+          "text": "Form $\\overrightarrow{AB}=B-A$, $\\overrightarrow{BC}=C-B$, $\\overrightarrow{CA}=A-C$ from coordinates."
+        },
+        {
+          "label": "Side lengths",
+          "text": "Compute each norm $\\lVert\\,\\cdot\\,\\rVert=\\sqrt{x^2+y^2+z^2}$. Equal lengths $\\Rightarrow$ equilateral/isosceles."
+        },
+        {
+          "label": "Right angle?",
+          "text": "Dot two edges sharing a vertex; if a dot product is $0$ the triangle is right-angled there."
+        },
+        {
+          "label": "Area",
+          "text": "$\\text{Area}=\\tfrac12\\lVert\\overrightarrow{AB}\\times\\overrightarrow{AC}\\rVert$. If this is $0$ the points are collinear (degenerate triangle)."
+        },
+        {
+          "label": "Perimeter",
+          "text": "Sum the three side lengths."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Worked: triangle A(1,0,0), B(0,1,0), C(0,0,1)",
+      "text": "Edges: $\\overrightarrow{AB}=B-A=(-1,1,0)=-\\vec i+\\vec j$, $\\overrightarrow{BC}=C-B=(0,-1,1)=-\\vec j+\\vec k$, $\\overrightarrow{CA}=A-C=(1,0,-1)=\\vec i-\\vec k$. Each length is $\\sqrt{1+1}=\\sqrt2$, so $T$ is **equilateral** and the perimeter is $3\\sqrt2$. For area use $\\overrightarrow{AB}\\times\\overrightarrow{AC}$ with $\\overrightarrow{AC}=C-A=(-1,0,1)$: the cross product is $(-1,1,0)\\times(-1,0,1)=(1\\cdot1-0\\cdot0,\\;-((-1)\\cdot1-0\\cdot(-1)),\\;(-1)\\cdot0-1\\cdot(-1))=(1,1,1)$, length $\\sqrt3$. So $\\text{Area}=\\tfrac12\\sqrt3=\\tfrac{\\sqrt3}{2}$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Which equation correctly tests whether non-zero $\\vec u$ and $\\vec w$ are parallel?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\vec u\\cdot\\vec w = 0$"
+          },
+          {
+            "id": "B",
+            "content": "$\\vec u\\times\\vec w = \\vec 0$"
+          },
+          {
+            "id": "C",
+            "content": "$\\vec u\\cdot\\vec w = 1$"
+          },
+          {
+            "id": "D",
+            "content": "$\\lVert\\vec u\\rVert=\\lVert\\vec w\\rVert$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Parallel means the cross product vanishes, $\\vec u\\times\\vec w=\\vec 0$ (zero area, $\\sin\\alpha=0$). A tests orthogonality, not parallelism. C is meaningless as a parallel test. D (equal lengths) says nothing about direction."
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Vectors $\\vec u,\\vec v,\\vec w$ satisfy $\\vec u\\times\\vec v\\cdot\\vec w = 0$ with all three non-zero. What can you conclude?",
+        "options": [
+          {
+            "id": "A",
+            "content": "They are mutually orthogonal"
+          },
+          {
+            "id": "B",
+            "content": "They span a box of volume 0, i.e. they are coplanar / linearly dependent"
+          },
+          {
+            "id": "C",
+            "content": "They are all parallel"
+          },
+          {
+            "id": "D",
+            "content": "Their sum is the zero vector"
+          }
+        ],
+        "correct": "B",
+        "explanation": "A zero mixed product means zero box volume, so the three vectors lie in a common plane — they are coplanar, equivalently linearly dependent. Orthogonality (A) would instead make the volume maximal. Parallel (C) is a stronger, unneeded condition. The sum (D) is unrelated."
+      }
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

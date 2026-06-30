@@ -1,0 +1,231 @@
+{
+  "title": "MATLAB essentials: syntax, vectors, matrices & plotting",
+  "summary": "A complete, runnable tour of the MATLAB commands Session 0 demands: the workspace and the output-suppressing semicolon; building vectors and matrices with brackets, the colon operator and linspace; indexing and slicing with A(i,j), A(:,k) and end; element-wise (.* ./ .^) versus matrix (* / ^) operations; the built-ins size, length, zeros, ones, eye, diag, sum and transpose; the for / while / if control structures; scripts versus functions; and 2D plotting with plot, loglog, hold on, title and legend. Every snippet is quoted from the real solution files session0_solutions_2025.m and taylor_exp.m.",
+  "minutes": 35,
+  "objectives": [
+    "Manage the workspace (clear all, close all, clc, whos) and use the semicolon to suppress output",
+    "Build vectors and matrices with brackets, the colon operator j:i:k, and linspace",
+    "Index and slice with A(i,j), A(:,k), A(m,:), end and index vectors",
+    "Distinguish element-wise operations .* ./ .^ from matrix operations * / ^",
+    "Use the built-ins size, length, zeros, ones, eye, diag, sum and transpose ('\")",
+    "Write for, while and if control structures the way taylor_exp.m does",
+    "Write scripts and functions and plot with plot, loglog, hold on, title and legend"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why MATLAB comes first"
+    },
+    {
+      "kind": "prose",
+      "text": "In this course MATLAB stands for **MAT**rix **LAB**oratory: it was designed to operate on matrices, and a real scalar is just a $1\\times 1$ matrix. It is an **interpreted** high-level language: the interpreter runs your instructions directly, with no separate compile step. The MATLAB part is the first and most important part of the exam, so you must reproduce the exact commands. Every snippet below is taken from the Session 0 slides, the handbook, and the real solution files `session0_solutions_2025.m` and `taylor_exp.m`."
+    },
+    {
+      "kind": "definition",
+      "term": "Workspace, Command Window, Current Folder",
+      "text": "The desktop has three main panels. The **Command Window** (prompt `>>`) is where you type commands and read results. The **Workspace** lists the variables you have created. The **Current Folder** is where MATLAB looks for `.m` files. You never declare variables: typing `z = 4*5` creates `z` and stores $20$."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Start every script with the housekeeping the course uses: `clear all` removes all variables from memory, `close all` closes all figures, and `clc` clears the Command Window. `session0_solutions_2025.m` opens every exercise with these. Comment a line with `%`; list current variables with `whos` or `who`."
+    },
+    {
+      "kind": "heading",
+      "text": "The semicolon: suppress output"
+    },
+    {
+      "kind": "prose",
+      "text": "A semicolon `;` at the **end of a line suppresses the display** of the result in the Command Window. The computation still runs and the variable is still stored; only the printing is silenced. With no semicolon, MATLAB echoes the result. If you do not assign an expression to a variable, the result is stored in the automatic variable `ans`."
+    },
+    {
+      "kind": "example",
+      "title": "Semicolon vs no semicolon",
+      "text": "```matlab\nz = 4*5      % no semicolon: prints  z = 20\na = 4*5;     % semicolon: prints nothing, but a is stored\na            % type the name to display its value\n4*5          % unassigned: result goes into ans\n```\nLine 1 prints, line 2 stays silent, line 3 re-displays `a`, and line 4 leaves the answer in `ans`."
+    },
+    {
+      "kind": "heading",
+      "text": "Vectors: brackets, colon, linspace"
+    },
+    {
+      "kind": "prose",
+      "text": "Build a **row vector** by separating entries with spaces or commas, and a **column vector** by separating them with semicolons (or newlines). The **colon operator** is the workhorse: `j:k` makes a unit-spaced row vector $[j,\\,j+1,\\dots]$, and `j:i:k` uses `i` as the step. `linspace(a,b)` returns 100 evenly spaced points between `a` and `b`, and `linspace(a,b,n)` returns exactly `n` points including both endpoints."
+    },
+    {
+      "kind": "example",
+      "title": "Three ways to build a vector (from exercise 0_1 and 0_5)",
+      "text": "```matlab\nr = [1 2 3];          % row vector (spaces)\nc = [1; 2; 3];        % column vector (semicolons)\nx = [1:-0.1:0]        % colon: from 1 down to 0 in steps of -0.1\nx = linspace(-pi,pi); % 100 evenly spaced points in [-pi, pi]\n```\nThe exam quiz asks what `x=[1:-0.25:0]` gives: stepping by $-0.25$ from $1$ to $0$ yields `[1 0.75 0.5 0.25 0]`."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "`linspace` differs from the colon operator in two ways: it gives **direct control over the number of points** and **always includes both endpoints**. Its sibling `logspace` generates logarithmically spaced values. `pi` is the built-in $\\pi$."
+    },
+    {
+      "kind": "heading",
+      "text": "Indexing and slicing"
+    },
+    {
+      "kind": "prose",
+      "text": "Indices start at **1** (there is no index 0, and a non-existent index errors). `x(i)` is the i-th entry and `x(end)` is the last entry. You can pass a **vector of indices**: `x([1 4 3])` returns entries 1, 4 and 3 in that order. For a matrix, `A(i,j)` is one element, `A(:,k)` is the whole k-th column, `A(m,:)` is the whole m-th row, and `A(r,c)` is the submatrix at the listed rows `r` and columns `c`."
+    },
+    {
+      "kind": "example",
+      "title": "Slicing from exercises 0_1, 0_2 and 0_3",
+      "text": "```matlab\nx = [1:-0.1:0];\nx([1 4 3])              % entries 1, 4 and 3 of x\ny = x(end:-1:1)        % x reversed, last to first\n\nA = [1:4;5:8;9:12];    % a 3x4 matrix\nA(1:2,4)               % rows 1-2 of column 4 (a submatrix)\nA(:,3)                 % the whole 3rd column\nB = A(:,6:-1:1);       % all columns in reverse order\nB = A(:,2:2:end);      % the even columns\nB = A(1:2:end,:);      % the odd rows\nB = A([1 4 3],[5 2]);  % rows 1,4,3 and columns 5,2\n```\n`end` adapts to the size of the dimension, so `2:2:end` and `1:2:end` keep working if the matrix grows."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Reading is `A(1:2,4)`; **assigning** uses the same syntax on the left: `A(1:2,4) = zeros(2,1)` sets that column block to zero, and `x([1:2:7 10]) = zeros(1,5)` zeros entries 1,3,5,7,10. The shape on the right must match the slice on the left. Indexing always uses **parentheses** `()`; brackets `[]` only build or delete."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Given `A = [1:4;5:8;9:12]`, what does `A(:,3)` return?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The element in row 3, column 3"
+          },
+          {
+            "id": "B",
+            "content": "The entire 3rd column of A, i.e. [3;7;11]"
+          },
+          {
+            "id": "C",
+            "content": "The entire 3rd row of A, i.e. [9 10 11 12]"
+          },
+          {
+            "id": "D",
+            "content": "An error, because the colon is not allowed here"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The colon `:` in the row position means 'all rows', so `A(:,3)` is the whole 3rd column, [3;7;11]. A would be `A(3,3)`. C (the 3rd row) would be `A(3,:)`. D is wrong: `A(:,k)` is the standard way to extract a column.",
+        "theory": "For a matrix, `A(:,k)` is the k-th column and `A(m,:)` is the m-th row; the colon stands for 'every index in that dimension'.",
+        "source": "Matlab_Intro.txt (Matrices: the colon operator) and session0_solutions_2025.m exercise 0_2"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Special matrices and the built-ins"
+    },
+    {
+      "kind": "prose",
+      "text": "`zeros(n,m)` and `ones(n,m)` make $n\\times m$ matrices of 0s and 1s; with a single argument they make a **square** $n\\times n$ matrix, not a vector. `eye(n)` is the $n\\times n$ identity. `diag(x)` puts a vector on the main diagonal, and `diag(A)` extracts the main diagonal of `A`. `diag(v,k)` places `v` on the k-th diagonal above ($k>0$) or below ($k<0$) the main one. `size(A)` returns [rows, columns]; `length` returns the length of a vector."
+    },
+    {
+      "kind": "example",
+      "title": "Building a tridiagonal matrix (exercise 0_4)",
+      "text": "```matlab\nD  = diag(5*ones(10,1));    % main diagonal of 5s\nCS = diag(3*ones(9,1),1);   % super-diagonal of 3s (k = 1)\nCI = diag(-1*ones(9,1),-1); % sub-diagonal of -1s (k = -1)\nB  = D+CS+CI;               % add the three diagonals\nB([5 8],[6 9]) = 2;        % set the 4 intersection elements to 2\n```\n`5*ones(10,1)` is a column of ten 5s; `diag(...,1)` and `diag(...,-1)` offset the diagonal up and down."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "Other generators the sessions use: `magic(3)` (a magic square), `rand(n)` (random entries in $(0,1)$), and `hilb(n)` (the Hilbert matrix). Transpose a vector or matrix with the apostrophe: `v'` and `A'`."
+    },
+    {
+      "kind": "heading",
+      "text": "Element-wise vs matrix operations"
+    },
+    {
+      "kind": "prose",
+      "text": "This is the single most common exam trap. `*`, `/` and `^` are **matrix** operations (row-by-column product, matrix division, matrix power). Put a **dot** before them — `.*`, `./`, `.^` — to operate **element by element**. To evaluate a function on a whole vector of points you almost always need the dotted versions."
+    },
+    {
+      "kind": "formula",
+      "tex": "z = x\\,.\\!*\\,y \\;\\Rightarrow\\; z_i = x_i\\,y_i, \\qquad z = x\\,.\\hat{}\\,2 \\;\\Rightarrow\\; z_i = x_i^{\\,2}, \\qquad z = x\\,.\\!/\\,y \\;\\Rightarrow\\; z_i = x_i/y_i"
+    },
+    {
+      "kind": "example",
+      "title": "Why the dot matters (exercise 0_5)",
+      "text": "```matlab\nx = linspace(-5,5);\ny = exp(-x.^2);        % x.^2 squares EACH entry; x^2 would error\n\nx = linspace(0.001,4*pi,1000);\ny = sin(x)./x;         % ./ divides entry-by-entry\n\nx = linspace(0.001,2,10000);\ny = x.*sin(1./x);      % .* and 1./x are both element-wise\n```\nWith a non-square row vector, `x^2` and `x*x` are invalid (inner dimensions don't match); `x.^2` and `x.*x` are exactly what you want."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "`x = linspace(-5,5);` is a row vector. What happens with `y = exp(-x.^2)` versus `y = exp(-x^2)`?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Both give the same vector of e^{-x_i^2} values"
+          },
+          {
+            "id": "B",
+            "content": "`.^2` squares each entry (works); `^2` tries a matrix power and errors"
+          },
+          {
+            "id": "C",
+            "content": "`^2` squares each entry (works); `.^2` errors"
+          },
+          {
+            "id": "D",
+            "content": "Both error because exp cannot take a vector"
+          }
+        ],
+        "correct": "B",
+        "explanation": "`.^2` is element-wise: it squares each x_i, so `exp(-x.^2)` is the bell curve evaluated at every point. `x^2` means the matrix power x*x; for a 1x100 row vector the inner dimensions don't match, so it errors. exp itself works fine on vectors, so D is wrong, and A/C invert the roles of the two operators.",
+        "theory": "Dotted operators .* ./ .^ act element by element; un-dotted * / ^ are linear-algebra matrix operations. Evaluating a function on a vector of points needs the dotted forms.",
+        "source": "session0_solutions_2025.m exercise 0_5 and matlab_handbook.txt (element-wise operations)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Control flow: for, while, if"
+    },
+    {
+      "kind": "prose",
+      "text": "`for counter = start:step:end ... end` repeats a fixed number of times. `while (condition) ... end` repeats as long as the condition is true (non-zero), so you must update the condition inside the loop. `if ... elseif ... else ... end` branches. Logical operators: `&` (and), `|` (or), `~` (not); comparisons `==` (equal) and `~=` (not equal)."
+    },
+    {
+      "kind": "example",
+      "title": "A while loop that sums a Taylor series (taylor_exp.m)",
+      "text": "```matlab\nfunction [v,i] = taylor_exp(x,toll)\nv = 0;\ni = 0;\nterm = 1;\nwhile term >= toll       % keep adding while the term is big enough\n    v = v+term;          % accumulate the partial sum\n    i = i+1;             % next degree\n    term = x^i/factorial(i);  % next Taylor term x^i / i!\nend\n```\nThis is the exact body of `taylor_exp.m`: it approximates $e^x$ by $1+x+\\frac{x^2}{2!}+\\dots$ and stops once a term drops below the tolerance `toll`. `factorial(i)` computes $i!$."
+    },
+    {
+      "kind": "heading",
+      "text": "Scripts vs functions"
+    },
+    {
+      "kind": "prose",
+      "text": "A **script** is a sequence of commands run together; it takes no inputs and returns no outputs, and its variables stay in the workspace. A **function** takes inputs and returns outputs, its internal variables are local, and it must begin with the `function` line. Crucially, **the file name must match the function name** (`taylor_exp.m` defines `taylor_exp`)."
+    },
+    {
+      "kind": "definition",
+      "term": "Function header",
+      "text": "`function [y1,...,yN] = function_name(x1,...,xM)` where the `y` are outputs and the `x` are inputs. Call it as `[v,i] = taylor_exp(x,tol)` to capture both outputs, or `taylor_exp(x,tol)` to get only the first output (stored in `ans`)."
+    },
+    {
+      "kind": "example",
+      "title": "A script calling the function (additional exercise 2)",
+      "text": "```matlab\nx = 1;\ntol = 1.0e-10;\n[v,i] = taylor_exp(x,tol)         % capture both outputs\nerr = abs(v-exp(x))/abs(exp(x))   % relative error vs the exact exp(x)\n```\nRun a script by typing its name (no extension) at the prompt or pressing Run. `1.0e-10` is $10^{-10}$ in scientific notation."
+    },
+    {
+      "kind": "heading",
+      "text": "Plotting: plot, loglog, hold on, title, legend"
+    },
+    {
+      "kind": "prose",
+      "text": "`plot(x,y)` draws `y` against `x`; the two vectors must have the **same size**. A string option sets the colour and style, e.g. `'b'` blue, `'r'` red, `'g'` green, `'m'` magenta, `'k'` black; `'linewidth',2` thickens the line. `title('...')` adds a title. Each `plot` erases the previous one unless you call `hold on` first to overlay curves; `legend(...)` labels them. For data spanning many orders of magnitude, `loglog(x,y)` uses logarithmic scales on both axes (same syntax as `plot`)."
+    },
+    {
+      "kind": "example",
+      "title": "plot then loglog (exercises 0_5 and 0_6)",
+      "text": "```matlab\nx = linspace(-pi,pi);\ny = sin(x);\nfigure\nplot(x,y,'b','linewidth',2)   % blue line, thickness 2\ntitle('sin(x)')\n\nx = linspace(0.1,100,10000);\ny = sqrt((100*(1-0.01*x.^2).^2+0.02*x.^2)./((1-x.^2).^2+0.1*x.^2));\nfigure\nplot(x,y,'linewidth',2)\nfigure\nloglog(x,y,'linewidth',2)      % log scale reveals the resonance peak\n```\n`figure` opens a fresh window; `close` / `close all` close them. Note the dotted `.^` and `./` so the function is evaluated entry-by-entry."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "To overlay several curves in one window, use `hold on` and then label them: ```matlab\nfigure\nplot(x,sin(x),'b'); hold on\nplot(x,cos(x),'r')\nlegend('sin(x)','cos(x)')\ntitle('two curves')\n``` Without `hold on`, the second `plot` would replace the first."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "Quick reference of dot products and geometry from exercise 0_7: the scalar (dot) product of two rows is `A(1,:)*A(3,:)'` (row times column = a number) or `dot(a,b)`; the cross product is `cross(A(:,1),A(:,2))`; and the determinant is `det(A)`. `norm(v)` gives the Euclidean length of `v`."
+    }
+  ],
+  "lecture": "MATLAB part"
+}

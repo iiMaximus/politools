@@ -1,0 +1,245 @@
+{
+  "title": "Distances, circles & spheres",
+  "summary": "From the general definition $d(X,Y)=\\min d(P,Q)$, every distance (point-line, point-plane, line-line, plane-plane) reduces to a point-to-point measurement along a perpendicular. We master the point-plane formula and the skew-line cross-product formula, then meet circles and spheres: completing the square to get center and radius, the radical axis/plane to intersect two of them, the relation $r^2=R^2-d(C,\\pi)^2$ for the circle a plane cuts on a sphere, and the discriminant/distance tests for tangency and intersection of lines and planes with these quadratic objects.",
+  "minutes": 45,
+  "objectives": [
+    "Compute distances point-point, point-line, point-plane, line-plane, line-line (parallel and skew), and plane-plane by reducing each to a perpendicular point-to-point distance.",
+    "Apply the point-plane formula $|ax_P+by_P+cz_P+d|/\\sqrt{a^2+b^2+c^2}$ and the skew-line cross-product formula correctly, including when each one fails.",
+    "Read off the center and radius of a circle or sphere by completing the square, and detect degenerate (point / empty) cases.",
+    "Find the intersection of two circles or two spheres via the radical axis / radical plane and classify it (empty, tangent point, or circle).",
+    "Compute the center and radius of the circle a plane cuts on a sphere using $r^2=R^2-d(C,\\pi)^2$.",
+    "Decide tangency vs. secant vs. disjoint for a line/plane with a circle/sphere using the discriminant or the distance-vs-radius test.",
+    "Construct a circle/sphere tangent at a given point, or passing through given points, by solving the appropriate linear conditions."
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Distances, circles & spheres"
+    },
+    {
+      "kind": "prose",
+      "text": "This topic ties together everything we know about points, lines and planes by asking a single geometric question: **how far apart are two objects?** The general definition is $$d(X,Y)=\\min\\{d(P,Q): P\\in X,\\ Q\\in Y\\}.$$ If the two objects meet, the distance is $0$. The art is to turn each case (point-line, point-plane, line-line, plane-plane) into a *point-to-point* distance using **orthogonality**: we drop a perpendicular and measure along it. We then meet two new objects defined by distance — the **circle** in $\\mathbb{R}^2$ and the **sphere** in $\\mathbb{R}^3$ — and learn to read off their center and radius by **completing the square**, and to decide tangency/intersection."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**The master idea.** Every distance reduces to a point-to-point distance along a perpendicular. For a circle/sphere, distance is always measured from the **center** and then corrected by the **radius** $R$."
+    },
+    {
+      "kind": "heading",
+      "text": "Point–plane distance (the workhorse formula)"
+    },
+    {
+      "kind": "definition",
+      "term": "Distance point–plane",
+      "text": "Let $\\pi:ax+by+cz+d=0$ with normal $\\mathbf{n}=(a,b,c)$, and let $P=(x_P,y_P,z_P)$. Then $$d(P,\\pi)=\\frac{|a\\,x_P+b\\,y_P+c\\,z_P+d|}{\\sqrt{a^2+b^2+c^2}}.$$ Geometrically: take the line $r$ through $P$ with $r\\perp\\pi$, let $Q=\\pi\\cap r$; then $d(P,\\pi)=d(P,Q)$."
+    },
+    {
+      "kind": "formula",
+      "tex": "d(P,\\pi)=\\frac{|a x_P+b y_P+c z_P+d|}{\\sqrt{a^2+b^2+c^2}}\\qquad (\\text{plane } ax+by+cz+d=0)"
+    },
+    {
+      "kind": "example",
+      "title": "Point to plane",
+      "text": "Distance from $Q(1,2,3)$ to $\\pi:x+y+z=0$. Here $\\mathbf{n}=(1,1,1)$, $|\\mathbf{n}|=\\sqrt3$, $d=0$. $$d(Q,\\pi)=\\frac{|1+2+3|}{\\sqrt{3}}=\\frac{6}{\\sqrt3}=2\\sqrt3.$$ (The same plane in 2D gives the line formula: from $Q(1,2)$ to $r:x+y=0$ we get $\\frac{|1+2|}{\\sqrt2}=\\frac{3\\sqrt2}{2}$.)"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Normalize before you trust $|\\,\\mathbf p\\cdot\\mathbf n-d\\,|$.** The clean form \"distance $=|\\mathbf p\\cdot\\mathbf n-d|$\" only holds when $|\\mathbf n|=1$. If the normal is not a unit vector you MUST divide by $\\sqrt{a^2+b^2+c^2}$ — forgetting the denominator is the single most common error here."
+    },
+    {
+      "kind": "heading",
+      "text": "Point–line and line–line distance"
+    },
+    {
+      "kind": "steps",
+      "title": "Distance point–line $d(P,r)$ in space",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Find the plane $\\alpha$ through $P$ perpendicular to $r$: its normal is the direction vector $\\mathbf v_r$, so $\\alpha:\\ \\mathbf v_r\\cdot(\\mathbf x-P)=0$."
+        },
+        {
+          "label": "2",
+          "text": "Intersect: $Q=\\alpha\\cap r$ (plug the parametric line into $\\alpha$, solve for $t$)."
+        },
+        {
+          "label": "3",
+          "text": "Compute $d(P,r)=d(P,Q)$ with the point-to-point formula."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "Distance between two lines",
+      "text": "If lines $r,s$ **intersect**, $d=0$. If they are **parallel**, $d(r,s)=d(P,s)$ for any $P\\in r$ (reduce to point-line). If they are **skew** (or crossing), with directions $\\mathbf v_r,\\mathbf v_s$ and points $P\\in r$, $Q\\in s$: $$d(r,s)=\\frac{|\\,\\overrightarrow{PQ}\\cdot(\\mathbf v_r\\times \\mathbf v_s)\\,|}{\\|\\mathbf v_r\\times \\mathbf v_s\\|}.$$"
+    },
+    {
+      "kind": "formula",
+      "tex": "d(r,s)=\\frac{\\bigl|\\overrightarrow{PQ}\\cdot(\\mathbf v_r\\times \\mathbf v_s)\\bigr|}{\\|\\mathbf v_r\\times \\mathbf v_s\\|}\\quad(\\text{skew lines})"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**The cross-product formula breaks for parallel lines.** If $\\mathbf v_r\\parallel \\mathbf v_s$ then $\\mathbf v_r\\times\\mathbf v_s=\\mathbf 0$ and you divide by zero. For parallel lines always reduce to a point-line distance instead. Also: if the numerator $\\overrightarrow{PQ}\\cdot(\\mathbf v_r\\times\\mathbf v_s)=0$ the lines are **coplanar** (they intersect), so $d=0$."
+    },
+    {
+      "kind": "example",
+      "title": "Point to a line in space",
+      "text": "$Q(1,2,3)$, line $r:\\,x+y+z=0,\\ y+z=0$. Parametrize: from $y+z=0$ get $z=-y$; then $x+y+z=x=0$. So $r:(x,y,z)=(0,t,-t)$, direction $\\mathbf v_r=(0,1,-1)$. Plane through $Q$ perpendicular to $r$: $0(x-1)+1(y-2)-1(z-3)=0\\Rightarrow y-z+1=0$. On $r$: $t-(-t)+1=0\\Rightarrow t=-\\tfrac12$, so $Q_0=(0,-\\tfrac12,\\tfrac12)$. Then $d(Q,r)=\\sqrt{1+(2+\\tfrac12)^2+(3-\\tfrac12)^2}=\\frac{3\\sqrt6}{2}.$"
+    },
+    {
+      "kind": "heading",
+      "text": "Circles: center & radius by completing the square"
+    },
+    {
+      "kind": "definition",
+      "term": "Circle (general form)",
+      "text": "A circle in $\\mathbb{R}^2$ is the solution set of $$x^2+y^2+Dx+Ey+F=0.$$ Completing the square gives $(x-x_c)^2+(y-y_c)^2=R^2$ with center $C(-\\tfrac{D}{2},-\\tfrac{E}{2})$ and $R^2=\\tfrac{D^2}{4}+\\tfrac{E^2}{4}-F$. If $R^2=0$ the \"circle\" is a single point; if $R^2<0$ it is empty (imaginary)."
+    },
+    {
+      "kind": "formula",
+      "tex": "x^2+y^2+Dx+Ey+F=0\\ \\Rightarrow\\ C\\!\\left(-\\tfrac{D}{2},-\\tfrac{E}{2}\\right),\\quad R=\\sqrt{\\tfrac{D^2}{4}+\\tfrac{E^2}{4}-F}"
+    },
+    {
+      "kind": "example",
+      "title": "Complete the square",
+      "text": "$C:x^2+y^2+2x-2y-2=0$. Write $x^2+2x=(x+1)^2-1$ and $y^2-2y=(y-1)^2-1$, so $(x+1)^2+(y-1)^2-4=0$. Center $C(-1,1)$, radius $R=\\sqrt4=2$. (Check via formula: $C(-\\tfrac22,-\\tfrac{-2}{2})=(-1,1)$, $R^2=1+1-(-2)=4$.)"
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "What are the center and radius of $x^2+y^2+x+y=1$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Center $(-\\tfrac12,-\\tfrac12)$, radius $\\tfrac{\\sqrt6}{2}$"
+          },
+          {
+            "id": "B",
+            "content": "Center $(\\tfrac12,\\tfrac12)$, radius $\\tfrac{3}{2}$"
+          },
+          {
+            "id": "C",
+            "content": "Center $(-1,-1)$, radius $\\sqrt3$"
+          },
+          {
+            "id": "D",
+            "content": "Center $(-\\tfrac12,-\\tfrac12)$, radius $\\tfrac{3}{2}$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "Here $D=E=1$, $F=-1$. Center $=(-\\tfrac{D}{2},-\\tfrac{E}{2})=(-\\tfrac12,-\\tfrac12)$. $R^2=\\tfrac14+\\tfrac14-(-1)=\\tfrac32$, so $R=\\sqrt{3/2}=\\tfrac{\\sqrt6}{2}$. B has the wrong center sign and a wrong radius; C completes the square incorrectly; D uses the right center but reports $R=\\tfrac32$ ($R^2=9/4$), not $3/2$.",
+        "theory": "Center $(-D/2,-E/2)$, $R^2=D^2/4+E^2/4-F$.",
+        "source": "LAGex 13.3(iii)"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Spheres and the radical plane"
+    },
+    {
+      "kind": "definition",
+      "term": "Sphere",
+      "text": "A sphere is $x^2+y^2+z^2+Dx+Ey+Fz+G=0$, i.e. $d(P,C)=R$ with $$C\\!\\left(-\\tfrac{D}{2},-\\tfrac{E}{2},-\\tfrac{F}{2}\\right),\\quad R=\\sqrt{\\tfrac{D^2}{4}+\\tfrac{E^2}{4}+\\tfrac{F^2}{4}-G}.$$ Found by completing the square in all three variables (same recipe as the circle, one more term)."
+    },
+    {
+      "kind": "prose",
+      "text": "**Intersecting two spheres / two circles.** Subtract the two equations: the quadratic terms $x^2+y^2(+z^2)$ cancel, leaving a **linear** equation — the **radical axis** (line, for circles) or **radical plane** (for spheres). Crucially $$S_1\\cap S_2=S_1\\cap\\pi=S_2\\cap\\pi,$$ so intersecting two spheres becomes intersecting one sphere with a plane — a problem we can solve."
+    },
+    {
+      "kind": "steps",
+      "title": "Sphere ∩ plane (the circle in space): center & radius",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Get the sphere's center $C$ and radius $R$ by completing the square."
+        },
+        {
+          "label": "2",
+          "text": "Compute $h=d(C,\\pi)$ with the point-plane formula."
+        },
+        {
+          "label": "3",
+          "text": "Compare: if $h>R$ → empty; if $h=R$ → one point (tangent); if $h<R$ → a circle."
+        },
+        {
+          "label": "4",
+          "text": "For the circle: its **center** is the foot of the perpendicular from $C$ onto $\\pi$ (intersect $\\pi$ with the line through $C$ along $\\mathbf n$), and its **radius** is $r=\\sqrt{R^2-h^2}$ (Pythagoras)."
+        }
+      ]
+    },
+    {
+      "kind": "formula",
+      "tex": "r^2=R^2-d(C,\\pi)^2\\qquad(\\text{radius of the circle cut on a sphere by a plane})"
+    },
+    {
+      "kind": "example",
+      "title": "Circle in space",
+      "text": "$C:\\ x^2+y^2+z^2=4,\\ \\ x+y+z=1$. Sphere center $O(0,0,0)$, $R=2$. The circle's center is $\\pi\\cap\\ell$ where $\\ell$ is the line through $O$ along $\\mathbf n=(1,1,1)$, i.e. $x=y=z$; plugging into $x+y+z=1$ gives the center $C'(\\tfrac13,\\tfrac13,\\tfrac13)$. Then $d(O,\\pi)=\\frac{|0+0+0-1|}{\\sqrt3}=\\tfrac{1}{\\sqrt3}$, so $r^2=4-\\tfrac13=\\tfrac{11}{3}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Tangency and intersection with spheres/circles"
+    },
+    {
+      "kind": "prose",
+      "text": "To intersect a **line/plane** with a circle/sphere: substitute the line/plane into the quadratic, getting a quadratic in one variable with discriminant $\\Delta$. Then $\\Delta>0$ → two points (secant), $\\Delta=0$ → one point (**tangent**), $\\Delta<0$ → empty. Equivalently, compare $d(C,\\text{object})$ with $R$: tangent $\\iff d(C,\\text{line})=R$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "**Position of a point/line/circle relative to a circle** (center $C$, radius $R$):\n- Point $P$: $d(P,\\mathcal C)=|d(P,C)-R|$.\n- Line $\\ell$: $d(\\ell,\\mathcal C)=\\max(0,\\ d(\\ell,C)-R)$.\n- Two circles $\\mathcal C_1,\\mathcal C$: they intersect $\\iff |R_1-R|\\le d(C_1,C)\\le R_1+R$. If $d(C_1,C)<|R_1-R|$ one circle is **inside** the other."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "For which condition is the line $\\ell$ tangent to the circle $\\mathcal C$ of center $C$, radius $R$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$d(C,\\ell)=0$"
+          },
+          {
+            "id": "B",
+            "content": "$d(C,\\ell)<R$"
+          },
+          {
+            "id": "C",
+            "content": "$d(C,\\ell)=R$"
+          },
+          {
+            "id": "D",
+            "content": "$d(C,\\ell)>R$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Tangency means the line touches the circle at exactly one point, i.e. the distance from the center to the line equals the radius: $d(C,\\ell)=R$ (equivalently $\\Delta=0$ when you substitute). A means the line passes through the center (a diameter, secant). B is the secant case (two intersection points). D means the line misses the circle entirely (empty intersection).",
+        "theory": "Substitute and impose $\\Delta=0$; equivalently $d(C,\\ell)=R$.",
+        "source": "LAGex 13.7"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Building a tangent circle/sphere & passing through points"
+    },
+    {
+      "kind": "prose",
+      "text": "**Tangent circle at a given point $P$ to a line $s$.** The center lies on the line $t$ through $P$ perpendicular to $s$ (the normal direction). Pick any center $C$ on $t$ (other than $P$), set $R=d(C,P)$, and write $(x-x_C)^2+(y-y_C)^2=R^2$. The same logic builds a tangent sphere to a plane: center on the normal line through $P$, radius $=d(C,P)$.\n\n**Through given points.** A circle through 3 non-collinear points (or a sphere through 4 non-coplanar points) is found by imposing $x_i^2+y_i^2+Dx_i+Ey_i+F=0$ for each point — a **linear** system in $D,E,F$ (and $G$)."
+    },
+    {
+      "kind": "example",
+      "title": "Circle tangent to a line at a point",
+      "text": "Circle tangent to $s:x+y=0$ at $P(0,0)$. Slope of $s$ is $-1$, so the perpendicular $t$ has slope $1$: $t:y=x$, centers $C(a,a)$. Take $C(2,2)$: $R=d(C,P)=\\sqrt{4+4}=2\\sqrt2$. The circle is $(x-2)^2+(y-2)^2=8$, i.e. $x^2+y^2-4x-4y=0$. (Many answers exist — any $C\\ne P$ on $t$ works.)"
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "**Sanity checks that catch arithmetic slips.** (1) The center coordinates are *minus half* the linear coefficients — sign errors are common. (2) After completing the square, verify $R^2\\ge 0$; a negative value means you made a sign mistake or the object is genuinely empty. (3) For sphere∩plane, you must have $d(C,\\pi)\\le R$ or there's no circle."
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

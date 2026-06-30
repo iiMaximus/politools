@@ -1,0 +1,221 @@
+{
+  "title": "Eigenvalues, the power method & SVD in MATLAB",
+  "summary": "Master the exact MATLAB commands for eigenvalues and singular values: `eig` for all eigenvalues/eigenvectors, the hand-written power method `mypower.m` for the dominant eigenvalue (iteration, normalization, Rayleigh quotient, stopping and convergence), and `svd` for singular values and their use in computing rank, conditioning and least-squares solutions with `rank` and `pinv`. Grounded entirely in the Session 3 solution code and the FESTA slides.",
+  "minutes": 40,
+  "objectives": [
+    "Compute all eigenvalues with d = eig(A) and eigenvectors with [X,D] = eig(A)",
+    "Read and run mypower.m line by line: normalize, transform, Rayleigh quotient, relative stopping test",
+    "Predict whether the power method converges from the ratio |lambda_2|/|lambda_1| and from complex/opposite dominant eigenvalues",
+    "Compute the singular values with svd(A) and the full factors with [U,S,V] = svd(A)",
+    "Use the SVD relations: rank = number of nonzero singular values, K2(A) = s1/sn, and the rank-k truncation",
+    "Compute rank with rank(A) / rank(A,tol) and the minimum-norm least-squares solution with pinv(A)*b",
+    "Distinguish the backslash solution from pinv for rank-deficient / overdetermined systems"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why eigenvalues, the power method and the SVD live together"
+    },
+    {
+      "kind": "prose",
+      "text": "This session covers three linked tools. **Eigenvalues** of a square matrix $A$ are the numbers $\\lambda$ for which $Ax=\\lambda x$ has a non-zero solution $x$ (the eigenvector). The **power method** is a hand-written iteration (`mypower.m`) that finds only the eigenvalue of largest modulus, the spectral radius $\\rho(A)$. The **SVD** generalizes eigenvalues to any matrix (even rectangular) and is the course's master tool for **rank**, **conditioning** and **least squares**. You must be able to type `eig`, `svd`, `rank`, `pinv` from memory and run `mypower` by hand."
+    },
+    {
+      "kind": "definition",
+      "term": "Eigenvalue / eigenvector",
+      "text": "Given $A\\in\\mathbb{R}^{n,n}$, a number $\\lambda$ is an **eigenvalue** if there is a non-null vector $x$ with $Ax=\\lambda x$; $x$ is the corresponding **eigenvector**. Equivalently $\\lambda$ is an eigenvalue iff $A-\\lambda I$ is singular, i.e. $\\det(A-\\lambda I)=0$. An $n\\times n$ matrix has exactly $n$ eigenvalues (real or complex, not necessarily distinct); complex ones come in conjugate pairs because $A$ is real."
+    },
+    {
+      "kind": "heading",
+      "text": "eig: all eigenvalues and eigenvectors"
+    },
+    {
+      "kind": "prose",
+      "text": "With one output `eig` returns the eigenvalues as a column vector; with two outputs it returns the eigenvectors too. The relation `A*X = X*D` holds: column `X(:,i)` is an eigenvector for the eigenvalue `D(i,i)`."
+    },
+    {
+      "kind": "formula",
+      "tex": "AX = XD \\qquad\\Longleftrightarrow\\qquad A x_i = \\lambda_i x_i",
+      "caption": "[X,D] = eig(A): X has eigenvectors in its columns, D is diagonal with the eigenvalues."
+    },
+    {
+      "kind": "example",
+      "title": "eig on a 3x3 matrix",
+      "text": "From `session3_solutions_first_part.m`, the eigenvalues of the test matrix are obtained in one line:\n\n```matlab\nA_1 = [1 2 0; 1 0 0; 0 1 0];\neigenvalues_A_1_eig = eig(A_1)   % column vector of the 3 eigenvalues\n```\n\nTo also get the eigenvectors:\n\n```matlab\n[X,D] = eig(A_1);\n% X(:,i) is an eigenvector for the eigenvalue D(i,i)\n```\n\nThe **spectral radius** (largest eigenvalue in modulus) is `max(abs(eig(A_1)))`, and the spectral norm is `norm(A_1,2)` or just `norm(A_1)`."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "`eig` is the reference answer in the exercises: after running `mypower` you always compare its result to `eig(A)` to *justify* whether the power method converged and to which value."
+    },
+    {
+      "kind": "heading",
+      "text": "The power method: what mypower.m computes"
+    },
+    {
+      "kind": "prose",
+      "text": "The power method approximates the eigenvalue of **largest modulus** $\\lambda_1$ of a diagonalizable matrix, assuming it is unique: $|\\lambda_1| > |\\lambda_2| \\ge \\dots \\ge |\\lambda_n|$. Starting from a vector $z$, repeated multiplication by $A$ aligns the iterate with the dominant eigenvector $x_1$; we normalize each step to avoid overflow/underflow, and we read off the eigenvalue with the **Rayleigh quotient**."
+    },
+    {
+      "kind": "formula",
+      "tex": "w^{(m)} = \\frac{z^{(m)}}{\\lVert z^{(m)}\\rVert_2}, \\qquad z^{(m+1)} = A\\,w^{(m)}, \\qquad \\lambda_1^{(m)} = (w^{(m)})^{T} A\\,w^{(m)} = (w^{(m)})^{T} z^{(m+1)}",
+      "caption": "Power iteration: normalize, transform, then the Rayleigh quotient gives the eigenvalue estimate."
+    },
+    {
+      "kind": "definition",
+      "term": "Rayleigh coefficient",
+      "text": "For a non-null $x$, $r_A(x)=\\dfrac{x^{H}Ax}{x^{H}x}$. If $x$ is an eigenvector then $r_A(x)=\\lambda$ exactly. In the power method, since $w$ is normalized, $w^{T}w=1$, so the quotient simplifies to $\\lambda \\approx w^{T}Aw = w^{T}(Aw)$ — exactly line 20 of `mypower.m`."
+    },
+    {
+      "kind": "example",
+      "title": "mypower.m, line by line",
+      "text": "This is the exact course implementation:\n\n```matlab\nfunction [lambda, w, iter] = mypower(A, winit, tol, max_iter)\n\nlambda(1) = 0;\n\n% 0. Normalize\nw = winit /norm(winit);\nfigure(10);\nquiver(0,0,w(1),w(2),0)\nhold on;\n\nfor iter = 1:max_iter\n\n    % 1. Transform\n    w_star = A * w;\n\n    % 2. Rayleigh coeff   lambda = w'*w_star\n    lambda(iter+1) = w'* w_star;\n\n    % 3. normalize\n    w = w_star/norm(w_star);\n\n    % 4. Stopping criterium\n    error = abs(lambda(iter+1) - lambda(iter))...\n            / abs(lambda(iter+1));\n\n    if error < tol\n        return;\n    end\nend\nend\n```\n\nWhat each part does: `w = winit/norm(winit)` makes the start vector unit length; `w_star = A*w` is the transform step; `lambda(iter+1) = w'*w_star` is the Rayleigh quotient `w'*(A*w)`; `w = w_star/norm(w_star)` renormalizes; `error` is the **relative** change between consecutive eigenvalue estimates; `return` exits early once `error < tol`. The outputs are the whole history `lambda`, the final eigenvector estimate `w`, and the iteration count `iter`."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "`lambda` is a **growing vector**, not a scalar: `lambda(1)=0` is the seed and `lambda(iter+1)` appends each new estimate. That is why the solution script reads the answer as `lambda_1(end)` and plots the whole convergence history with `plot(1:m1+1,lambda_1,'b+-')`. The stopping test compares `lambda(iter+1)` with the *previous* entry `lambda(iter)`."
+    },
+    {
+      "kind": "example",
+      "title": "Calling mypower (Exercise 4.1)",
+      "text": "From `session3_solutions_first_part.m`:\n\n```matlab\nm_max = 100;\ntol = 1.0e-10;\nz = [1;2;3];\nA_1 = [1 2 0; 1 0 0; 0 1 0];\n[lambda_1,w1,m1] = mypower(A_1,z,tol,m_max)\nplot(1:m1+1,lambda_1,'b+-','linewidth',2)\nlambda_max_1 = lambda_1(end)\neigenvalues_A_1_eig = eig(A_1)\n```\n\nHere `lambda_max_1` is the dominant eigenvalue from the iteration and `eig(A_1)` is the exact reference used to justify it."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In `mypower.m`, what does the line `lambda(iter+1) = w' * w_star;` compute, given that `w_star = A*w` and `w` is already normalized?",
+        "options": [
+          {
+            "id": "A",
+            "content": "The norm of the new vector"
+          },
+          {
+            "id": "B",
+            "content": "The Rayleigh quotient $w^{T}Aw$, i.e. the current eigenvalue estimate"
+          },
+          {
+            "id": "C",
+            "content": "The relative error of the iteration"
+          },
+          {
+            "id": "D",
+            "content": "The eigenvector itself"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Since `w_star = A*w`, the expression `w'*w_star` equals $w^{T}Aw$. Because `w` is normalized ($w^{T}w=1$), this is exactly the Rayleigh quotient, which estimates the dominant eigenvalue. It is not a norm (that is `norm`), not the error (computed two lines later), and not an eigenvector.",
+        "theory": "Rayleigh quotient: with $w^{T}w=1$, $r_A(w)=w^{T}Aw$ approximates $\\lambda_1$.",
+        "source": "mypower.m line 20"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Convergence: read it off the eigenvalue ratio"
+    },
+    {
+      "kind": "prose",
+      "text": "The speed of the power method is governed by the ratio $|\\lambda_2|/|\\lambda_1|$ of the second-largest to the largest eigenvalue in modulus: the closer to 1, the slower. Two situations break convergence entirely: a dominant pair of **opposite** real eigenvalues ($\\lambda_1=-\\lambda_2$), and a dominant pair of **complex conjugates** — the real iteration cannot align with a complex eigenvector."
+    },
+    {
+      "kind": "example",
+      "title": "Three matrices, three behaviours (from the solution comments)",
+      "text": "```matlab\nA_1 = [1 2 0; 1 0 0; 0 1 0];   % |l2|/|l1| = 1/2  -> converges in ~35 iters\nA_2 = [0.1 3.8 0; 1 0 0; 0 1 0]; % |l2|/|l1| = 1.9/2 = 0.95 -> too slow, 100 iters not enough\nA_3 = [0 -1 0; 1 0 0; 0 1 0];   % eigenvalues i and -i (modulus 1) -> does NOT converge\n```\n\nThe course comments state exactly this: $A_1$ reaches `tol` in 35 iterations; $A_2$ converges so slowly that `m_max = 100` is insufficient; $A_3$ does not converge because it has the complex conjugate pair $i,-i$ of equal maximum modulus."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "To justify a power-method result in the exam: compute `eig(A)`, look at the two largest moduli. If they are equal (complex pair, or opposite signs) -> no convergence. If close in size -> slow. The ratio $|\\lambda_2|/|\\lambda_1|$ is the convergence rate."
+    },
+    {
+      "kind": "prose",
+      "text": "A related variant in the session is the **inverse power method** (`myinvers` in the script, `inverse_powers` in the slides). It finds the eigenvalue **closest to a shift $p$** by applying the power idea to $(A-pI)^{-1}$, returning $\\lambda = p + 1/\\mu$. It uses `eigs(A,1,p)` as the reference. It fails if $p$ is itself an eigenvalue (then $A-pI$ is singular) or if $p$ is equidistant from two eigenvalues."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "`eigs` is the partial-eigenvalue command: `[X,D] = eigs(A,k)` gives the `k` largest-modulus eigenvalues; `eigs(A,k,p)` gives the `k` eigenvalues closest to `p`. The solution uses `eigs(A_1,3)` (all three) and `eigs(A_1,1,p)` (the one nearest the shift)."
+    },
+    {
+      "kind": "heading",
+      "text": "The SVD: singular values for any matrix"
+    },
+    {
+      "kind": "prose",
+      "text": "Every matrix $A\\in\\mathbb{R}^{m,n}$ factorizes as $A=USV^{T}$ with $U,V$ orthogonal and $S$ diagonal holding the **singular values** $s_1\\ge s_2\\ge\\dots\\ge s_p\\ge 0$, $p=\\min(m,n)$. The singular values are the square roots of the eigenvalues of $A^{T}A$. Crucially, computing singular values is **always well-conditioned**: $|s_i-\\tilde s_i|\\le\\lVert A-\\tilde A\\rVert_2$."
+    },
+    {
+      "kind": "formula",
+      "tex": "A = U S V^{T} = \\sum_{i=1}^{p} s_i\\, u_i v_i^{T}, \\qquad s_1 \\ge s_2 \\ge \\dots \\ge s_p \\ge 0",
+      "caption": "SVD: U,V orthogonal, S diagonal of singular values in decreasing order."
+    },
+    {
+      "kind": "example",
+      "title": "svd commands",
+      "text": "```matlab\nd = svd(A)            % column vector of singular values, decreasing order\n[U,S,V] = svd(A)      % full factors: A = U*S*V'  (S same size as A)\n```\n\n`svd(A)` returns just the singular values; the three-output form returns the orthogonal `U`, the diagonal `S`, and the orthogonal `V` such that `A = U*S*V'`."
+    },
+    {
+      "kind": "definition",
+      "term": "Rank, conditioning, low-rank truncation via SVD",
+      "text": "If $s_1\\ge\\dots\\ge s_r>s_{r+1}=\\dots=0$ then: (1) the **rank** of $A$ is $r$ = number of non-zero singular values; (2) for a full-rank square $A$ the **2-norm condition number** is $K_2(A)=\\lVert A\\rVert_2\\,\\lVert A^{-1}\\rVert_2 = s_1/s_n$; (3) the best rank-$k$ approximation in 2-norm is $A_k=\\sum_{i=1}^k s_i u_i v_i^{T}$, with error $\\lVert A-A_k\\rVert_2 = s_{k+1}$."
+    },
+    {
+      "kind": "example",
+      "title": "Rank-k approximation and conditioning",
+      "text": "Best rank-$r$ approximation of a Hilbert matrix (FESTA slide):\n\n```matlab\nH = hilb(8);\n[U,S,V] = svd(H);\nr = 5;\nH_r = U(:,1:r)*S(1:r,1:r)*V(:,1:r)';   % best rank-5 approximation\nnorm(H-H_r) - S(6,6)    % equals 0: the error is the (r+1)-th singular value\n```\n\nConditioning straight from the singular values:\n\n```matlab\ns = svd(A);\nK2 = s(1)/s(end)    % = cond(A): ratio of largest to smallest singular value\n```"
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Given the singular values $\\sigma_1=10,\\ \\sigma_2=3,\\ \\sigma_3=1,\\ \\sigma_4=\\tfrac12$ of $A\\in\\mathbb{R}^{4\\times4}$, what is the 2-norm condition number $K_2(A)$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "5"
+          },
+          {
+            "id": "B",
+            "content": "10"
+          },
+          {
+            "id": "C",
+            "content": "15"
+          },
+          {
+            "id": "D",
+            "content": "20"
+          }
+        ],
+        "correct": "D",
+        "explanation": "For a full-rank matrix $K_2(A)=s_1/s_n$, the largest over the smallest singular value: $10/(1/2)=20$. Option B (10) is just $s_1$; A and C ignore that the smallest value $1/2$ doubles the ratio.",
+        "theory": "Conditioning from SVD: $K_2(A)=s_1/s_n$.",
+        "source": "exercise_session3 QUIZ 6"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "rank, pinv and least squares"
+    },
+    {
+      "kind": "prose",
+      "text": "`rank(A)` returns the number of singular values above a default tolerance; `rank(A,tol)` counts those above your `tol`. For an overdetermined / rank-deficient system $Ax=b$, `pinv(A)*b` gives the least-squares solution of **minimum Euclidean norm** via the SVD-based pseudo-inverse $A^{+}=VS^{+}U^{T}$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "`\\` and `pinv` differ for non-full-rank systems. `x = A\\b` returns a least-squares solution with the **maximum number of zero components** (a basic solution); `x = pinv(A)*b` returns the one with **minimum Euclidean norm**. They are equal only when $A$ has full column rank."
+    },
+    {
+      "kind": "example",
+      "title": "Stable least squares via truncated SVD (FESTA slide)",
+      "text": "For an ill-conditioned Hilbert system, dropping tiny singular values beats plain Gaussian elimination:\n\n```matlab\nn = 15;  A = hilb(n);  b = sum(A,2);  u = ones(n,1);\nx_gauss = A\\b;\nerr_gauss = norm(u-x_gauss)/norm(u)      % > 100% error, RCOND ~ 1e-19\n\ntol = 1.0e-12;\n[U,S,V] = svd(A);\nr = rank(A,tol);\ns = diag(S);\ny = zeros(n,1);\ny(1:r) = (U(:,1:r)'*b)./s(1:r);\nx_svd = V*y                              % equivalently pinv(A,tol)*b\nerr_svd = norm(u-x_svd)/norm(u)          % ~ 1e-6, far smaller\n```"
+    },
+    {
+      "kind": "prose",
+      "text": "Summary of the command map you must memorize: `eig(A)` -> all eigenvalues; `[X,D]=eig(A)` -> eigenvectors+eigenvalues; `max(abs(eig(A)))` -> spectral radius; `eigs(A,k,p)` -> few eigenvalues near `p`; `mypower(A,z,tol,m_max)` -> dominant eigenvalue by iteration; `svd(A)` -> singular values; `[U,S,V]=svd(A)` -> full SVD; `rank(A,tol)` -> numerical rank; `cond(A)` or `s(1)/s(end)` -> conditioning; `pinv(A)*b` -> minimum-norm least squares."
+    }
+  ],
+  "lecture": "MATLAB part"
+}

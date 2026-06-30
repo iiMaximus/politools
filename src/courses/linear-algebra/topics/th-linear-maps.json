@@ -1,0 +1,215 @@
+{
+  "title": "Linear maps, kernel & image",
+  "summary": "Linear maps respect vector addition and scalar multiplication; once ordered bases are fixed, every linear map becomes a matrix whose columns are the coordinates of the images of the basis vectors. The kernel is the solution space of the homogeneous system and the image is the column space, so their dimensions (nullity and rank) satisfy the Rank-Nullity Theorem dim V = dim(ker f)+dim(Im f). From rank alone you classify the map as injective (nullity 0), surjective (rank = arrival dimension), or an isomorphism (full rank with equal dimensions). Changing bases changes the matrix entries but never the rank or nullity. This topic drills the standard exam computations: building the associated matrix, finding bases of kernel and image, computing preimages, and classifying the map.",
+  "minutes": 40,
+  "objectives": [
+    "Decide whether a given map between vector spaces is linear, using the conditions (LM1),(LM2) and the quick test f(0)=0",
+    "Build the matrix of a linear map with respect to chosen ordered bases, including non-canonical bases (change of basis)",
+    "Compute a basis and the dimension of the kernel by solving the homogeneous system, and of the image from the pivot columns",
+    "Apply the Rank-Nullity Theorem dim V = dim(ker f) + dim(Im f) to relate nullity and rank",
+    "Classify a linear map as injective, surjective, or an isomorphism using the rank conditions",
+    "Find preimages f^{-1}(w) as solution sets of linear systems and interpret them via the kernel"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What is a linear map?"
+    },
+    {
+      "kind": "prose",
+      "text": "A **linear map** (or linear mapping, linear application) is a function $f:V\\to W$ between two real vector spaces that respects the two operations of a vector space: addition and scalar multiplication. Almost everything in this course - matrices, systems, eigenvalues, diagonalization - is really about understanding linear maps. The key insight from these lectures is: **once you fix bases, a linear map IS a matrix**, and the geometry of the map (what it kills, what it reaches) is read off from that matrix via rank and nullity."
+    },
+    {
+      "kind": "definition",
+      "term": "Linear map",
+      "text": "A map $f:V\\to W$ is **linear** if for all $u,v\\in V$ and all $a\\in\\mathbb{R}$:\n- (LM1) $f(u+v)=f(u)+f(v)$\n- (LM2) $f(av)=af(v)$\n\nThese two are equivalent to the single condition $f(au+bv)=af(u)+bf(v)$ for all $a,b\\in\\mathbb{R}$."
+    },
+    {
+      "kind": "formula",
+      "tex": "f(0_V)=0_W",
+      "caption": "Every linear map sends the zero vector to the zero vector. This is the fastest test: if $f(0)\\neq 0$, the map is NOT linear."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**The single most common mistake on the exam.** A map like $f(x)=2x+1$ is NOT linear, because $f(0)=1\\neq 0$. Any map with a constant added (an 'affine' map) fails. Likewise $f(A)=\\det A$ is not linear ($\\det(A+B)\\neq\\det A+\\det B$ in general), but $f(A)=\\operatorname{Tr}A$ IS linear. Always check $f(0)=0$ first, then check it is built only from linear combinations of the input coordinates."
+    },
+    {
+      "kind": "example",
+      "title": "Linear vs. not linear",
+      "text": "From the lecture's list:\n- $f:\\mathbb{R}\\to\\mathbb{R},\\ f(x)=3x$ - **linear** (just scaling).\n- $f:\\mathbb{R}\\to\\mathbb{R},\\ f(x)=2x+1$ - **not linear** ($f(0)=1$).\n- $f:\\mathbb{R}^{3,3}\\to\\mathbb{R}^{3,3},\\ f(A)=\\det A$ - **not linear**.\n- $f:\\mathbb{R}^{3,3}\\to\\mathbb{R}^{3,3},\\ f(A)=\\operatorname{Tr}A$ - **linear** ($\\operatorname{Tr}(A+B)=\\operatorname{Tr}A+\\operatorname{Tr}B$).\n- $f:\\mathbb{R}_2[t]\\to\\mathbb{R}_2[t],\\ f(p)=p'$ - **linear** (differentiation).\n- $f(p)=p'+t$ - **not linear** ($f(0)=t\\neq 0$)."
+    },
+    {
+      "kind": "heading",
+      "text": "From matrix to map, and from map to matrix"
+    },
+    {
+      "kind": "prose",
+      "text": "Any matrix $A\\in\\mathbb{R}^{m,n}$ defines a linear map $f:\\mathbb{R}^n\\to\\mathbb{R}^m$ by $f(v)=Av$ (treating $v$ as a column). Note the swap: an $m\\times n$ matrix goes **from** $\\mathbb{R}^n$ **to** $\\mathbb{R}^m$. The $j$-th column of $A$ is exactly the image $f(e_j)$ of the $j$-th canonical basis vector. Conversely, every linear map between finite-dimensional spaces can be written as a matrix once bases are chosen - this is the heart of Lecture 16."
+    },
+    {
+      "kind": "definition",
+      "term": "Matrix associated to a linear map",
+      "text": "Let $g:V\\to W$ be linear with chosen ordered bases $\\{v_1,\\dots,v_n\\}$ of $V$ and $\\{w_1,\\dots,w_m\\}$ of $W$. The **associated matrix** $M_g\\in\\mathbb{R}^{m,n}$ has as its $j$-th column the coordinates of $g(v_j)$ expressed in the basis $\\{w_1,\\dots,w_m\\}$:\n$$g(v_j)=b_{1j}w_1+\\cdots+b_{mj}w_m.$$\nA linear map is completely determined by the images $g(v_1),\\dots,g(v_n)$ of a basis."
+    },
+    {
+      "kind": "steps",
+      "title": "Building the associated matrix (standard method)",
+      "steps": [
+        {
+          "label": "1",
+          "text": "Fix an ordered basis of the departure space $V$ and an ordered basis of the arrival space $W$."
+        },
+        {
+          "label": "2",
+          "text": "Apply $g$ to each basis vector $v_j$ of $V$."
+        },
+        {
+          "label": "3",
+          "text": "Express each image $g(v_j)$ as a linear combination of the arrival basis $\\{w_1,\\dots,w_m\\}$; record the coefficients."
+        },
+        {
+          "label": "4",
+          "text": "Place those coefficients as the $j$-th COLUMN of $M_g$. Repeat for all $j$. The result is $m\\times n$."
+        }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "Associated matrix, canonical bases",
+      "text": "Let $f:\\mathbb{R}^2\\to\\mathbb{R}^3,\\ f(x,y)=(x+2y,\\,3x+4y,\\,5x+6y)$ w.r.t. canonical bases. Compute images of the basis:\n$$f(1,0)=(1,3,5),\\qquad f(0,1)=(2,4,6).$$\nThese become the columns:\n$$M_f=\\begin{pmatrix}1&2\\\\3&4\\\\5&6\\end{pmatrix}.$$\nNotice $M_f$ is $3\\times 2$ because $f:\\mathbb{R}^2\\to\\mathbb{R}^3$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "**Composition = matrix product.** If $W\\xleftarrow{g}V\\xleftarrow{f}U$ are linear and $h=g\\circ f$, then $M_h=M_g\\,M_f$ (using the SAME basis of $V$ for both). This is the real reason matrix multiplication is defined the way it is. Verify: for $f:\\mathbb{R}^3\\to\\mathbb{R}^2$ and $g:\\mathbb{R}^2\\to\\mathbb{R}^3$, $M_{g\\circ f}=M_g M_f$ is $3\\times 3$."
+    },
+    {
+      "kind": "heading",
+      "text": "Kernel and image"
+    },
+    {
+      "kind": "definition",
+      "term": "Kernel and image",
+      "text": "For a linear map $g:V\\to W$:\n- The **kernel** $\\ker g=g^{-1}(0)=\\{v\\in V:g(v)=0\\}$ is a subspace of $V$. Its dimension is the **nullity** of $g$.\n- The **image** $\\operatorname{Im}g=\\{g(v):v\\in V\\}$ is a subspace of $W$. Its dimension is the **rank** of $g$.\n\nWhen $g(v)=Av$: $\\ker g=\\ker A$ is the solution space of $Ax=0$, and $\\operatorname{Im}g=\\operatorname{Col}A$ is spanned by the columns of $A$. Hence $\\dim(\\operatorname{Im}g)=r(A)$, the rank of the matrix."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Two computations you must master:**\n- **Basis of $\\ker f$:** solve the homogeneous system $M_f\\,x=0$; the free-variable solution vectors form a basis. $\\dim\\ker f=n-r(M_f)$.\n- **Basis of $\\operatorname{Im}f$:** row-reduce $M_f$; the columns of $M_f$ corresponding to pivot columns form a basis (the images of basis vectors). $\\dim\\operatorname{Im}f=r(M_f)$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\dim V=\\dim(\\ker g)+\\dim(\\operatorname{Im}g)\\quad\\Longleftrightarrow\\quad \\text{nullity}(g)+\\text{rank}(g)=n",
+      "caption": "The Rank-Nullity (Dimension) Theorem. Here $n=\\dim V$ is the dimension of the DEPARTURE space. This single equation answers most kernel/image dimension questions instantly."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "In rank-nullity, $n$ is the dimension of the **departure** space $V$, NOT the arrival space $W$. For $f:\\mathbb{R}^4\\to\\mathbb{R}^3$, $\\dim\\ker f+\\dim\\operatorname{Im}f=4$. A frequent error is to use the dimension of the codomain. Also: $\\dim\\operatorname{Im}f\\le\\min(\\dim V,\\dim W)$, so for $f:\\mathbb{R}^4\\to\\mathbb{R}^3$ the rank is at most $3$, forcing $\\dim\\ker f\\ge 1$."
+    },
+    {
+      "kind": "example",
+      "title": "Kernel and image of a map into matrices",
+      "text": "$f:\\mathbb{R}^3\\to\\mathbb{R}^{2,2},\\ f(x,y,z)=\\begin{pmatrix}x&-y\\\\y&x\\end{pmatrix}$. Images of the canonical basis, written in the canonical basis of $\\mathbb{R}^{2,2}$ (order $E_{11},E_{12},E_{21},E_{22}$):\n$$f(1,0,0)\\to(1,0,0,1),\\quad f(0,1,0)\\to(0,-1,1,0),\\quad f(0,0,1)\\to(0,0,0,0).$$\nSo $M_f=\\begin{pmatrix}1&0&0\\\\0&-1&0\\\\0&1&0\\\\1&0&0\\end{pmatrix}$. The third column is zero, so $r(M_f)=2$: $\\dim\\operatorname{Im}f=2$ with basis $\\left\\{\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix},\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}\\right\\}$. By rank-nullity $\\dim\\ker f=3-2=1$; solving $M_f x=0$ gives $x=y=0$, $z$ free, so $\\ker f=L\\{(0,0,1)\\}$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A linear map $f:\\mathbb{R}^5\\to\\mathbb{R}^3$ has $\\dim\\operatorname{Im}f=3$. What is $\\dim\\ker f$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$0$"
+          },
+          {
+            "id": "B",
+            "content": "$2$"
+          },
+          {
+            "id": "C",
+            "content": "$3$"
+          },
+          {
+            "id": "D",
+            "content": "$5$"
+          }
+        ],
+        "correct": "B",
+        "explanation": "Rank-nullity uses the DEPARTURE dimension: $\\dim\\ker f=\\dim V-\\dim\\operatorname{Im}f=5-3=2$. Option A would require rank $5$, impossible into $\\mathbb{R}^3$. Option C confuses kernel with rank. Option D ignores the theorem entirely.",
+        "theory": "Rank-Nullity Theorem"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Injective, surjective, isomorphism"
+    },
+    {
+      "kind": "prose",
+      "text": "Because a linear map sends $0$ to $0$, injectivity has a simple test (the 'Lazy Lemma'): $f$ is injective iff $f(v)=0\\Rightarrow v=0$, i.e. iff $\\ker f=\\{0\\}$. Combined with rank-nullity, all three properties become rank conditions."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\begin{aligned}g\\text{ injective}&\\iff \\text{nullity}(g)=0\\iff \\text{rank}(g)=n\\\\ g\\text{ surjective}&\\iff \\text{rank}(g)=m\\\\ g\\text{ bijective (isomorphism)}&\\iff \\text{rank}(g)=m=n\\end{aligned}",
+      "caption": "$n=\\dim V$ (departure), $m=\\dim W$ (arrival). A bijective linear map is called an isomorphism; it requires the square case $m=n$ AND full rank."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "**Quick dimension reasoning before any computation:**\n- If $\\dim V>\\dim W$ (more inputs than outputs), $f$ can NEVER be injective ($\\ker f\\neq\\{0\\}$).\n- If $\\dim V<\\dim W$, $f$ can NEVER be surjective.\n- An isomorphism is only possible when $\\dim V=\\dim W$, and then injective $\\iff$ surjective $\\iff$ bijective. For an endomorphism $f:V\\to V$, just check whether $\\det M_f\\neq 0$."
+    },
+    {
+      "kind": "example",
+      "title": "Classifying a map",
+      "text": "$f:\\mathbb{R}^3\\to\\mathbb{R}^2,\\ f(x,y,z)=(x+2y,\\,2y+3z)$, $M_f=\\begin{pmatrix}1&2&0\\\\0&2&3\\end{pmatrix}$. Row-reducing shows $r(M_f)=2=m$, so $f$ is **surjective**. But $n=3>m=2$, so $\\dim\\ker f=3-2=1\\neq 0$: $f$ is **not injective**, hence not an isomorphism. Indeed $\\ker f=L\\{(3,-\\tfrac32,1)\\}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Change of basis (different bases for the same map)"
+    },
+    {
+      "kind": "prose",
+      "text": "The same linear map has DIFFERENT matrices for different choices of basis. The lecture's main example: take $D=\\frac{d}{dx}$ on $\\mathbb{R}_2[x]$. With the basis $\\{1,x,x^2\\}$ for the departure and $\\{1,x+1,(x+1)^2\\}$ for the arrival, the matrix changes because we must re-express each image in the new arrival basis. The procedure is always the same: compute $g(v_j)$, then solve for its coordinates in the arrival basis."
+    },
+    {
+      "kind": "example",
+      "title": "Same map, different basis",
+      "text": "$D:\\mathbb{R}_2[x]\\to\\mathbb{R}_2[x]$, $D(p)=p'$, departure basis $\\{1,x,x^2\\}$, arrival basis $\\{1,\\,x+1,\\,(x+1)^2\\}$.\n- $D(1)=0\\to$ column $(0,0,0)$.\n- $D(x)=1=1\\cdot 1+0\\cdot(x+1)+0\\cdot(x+1)^2\\to(1,0,0)$.\n- $D(x^2)=2x$. Write $2x=\\gamma_1+\\gamma_2(x+1)+\\gamma_3(x+1)^2$: matching gives $\\gamma_3=0,\\ \\gamma_2=2,\\ \\gamma_1=-2\\to(-2,2,0)$.\n\n$$M_D=\\begin{pmatrix}0&1&-2\\\\0&0&2\\\\0&0&0\\end{pmatrix}.$$\nCompare with the canonical-basis matrix $\\begin{pmatrix}0&1&0\\\\0&0&2\\\\0&0&0\\end{pmatrix}$ - same map, different numbers, same rank $2$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "When the arrival basis is non-canonical, you CANNOT just read off coefficients - you must SOLVE for the coordinates in that basis. Forgetting this and writing $D(x^2)=2x\\to(0,2,0)$ (as if the basis were $\\{1,x,x^2\\}$) is wrong here; the correct column is $(-2,2,0)$. Rank, kernel dimension and image dimension are basis-independent, but the actual matrix entries are not."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "Let $f:V\\to V$ be a linear transformation (endomorphism) with $\\dim V=4$ and associated matrix $M_f$. Which condition guarantees $f$ is an isomorphism?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\dim\\operatorname{Im}f=2$"
+          },
+          {
+            "id": "B",
+            "content": "$r(M_f)=4$"
+          },
+          {
+            "id": "C",
+            "content": "$\\dim\\ker f=1$"
+          },
+          {
+            "id": "D",
+            "content": "$f$ sends some basis to a linearly dependent set"
+          }
+        ],
+        "correct": "B",
+        "explanation": "For an endomorphism $\\dim V=\\dim W=4$, so isomorphism $\\iff$ rank $=4$ (full rank, equivalently $\\det M_f\\neq 0$, equivalently $\\ker f=\\{0\\}$). A gives rank $2$ (not full). C gives nonzero kernel, so not injective. D means the images of a basis are dependent, so rank $<4$.",
+        "theory": "Isomorphism criterion"
+      }
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

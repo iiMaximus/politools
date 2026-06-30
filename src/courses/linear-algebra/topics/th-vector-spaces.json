@@ -1,0 +1,228 @@
+{
+  "title": "Vector spaces, subspaces & bases",
+  "summary": "Vector spaces and their subspaces in $\\mathbb{R}^n$: closure tests, spans, linear independence, bases and dimension. The central computational tool is row reduction, giving $\\dim\\mathrm{Row}\\,A=\\dim\\mathrm{Col}\\,A=r(A)$ and $\\dim\\ker A=n-r(A)$. Covers coordinates, the Row/Col/Kernel subspaces of a matrix, sum and intersection of subspaces with Grassmann's formula, and the general notion of vector space (matrices, polynomials).",
+  "minutes": 55,
+  "objectives": [
+    "Decide whether a subset of $\\mathbb{R}^n$ is a subspace using the closure tests and the zero-vector check",
+    "Express any subspace as a span $L\\{u_1,\\dots,u_k\\}$ and test linear independence",
+    "Find a basis and dimension of a subspace by row reduction (rows, kernel, and column-space bases)",
+    "Apply $\\dim\\mathrm{Row}\\,A=\\dim\\mathrm{Col}\\,A=r(A)$ and $\\dim\\ker A=n-r(A)$ to the three subspaces of a matrix",
+    "Compute coordinates of a vector relative to a basis and recognise the canonical basis of $\\mathbb{R}^n$",
+    "Use Grassmann's formula to relate $\\dim(U+V)$, $\\dim U$, $\\dim V$ and $\\dim(U\\cap V)$, and complete vectors to a basis",
+    "Recognise general vector spaces (matrices, polynomials) via the closure axioms"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What a vector space is"
+    },
+    {
+      "kind": "prose",
+      "text": "This topic is the heart of linear algebra: it turns the algebra of systems and matrices into **geometry**. A **vector space** over $\\mathbb{R}$ is a set $V$ on which you can do two operations — **add** two vectors ($u+v$) and **scale** a vector by a real number ($av$) — and these obey the usual rules (associative/commutative addition, a zero vector $\\mathbf{0}$, negatives $-v$, and the distributive laws $(a+b)v=av+bv$, $a(u+v)=au+av$, $(ab)v=a(bv)$, $1v=v$). The prime example is $\\mathbb{R}^n$, but the same theory covers matrices $\\mathbb{R}^{m,n}$, polynomials $\\mathbb{R}_n[x]$, and functions."
+    },
+    {
+      "kind": "prose",
+      "text": "For the exam, the most important vector spaces are $\\mathbb{R}^n$ and its **subspaces**. Almost every exercise reduces to: take some vectors, build a matrix, row-reduce it, and read off rank, dimension, and a basis."
+    },
+    {
+      "kind": "heading",
+      "text": "Subspaces: the closure test"
+    },
+    {
+      "kind": "definition",
+      "term": "Subspace",
+      "text": "A nonempty subset $V\\subseteq\\mathbb{R}^n$ is a **subspace** if it is *closed* under the two operations:\n- **(S1)** $u,v\\in V \\Rightarrow u+v\\in V$ (closed under addition),\n- **(S2)** $a\\in\\mathbb{R},\\, v\\in V \\Rightarrow av\\in V$ (closed under scaling).\nA subspace always contains $\\mathbf{0}$ (take $a=0$). The smallest subspace is the **null subspace** $\\{\\mathbf{0}\\}$; the largest is $\\mathbb{R}^n$ itself."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "**First test, always:** does the set contain $\\mathbf{0}$? If not, it is **not** a subspace and you are done. E.g. $\\{(x,y): x+y=1\\}$ fails because $(0,0)$ gives $0\\ne 1$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "Containing $\\mathbf{0}$ is necessary but **not sufficient**. Two classic traps in $\\mathbb{R}^2$ both contain $\\mathbf{0}$ yet fail:\n- The first quadrant $\\{x\\ge 0,\\,y\\ge 0\\}$ satisfies (S1) but **not (S2)** (scaling by $-1$ escapes).\n- The union of the axes $\\{xy=0\\}$ satisfies (S2) but **not (S1)** ($(1,0)+(0,1)=(1,1)$ escapes).\nAlso $\\{x^2-y=0\\}$ (a parabola) contains $(1,1)$ but not $2(1,1)=(2,2)$, so it is not a subspace."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "A subset of $\\mathbb{R}^n$ defined by **homogeneous linear equations** (all $=0$, no constants, no squares/products) is automatically a subspace. $\\{x+2y=0\\}$, $\\{x=y=z\\}$, $\\{x+y+z=0\\}$ are subspaces (lines/planes through the origin)."
+    },
+    {
+      "kind": "heading",
+      "text": "Linear combinations and span"
+    },
+    {
+      "kind": "definition",
+      "term": "Linear combination and span",
+      "text": "A **linear combination (LC)** of $u_1,\\dots,u_k$ is any $a_1u_1+\\cdots+a_ku_k$ with $a_i\\in\\mathbb{R}$. The **span** (the professor writes $L\\{u_1,\\dots,u_k\\}$) is the set of *all* such combinations:\n$$L\\{u_1,\\dots,u_k\\}=\\{a_1u_1+\\cdots+a_ku_k:\\ a_i\\in\\mathbb{R}\\}.$$\nThe span of any finite set of vectors is **always a subspace**, and it is the smallest subspace containing those vectors."
+    },
+    {
+      "kind": "prose",
+      "text": "Conversely, **every** subspace of $\\mathbb{R}^n$ can be written as a span $L\\{u_1,\\dots,u_k\\}$. So 'subspace' and 'span of some vectors' are two descriptions of the same thing. The other key description is as a solution set of a homogeneous system (a kernel)."
+    },
+    {
+      "kind": "heading",
+      "text": "Linear independence"
+    },
+    {
+      "kind": "definition",
+      "term": "Linear independence",
+      "text": "Vectors $v_1,\\dots,v_k$ are **linearly independent (LI)** if the only way to get\n$$a_1v_1+\\cdots+a_kv_k=\\mathbf{0}$$\nis with all $a_i=0$. If some nontrivial combination gives $\\mathbf{0}$, they are **linearly dependent** — meaning one of them is a LC (a 'redundant' copy) of the others."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "Two quick facts you will use constantly: a set containing $\\mathbf{0}$ is automatically dependent; and in $\\mathbb{R}^n$ you can have **at most $n$** linearly independent vectors. To test LI in practice, put the vectors as rows of a matrix and row-reduce: the number of nonzero rows (the **rank**) is how many are independent."
+    },
+    {
+      "kind": "heading",
+      "text": "Basis and dimension"
+    },
+    {
+      "kind": "definition",
+      "term": "Basis",
+      "text": "A **basis** of a subspace $V$ is a set $\\{v_1,\\dots,v_k\\}$ that is\n- **(B1)** spanning: $V=L\\{v_1,\\dots,v_k\\}$, and\n- **(B2)** linearly independent.\nEvery vector of $V$ is then a LC of the basis in **exactly one way** (the coefficients are the **coordinates**). Any two bases of $V$ have the same number of elements; this number is the **dimension** $\\dim V$."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\dim(\\mathrm{Row}\\,A)=r(A),\\qquad \\dim(\\mathrm{Col}\\,A)=r(A),\\qquad \\dim(\\ker A)=n-r(A)"
+    },
+    {
+      "kind": "prose",
+      "text": "These three identities (for an $m\\times n$ matrix $A$) are the engine of the whole topic. Since $r(A)=r(A^\\top)$, rows and columns always give the same rank. The **canonical basis** of $\\mathbb{R}^n$ is $e_1,\\dots,e_n$ (columns of $I_n$), so $\\dim\\mathbb{R}^n=n$. By convention $\\dim\\{\\mathbf{0}\\}=0$ with the empty set as basis."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "A basis can never contain $\\mathbf{0}$ (it would break independence), and a basis of a subspace $V\\subseteq\\mathbb{R}^n$ has at most $n$ elements. If you 'find' a basis with $n+1$ vectors in $\\mathbb{R}^n$, you made an error — they cannot be independent."
+    },
+    {
+      "kind": "heading",
+      "text": "Finding a basis by row reduction (the standard method)"
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Set up",
+          "text": "To get a basis of $V=L\\{u_1,\\dots,u_k\\}$, write the $u_i$ as the **rows** of a matrix $A$. (If they are column vectors, transpose them to rows first.)"
+        },
+        {
+          "label": "Reduce",
+          "text": "Apply elementary row operations to bring $A$ to a step-reduced (echelon) form $B$. Row operations do not change $\\mathrm{Row}\\,A$ or $\\ker A$, so $\\mathrm{Row}\\,B=\\mathrm{Row}\\,A=V$."
+        },
+        {
+          "label": "Read the basis",
+          "text": "The **nonzero rows of $B$** form a basis of $V$. Their number is $\\dim V=r(A)$."
+        },
+        {
+          "label": "Kernel basis",
+          "text": "For $\\ker A$: reduce $A$, find the free variables (one per unmarked column). For each free variable set it to a convenient value (others $0$) and back-solve. These solutions form a basis; there are $n-r(A)$ of them."
+        },
+        {
+          "label": "Column space",
+          "text": "For $\\mathrm{Col}\\,A$: the **marked (pivot) columns** of the reduced matrix tell you which **original** columns of $A$ form a basis of $\\mathrm{Col}\\,A$. (Do not use the reduced columns — $\\mathrm{Col}$ changes under ERO; the pivot *positions* do not.)"
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "warn",
+      "text": "Row equivalence $A\\sim B$ preserves $\\mathrm{Row}\\,A$ and $\\ker A$ but **NOT** $\\mathrm{Col}\\,A$. So read row-space and kernel bases from the reduced matrix, but for the column space go back to the *original* columns at the pivot positions (or reduce $A^\\top$ instead)."
+    },
+    {
+      "kind": "heading",
+      "text": "The three subspaces of a matrix"
+    },
+    {
+      "kind": "definition",
+      "term": "Row space, Column space, Kernel",
+      "text": "For $A\\in\\mathbb{R}^{m,n}$:\n- **Row space** $\\mathrm{Row}\\,A=L\\{\\text{rows}\\}\\subseteq\\mathbb{R}^{1,n}$, dimension $r(A)$.\n- **Column space** $\\mathrm{Col}\\,A=L\\{\\text{columns}\\}\\subseteq\\mathbb{R}^{m,1}$ (also called the **image**), dimension $r(A)$.\n- **Kernel / null space** $\\ker A=\\{x\\in\\mathbb{R}^{n,1}:Ax=\\mathbf{0}\\}$, dimension $n-r(A)$.\nIf $A$ is an invertible $n\\times n$ matrix then $\\mathrm{Row}\\,A=\\mathbb{R}^{1,n}$, $\\mathrm{Col}\\,A=\\mathbb{R}^{n,1}$ and $\\ker A=\\{\\mathbf{0}\\}$."
+    },
+    {
+      "kind": "example",
+      "text": "**Worked example (Ex 6.9):** $A=\\begin{pmatrix}1&2\\\\3&4\\\\5&6\\end{pmatrix}$.\n- Rows live in $\\mathbb{R}^{1,2}$; reducing gives two nonzero rows, so $\\mathrm{Row}\\,A=\\mathbb{R}^{1,2}$, $r(A)=2$.\n- $A\\sim\\begin{pmatrix}1&0\\\\0&1\\\\0&0\\end{pmatrix}$, so $\\ker A=\\{\\mathbf{0}\\}$ (since $n-r=2-2=0$).\n- $\\mathrm{Col}\\,A=L\\!\\left\\{\\begin{pmatrix}1\\\\3\\\\5\\end{pmatrix},\\begin{pmatrix}2\\\\4\\\\6\\end{pmatrix}\\right\\}\\subseteq\\mathbb{R}^{3,1}$, a 2-dimensional subspace (a plane through the origin in $\\mathbb{R}^3$)."
+    },
+    {
+      "kind": "heading",
+      "text": "Sum and intersection of subspaces; Grassmann's formula"
+    },
+    {
+      "kind": "definition",
+      "term": "Sum and intersection",
+      "text": "For subspaces $U,V\\subseteq\\mathbb{R}^n$:\n- the **intersection** $U\\cap V=\\{w:w\\in U\\text{ and }w\\in V\\}$ is a subspace (vectors in both);\n- the **sum** $U+V=\\{u+v:u\\in U,\\,v\\in V\\}$ is a subspace — the span of all vectors of $U$ together with all vectors of $V$. It is the smallest subspace containing both."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\dim(U+V)=\\dim U+\\dim V-\\dim(U\\cap V)\\qquad(\\text{Grassmann's formula})"
+    },
+    {
+      "kind": "prose",
+      "text": "To compute $\\dim(U+V)$ in practice: take generators of $U$ and generators of $V$, stack them all as rows of one matrix, row-reduce, and the rank is $\\dim(U+V)$. Then Grassmann gives $\\dim(U\\cap V)$ without solving for the intersection directly. To **combine bases into a basis of $\\mathbb{R}^n$**, stack a basis of $U$ and a basis of $V$ as rows and keep the independent ones."
+    },
+    {
+      "kind": "example",
+      "text": "**Worked example (Further ex. 13.1):** $U=L\\{(1,3,-2,2,3),(1,4,-3,4,2),(2,3,-1,-2,9)\\}$ and $V=L\\{(1,3,0,2,1),(1,5,-6,6,3),(2,5,3,2,1)\\}$ in $\\mathbb{R}^5$. Row-reducing $U$'s matrix leaves 2 nonzero rows, so $\\dim U=2$; same for $V$, $\\dim V=2$. Stacking all six rows and reducing gives rank $4$, so $\\dim(U+V)=4$. Grassmann: $\\dim(U\\cap V)=2+2-4=0$, so $U\\cap V=\\{\\mathbf{0}\\}$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "Which subset of $\\mathbb{R}^2$ is a subspace?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$\\{(x,y):x+y=1\\}$"
+          },
+          {
+            "id": "B",
+            "content": "$\\{(x,y):xy=0\\}$ (union of the axes)"
+          },
+          {
+            "id": "C",
+            "content": "$\\{(x,y):x-3y=0\\}$"
+          },
+          {
+            "id": "D",
+            "content": "$\\{(x,y):x\\ge 0\\}$"
+          }
+        ],
+        "correct": "C",
+        "explanation": "A subspace must be the solution set of homogeneous linear equations (a line/plane through the origin). $x-3y=0$ is exactly that, and it contains $\\mathbf{0}$ and is closed under $+$ and scaling. A fails (no $\\mathbf{0}$). B contains $\\mathbf{0}$ but is not closed under addition: $(1,0)+(0,1)=(1,1)$ escapes. D is closed under addition but not under scaling by $-1$.",
+        "theory": "Subspace closure tests (S1),(S2); homogeneous linear sets are subspaces.",
+        "source": "Carlini Notes 12; Ex 6.7-6.8"
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "For a matrix $A\\in\\mathbb{R}^{4,6}$ with $r(A)=3$, what is $\\dim(\\ker A)$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$3$"
+          },
+          {
+            "id": "B",
+            "content": "$1$"
+          },
+          {
+            "id": "C",
+            "content": "$6$"
+          },
+          {
+            "id": "D",
+            "content": "$4$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "$\\dim(\\ker A)=n-r(A)$ where $n$ is the number of columns $=6$. So $6-3=3$. The number of rows (4) is irrelevant to this count. Option B would be $4-3$ (wrong, uses rows). C is $n$ itself, D is $m$.",
+        "theory": "$\\dim(\\ker A)=n-r(A)$, with $n=$ number of columns.",
+        "source": "Carlini Notes 13"
+      }
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

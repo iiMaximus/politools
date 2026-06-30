@@ -1,0 +1,229 @@
+{
+  "title": "Floating point, rounding & numerical errors in MATLAB",
+  "summary": "Teaches MATLAB finite arithmetic exactly as in Session 1: floating-point representation $a=(-1)^s pN^q$, machine epsilon and machine precision, absolute vs relative error, the rounding-error bound, condition number, and catastrophic cancellation. Builds the Session 1 finite-difference derivative code (`(sin(x+h)-sin(x))./h` with element-wise operators, log-log error plot) and its cancellation-free prosthaphaeresis form, walks through the condition-number QUIZ (`tmax=-log10(2*E_min)+1` giving t=15), and covers machine subtraction and overflow-avoidance, all with runnable snippets quoted from `session1_solutions_2025.m`.",
+  "minutes": 35,
+  "objectives": [
+    "Write the floating-point representation $a=(-1)^s pN^q$, identify normalized mantissa and exponent, and state what machine numbers are",
+    "Define and distinguish machine epsilon `eps`$=N^{1-t}$ from machine precision $\\varepsilon_m=\\tfrac12 N^{1-t}$, and recall MATLAB's `eps`, `realmin`, `realmax`",
+    "Compute absolute and relative errors in MATLAB with `abs(...)`/`abs(...)` and explain why relative error is preferred",
+    "Reproduce the Session 1 finite-difference derivative code, including element-wise `.*`, `./`, `.^`, and the prosthaphaeresis reformulation that removes cancellation",
+    "Interpret log-log / semilogy error curves and explain why the naive difference-quotient error grows as the step $h$ shrinks",
+    "Solve the QUIZ relating the condition number $K$ to the maximum mantissa digits $t$ via `tmax=-log10(2*E_min)+1`",
+    "Recognize and avoid overflow and catastrophic cancellation by reformulating expressions (e.g. `prod(x+1:z)` for factorials)"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "title": "Why floating point matters in this course"
+    },
+    {
+      "kind": "prose",
+      "text": "The MATLAB part of the exam opens with **finite arithmetic**: how a computer stores real numbers, the errors that creates, and how those errors can blow up. The course's own words: *\"One of the worst errors to avoid when programming with a computer is thinking that the so-obtained numerical results are correct or affected by negligible errors.\"* You will be asked to reproduce, exactly, the Session 1 commands that expose these errors. This topic teaches every command from `session1_solutions_2025.m` and the theory behind it."
+    },
+    {
+      "kind": "definition",
+      "term": "Floating-point representation",
+      "text": "A real number $a$ is stored as $$a = (-1)^s\\, p\\, N^{q},$$ where $s\\in\\{0,1\\}$ is the **sign**, $N$ is the **basis** ($N=2$ binary, $N=10$ decimal), $p\\ge 0$ is the **mantissa**, and $q$ is the integer **exponent** (characteristic). The representation is **normalized** when $N^{-1}\\le p < 1$, which makes $p$ and $q$ unique. For $N=10$ this means $0.1 \\le p < 1$."
+    },
+    {
+      "kind": "example",
+      "title": "Reading off mantissa and exponent ($N=10$)",
+      "text": "From the slides: $a = 0.15\\cdot 10^{-2}$ has mantissa $p=0.15$, exponent $q=-2$. And $a = 12.4 = 0.124\\cdot 10^{2}$ has $p=0.124$, $q=2$. Normalization is just \"shift the point so the first digit after it is non-zero.\""
+    },
+    {
+      "kind": "definition",
+      "term": "Machine numbers, t digits",
+      "text": "Only finitely many reals fit. The set of **machine numbers** is $$F=\\{0\\}\\cup\\{(-1)^s\\,0.a_1a_2\\dots a_t\\cdot N^q,\\; a_1\\neq 0,\\; L\\le q\\le U\\}.$$ Here $t$ is the maximum number of **mantissa digits**, and $L\\le q\\le U$ bounds the exponent. A real with more than $t$ mantissa digits must be **rounded** to $t$ digits."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "What MATLAB actually uses (IEEE 754 double)",
+      "text": "MATLAB uses IEEE 754 double precision: basis $N=2$, 64 bits = 1 sign bit, 52 stored mantissa bits (53 effective), 11 exponent bits. The 53 binary mantissa bits are about **16 decimal digits**. Useful built-ins: `realmin` $\\approx 2.2\\cdot10^{-308}$ (smallest positive machine number), `realmax` $\\approx 1.8\\cdot10^{308}$ (largest), `eps` $\\approx 2.2\\cdot10^{-16}$ (machine epsilon)."
+    },
+    {
+      "kind": "definition",
+      "term": "Machine epsilon and machine precision",
+      "text": "The **rounding error** when storing $a$ as its machine number $\\bar a$ is bounded by $$\\frac{|a-\\bar a|}{|a|}=\\frac{|p-\\bar p|}{|p|}\\le \\tfrac12 N^{1-t}.$$ The course defines $$\\texttt{eps}=N^{1-t}\\quad\\text{(machine epsilon)},\\qquad \\varepsilon_m=\\tfrac12 N^{1-t}\\quad\\text{(machine precision)}.$$ So $\\varepsilon_m$ is the **maximum relative error** of storing one number, and $\\bar a = a(1+\\varepsilon)$ with $|\\varepsilon|\\le\\varepsilon_m$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "eps vs machine precision — don't confuse them",
+      "text": "In this course `eps` $=N^{1-t}$ but the **machine precision** is $\\varepsilon_m=\\tfrac12 N^{1-t}$ — half of `eps`. The relative rounding-error bound is $\\tfrac12 N^{1-t}=\\varepsilon_m$, NOT `eps`. The factor $\\tfrac12$ is exactly what the QUIZ exercise hinges on."
+    },
+    {
+      "kind": "definition",
+      "term": "Absolute vs relative error",
+      "text": "If $\\tilde x$ approximates $x$: the **absolute error** is $e_a=|x-\\tilde x|$ and the **relative error** is $e_r=\\dfrac{|x-\\tilde x|}{|x|}$ (for $x\\neq 0$). Relative error is the meaningful one: with $x=10^3,\\tilde x=999$ we get $e_a=1$ but $e_r=10^{-3}$; with $x=10^6,\\tilde x=999999$ again $e_a=1$ but $e_r=10^{-6}$, far smaller. In MATLAB the relative error of an approximation `r` to the true `cos(x)` is `abs(cos(x)-r)/abs(cos(x))`."
+    },
+    {
+      "kind": "heading",
+      "title": "Catastrophic cancellation — the finite-difference derivative"
+    },
+    {
+      "kind": "prose",
+      "text": "Exercise 1.1 of Session 1 approximates $f'(x)$ for $f(x)=\\sin x$ by the difference quotient $$r(x)=\\frac{\\sin(x+h)-\\sin(x)}{h},$$ with $h=2^{-k}$, $k=1,\\dots,50$, at $x=\\pi/4$. Mathematically smaller $h$ means a better derivative. Numerically, the subtraction $\\sin(x+h)-\\sin(x)$ for tiny $h$ subtracts two **almost equal** numbers — **catastrophic cancellation** — and the error eventually grows as $h$ shrinks."
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Set the point and step sizes",
+          "text": "`x = pi/4;` then `k = 1:50;` and `h = 2.^(-k);` builds the row vector $h=2^{-k}$. Note `2.^(-k)` uses element-wise power `.^` so every entry of `k` is exponentiated."
+        },
+        {
+          "label": "Naive difference quotient",
+          "text": "`r = (sin(x+h)-sin(x))./h;` — element-wise `./` divides each entry. This is the cancellation-prone form."
+        },
+        {
+          "label": "Relative error vs the exact derivative",
+          "text": "Since $f'(x)=\\cos x$: `err = abs(cos(x)-r)/abs(cos(x));`."
+        },
+        {
+          "label": "Plot on log-log axes",
+          "text": "`loglog(h,err,'r','linewidth',2)` plots error vs step on logarithmic x and y axes — the only way to see error spanning many orders of magnitude. `'r'` = red curve, `'linewidth',2` = thicker line. `pause` waits for a keypress; `hold on` keeps the figure so the next curve overlays."
+        },
+        {
+          "label": "Cancellation-free reformulation (prosthaphaeresis)",
+          "text": "Using $\\sin(x+h)-\\sin(x)=2\\sin(h/2)\\cos(x+h/2)$: `r2 = 2*sin(h/2).*cos(x+h/2)./h;`. Here `.*` multiplies element-wise. Then `err2 = abs(cos(x)-r2)/abs(cos(x));` and `loglog(h,err2,'g','linewidth',2)` overlays the green curve."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "What the two curves show",
+      "text": "The naive red curve first **decreases** (truncation error $\\sim h$ dominates) then **increases** as $h\\to 0$ because cancellation in $\\sin(x+h)-\\sin(x)$ amplifies rounding error $\\sim \\varepsilon_m/h$. The green prosthaphaeresis curve avoids the subtraction of near-equal numbers, so it keeps decreasing and stays near machine precision. Same math, different numerical stability."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "`.*` `./` `.^` are element-wise — not optional",
+      "text": "`h = 2.^(-k)`, `r = (...)./h`, `r2 = 2*sin(h/2).*cos(x+h/2)./h` all operate on whole vectors at once. Writing `*`, `/`, `^` instead would attempt matrix operations and either error or give the wrong answer. Element-wise dot-operators are the single most common MATLAB exam mistake."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "In `r = (sin(x+h)-sin(x))./h;` with `h = 2.^(-k)` and `k = 1:50`, why is `./` used instead of `/`?",
+        "options": [
+          {
+            "id": "A",
+            "content": "`/` would round the result to an integer"
+          },
+          {
+            "id": "B",
+            "content": "`h` is a 1x50 vector, so element-wise division is needed to divide each difference by its own step"
+          },
+          {
+            "id": "C",
+            "content": "`./` is faster but otherwise identical to `/`"
+          },
+          {
+            "id": "D",
+            "content": "`/` is not valid MATLAB syntax"
+          }
+        ],
+        "correct": "B",
+        "explanation": "`h` is a row vector of 50 step sizes, so `sin(x+h)-sin(x)` is also a 50-element vector; `./` divides each entry by the corresponding `h`. `/` would attempt matrix right-division (solving a linear system) and not give the per-step quotient. A is wrong (no integer rounding happens); C is wrong (`/` is genuinely a different operation, not just slower); D is wrong (`/` is valid but means matrix division).",
+        "theory": "Element-wise operators `.*`, `./`, `.^` act entrywise on arrays; bare `*`, `/`, `^` are matrix operations.",
+        "source": "session1_solutions_2025.m, exercise 1.1"
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "The QUIZ — condition number and digits of mantissa"
+    },
+    {
+      "kind": "prose",
+      "text": "Session 1 QUIZ: floating-point arithmetic with basis $N=10$ and $t$ mantissa digits. The problem $y=f(x)$ has **condition number** $K=2\\times 10^9$. A datum $\\bar x$ is affected by rounding error and $\\bar y=f(\\bar x)$ gives $\\dfrac{|y-\\bar y|}{|y|}=10^{-5}$. How many mantissa digits $t$ (at maximum)?"
+    },
+    {
+      "kind": "definition",
+      "term": "Condition number",
+      "text": "The condition number $K$ bounds how the relative output error follows the relative input error: $$\\frac{|y-\\bar y|}{|y|}\\le K\\,\\frac{|x-\\bar x|}{|x|}.$$ $K$ small $\\Rightarrow$ **well-conditioned** (input errors not amplified); $K$ large $\\Rightarrow$ **ill-conditioned**. It is a property of the problem $f$, not of the algorithm. (Algorithm quality is **stability**.)"
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Lower-bound the input error",
+          "text": "From $\\frac{|y-\\bar y|}{|y|}\\le K\\frac{|x-\\bar x|}{|x|}$, isolate the input error: $\\frac{|x-\\bar x|}{|x|}\\ge \\frac{1}{K}\\cdot\\frac{|y-\\bar y|}{|y|}$. In code: `K=2e9;` then `E_min=1e-5/K;` so $E_{\\min}=\\frac{10^{-5}}{2\\times10^9}=0.5\\times10^{-14}$."
+        },
+        {
+          "label": "Connect to the rounding bound",
+          "text": "The input rounding error obeys $\\frac{|x-\\bar x|}{|x|}\\le \\tfrac12 N^{1-t}$. Chaining: $E_{\\min}\\le \\tfrac12 N^{1-t}$, i.e. $2E_{\\min}\\le N^{1-t}$."
+        },
+        {
+          "label": "Take logarithms",
+          "text": "$\\log_{10}(2E_{\\min})\\le (1-t)\\Rightarrow t\\le 1-\\log_{10}(2E_{\\min})$. In code: `tmax=-log10(2*E_min)+1`."
+        },
+        {
+          "label": "Evaluate",
+          "text": "$2E_{\\min}=10^{-14}$, so $\\log_{10}(2E_{\\min})=-14$ and $t\\le 14+1=15$. Answer **(b) 15**."
+        }
+      ]
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The exact QUIZ code",
+      "text": "```matlab\nK=2e9;\nE_min=1e-5/K;            % from |y-yb|/|y| <= K|x-xb|/|x|\n% E_min <= 0.5*N^(1-t)  ->  2*E_min <= N^(1-t)\n% log10(2*E_min) <= 1-t  ->  t <= -log10(2*E_min)+1\ntmax=-log10(2*E_min)+1   % = 15  -> answer (b)\n```\nNote `log10` (base 10) is used because $N=10$, and the `+1` comes from the $N^{1-t}$ exponent. The $\\tfrac12$ factor (machine precision, not `eps`) is what turns $E_{\\min}=0.5\\times10^{-14}$ into $2E_{\\min}=10^{-14}$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "hard",
+        "prompt": "In the QUIZ, why does the solution use `t <= -log10(2*E_min)+1` rather than `-log10(E_min)+1`?",
+        "options": [
+          {
+            "id": "A",
+            "content": "To convert from natural log to base-10 log"
+          },
+          {
+            "id": "B",
+            "content": "Because the relative rounding-error bound is the machine precision $\\tfrac12 N^{1-t}$, so $E_{\\min}\\le \\tfrac12 N^{1-t}$ gives $2E_{\\min}\\le N^{1-t}$"
+          },
+          {
+            "id": "C",
+            "content": "Because the basis is $N=2$"
+          },
+          {
+            "id": "D",
+            "content": "It is an arbitrary safety margin of factor 2"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The rounding error obeys $\\frac{|x-\\bar x|}{|x|}\\le \\tfrac12 N^{1-t}=\\varepsilon_m$. Multiplying both sides by 2 removes the $\\tfrac12$, giving $2E_{\\min}\\le N^{1-t}$, hence the `2*E_min` inside the log. A is wrong (`log10` already is base 10, the 2 is unrelated); C is wrong ($N=10$ here, which is why `log10` is used); D is wrong (the 2 is the exact reciprocal of the $\\tfrac12$ in the machine-precision bound, not arbitrary).",
+        "theory": "Relative rounding error is bounded by machine precision $\\varepsilon_m=\\tfrac12 N^{1-t}$, half of machine epsilon $\\texttt{eps}=N^{1-t}$.",
+        "source": "session1_solutions_2025.m, exercise_1_2_QUIZ"
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "Reading raw cancellation: machine subtraction and the (x!)^2 quiz"
+    },
+    {
+      "kind": "example",
+      "title": "Machine subtraction with t=5 (Additional 1)",
+      "text": "With `format short e` (5-significant-digit exponential display): subtract $a=1.483593$, $b=1.484111$. The course first rounds each to 5 mantissa digits then subtracts:\n```matlab\nformat short e\na = 1.483593;  b = 1.484111;\ns  = a-b              % exact-ish difference\na_ = 1.4836;  b_ = 1.4841;   % rounded to 5 digits\ns_ = a_-b_            % machine subtraction\ner = abs(s-s_)/abs(s) % relative error of the cancelled result\n```\nThe near-equal operands lose leading digits, so `er` is large — cancellation in action. `format short e` / `format long e` only change display, not the stored value."
+    },
+    {
+      "kind": "example",
+      "title": "Overflow and reformulation (Additional 4 quiz)",
+      "text": "The quantity $\\frac{(x!)^2+(y!)^2}{z!}$ with $x=121,y=122,z=150$ **overflows** if computed directly ($121!$ is astronomically large $\\Rightarrow$ `Inf`). Reformulate so each factorial is divided down before it explodes:\n```matlab\nx=121; y=122; z=150;\nq = factorial(x)/prod(x+1:z) + factorial(y)/prod(y+1:z)\n```\nHere `prod(x+1:z)` multiplies all integers from $x+1$ to $z$, so $\\frac{x!}{\\text{prod}(122{:}150)}=\\frac{x!\\,z!^{-1}\\cdot z!}{\\dots}$ keeps numbers in range. This is the overflow-avoidance trick (same idea as computing $\\sqrt{x_1^2+x_2^2}$ as $|x_1|\\sqrt{1+(x_2/x_1)^2}$)."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "semilogy vs loglog",
+      "text": "`loglog(h,err)` uses log scale on BOTH axes — use it when the x-data (`h`) also spans many magnitudes. `semilogy(1:m,err)` uses a log y-axis but linear x-axis — used in the $\\pi$-approximation exercise where the x-axis is just the index `1:m`. Pick the one matching whether your x-values are spread over orders of magnitude."
+    },
+    {
+      "kind": "prose",
+      "text": "Across all the cancellation exercises the recurring MATLAB pattern is identical: build `x = 10.^(-n)` (a vector of shrinking inputs), compute the naive formula `f`, compute a cancellation-free `f_ex` taken as exact, form `er = abs(f-f_ex)./abs(f_ex)`, display `[x' f' er']` and `loglog(x,er,'linewidth',2)`. Master this five-line skeleton and you can solve every Session 1 cancellation problem."
+    }
+  ],
+  "lecture": "MATLAB part"
+}

@@ -1,0 +1,198 @@
+{
+  "title": "Linear systems, rank & inverse",
+  "summary": "Solve linear systems $A\\mathbf{x}=\\mathbf{b}$ by Gaussian elimination: reduce to row echelon form, read off the rank, and apply the Rouché–Capelli theorem to decide consistency ($r(A)$ vs $r(A\\mid\\mathbf b)$) and count solutions as $\\infty^{n-r}$. Covers homogeneous systems and free variables, plus invertibility, computing $A^{-1}$ via $(A\\mid I)\\sim(I\\mid A^{-1})$, the determinant criterion, and Cramer's rule. Includes parameter-discussion exercises straight from the Carlini sheets.",
+  "minutes": 45,
+  "objectives": [
+    "Write a linear system in matrix form $A\\mathbf{x}=\\mathbf{b}$ and identify $m$, $n$, homogeneous vs inhomogeneous",
+    "Use elementary row operations to bring a matrix to step-reduced (row echelon) and super-reduced form",
+    "Compute the rank of a matrix and the rank of an augmented matrix by Gaussian elimination",
+    "State and apply the Rouché–Capelli theorem to decide consistency and count solutions as $\\infty^{n-r}$",
+    "Find the general solution of homogeneous and inhomogeneous systems using free variables",
+    "Determine invertibility, compute $A^{-1}$ via $(A\\mid I_n)\\sim(I_n\\mid A^{-1})$, and use Cramer's rule",
+    "Discuss systems depending on parameters $a,b,\\lambda$ and split into the correct cases"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "Why linear systems are the heart of the course"
+    },
+    {
+      "kind": "prose",
+      "text": "A **linear system** is a collection of $m$ equations in $n$ unknowns $x_1,\\dots,x_n$ where every unknown appears only to the first power. The whole game is: *find all values of the unknowns that satisfy every equation at once.* Three outcomes are possible and no others — **no solution**, **exactly one solution**, or **infinitely many solutions**. A system can never have, say, exactly four solutions. The tool that decides which case we are in, and how to describe the solutions, is **Gaussian elimination** together with the notion of **rank** and the **Rouché–Capelli theorem**."
+    },
+    {
+      "kind": "definition",
+      "term": "Matrix form of a system",
+      "text": "Any system can be written as $$A\\mathbf{x}=\\mathbf{b},\\qquad A\\in\\mathbb{R}^{m,n},\\ \\mathbf{x}\\in\\mathbb{R}^{n,1},\\ \\mathbf{b}\\in\\mathbb{R}^{m,1}.$$ Here $m$ = number of equations, $n$ = number of unknowns. Each **row** of $A$ is one equation; each **column** of $A$ is the coefficients of one unknown. The system is **homogeneous** if $\\mathbf{b}=\\mathbf{0}$, and **inhomogeneous** otherwise. A homogeneous system always has at least the **trivial solution** $\\mathbf{x}=\\mathbf{0}$, so it is always consistent."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "There are two complementary viewpoints. **Rows** of $A$ encode the equations (we operate on rows to solve). **Columns** $\\mathbf{c}_1,\\dots,\\mathbf{c}_n$ of $A$ give the *column vector form* $x_1\\mathbf{c}_1+\\cdots+x_n\\mathbf{c}_n=\\mathbf{b}$. A solution exists exactly when $\\mathbf{b}$ is a linear combination of the columns, i.e. $\\mathbf{b}\\in L\\{\\mathbf{c}_1,\\dots,\\mathbf{c}_n\\}$."
+    },
+    {
+      "kind": "definition",
+      "term": "Elementary row operations (ERO)",
+      "text": "From a matrix $A$ we may form a new matrix of the same size by one of:\n- **(i)** add to a row a multiple of a *different* row: $r_i\\mapsto r_i+a\\,r_j$ ($i\\neq j$),\n- **(ii)** multiply a row by a nonzero constant: $r_i\\mapsto c\\,r_i$ ($c\\neq0$),\n- **(iii)** swap two rows: $r_i\\leftrightarrow r_j$.\n\nEach ERO is the same as left-multiplying by an invertible **elementary matrix** $E$. ERO's never change the solution set of $A\\mathbf{x}=\\mathbf{0}$: if $A\\sim B$ (row equivalent) then $A\\mathbf{x}=\\mathbf{0}$ and $B\\mathbf{x}=\\mathbf{0}$ have exactly the same solutions."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "In operation (i) you must use a **different** row ($i\\neq j$); $r_i\\mapsto r_i-r_i$ would wipe out an equation. And when solving an *inhomogeneous* system you must apply each ERO to the **whole** augmented row, including the right-hand entry $b_i$ — forgetting to update $\\mathbf{b}$ is the single most common computational error."
+    },
+    {
+      "kind": "definition",
+      "term": "Step-reduced (row echelon) form",
+      "text": "A **marker** (or **pivot**) is the first nonzero entry of a row, reading from the left. A matrix is **step-reduced** if:\n- **(M1)** each column has at most one marker,\n- **(M2)** going down the rows, markers move strictly to the right,\n- **(M3)** all zero rows are at the bottom.\n\nIf in addition each marker equals $1$ and is the *only* nonzero entry in its column (above and below), the matrix is **super-reduced** (RREF). From a super-reduced augmented matrix you can read off the solution immediately."
+    },
+    {
+      "kind": "steps",
+      "text": "Gaussian elimination — the standard method to solve $A\\mathbf{x}=\\mathbf{b}$",
+      "steps": [
+        {
+          "label": "Augment",
+          "text": "Form the augmented matrix $(A\\mid \\mathbf{b})$. Treat $\\mathbf{b}$ as an extra column that rides along through every ERO."
+        },
+        {
+          "label": "Forward reduce",
+          "text": "Use ERO's of type (i) (and swaps) to create a marker in the first column, then clear everything below it; move to the next pivot column and repeat. Result: a step-reduced $(A'\\mid \\mathbf{b}')$."
+        },
+        {
+          "label": "Read the ranks",
+          "text": "Count markers in $A'$ to get $r(A)$, and markers in $(A'\\mid\\mathbf{b}')$ to get $r(A\\mid\\mathbf{b})$."
+        },
+        {
+          "label": "Apply Rouché–Capelli",
+          "text": "If $r(A)<r(A\\mid\\mathbf{b})$ → no solution (a row $0\\,\\cdots\\,0\\mid c$ with $c\\neq0$ appears). If $r(A)=r(A\\mid\\mathbf{b})=r$ → solutions exist, with $n-r$ free parameters ($\\infty^{n-r}$ solutions)."
+        },
+        {
+          "label": "Back-substitute",
+          "text": "Super-reduce, then set the unmarked (free) variables to parameters $s,t,\\dots$ and solve each marked variable in terms of them."
+        }
+      ]
+    },
+    {
+      "kind": "definition",
+      "term": "Rank",
+      "text": "The **rank** $r(A)$ (also $\\operatorname{rk}A$) of a step-reduced matrix is its number of markers, equivalently its number of nonzero rows, equivalently the number of linearly independent rows (or columns). For an arbitrary $A$, the rank is the rank of any step-reduced matrix row-equivalent to it — a well-defined number because row-equivalent step-reduced matrices have markers in identical positions. Always $r(A)\\le\\min\\{m,n\\}$, and $r(A)=r(A^{\\top})$."
+    },
+    {
+      "kind": "formula",
+      "text": "**Rouché–Capelli theorem.** For $A\\mathbf{x}=\\mathbf{b}$ with $n$ unknowns:\n$$r(A)<r(A\\mid\\mathbf{b})\\ \\Rightarrow\\ \\text{no solution},$$\n$$r(A)=r(A\\mid\\mathbf{b})=r\\ \\Rightarrow\\ \\infty^{\\,n-r}\\text{ solutions}.$$\nIn particular $r=n$ gives a **unique** solution, and $r<n$ gives infinitely many with $n-r$ free parameters. Note $r(A)\\le r(A\\mid\\mathbf{b})\\le r(A)+1$ always."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "Memorise the three-line summary: (1) compare $r(A)$ with $r(A\\mid\\mathbf{b})$ — different means inconsistent; (2) if equal, the count of solutions is $\\infty^{n-r}$; (3) number of **free variables** = $n-r$ = (number of unknowns) − (rank). A homogeneous system has $\\mathbf{b}=\\mathbf{0}$ so $r(A)=r(A\\mid\\mathbf{0})$ always — it is *always consistent*, and it has a nontrivial solution iff $r(A)<n$."
+    },
+    {
+      "kind": "example",
+      "title": "Solving a homogeneous system by reduction",
+      "text": "Solve $\\begin{cases}x_1+x_2+2x_3+3x_4=0\\\\5x_1+8x_2+13x_3+21x_4=0\\\\34x_1+55x_2+89x_3+144x_4=0\\end{cases}$\n\nStep-reduce the coefficient matrix:\n$$\\begin{pmatrix}1&1&2&3\\\\5&8&13&21\\\\34&55&89&144\\end{pmatrix}\\sim\\begin{pmatrix}1&1&2&3\\\\0&1&1&2\\\\0&0&0&0\\end{pmatrix}.$$\nHere $n=4$, $r=2$, so there are $\\infty^{4-2}=\\infty^2$ solutions with **2 free variables**. The equations are $x_1+x_2+2x_3+3x_4=0$ and $x_2+x_3+2x_4=0$. Set $x_3=s,\\ x_4=t$: then $x_2=-s-2t$ and $x_1=-s-t$. The solution set is\n$$\\mathbf{x}=s\\begin{pmatrix}-1\\\\-1\\\\1\\\\0\\end{pmatrix}+t\\begin{pmatrix}-1\\\\-2\\\\0\\\\1\\end{pmatrix}.$$"
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A system has $n=5$ unknowns and after reduction $r(A)=r(A\\mid\\mathbf{b})=3$. How many solutions, and how many free variables?",
+        "options": [
+          {
+            "id": "A",
+            "content": "No solutions"
+          },
+          {
+            "id": "B",
+            "content": "A unique solution"
+          },
+          {
+            "id": "C",
+            "content": "$\\infty^{2}$ solutions, 2 free variables"
+          },
+          {
+            "id": "D",
+            "content": "$\\infty^{3}$ solutions, 3 free variables"
+          }
+        ],
+        "correct": "C",
+        "explanation": "Ranks are equal so the system is consistent. Free variables $=n-r=5-3=2$, giving $\\infty^{5-3}=\\infty^2$ solutions. A is wrong (ranks equal). B needs $r=n=5$. D miscounts $n-r$.",
+        "theory": "Rouché–Capelli: $\\infty^{n-r}$ solutions when $r(A)=r(A\\mid\\mathbf{b})=r$.",
+        "source": "LAG10 L10.3"
+      }
+    },
+    {
+      "kind": "heading",
+      "text": "Square systems: inverse, determinant and Cramer"
+    },
+    {
+      "kind": "prose",
+      "text": "When $m=n$ (a **square** system) and $A$ is **invertible**, the system has the unique solution $\\mathbf{x}=A^{-1}\\mathbf{b}$, obtained from $A^{-1}(A\\mathbf{x})=A^{-1}\\mathbf{b}\\Rightarrow\\mathbf{x}=A^{-1}\\mathbf{b}$. A square $A\\in\\mathbb{R}^{n,n}$ is invertible **iff** $r(A)=n$ (full rank) **iff** $\\det A\\neq0$. So checking invertibility is just checking whether reduction produces $n$ markers."
+    },
+    {
+      "kind": "steps",
+      "text": "Computing $A^{-1}$ by reduction (Gauss–Jordan)",
+      "steps": [
+        {
+          "label": "Augment with identity",
+          "text": "Form $(A\\mid I_n)$."
+        },
+        {
+          "label": "Super-reduce the left block",
+          "text": "Apply ERO's to turn the left block into $I_n$. If at any point a zero row appears on the left, $r(A)<n$ and $A$ is **not** invertible — stop."
+        },
+        {
+          "label": "Read off the inverse",
+          "text": "When the left block is $I_n$, the right block is $A^{-1}$: $(A\\mid I_n)\\sim(I_n\\mid A^{-1})$. This works because the product $E$ of the elementary matrices satisfies $EA=I_n$, hence $E=A^{-1}$, and $E$ also acts on the identity block."
+        }
+      ]
+    },
+    {
+      "kind": "formula",
+      "text": "**Cramer's rule** (square $A$, $\\det A\\neq0$). Each unknown is\n$$x_i=\\frac{\\det A_i}{\\det A},$$\nwhere $A_i$ is $A$ with its $i$-th column replaced by $\\mathbf{b}$. For a $2\\times2$ system $\\begin{cases}ax+by=p\\\\cx+dy=q\\end{cases}$ this gives $x=\\dfrac{\\det\\begin{pmatrix}p&b\\\\q&d\\end{pmatrix}}{\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}}=\\dfrac{dp-bq}{ad-bc}$, $\\;y=\\dfrac{aq-cp}{ad-bc}$."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "For invertibility questions with a parameter, you do **not** need the full inverse — just reduce until you can see whether the last pivot survives. E.g. $\\det A=0$ exactly at the parameter values that kill a marker. Cramer is cleanest for $2\\times2$ or $3\\times3$ with symbolic right-hand sides; reduction is faster for actually listing all solutions of a large or rank-deficient system."
+    },
+    {
+      "kind": "example",
+      "title": "Discussing a system with a parameter",
+      "text": "Discuss $\\begin{cases}x+ay=1\\\\x+y=b\\end{cases}$ for $a,b\\in\\mathbb{R}$.\n\nReduce: $\\begin{pmatrix}1&a&\\mid&1\\\\1&1&\\mid&b\\end{pmatrix}\\sim\\begin{pmatrix}1&a&\\mid&1\\\\0&1-a&\\mid&b-1\\end{pmatrix}.$\n- If $1-a\\neq0$ (i.e. $a\\neq1$): $r(A)=2=r(A\\mid\\mathbf b)$, **unique solution**.\n- If $a=1$ and $b-1\\neq0$: the last row is $0\\;0\\mid b-1\\neq0$, so $r(A)=1\\neq2=r(A\\mid\\mathbf b)$ → **no solution**.\n- If $a=1$ and $b=1$: $r(A)=1=r(A\\mid\\mathbf b)$, so $\\infty^{2-1}=\\infty^1$ solutions; solve $x+y=1$ giving $(x,y)=(1-t,\\,t)$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "For which statement is a square matrix $A\\in\\mathbb{R}^{n,n}$ guaranteed invertible?",
+        "options": [
+          {
+            "id": "A",
+            "content": "$r(A)=n$"
+          },
+          {
+            "id": "B",
+            "content": "$A$ has a zero row after reduction"
+          },
+          {
+            "id": "C",
+            "content": "$r(A)<n$"
+          },
+          {
+            "id": "D",
+            "content": "$\\det A=0$"
+          }
+        ],
+        "correct": "A",
+        "explanation": "$A$ is invertible iff it has full rank $r(A)=n$ iff $\\det A\\neq0$. B and C both mean rank-deficient (not invertible); D ($\\det A=0$) is exactly the non-invertible case.",
+        "theory": "Invertible $\\iff r(A)=n \\iff \\det A\\neq 0$; then $(A\\mid I_n)\\sim(I_n\\mid A^{-1})$.",
+        "source": "LAG10 L10.4"
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "A frequent mistake: concluding a homogeneous square system $A\\mathbf{x}=\\mathbf{0}$ has only the trivial solution without checking the rank. It has only the trivial solution **iff** $r(A)=n$ (equivalently $\\det A\\neq0$). If $r(A)<n$ there are infinitely many nontrivial solutions — the homogeneous system is never inconsistent, so 'no solution' is never the answer for it."
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

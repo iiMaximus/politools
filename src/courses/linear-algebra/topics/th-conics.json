@@ -1,0 +1,235 @@
+{
+  "title": "Conics & quadrics",
+  "summary": "Classify conics and quadrics from their two associated symmetric matrices. The small matrix $A_{22}$ (the quadratic part) fixes the type via $\\det A_{22}=\\lambda_1\\lambda_2$ — positive ⟹ elliptic, negative ⟹ hyperbolic, zero ⟹ parabolic — while $\\det A_{33}$ separates proper from degenerate conics. Eigenvalue signs give the character of definition and reduce the conic to canonical form $\\lambda_1X^2+\\lambda_2Y^2=\\mu$. The same machinery, one dimension up, classifies ellipsoids, hyperboloids, cones, cylinders and paraboloids.",
+  "minutes": 35,
+  "objectives": [
+    "Build the symmetric matrix of a quadratic form by halving mixed coefficients, and write a conic/quadric in the form v^T S v",
+    "Assemble the matrices A_33 and A_22 (and the 4x4/3x3 versions for quadrics) from a degree-2 equation",
+    "Classify a conic as ellipse, hyperbola, or parabola using det A_22 (type) and det A_33 (degenerate vs proper)",
+    "Distinguish real from imaginary ellipses and identify degenerate conics (pairs of lines, point, empty set)",
+    "Determine the character of definition (positive/negative definite, indefinite) from eigenvalue signs, using Descartes' rule as a shortcut",
+    "Reduce a central conic to canonical form lambda1 X^2 + lambda2 Y^2 = mu by diagonalizing A_22, and find the centre by translation",
+    "Classify central quadrics (ellipsoid, hyperboloids, cone, cylinder, paraboloid) and decide whether they contain a line or a circle"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "text": "What is a conic?"
+    },
+    {
+      "kind": "prose",
+      "text": "A **conic** is the set of points $(x,y)\\in\\mathbb{R}^2$ satisfying a degree-2 equation\n$$Ax^2 + 2Bxy + Cy^2 + 2Dx + 2Ey + F = 0,$$\nwhere $A,B,C$ are not all zero. The coefficients with mixed terms carry a factor $2$ purely for convenience: it makes the associated matrices symmetric with no extra fractions on the cross terms. The familiar shapes — **ellipse**, **hyperbola**, **parabola** — are the non-degenerate conics; but the same equation can also collapse into pairs of lines, a single point, or even the empty set. The whole game of this topic is: read off two matrices, compute a few determinants and eigenvalue signs, and **classify** the conic without ever drawing it."
+    },
+    {
+      "kind": "prose",
+      "text": "A **quadric** is the 3-D analogue: the set of $(x,y,z)\\in\\mathbb{R}^3$ satisfying a degree-2 equation in three variables. Ellipsoids, hyperboloids, cones, paraboloids and cylinders are all quadrics, and they are classified by exactly the same matrix machinery, just one dimension up."
+    },
+    {
+      "kind": "heading",
+      "text": "Quadratic forms and the symmetric matrix"
+    },
+    {
+      "kind": "definition",
+      "term": "Quadratic form",
+      "text": "A **quadratic form** in $x_1,\\dots,x_n$ is a homogeneous degree-2 polynomial $q(v)=\\sum_{i,j} a_{ij}x_i x_j$. It can always be written as $q(v)=v^\\top S\\, v$ with $S$ **symmetric**. Because the coefficient of $x_ix_j$ ($i\\neq j$) splits as $a_{ij}+a_{ji}$, we put **half** of each mixed coefficient into each off-diagonal slot, which makes $S$ symmetric."
+    },
+    {
+      "kind": "example",
+      "title": "Building the symmetric matrix",
+      "text": "For $q(x,y,z)=2x^2+y^2+5z^2+6xy+2yz$, the diagonal entries are the pure-square coefficients $2,1,5$. Halve each mixed coefficient: $6xy\\Rightarrow 3$ in the $(1,2)$ and $(2,1)$ slots; $2yz\\Rightarrow 1$ in the $(2,3)$ and $(3,2)$ slots; there is no $xz$ term, so $0$. Hence\n$$S=\\begin{pmatrix}2&3&0\\\\3&1&1\\\\0&1&5\\end{pmatrix},\\qquad q(v)=v^\\top S\\,v.$$"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "**Do not** put the full mixed coefficient on the off-diagonal. The cross term $4xy$ gives off-diagonal entry $2$, **not** $4$. Forgetting the factor $\\tfrac12$ silently changes the eigenvalues and ruins the classification."
+    },
+    {
+      "kind": "heading",
+      "text": "The two matrices of a conic"
+    },
+    {
+      "kind": "formula",
+      "tex": "A_{33}=\\begin{pmatrix}A&B&D\\\\B&C&E\\\\D&E&F\\end{pmatrix},\\qquad A_{22}=\\begin{pmatrix}A&B\\\\B&C\\end{pmatrix}"
+    },
+    {
+      "kind": "prose",
+      "text": "From $Ax^2+2Bxy+Cy^2+2Dx+2Ey+F=0$ we read off two symmetric matrices. The **big** $3\\times3$ matrix $A_{33}$ uses ALL coefficients (with halved mixed terms: the $D,E,B$ are the half-coefficients of $2Dx,2Ey,2Bxy$). The **small** $2\\times2$ matrix $A_{22}$ is just the top-left block — the quadratic part. Everything about the conic's classification is encoded in $\\det A_{33}$, $\\det A_{22}$, and the eigenvalue signs of $A_{22}$."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "text": "**Two-determinant rule.**\n- $\\det A_{33}\\neq0$ ⟹ the conic is **non-degenerate** (proper); $\\det A_{33}=0$ ⟹ **degenerate** (splits into lines/point).\n- $\\det A_{22}>0$ ⟹ **elliptic** type; $\\det A_{22}<0$ ⟹ **hyperbolic** type; $\\det A_{22}=0$ ⟹ **parabolic** type."
+    },
+    {
+      "kind": "heading",
+      "text": "Classification by eigenvalues of the small matrix"
+    },
+    {
+      "kind": "prose",
+      "text": "Note that $\\det A_{22}=\\lambda_1\\lambda_2$, the product of the eigenvalues of $A_{22}$. So the type is decided by the **signs** of $\\lambda_1,\\lambda_2$:\n- **Same sign** ($\\det A_{22}>0$): elliptic type. Diagonalizing rotates the equation to $\\lambda_1 X^2+\\lambda_2 Y^2=\\mu$. A real ellipse if $\\mu$ matches the eigenvalue sign; an **imaginary** (empty) ellipse if it does not.\n- **Opposite signs** ($\\det A_{22}<0$): hyperbolic type. Gives a hyperbola if non-degenerate, or a pair of intersecting lines if degenerate.\n- **One eigenvalue zero** ($\\det A_{22}=0$): parabolic type. Gives a parabola if non-degenerate, or parallel/coincident lines if degenerate."
+    },
+    {
+      "kind": "formula",
+      "tex": "\\lambda_1 X^2+\\lambda_2 Y^2=\\mu,\\qquad \\mu=-F"
+    },
+    {
+      "kind": "prose",
+      "text": "This is the **canonical form** obtained after rotating (to kill the $xy$ term) and, if the conic is central, translating (to kill the linear terms). The coefficients $\\lambda_1,\\lambda_2$ are exactly the eigenvalues of $A_{22}$; the rotation matrix is built from its orthonormal eigenvectors."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "text": "**Refinement for non-degenerate central conics.** Once $\\det A_{33}\\neq0$ and $\\det A_{22}>0$ (elliptic), check the sign of $\\operatorname{tr}(A_{22})\\cdot\\det A_{33}$: if it is **negative** you get a real (proper) ellipse, if **positive** an imaginary ellipse with no real points (e.g. $x^2+2y^2=-1$)."
+    },
+    {
+      "kind": "heading",
+      "text": "Descartes' rule of signs — a shortcut for eigenvalue signs"
+    },
+    {
+      "kind": "prose",
+      "text": "You rarely need the actual eigenvalues, only their **signs**. For a $2\\times2$ symmetric $A_{22}$, the characteristic polynomial is $\\lambda^2-(\\operatorname{tr})\\lambda+\\det$. Count sign changes $v(p)$ in the coefficient list to get the number of positive roots. Even faster: $\\det A_{22}<0$ already forces opposite signs (one $+$, one $-$). $\\det>0$ with $\\operatorname{tr}>0$ ⟹ both positive; $\\det>0$ with $\\operatorname{tr}<0$ ⟹ both negative."
+    },
+    {
+      "kind": "example",
+      "title": "Sign of eigenvalues via Descartes",
+      "text": "For $q=5x^2+4xy+8y^2$, $A_{22}=\\begin{pmatrix}5&2\\\\2&8\\end{pmatrix}$, $p(\\lambda)=\\lambda^2-13\\lambda+36$. Coefficient signs $(1,-13,36)$ have $2$ sign changes ⟹ $2$ positive eigenvalues (they are $4$ and $9$). Both positive ⟹ **positive definite**, and $q=1$ is an **ellipse**."
+    },
+    {
+      "kind": "heading",
+      "text": "Definite / indefinite quadratic forms"
+    },
+    {
+      "kind": "definition",
+      "term": "Character of definition",
+      "text": "A quadratic form $q$ (equivalently its symmetric matrix) is **positive definite** if $q(v)>0$ for all $v\\neq 0$, **negative definite** if $q(v)<0$ for all $v\\neq0$, and **indefinite** if it takes both signs. The link to eigenvalues: positive definite ⟺ all eigenvalues $>0$; negative definite ⟺ all eigenvalues $<0$; indefinite ⟺ there is a positive AND a negative eigenvalue."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "text": "Elliptic type ⟺ $A_{22}$ is positive or negative **definite**. Hyperbolic type ⟺ $A_{22}$ is **indefinite**. Parabolic type ⟺ $\\det A_{22}=0$ (a zero eigenvalue, semi-definite). This is the bridge between the 'definite/indefinite' language and the conic type."
+    },
+    {
+      "kind": "heading",
+      "text": "The standard solving method"
+    },
+    {
+      "kind": "steps",
+      "steps": [
+        {
+          "label": "Write the equation in standard form",
+          "text": "Move everything to one side: $Ax^2+2Bxy+Cy^2+2Dx+2Ey+F=0$. Read off $A,\\dots,F$, remembering mixed coefficients are HALVED."
+        },
+        {
+          "label": "Build $A_{33}$ and $A_{22}$",
+          "text": "$A_{33}=\\begin{pmatrix}A&B&D\\\\B&C&E\\\\D&E&F\\end{pmatrix}$ and its top-left block $A_{22}=\\begin{pmatrix}A&B\\\\B&C\\end{pmatrix}$."
+        },
+        {
+          "label": "Degenerate or not?",
+          "text": "Compute $\\det A_{33}$. If $\\neq0$ the conic is proper; if $=0$ it is degenerate (lines/point)."
+        },
+        {
+          "label": "Find the type",
+          "text": "Compute $\\det A_{22}=\\lambda_1\\lambda_2$. Sign $>0$: elliptic; $<0$: hyperbolic; $=0$: parabolic."
+        },
+        {
+          "label": "Resolve real vs imaginary / which degenerate case",
+          "text": "For ellipses use the $\\operatorname{tr}(A_{22})\\cdot\\det A_{33}$ sign (negative ⟹ real). For degenerate conics, intersect with a test line to see if you get two distinct lines, a double line, or a point."
+        },
+        {
+          "label": "Reduce to canonical form (if asked)",
+          "text": "Diagonalize $A_{22}$: eigenvalues $\\lambda_1,\\lambda_2$ become the coefficients in $\\lambda_1X^2+\\lambda_2Y^2=\\mu$; orthonormal eigenvectors give the rotation."
+        }
+      ]
+    },
+    {
+      "kind": "heading",
+      "text": "Worked classification"
+    },
+    {
+      "kind": "example",
+      "title": "Classify x² + 2y² + 4xy = 1",
+      "text": "Standard form: $x^2+4xy+2y^2-1=0$, so $A=1,\\;2B=4\\Rightarrow B=2,\\;C=2,\\;D=E=0,\\;F=-1$.\n$$A_{33}=\\begin{pmatrix}1&2&0\\\\2&2&0\\\\0&0&-1\\end{pmatrix},\\quad A_{22}=\\begin{pmatrix}1&2\\\\2&2\\end{pmatrix}.$$\n$\\det A_{33}=-1\\cdot(1\\cdot2-2\\cdot2)=-1\\cdot(-2)=2\\neq0$ ⟹ non-degenerate. $\\det A_{22}=2-4=-2<0$ ⟹ hyperbolic type. Conclusion: a **proper hyperbola**."
+    },
+    {
+      "kind": "heading",
+      "text": "Reduction to canonical form"
+    },
+    {
+      "kind": "example",
+      "title": "Reduce x² + 4xy − 2y² = −1",
+      "text": "Here $A_{22}=\\begin{pmatrix}1&2\\\\2&-2\\end{pmatrix}$, $p(\\lambda)=(1-\\lambda)(-2-\\lambda)-4=\\lambda^2+\\lambda-6=(\\lambda+3)(\\lambda-2)$, so $\\lambda_1=-3,\\lambda_2=2$ — opposite signs ⟹ **hyperbola**. The orthonormal eigenvectors $\\tfrac1{\\sqrt5}(1,-2)$ and $\\tfrac1{\\sqrt5}(2,1)$ rotate the equation into $-3X^2+2Y^2=-1$. The canonical coefficients are exactly the eigenvalues of $A_{22}$."
+    },
+    {
+      "kind": "heading",
+      "text": "Quadrics in 3-D"
+    },
+    {
+      "kind": "prose",
+      "text": "For a central quadric $v^\\top S v=-J$ with symmetric $3\\times3$ matrix $S$, a rotation diagonalizes it to $\\lambda_1X^2+\\lambda_2Y^2+\\lambda_3Z^2=\\mu$. The eigenvalue signs classify it:\n- all same sign as $\\mu$: **ellipsoid** (sphere if all equal);\n- two positive, one negative (with $\\mu\\neq0$): **hyperboloid of one sheet** if one eigenvalue opposes $\\mu$, two sheets if two oppose it;\n- mixed signs with $\\mu=0$: a **cone**;\n- one eigenvalue zero (rank drop): **cylinder** or **paraboloid** depending on the linear part.\nThe $4\\times4$ matrix $A$ (full coefficients) and its $3\\times3$ block $B$ play the roles of $A_{33}$ and $A_{22}$: $\\operatorname{rk}A$ tells degenerate vs proper, and the eigenvalue signs of $B$ give the shape."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "text": "A quadric **contains a line** only when it is ruled: cones, hyperboloids of one sheet, hyperbolic paraboloids, and cylinders. An **ellipsoid never contains a line** (it is bounded). A surface **contains a circle** when two of the eigenvalues of $B$ are equal (rotational symmetry) — e.g. $x^2+y^2+3z^2=1$ has circular cross-sections, but $x^2+2y^2+3z^2=1$ does not."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "For the conic $x^2+2y^2+4xy=-1$, the matrix $A_{22}=\\begin{pmatrix}1&2\\\\2&2\\end{pmatrix}$. What is its type?",
+        "options": [
+          {
+            "id": "A",
+            "content": "Elliptic, because $A=1>0$"
+          },
+          {
+            "id": "B",
+            "content": "Hyperbolic, because $\\det A_{22}=2-4=-2<0$"
+          },
+          {
+            "id": "C",
+            "content": "Parabolic, because there is an $xy$ term"
+          },
+          {
+            "id": "D",
+            "content": "Cannot be determined without the linear terms"
+          }
+        ],
+        "correct": "B",
+        "explanation": "The type is fixed by $\\det A_{22}=\\lambda_1\\lambda_2$. Here $\\det A_{22}=1\\cdot2-2\\cdot2=-2<0$, so the eigenvalues have opposite signs and the conic is of hyperbolic type. A) confuses a single entry with the determinant; C) an $xy$ term only signals a rotation is needed, not parabolic type (parabolic requires $\\det A_{22}=0$); D) the type depends only on the quadratic part $A_{22}$, not on $D,E$.",
+        "theory": "$\\det A_{22}<0$ ⟺ hyperbolic type.",
+        "source": "LAGex23-24 sol, Ex 12.4(iv)"
+      }
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "The conic $4x^2-y^2=0$ has $\\det A_{33}=0$ and $\\det A_{22}=-4<0$. What is it?",
+        "options": [
+          {
+            "id": "A",
+            "content": "A proper hyperbola"
+          },
+          {
+            "id": "B",
+            "content": "A real ellipse"
+          },
+          {
+            "id": "C",
+            "content": "A degenerate hyperbola: a pair of intersecting lines"
+          },
+          {
+            "id": "D",
+            "content": "The empty set"
+          }
+        ],
+        "correct": "C",
+        "explanation": "$\\det A_{22}<0$ gives hyperbolic type, but $\\det A_{33}=0$ makes it degenerate. A degenerate hyperbolic conic is a pair of lines crossing at one point: indeed $4x^2-y^2=(2x-y)(2x+y)=0$ gives $y=\\pm2x$. A) requires $\\det A_{33}\\neq0$; B) needs $\\det A_{22}>0$; D) the empty set arises only for imaginary ellipses.",
+        "theory": "$\\det A_{22}<0$ and $\\det A_{33}=0$ ⟹ two intersecting lines.",
+        "source": "LAGsol23, Ex 1(ii)"
+      }
+    }
+  ],
+  "lecture": "Written part (theory)"
+}

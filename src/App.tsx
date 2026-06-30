@@ -5,12 +5,14 @@ import { LessonPage } from "./pages/LessonPage";
 import { PracticePage } from "./pages/PracticePage";
 import { ExamPage } from "./pages/ExamPage";
 import { ScrollPage } from "./pages/ScrollPage";
+import { CourseGroupPage } from "./pages/CourseGroupPage";
 import { NotFound } from "./pages/NotFound";
 
 export function App() {
   return (
     <Routes>
       <Route path="/" element={<HubPage />} />
+      <Route path="/g/:groupId" element={<CourseGroupPage />} />
       <Route path="/c/:courseId" element={<CoursePage />} />
       <Route path="/c/:courseId/learn/:lessonId" element={<LessonPage />} />
       <Route path="/c/:courseId/scroll" element={<ScrollPage />} />

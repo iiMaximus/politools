@@ -23,8 +23,10 @@ const COURSES: Course[] = [
   electronicSystems,
 ];
 
+const HIDDEN_FROM_HUB = new Set(["cybersecurity"]);
+
 export function allCourses(): Course[] {
-  return COURSES;
+  return COURSES.filter((course) => !HIDDEN_FROM_HUB.has(course.meta.id));
 }
 
 export function getCourse(id: string): Course | undefined {

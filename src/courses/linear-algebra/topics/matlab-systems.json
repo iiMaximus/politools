@@ -1,0 +1,238 @@
+{
+  "title": "Solving linear systems numerically: backslash, LU, Cholesky, QR & least squares",
+  "summary": "Master the exact MATLAB commands the course uses to solve $Ax=b$: the backslash `A\\b` (Gaussian elimination with partial pivoting), the `lu`, `chol` and `qr` factorizations with forward/back substitution, least squares for overdetermined systems via QR and `\\`, the diagnostics `cond` and `norm`, and how to invert with `inv` / via factors — plus why backslash is almost always preferred over forming the inverse. Every snippet is taken verbatim from the Session 2/3 solution files and the FESTA linear-systems slides.",
+  "minutes": 35,
+  "objectives": [
+    "Solve Ax=b with the backslash operator A\\b and explain that it uses Gaussian elimination with partial pivoting",
+    "Compute and use the PA=LU factorization with [L,U,P]=lu(A) and solve via two triangular systems (forward then back substitution)",
+    "Use chol on a symmetric positive-definite matrix to get A=R'R and solve / invert through the triangular factor",
+    "Use qr to factor A=QR and solve square systems via Rx=Q'b",
+    "Solve overdetermined systems in the least-squares sense with both the QR method and backslash, and know what \\ returns when A is rank-deficient",
+    "Quantify accuracy and sensitivity with norm and cond, including the relative error in the infinity norm",
+    "Explain why solving with A\\b is preferred over computing inv(A)*b on both cost and accuracy grounds"
+  ],
+  "blocks": [
+    {
+      "kind": "heading",
+      "title": "Why this is the most important MATLAB topic"
+    },
+    {
+      "kind": "prose",
+      "text": "Almost every numerical task in this course ends in a linear system $Ax = b$. The exam expects you to **solve it with the right command** and to **explain why** that command is preferred. This lesson teaches the exact MATLAB tools the sessions use: the backslash `\\`, the factorizations `lu`, `chol`, `qr`, the conditioning/norm diagnostics `cond` and `norm`, least squares for overdetermined systems, and how to invert a matrix (and why you usually should not). Every snippet below is taken from the Session 2/3 solution files or the FESTA *Linear systems* slides."
+    },
+    {
+      "kind": "definition",
+      "term": "The linear system Ax = b",
+      "text": "Given a square non-singular matrix $A \\in \\mathbb{R}^{n,n}$ and a right-hand side $b$, the system $Ax=b$ has a **unique** solution. When $A$ is rectangular with more rows than columns ($m>n$), the system is **overdetermined** and we solve it in the **least-squares** sense (minimize $\\|Ay-b\\|_2$)."
+    },
+    {
+      "kind": "heading",
+      "title": "1. The backslash operator: x = A\\b"
+    },
+    {
+      "kind": "prose",
+      "text": "The single most important command. `x = A\\b` solves $Ax=b$ with **Gaussian elimination and partial pivoting**. From the FESTA slides: \"`x = A\\b` computes the solution x of $Ax=b$ with the Gaussian elimination method and partial pivoting. The command calls specific algorithms depending on the characteristics of the matrix A (diagonal, triangular, symmetric and positive definite, ...); if the matrix has no special structure, the algorithm calculates a generic $PA=LU$ factorization.\""
+    },
+    {
+      "kind": "example",
+      "title": "Solve a system so the exact solution is all ones",
+      "text": "A standard course trick: build $b$ as the row-sums of $A$, so the exact solution is $x=(1,\\ldots,1)^T$. Then `A\\b` should return a vector of ones.\n```matlab\nn = 100;\nA = hilb(n);          % some test matrix\nb = sum(A,2);         % row sums => exact solution is ones(n,1)\nx = A\\b;              % solve with Gaussian elimination + partial pivoting\nerr = norm(ones(n,1)-x,inf)/norm(ones(n,1),inf)\n```\n`sum(A,2)` sums **along the rows** (dimension 2), giving an $n\\times1$ column. `A\\b` does the solve. The last line is the **relative error in the infinity norm**."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Backslash is a solver, not an operator on numbers",
+      "text": "`A\\b` means \"$A$ inverse times $b$\", solved efficiently. It is **not** the same as `inv(A)*b` numerically — backslash is both faster (about $n^3/3$ vs $n^3$) and more accurate, because it never forms the inverse explicitly. Triangular factors are also solved with backslash: if $L$ is lower triangular, `L\\b` runs forward substitution; if $U$ is upper triangular, `U\\b` runs back substitution."
+    },
+    {
+      "kind": "heading",
+      "title": "2. LU factorization: [L,U,P] = lu(A)"
+    },
+    {
+      "kind": "definition",
+      "term": "PA = LU factorization",
+      "text": "Gaussian elimination with partial pivoting factors $PA = LU$, where $L$ is **lower triangular with unit diagonal**, $U$ is **upper triangular**, and $P$ is a **permutation matrix** recording the row swaps. Without swaps you get the simpler $A=LU$."
+    },
+    {
+      "kind": "prose",
+      "text": "MATLAB gives you both forms:\n```matlab\n[L,U] = lu(A);      % L is PERMUTED lower-triangular (psychologically lower)\n[L,U,P] = lu(A);    % PA = LU, true triangular L, permutation P\n```\nThe two-output `[L,U]=lu(A)` returns a row-permuted $L$ (it equals $P^T\\tilde L$). To get a genuinely lower-triangular $L$ and a separate permutation, **always ask for the third output** `P`."
+    },
+    {
+      "kind": "example",
+      "title": "Solve Ax=b via PA=LU (two triangular solves)",
+      "text": "From `session3_solutions_first_part.m`, exercise 3.1, the pivoted solve:\n```matlab\n[L,U,P] = lu(A);   % computes L and U factors by pivoting (row swaps)\ny = L\\(P*b);       % forward substitution on Ly = Pb\nx_piv = U\\y;       % back substitution on Ux = y\n```\nThe system $Ax=b$ becomes $PAx=Pb$, i.e. $L(Ux)=Pb$. Step 1 solves $Ly=Pb$, step 2 solves $Ux=y$. Each triangular solve costs only about $n^2/2$, so once you have the factors, repeated solves are cheap."
+    },
+    {
+      "kind": "callout",
+      "tone": "tip",
+      "title": "Pivoting wins: A=LU vs PA=LU",
+      "text": "Exercise 3.1 compares a hand-written `elleu` (no swaps, giving $A=LU$) against MATLAB's `lu` (with pivoting, giving $PA=LU$). The course comment is exact: \"the solution obtained by the method of the elimination of Gauss **with pivoting** (i.e. obtained by factoring $PA=LU$) is **more accurate** than without pivoting.\" Partial pivoting keeps the multipliers small and limits rounding-error amplification."
+    },
+    {
+      "kind": "prose",
+      "text": "The hand-written factorization function `elleu` (from the FESTA slide 58 and the session) builds $L$ and $U$ in place, then extracts them with `tril` and `triu`:\n```matlab\nfunction [L,U] = ellu(A)\nn = size(A,1);\nfor k = 1:n-1\n    for i = k+1:n\n        A(i,k) = A(i,k)/A(k,k);          % multiplier m_ik stored below diagonal\n        for j = k+1:n\n            A(i,j) = A(i,j)-A(i,k)*A(k,j);% update the trailing submatrix\n        end\n    end\nend\nL = tril(A,-1)+eye(n);   % strict lower part + identity diagonal\nU = triu(A);             % upper triangular part\n```\n`tril(A,-1)` takes the part **strictly below** the diagonal; `+eye(n)` puts ones on $L$'s diagonal. `triu(A)` takes the upper triangle for $U$."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "After `[L,U,P] = lu(A)`, which line correctly solves $Ax=b$?",
+        "options": [
+          {
+            "id": "A",
+            "content": "`x = U\\(L\\b)`"
+          },
+          {
+            "id": "B",
+            "content": "`y = L\\(P*b); x = U\\y;`"
+          },
+          {
+            "id": "C",
+            "content": "`x = L\\(U\\(P*b))`"
+          },
+          {
+            "id": "D",
+            "content": "`x = P*(L\\(U\\b))`"
+          }
+        ],
+        "correct": "B",
+        "explanation": "With $PA=LU$, multiply $Ax=b$ by $P$: $PAx=Pb \\Rightarrow L(Ux)=Pb$. First solve $Ly=Pb$ (forward, `y=L\\(P*b)`), then $Ux=y$ (back, `x=U\\y`). A and D forget the permutation $P$ on $b$ entirely. C applies the factors in the wrong order ($U$ before $L$) and would not give the right answer. Only B matches the session-3 code.",
+        "theory": "PA=LU factorization and two triangular solves.",
+        "source": "session3_solutions_first_part.m, ex 3.1"
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "3. Cholesky: R = chol(A) for SPD matrices"
+    },
+    {
+      "kind": "definition",
+      "term": "Cholesky factorization",
+      "text": "If $A$ is **symmetric positive definite (SPD)**, there is a unique factorization $A = R^T R$ with $R$ upper triangular and positive diagonal. MATLAB: `R = chol(A)`. Cost is about $n^3/6$, half of LU, because it exploits symmetry. A reliable way to *build* an SPD matrix: take any non-singular $B$ and set $A=B^TB$."
+    },
+    {
+      "kind": "example",
+      "title": "Cholesky solve and inverse (exercise 3.4)",
+      "text": "```matlab\nn = 100;\nB = diag(10*ones(n,1)) + diag(5*ones(n-1,1),1) + diag(-5*ones(n-1,1),-1);\nA = B'*B;            % B nonsingular => A symmetric positive definite\nR = chol(A);         % Choleski factor: A = R'*R\nb = sum(A,2);\ny = R'\\b;            % solve R'y = b  (forward, R' is lower triangular)\nx = R\\y;             % solve Rx = y   (back)\nerr_sol = norm(ones(n,1)-x,inf)/norm(ones(n,1),inf)\n```\n`diag(v,k)` puts vector `v` on the $k$-th diagonal: $k=0$ main, $k=1$ super-diagonal, $k=-1$ sub-diagonal. The system $Ax=b$ becomes $R^T(Rx)=b$: solve $R^Ty=b$ then $Rx=y$."
+    },
+    {
+      "kind": "prose",
+      "text": "To invert an SPD matrix via Cholesky, invert only the triangular factor:\n```matlab\nR1 = inv(R);\ninversa_c = R1*R1';   % A^{-1} = R^{-1} (R^{-1})^T\n```\nThis exploits $A^{-1}=(R^TR)^{-1}=R^{-1}(R^{-1})^T$, so you invert a single triangular matrix instead of the full $A$."
+    },
+    {
+      "kind": "heading",
+      "title": "4. QR factorization: [Q,R] = qr(A)"
+    },
+    {
+      "kind": "definition",
+      "term": "QR factorization",
+      "text": "Any $A\\in\\mathbb{R}^{m,n}$ factors as $A=QR$ with $Q$ orthogonal ($Q^TQ=I$, so $Q^{-1}=Q^T$) and $R$ upper triangular (entries $r_{ij}=0$ for $i>j$). MATLAB: `[Q,R] = qr(A)` returns $Q$ of size $m\\times m$ and $R$ of size $m\\times n$."
+    },
+    {
+      "kind": "example",
+      "title": "Square solve via QR (exercise 3.5)",
+      "text": "For a square non-singular $A$, $Ax=b \\Rightarrow QRx=b \\Rightarrow Rx=Q^Tb$ (using $Q^{-1}=Q^T$):\n```matlab\n[Q,R] = qr(A);\nx = R\\(Q'*b);     % R x = Q' b, one back substitution\n```\nQR is **more expensive** than $PA=LU$ for square systems. Exercise 3.5 measures the time ratio `t2/t1` of QR over LU with `tic`/`toc` and confirms QR is slower, so for ordinary square systems prefer LU / backslash. QR shines for **least squares**."
+    },
+    {
+      "kind": "heading",
+      "title": "5. Least squares for overdetermined systems"
+    },
+    {
+      "kind": "prose",
+      "text": "When $A$ is $m\\times n$ with $m>n$ (more equations than unknowns), there is generally no exact solution. We minimize the residual $\\|Ay-b\\|_2$. Two routes: the **QR method** (stable) and the **normal equations** $A^TAx=A^Tb$ (cheaper but can be ill-conditioned). And backslash does it automatically."
+    },
+    {
+      "kind": "example",
+      "title": "Least squares via QR and via backslash (exercise 3.6)",
+      "text": "```matlab\nA = [1 2 3 4;-1 0 4 1;3 5 1 0;2 -1 0 1;1 1 -1 1;2 -1 0 3];\nb = [1:6]';\n[m n] = size(A);\nr = rank(A)            % check rank is maximal (= n)\n[Q,R] = qr(A);         % QR factorization of the m-by-n matrix\nc = Q'*b;              % c = Q' b\nRt = R(1:n,1:n);       % R-tilde: top n-by-n non-singular block of R\nc1 = c(1:n);           % first n components of c\ncstar = Rt\\c1          % least-squares solution: solve R-tilde * x = c1\nx = A\\b                % SAME result, computed directly by backslash\nerr = norm(cstar-x)/norm(x)\n```\nThe residual lives in the **last $m-n$ components** $c_2$ that we drop: $\\|c_2\\|_2$ is the size of the residual. `A\\b` performs this whole QR-based procedure internally."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "What backslash returns when A is not full rank",
+      "text": "FESTA, verbatim: \"For overdetermined linear systems $Ax=b$, where $A$ is $m\\times n$ with $m>n$ and of maximum rank, `x = A\\b` provides the least square solution. **If $A$ is not of maximum rank, the command `\\` provides as a least square solution the one with more null components** — this may coincide with the minimum-norm solution but need not.\" For the guaranteed **minimum-Euclidean-norm** solution when rank is deficient, the course uses `pinv` (the pseudoinverse, built on the SVD)."
+    },
+    {
+      "kind": "example",
+      "title": "Polynomial least-squares fit (exercise 3.7)",
+      "text": "Fit a parabola $y=c_1x^2+c_2x+c_3$ to data by building the design matrix and solving with backslash:\n```matlab\nx = linspace(0,pi,15);          % 15 equispaced x_i in [0,pi]\ny = x.*cos(x);                  % the data y_i = x_i cos(x_i)\nA = [x.^2' x' ones(15,1)];      % columns: x^2, x, 1\nc = A\\y';                       % least-squares coefficients c1,c2,c3\nxx = linspace(0,pi,100);\np = c(1)*xx.^2 + c(2)*xx + c(3);% evaluate fitted parabola\nplot(x,y,'*'); hold on; plot(xx,p,'-r')\n```\n`x.^2` is **element-wise** squaring (the dot matters); `x.*cos(x)` is element-wise product. `ones(15,1)` is the constant column."
+    },
+    {
+      "kind": "heading",
+      "title": "6. Conditioning and norms: cond, norm"
+    },
+    {
+      "kind": "definition",
+      "term": "Condition number K(A)",
+      "text": "$K(A)=\\|A\\|\\,\\|A^{-1}\\| \\ge 1$ measures sensitivity of $Ax=b$ to perturbations. If $K(A)\\approx 1$ the matrix is **well-conditioned**; if $K(A)\\gg 1$ it is **ill-conditioned** and small data errors can blow up the solution. MATLAB: `cond(A)` (2-norm), `cond(A,1)`, `cond(A,inf)`."
+    },
+    {
+      "kind": "prose",
+      "text": "Norm commands from the FESTA slides:\n```matlab\nnorm(x,1)     % 1-norm of vector x: sum of |x_i|\nnorm(x,2)     % 2-norm (Euclidean); same as norm(x)\nnorm(x,inf)   % infinity norm: max |x_i|\nnorm(A,1)     % matrix 1-norm: max column abs-sum\nnorm(A,inf)   % matrix inf-norm: max row abs-sum\n```\nThe **relative error** of a computed solution `x` against the exact ones-vector is the recurring exam line:\n```matlab\nerr = norm(ones(n,1)-x,inf)/norm(ones(n,1),inf)\n```"
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The Hilbert matrix is the classic ill-conditioned example",
+      "text": "`hilb(n)` builds the Hilbert matrix. The additional exercise solves $Hx=b$ for $n=5,10,15$ with `A\\b` and prints `cond(A,inf)` and the error. As $n$ grows, $K_\\infty(H_n)$ explodes (e.g. about $3.5\\times10^{13}$ at $n=10$) and the solution loses accuracy accordingly — even though backslash is doing nothing wrong. Ill-conditioning is a property of $A$, not of the algorithm."
+    },
+    {
+      "kind": "heading",
+      "title": "7. Inverting a matrix: inv, myinvers, and why backslash wins"
+    },
+    {
+      "kind": "prose",
+      "text": "You CAN compute the inverse explicitly. Exercise 3.2 inverts via the LU factors and compares with `inv`:\n```matlab\n[L,U,P] = lu(A);\ninverse_c = inv(U)*inv(L)*P;   % A^{-1} = U^{-1} L^{-1} P\ninverse   = inv(A);            % MATLAB built-in inverse\nerr = norm(inverse-inverse_c,inf)/norm(inverse,inf)\n```\nThis uses $A^{-1}=U^{-1}L^{-1}P$ (from $PA=LU$). The two agree to machine precision."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Never solve Ax=b with x = inv(A)*b",
+      "text": "FESTA is explicit: computing the inverse costs about $n^3$ — **three times** the $n^3/3$ of Gaussian elimination — so \"solving $Ax=b$ by computing $x=A^{-1}b$ is not cheap.\" It is also less accurate. Rule for the exam: to **solve a system** use `A\\b`; only compute `inv(A)` when the inverse matrix *itself* is the requested object."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "You must solve $Ax=b$ for a single square non-singular $A$. Which is the preferred command?",
+        "options": [
+          {
+            "id": "A",
+            "content": "`x = inv(A)*b`"
+          },
+          {
+            "id": "B",
+            "content": "`x = A\\b`"
+          },
+          {
+            "id": "C",
+            "content": "`x = b/A`"
+          },
+          {
+            "id": "D",
+            "content": "`x = A^(-1)*b`"
+          }
+        ],
+        "correct": "B",
+        "explanation": "`A\\b` solves the system directly with Gaussian elimination + partial pivoting at cost ~$n^3/3$, and is the most accurate. A and D form the explicit inverse (cost ~$n^3$, less accurate) — the course explicitly warns against this. C, the forward slash `b/A`, solves $xA=b$ (right division), which is the wrong system shape here. Backslash is the answer.",
+        "theory": "Backslash vs explicit inverse; computational cost.",
+        "source": "FESTA Linear systems slides 64, 70"
+      }
+    },
+    {
+      "kind": "heading",
+      "title": "8. Solving many systems sharing the same A"
+    },
+    {
+      "kind": "prose",
+      "text": "When you must solve $Ax_i=b_i$ for many right-hand sides with the **same** $A$, factor once and reuse. Exercise 3.3 factors $PA=LU$ a single time, then loops with cheap triangular solves:\n```matlab\n[L,U,P] = lu(A);     % factor ONCE (cost n^3/3)\ntn = P*b;\nfor i = 1:p\n    y = L\\tn;         % each step: two triangular solves, cost ~n^2\n    x(:,i) = U\\y;\n    tn = P*x(:,i);    % next right-hand side\nend\n```\nTotal cost is about $n^3/3 + p\\,n^2$ instead of $p\\,n^3/3$ for $p$ separate backslash solves. `tic`/`toc` confirm the factor-once approach is faster for large $n$."
+    },
+    {
+      "kind": "callout",
+      "tone": "info",
+      "title": "Summary table of the factorizations",
+      "text": "From the session slide: **$A=LU$** `[L,U]=lu(A)`; **$PA=LU$** `[L,U,P]=lu(A)` (solve $Ly=Pb$, $Ux=y$); **$A=R^TR$** `R=chol(A)` for SPD (solve $R^Ty=b$, $Rx=y$); **$A=QR$** `[Q,R]=qr(A)` (solve $Rx=Q^Tb$, or least squares $\\tilde Rx=\\tilde c$). Backslash `\\` picks the right one for you automatically based on the structure of $A$."
+    }
+  ],
+  "lecture": "MATLAB part"
+}

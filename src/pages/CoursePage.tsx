@@ -63,9 +63,7 @@ export function CoursePage() {
           <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full blur-3xl" style={{ background: "var(--accent)", opacity: 0.16 }} />
           <div className="relative max-w-2xl">
             <div className="flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-2xl text-white" style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}>
-                <Icon name={meta.icon} size={24} />
-              </span>
+              <CourseIconTile icon={meta.icon} soft={usesSoftCourseIcon(meta.id)} />
               <div>
                 <Kicker>
                   Year {meta.year} · Sem {meta.semester}
@@ -206,6 +204,32 @@ export function CoursePage() {
       </Page>
     </CourseTheme>
   );
+}
+
+function CourseIconTile({ icon, soft }: { icon: string; soft?: boolean }) {
+  if (!soft) {
+    return (
+      <span
+        className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-white"
+        style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
+      >
+        <Icon name={icon} size={24} />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-[var(--accent-line)] bg-[var(--accent-soft)]"
+      style={{ color: "var(--accent)" }}
+    >
+      <Icon name={icon} size={24} />
+    </span>
+  );
+}
+
+function usesSoftCourseIcon(courseId: string): boolean {
+  return courseId === "linear-algebra" || courseId === "fundamentals-electronic-systems" || courseId === "electronic-systems";
 }
 
 function BreakdownRow({
