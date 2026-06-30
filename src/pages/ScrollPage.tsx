@@ -1,16 +1,12 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { CourseNav } from "../components/CourseNav";
 import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
-import { TopBar, Page } from "../components/Layout";
 import { rt, rtInline } from "../components/RichText";
-import { Pill } from "../components/ui";
 import { getCourse } from "../courses/registry";
-import { dueCount } from "../lib/adaptive";
 import { cn } from "../lib/cn";
 import { TexBlock } from "../lib/math";
-import { recordAnswer, useCourseProgress } from "../lib/progress";
+import { recordAnswer } from "../lib/progress";
 import type { Lesson, LessonBlock, Question } from "../types";
 import { NotFound } from "./NotFound";
 
@@ -40,11 +36,17 @@ const MAX_CALLOUTS_PER_LESSON = 2;
 const MAX_EXAMPLES_PER_LESSON = 1;
 const MAX_QUESTIONS_PER_LESSON = 2;
 const DRILL_QUESTIONS_PER_LESSON = 5;
+const FEED_KICKER = "text-xs font-black uppercase tracking-[0.22em] text-[var(--accent)]";
+const FEED_TITLE =
+  "max-w-5xl text-[clamp(2.45rem,11vw,7.25rem)] font-black leading-[0.95] tracking-normal text-white [text-wrap:balance]";
+const FEED_BODY =
+  "mt-6 max-w-4xl text-[clamp(1.12rem,4.6vw,2.08rem)] font-semibold leading-[1.28] text-white/78 [text-wrap:pretty] [&_p]:m-0 [&_p+p]:mt-5 [&_strong]:text-white [&_em]:font-bold [&_em]:not-italic [&_em]:text-[var(--accent)] [&_.katex-inline]:max-w-full";
+const FEED_NOTE =
+  "mt-7 max-w-3xl text-base font-bold leading-snug text-white/45";
 
 export function ScrollPage() {
   const { courseId = "" } = useParams();
   const course = getCourse(courseId);
-  const progress = useCourseProgress(courseId);
   const feedRef = useRef<HTMLElement | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
@@ -97,9 +99,6 @@ export function ScrollPage() {
 
   if (!course) return <NotFound />;
 
-  const current = feed[active];
-  const lessonLabel = current && "lesson" in current ? current.lesson.title : course.meta.short;
-
   function choose(question: Question, optionId: string) {
     if (answers[question.id]) return;
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
@@ -112,68 +111,80 @@ export function ScrollPage() {
     node?.scrollIntoView({ block: "start", behavior: "smooth" });
   }
 
+  function handleFeedClick(event: MouseEvent<HTMLElement>) {
+    if (isInteractiveTarget(event.target)) return;
+    scrollToIndex(active + 1);
+  }
+
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
-      <TopBar crumbs={[{ label: course.meta.short, to: `/c/${courseId}` }, { label: "Scroll" }]}>
-        <Link to={`/c/${courseId}/practice`} className="btn btn-ghost !py-2 !text-sm">
-          <Icon name="Dumbbell" size={15} /> <span className="hidden sm:inline">Practice</span>
-        </Link>
-      </TopBar>
-
-      <Page className="max-w-5xl pb-5">
-        <div className="mb-3">
-          <CourseNav courseId={courseId} due={dueCount(course.practice, progress)} />
-        </div>
-
-        <div className="mb-3 rounded-2xl border border-[var(--color-line)] bg-[color-mix(in_srgb,var(--color-surface)_92%,transparent)] p-2 shadow-sm backdrop-blur">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="min-w-[9rem] flex-1 px-2">
-              <div className="truncate text-xs font-semibold uppercase tracking-wider text-[var(--color-faint)]">
-                TikTok mode
-              </div>
-              <div className="truncate text-sm font-bold">{rtInline(lessonLabel)}</div>
-            </div>
+      <div className="fixed inset-0 z-50 overflow-hidden bg-[#070b16] text-white" style={{ colorScheme: "dark" }}>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(900px 620px at 18% 10%, color-mix(in oklab, var(--accent) 30%, transparent), transparent 60%), radial-gradient(760px 580px at 95% 75%, color-mix(in oklab, var(--accent-2) 24%, transparent), transparent 58%), linear-gradient(180deg, #10172d 0%, #070b16 56%, #050812 100%)",
+          }}
+        />
+        <header
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-3 px-4 sm:px-6"
+          style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
+          <Link
+            to={`/c/${courseId}`}
+            className="pointer-events-auto grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/10 text-white/80 backdrop-blur-xl transition hover:bg-white/15 hover:text-white"
+            aria-label={`Back to ${course.meta.short}`}
+          >
+            <Icon name="ChevronLeft" size={20} />
+          </Link>
+          <div className="pointer-events-auto flex min-w-0 items-center gap-1 rounded-full border border-white/10 bg-black/20 p-1 backdrop-blur-xl">
             <ModeButton active={mode === "story"} icon="Sparkles" label="Story" onClick={() => setMode("story")} />
             <ModeButton active={mode === "drill"} icon="CircleHelp" label="Drill" onClick={() => setMode("drill")} />
             <ModeButton active={mode === "formula"} icon="Sigma" label="Formula" onClick={() => setMode("formula")} />
           </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-bg)]">
-            <div
-              className="h-full rounded-full"
-              style={{
-                width: `${feed.length ? ((active + 1) / feed.length) * 100 : 0}%`,
-                background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
-              }}
-            />
+          <div className="pointer-events-none min-w-10 text-right font-mono text-[11px] font-semibold text-white/45">
+            {feed.length ? active + 1 : 0}/{feed.length}
           </div>
-        </div>
-
+        </header>
         <section
           ref={feedRef}
-          className="mx-auto h-[calc(100svh-15.75rem)] min-h-[520px] max-w-3xl snap-y snap-mandatory overflow-y-auto overscroll-contain rounded-[1.6rem] border border-[var(--color-line)] bg-[var(--color-bg)] scroll-smooth"
+          onClick={handleFeedClick}
+          className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-auto overscroll-contain scroll-smooth no-scrollbar"
           aria-label="Microlearning scroll feed"
         >
           {feed.map((item, index) => (
-            <article key={item.id} data-feed-index={index} className="h-full snap-start snap-always p-2 sm:p-4">
-              <div className="flex h-full min-h-0 rounded-[1.35rem] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-sm sm:p-7">
-                <FeedCard
-                  item={item}
-                  index={index}
-                  total={feed.length}
-                  picked={item.kind === "question" ? answers[item.question.id] : undefined}
-                  revealed={Boolean(revealed[item.id])}
-                  formulaMark={formulaMarks[item.id]}
-                  onPick={choose}
-                  onReveal={() => setRevealed((prev) => ({ ...prev, [item.id]: true }))}
-                  onFormulaMark={(mark) => setFormulaMarks((prev) => ({ ...prev, [item.id]: mark }))}
-                  onNext={() => scrollToIndex(index + 1)}
-                  onPrevious={() => scrollToIndex(index - 1)}
-                />
-              </div>
+            <article
+              key={item.id}
+              data-feed-index={index}
+              className="flex h-[100dvh] snap-start snap-always overflow-hidden px-6 sm:px-10 md:px-16"
+              style={{
+                paddingTop: "max(4.8rem, calc(env(safe-area-inset-top) + 3.8rem))",
+                paddingBottom: "max(2.75rem, calc(env(safe-area-inset-bottom) + 2.4rem))",
+              }}
+            >
+              <FeedCard
+                item={item}
+                picked={item.kind === "question" ? answers[item.question.id] : undefined}
+                revealed={Boolean(revealed[item.id])}
+                formulaMark={formulaMarks[item.id]}
+                onPick={choose}
+                onReveal={() => setRevealed((prev) => ({ ...prev, [item.id]: true }))}
+                onFormulaMark={(mark) => setFormulaMarks((prev) => ({ ...prev, [item.id]: mark }))}
+              />
             </article>
           ))}
         </section>
-      </Page>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
+          <div
+            className="h-1 origin-left"
+            style={{
+              transform: `scaleX(${feed.length ? (active + 1) / feed.length : 0})`,
+              background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
+            }}
+          />
+        </div>
+      </div>
     </CourseTheme>
   );
 }
@@ -226,7 +237,7 @@ function buildFeed(lessons: Lesson[], practice: Question[], mode: ScrollMode): F
     }
 
     if (mode !== "formula" && mapBlock) {
-      splitNode(mapBlock.content, 210).forEach((text, i, chunks) => {
+      splitNode(mapBlock.content, 155).forEach((text, i, chunks) => {
         items.push({
           id: `${lesson.id}:map:${i}`,
           kind: "beat",
@@ -273,7 +284,7 @@ function buildFeed(lessons: Lesson[], practice: Question[], mode: ScrollMode): F
 
     if (mode === "story") {
       callouts.slice(0, MAX_CALLOUTS_PER_LESSON).forEach((callout, i) => {
-        splitNode(callout.content, 210).forEach((text, j, chunks) => {
+        splitNode(callout.content, 150).forEach((text, j, chunks) => {
           items.push({
             id: `${lesson.id}:callout:${i}:${j}`,
             kind: "beat",
@@ -318,6 +329,11 @@ function dedupeQuestions(questions: Question[]) {
   });
 }
 
+function isInteractiveTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest("button, a, input, textarea, select, label, [role='button']"));
+}
+
 function splitNode(value: ReactNode, maxChars: number): ReactNode[] {
   if (typeof value !== "string") return [value];
   return splitPlainText(value, maxChars);
@@ -326,8 +342,8 @@ function splitNode(value: ReactNode, maxChars: number): ReactNode[] {
 function splitExample(value: ReactNode): ReactNode[] {
   if (typeof value !== "string") return [value];
   const paragraphs = value.split(/\n{2,}/).filter((p) => p.trim().length);
-  const chunks = paragraphs.flatMap((paragraph) => splitPlainText(paragraph, 420));
-  return chunks.slice(0, 4);
+  const chunks = paragraphs.flatMap((paragraph) => splitPlainText(paragraph, 260));
+  return chunks.slice(0, 6);
 }
 
 function splitPlainText(text: string, maxChars: number): string[] {
@@ -357,7 +373,7 @@ function splitPlainText(text: string, maxChars: number): string[] {
 }
 
 function firstBeat(text: string) {
-  const chunks = splitPlainText(text, 210);
+  const chunks = splitPlainText(text, 165);
   if (chunks.length > 1 && chunks[0].length < 60) {
     return `${chunks[0]} ${chunks[1]}`;
   }
@@ -379,70 +395,70 @@ function analogyForLesson(lesson: Lesson) {
     return {
       title: "Name thing. Then solve thing.",
       text:
-        "Caveman version: before math, point at the box and grunt: what is inside, what can cross the wall, and what state is it in? Thermodynamics gets annoying when you skip naming the problem before chasing equations.",
+        "Caveman checklist: box? stuff inside? stuff crossing? gas or wet soup? Name the situation first. Then the equations stop pretending to be a haunted forest.",
     };
   }
   if (id === "first-law") {
     return {
       title: "Energy is a bank account",
       text:
-        "Heat is money entering. Work is money leaving. Internal energy is the account balance. First Law problems are not magic; they are accounting with hotter words.",
+        "Heat is money entering. Work is money leaving. Internal energy is the balance. First Law problems are just accounting wearing safety goggles.",
     };
   }
   if (id === "second-law") {
     return {
       title: "Entropy is the mess receipt",
       text:
-        "First Law says the money is still somewhere. Second Law says some of it got turned into glitter on the floor. Entropy production is the receipt for the mess. Zero mess: reversible. Positive mess: real. Negative mess: fantasy.",
+        "First Law says the energy is still somewhere. Second Law says some usefulness got shredded. Entropy production is the receipt: zero is perfect, positive is real, negative is nonsense.",
     };
   }
   if (id === "vapor-cycles") {
     return {
       title: "Four machines in a loop",
       text:
-        "Rankine is a little steam gym: pump squeezes, boiler feeds, turbine works, condenser cools it back down. Refrigeration is the same loop energy-wise, but the goal is stealing heat from the cold side.",
+        "Rankine is a steam treadmill: pump squeezes, boiler feeds, turbine cashes out, condenser resets. Refrigeration flips the mission: steal heat from the cold side.",
     };
   }
   if (id === "gas-cycles") {
     return {
       title: "Engine cartoons",
       text:
-        "Otto, Diesel, and Brayton are not full real engines. They are exam cartoons. Label each leg of the cartoon first: squeeze, heat, expand, dump heat. Once labels are right, formulas stop feeling random.",
+        "Otto, Diesel, and Brayton are exam cartoons. Label each leg: squeeze, heat, expand, dump. Once the cartoon is named, the formulas stop spawning randomly.",
     };
   }
   if (id === "moist-air") {
     return {
       title: "Air with a wet backpack",
       text:
-        "Dry air is the person. Water vapor is the backpack. Psychrometrics keeps asking: how heavy is the backpack, how full is it compared to max, and did water get added or removed?",
+        "Dry air carries a water backpack. Psychrometrics asks three things: how heavy, how full compared with max, and did water get added or removed?",
     };
   }
   if (id === "conduction") {
     return {
       title: "Heat walking through walls",
       text:
-        "Heat wants to walk from hot to cold. Every wall layer is mud it must walk through. Thick mud, low conductivity, bad contact: slower walk. Draw the path, add the muds, divide temperature push by resistance.",
+        "Heat walks from hot to cold. Every layer is mud. Thick mud, low conductivity, bad contact: slower walk. Draw the path, add the mud, divide temperature push by resistance.",
     };
   }
   if (id === "convection") {
     return {
       title: "Fluid steals heat from the wall",
       text:
-        "At the wall, heat first crawls by conduction. Then moving fluid grabs it and runs away. The whole topic is basically: how good is the fluid thief? That number is $h$.",
+        "At the wall, heat crawls out. Moving fluid grabs it and runs. The whole topic asks: how good is the theft? That number is $h$.",
     };
   }
   if (id === "heat-exchangers") {
     return {
       title: "Two rivers trading warmth",
       text:
-        "A hot river and a cold river pass each other through a wall. They do not mix; they just trade heat. Your job is to track who lost warmth, who gained it, and how hard the wall made the trade.",
+        "A hot stream and a cold stream pass through a wall. They do not mix; they trade heat. Track who pays, who gains, and how hard the wall taxes the trade.",
     };
   }
   if (id === "radiation") {
     return {
       title: "Heat flashlight",
       text:
-        "Radiation is heat sent as light you mostly cannot see. No air needed. Hotter objects scream energy much louder because of $T^4$. Kelvin only, because Celsius lies to this formula.",
+        "Radiation is heat as invisible light. No air needed. Hotter objects shout way louder because of $T^4$. Kelvin only, because Celsius lies to this formula.",
     };
   }
   return {
@@ -598,55 +614,39 @@ function ModeButton({
     <button
       type="button"
       onClick={onClick}
+      aria-label={`${label} mode`}
       className={cn(
-        "flex h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition",
-        active ? "text-white" : "text-[var(--color-muted)] hover:bg-[var(--color-bg)] hover:text-[var(--color-ink)]"
+        "flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-full px-2.5 text-xs font-black uppercase tracking-wide transition",
+        active ? "text-[#080b14]" : "text-white/55 hover:bg-white/10 hover:text-white"
       )}
       style={active ? { background: "linear-gradient(180deg,var(--accent),var(--accent-2))" } : undefined}
     >
       <Icon name={icon} size={15} />
-      {label}
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }
 
 function FeedCard({
   item,
-  index,
-  total,
   picked,
   revealed,
   formulaMark,
   onPick,
   onReveal,
   onFormulaMark,
-  onNext,
-  onPrevious,
 }: {
   item: FeedItem;
-  index: number;
-  total: number;
   picked?: string;
   revealed: boolean;
   formulaMark?: FormulaMark;
   onPick: (question: Question, optionId: string) => void;
   onReveal: () => void;
   onFormulaMark: (mark: FormulaMark) => void;
-  onNext: () => void;
-  onPrevious: () => void;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <Pill tone={item.kind === "question" ? "accent" : item.kind === "formula" ? "warn" : "neutral"}>
-          <Icon name={kindIcon(item.kind)} size={13} /> {kindLabel(item.kind)}
-        </Pill>
-        <span className="font-mono text-xs text-[var(--color-faint)]">
-          {index + 1}/{total}
-        </span>
-      </div>
-
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col justify-center">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1 no-scrollbar">
         {item.kind === "lesson" && <LessonIntro item={item} />}
         {item.kind === "beat" && <BeatCard item={item} />}
         {item.kind === "step" && <StepCard item={item} />}
@@ -657,29 +657,6 @@ function FeedCard({
         {item.kind === "question" && <QuestionScrollCard item={item} picked={picked} onPick={onPick} />}
         {item.kind === "finish" && <FinishCard item={item} />}
       </div>
-
-      <div className="mt-4 flex items-center justify-between border-t border-[var(--color-line)] pt-3">
-        <button
-          type="button"
-          onClick={onPrevious}
-          disabled={index === 0}
-          className="btn btn-ghost !h-10 !px-3 disabled:cursor-not-allowed disabled:opacity-35"
-          aria-label="Previous card"
-        >
-          <Icon name="ChevronUp" size={16} />
-        </button>
-        <span className="hidden text-xs font-semibold uppercase tracking-wider text-[var(--color-faint)] sm:inline">
-          Scroll, swipe, or press down
-        </span>
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={index >= total - 1}
-          className="btn btn-primary !h-10 !px-4 disabled:cursor-not-allowed disabled:opacity-35"
-        >
-          Next <Icon name="ChevronDown" size={16} />
-        </button>
-      </div>
     </div>
   );
 }
@@ -687,11 +664,11 @@ function FeedCard({
 function LessonIntro({ item }: { item: Extract<FeedItem, { kind: "lesson" }> }) {
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">Lesson {item.index + 1}</div>
-      <h1 className="text-3xl font-black tracking-tight sm:text-5xl">{rtInline(item.lesson.title)}</h1>
-      <div className="prose-lesson mt-5 text-xl leading-relaxed text-[var(--color-muted)]">{rt(item.hook)}</div>
-      <div className="mt-6 rounded-2xl bg-[var(--color-bg)] p-4 text-sm font-semibold text-[var(--color-muted)]">
-        One screen at a time. You are not reading the chapter; you are collecting handles.
+      <div className={FEED_KICKER}>Lesson {item.index + 1}</div>
+      <h1 className={cn(FEED_TITLE, "mt-4")}>{rtInline(item.lesson.title)}</h1>
+      <div className={FEED_BODY}>{rt(item.hook)}</div>
+      <div className={FEED_NOTE}>
+        One idea per screen. No textbook fog. Tap empty space or swipe when the idea lands.
       </div>
     </div>
   );
@@ -700,12 +677,12 @@ function LessonIntro({ item }: { item: Extract<FeedItem, { kind: "lesson" }> }) 
 function BeatCard({ item }: { item: Extract<FeedItem, { kind: "beat" }> }) {
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
+      <div className={cn(FEED_KICKER, "flex items-center gap-2")}>
         {item.label}
-        {item.part && <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px]">{item.part}</span>}
+        {item.part && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] text-white/60">{item.part}</span>}
       </div>
-      <h2 className="text-3xl font-black tracking-tight">{rtInline(item.title)}</h2>
-      <div className="prose-lesson mt-5 text-xl leading-relaxed">{rt(item.text)}</div>
+      <h2 className={cn(FEED_TITLE, "mt-4")}>{rtInline(item.title)}</h2>
+      <div className={FEED_BODY}>{rt(item.text)}</div>
     </div>
   );
 }
@@ -713,13 +690,13 @@ function BeatCard({ item }: { item: Extract<FeedItem, { kind: "beat" }> }) {
 function StepCard({ item }: { item: Extract<FeedItem, { kind: "step" }> }) {
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
+      <div className={FEED_KICKER}>
         Move {item.step}/{item.total}
       </div>
-      <h2 className="text-3xl font-black tracking-tight">{item.label ? rtInline(item.label) : rtInline(item.title)}</h2>
-      <div className="prose-lesson mt-5 text-xl leading-relaxed">{rt(item.text)}</div>
-      <div className="mt-6 rounded-2xl bg-[var(--color-bg)] p-4 text-sm text-[var(--color-muted)]">
-        This is one exam move. Learn the move, then swipe.
+      <h2 className={cn(FEED_TITLE, "mt-4")}>{item.label ? rtInline(item.label) : rtInline(item.title)}</h2>
+      <div className={FEED_BODY}>{rt(item.text)}</div>
+      <div className={FEED_NOTE}>
+        This is the move. Do it before the algebra starts yelling.
       </div>
     </div>
   );
@@ -740,45 +717,58 @@ function FormulaCard({
 }) {
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--warn)]">Closed-book recall</div>
-      <h2 className="text-3xl font-black tracking-tight">{rtInline(item.title)}</h2>
-      <div className="prose-lesson mt-4 rounded-2xl bg-[var(--warn-bg)] p-4 text-lg font-semibold text-[var(--warn)]">
+      <div className={FEED_KICKER}>Closed-book recall</div>
+      <h2 className={cn(FEED_TITLE, "mt-4")}>{rtInline(item.title)}</h2>
+      <div className="mt-6 max-w-4xl rounded-3xl border border-[var(--accent-line)] bg-[color-mix(in_oklab,var(--accent)_16%,transparent)] px-5 py-4 text-[clamp(1.05rem,4vw,1.9rem)] font-black leading-tight text-white">
         {rt(item.prompt)}
       </div>
-      <div className="prose-lesson mt-3 rounded-2xl bg-[var(--color-bg)] p-4 text-sm text-[var(--color-muted)]">
-        <strong>Hint:</strong> {rtInline(item.hint)}
+      <div className="mt-3 max-w-3xl text-base font-semibold leading-snug text-white/55">
+        Hint: {rtInline(item.hint)}
       </div>
 
       {revealed ? (
         <>
-          <div className="mt-5 rounded-2xl bg-[var(--color-bg)] p-4">
+          <div className="mt-6 max-w-full overflow-x-auto rounded-3xl border border-white/10 bg-white/10 p-4 text-white/90 backdrop-blur [&_.katex-display]:my-0">
             <TexBlock>{item.tex}</TexBlock>
-            {item.caption && <div className="prose-lesson mt-4 text-sm text-[var(--color-muted)]">{rt(item.caption)}</div>}
+            {item.caption && (
+              <div className="mt-4 text-sm font-semibold leading-relaxed text-white/55 [&_p]:m-0 [&_p+p]:mt-3">{rt(item.caption)}</div>
+            )}
           </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => onMark("known")}
-              className={cn("btn", mark === "known" ? "btn-primary" : "btn-ghost")}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition",
+                mark === "known" ? "bg-white text-[#070b16]" : "border border-white/10 bg-white/10 text-white/70 hover:bg-white/15"
+              )}
             >
               <Icon name="CircleCheck" size={16} /> I knew it
             </button>
             <button
               type="button"
               onClick={() => onMark("again")}
-              className={cn("btn", mark === "again" ? "btn-primary" : "btn-ghost")}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition",
+                mark === "again" ? "bg-white text-[#070b16]" : "border border-white/10 bg-white/10 text-white/70 hover:bg-white/15"
+              )}
             >
               <Icon name="RotateCcw" size={16} /> Drill again
             </button>
           </div>
           {mark && (
-            <div className="mt-3 rounded-xl bg-[var(--accent-soft)] px-3 py-2 text-sm font-semibold text-[var(--accent)]">
+            <div className="mt-3 max-w-lg rounded-2xl bg-white/10 px-4 py-3 text-sm font-bold text-white/65">
               {mark === "known" ? "Good. This one can move to fast recall." : "Marked for reps. Formula mode is for exactly this."}
             </div>
           )}
         </>
       ) : (
-        <button type="button" onClick={onReveal} className="btn btn-primary mt-6 w-full justify-center">
+        <button
+          type="button"
+          onClick={onReveal}
+          className="mt-7 inline-flex w-fit items-center gap-2 rounded-full px-5 py-3 text-sm font-black text-[#070b16] shadow-lg shadow-black/20 transition hover:scale-[1.02]"
+          style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
+        >
           <Icon name="Eye" size={16} /> Reveal after trying
         </button>
       )}
@@ -789,12 +779,12 @@ function FormulaCard({
 function ExampleCard({ item }: { item: Extract<FeedItem, { kind: "example" }> }) {
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
+      <div className={cn(FEED_KICKER, "flex items-center gap-2")}>
         Worked example
-        {item.part && <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px]">{item.part}</span>}
+        {item.part && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] text-white/60">{item.part}</span>}
       </div>
-      <h2 className="text-3xl font-black tracking-tight">{rtInline(item.title ?? "Example")}</h2>
-      <div className="prose-lesson mt-5 text-lg leading-relaxed">{rt(item.text)}</div>
+      <h2 className={cn(FEED_TITLE, "mt-4")}>{rtInline(item.title ?? "Example")}</h2>
+      <div className={FEED_BODY}>{rt(item.text)}</div>
     </div>
   );
 }
@@ -813,12 +803,16 @@ function QuestionScrollCard({
 
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <div className="mb-3 flex flex-wrap gap-2">
-        <Pill tone="accent">Quick check</Pill>
-        <Pill tone="neutral">{item.question.difficulty}</Pill>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <span className={FEED_KICKER}>Quick check</span>
+        <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white/55">
+          {item.question.difficulty}
+        </span>
       </div>
-      <div className="prose-lesson text-xl font-bold leading-snug">{rt(item.question.prompt)}</div>
-      <div className="mt-5 grid gap-2.5">
+      <div className="max-w-5xl text-[clamp(1.35rem,5.4vw,2.8rem)] font-black leading-[1.08] text-white [text-wrap:balance] [&_p]:m-0">
+        {rt(item.question.prompt)}
+      </div>
+      <div className="mt-6 grid max-w-5xl gap-2.5">
         {item.question.options.map((option) => {
           const isCorrect = option.id === item.question.correct;
           const show = answered && (option.id === picked || isCorrect);
@@ -829,14 +823,14 @@ function QuestionScrollCard({
               disabled={answered}
               onClick={() => onPick(item.question, option.id)}
               className={cn(
-                "flex items-start gap-3 rounded-xl border px-4 py-3 text-left transition",
-                !answered && "border-[var(--color-line)] hover:border-[var(--accent-line)] hover:bg-[var(--color-bg)]",
-                show && isCorrect && "border-emerald-500/50 bg-emerald-500/10",
-                show && !isCorrect && "border-rose-500/50 bg-rose-500/10",
-                answered && !show && "border-[var(--color-line)] opacity-45"
+                "flex items-start gap-3 rounded-2xl border px-4 py-3 text-left text-[clamp(0.95rem,3.5vw,1.15rem)] font-bold leading-snug text-white/75 transition",
+                !answered && "border-white/10 bg-white/8 hover:border-[var(--accent-line)] hover:bg-white/12",
+                show && isCorrect && "border-emerald-300/50 bg-emerald-400/15 text-white",
+                show && !isCorrect && "border-rose-300/50 bg-rose-400/15 text-white",
+                answered && !show && "border-white/5 opacity-40"
               )}
             >
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-[var(--color-bg)] font-mono text-xs font-bold text-[var(--color-faint)]">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10 font-mono text-xs font-black text-white/55">
                 {option.id}
               </span>
               <span>{rtInline(option.content)}</span>
@@ -845,7 +839,7 @@ function QuestionScrollCard({
         })}
       </div>
       {answered && (
-        <div className="mt-5 rounded-2xl bg-[var(--color-bg)] p-4">
+        <div className="mt-5 max-w-5xl rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur">
           <div
             className="mb-2 flex items-center gap-2 font-bold"
             style={{ color: correct ? "var(--good)" : "var(--bad)" }}
@@ -853,9 +847,9 @@ function QuestionScrollCard({
             <Icon name={correct ? "CircleCheck" : "CircleX"} size={18} />
             {correct ? "Locked" : `Correct answer: ${item.question.correct}`}
           </div>
-          <div className="prose-lesson text-sm text-[var(--color-muted)]">{rt(item.question.explanation)}</div>
+          <div className="text-sm font-semibold leading-relaxed text-white/65 [&_p]:m-0 [&_p+p]:mt-3">{rt(item.question.explanation)}</div>
           {item.question.theory && (
-            <div className="prose-lesson mt-3 border-t border-[var(--color-line)] pt-3 text-sm">
+            <div className="mt-3 border-t border-white/10 pt-3 text-sm font-semibold leading-relaxed text-white/75 [&_p]:m-0 [&_p+p]:mt-3">
               {rt(item.question.theory)}
             </div>
           )}
@@ -869,61 +863,34 @@ function FinishCard({ item }: { item: Extract<FeedItem, { kind: "finish" }> }) {
   return (
     <div className="flex min-h-full flex-col items-center justify-center text-center">
       <span
-        className="grid h-16 w-16 place-items-center rounded-2xl text-white"
+        className="grid h-16 w-16 place-items-center rounded-full text-[#070b16]"
         style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
       >
         <Icon name="Flag" size={30} />
       </span>
-      <h2 className="mt-5 text-3xl font-black tracking-tight">Feed complete</h2>
-      <p className="mt-3 max-w-md text-[var(--color-muted)]">
-        You moved through {item.totalLessons} lessons in micro-cards. Now do a real practice set so the exam has fewer surprises.
+      <h2 className="mt-6 text-[clamp(2.8rem,12vw,7rem)] font-black leading-none text-white [text-wrap:balance]">
+        Feed complete
+      </h2>
+      <p className="mt-5 max-w-2xl text-[clamp(1.05rem,4vw,1.7rem)] font-semibold leading-tight text-white/65">
+        {item.totalLessons} lessons moved through your brain. Now make it stick with actual practice.
       </p>
-      <div className="mt-6 flex flex-wrap justify-center gap-2">
-        <Link to="../practice" relative="path" className="btn btn-primary">
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link
+          to="../practice"
+          relative="path"
+          className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-black text-[#070b16]"
+          style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
+        >
           <Icon name="Dumbbell" size={16} /> Practice
         </Link>
-        <Link to="../exams" relative="path" className="btn btn-ghost">
+        <Link
+          to="../exams"
+          relative="path"
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-white/75 backdrop-blur transition hover:bg-white/15"
+        >
           <Icon name="FileText" size={16} /> Exam problems
         </Link>
       </div>
     </div>
   );
-}
-
-function kindIcon(kind: FeedItem["kind"]) {
-  switch (kind) {
-    case "lesson":
-      return "BookOpen";
-    case "beat":
-      return "Sparkles";
-    case "step":
-      return "ListChecks";
-    case "formula":
-      return "Sigma";
-    case "example":
-      return "PencilLine";
-    case "question":
-      return "CircleHelp";
-    case "finish":
-      return "Flag";
-  }
-}
-
-function kindLabel(kind: FeedItem["kind"]) {
-  switch (kind) {
-    case "lesson":
-      return "Lesson";
-    case "beat":
-      return "Micro-card";
-    case "step":
-      return "Exam move";
-    case "formula":
-      return "Recall";
-    case "example":
-      return "Example";
-    case "question":
-      return "Question";
-    case "finish":
-      return "Done";
-  }
 }
