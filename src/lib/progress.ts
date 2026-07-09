@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { logAnswer, logLessonCompleted, rustLevel } from "./game";
 
 /* ================================================================== *
  *  PROGRESS STORE
  *  Per-course progress persisted in localStorage with a tiny pub/sub
  *  so every component (course page, practice, hub) stays in sync.
+ *  Every answer/lesson is also mirrored into lib/game.ts (streaks,
+ *  quests, achievements) — game.ts never imports back, no cycles.
  * ================================================================== */
 
 export interface CardState {
@@ -74,15 +77,24 @@ export function recordAnswer(courseId: string, cardId: string, isCorrect: boolea
   // XP: solid reward for correct, streak bonus, token reward for trying.
   const gained = isCorrect ? 12 + Math.min(streak - 1, 4) * 3 : 2;
   write(courseId, { ...p, xp: p.xp + gained, cards: { ...p.cards, [cardId]: card } });
+  logAnswer({
+    courseId,
+    isCorrect,
+    xp: gained,
+    wasDue: prev.wrong > 0 && !prev.mastered,
+    wasRusty: rustLevel(prev) > 0,
+  });
   return gained;
 }
 
 export function markLesson(courseId: string, lessonId: string, completed: boolean) {
   const p = read(courseId);
+  const wasCompleted = p.lessons[lessonId]?.completed ?? false;
   write(courseId, {
     ...p,
     lessons: { ...p.lessons, [lessonId]: { completed, lastViewed: Date.now() } },
   });
+  if (completed && !wasCompleted) logLessonCompleted();
 }
 
 export function setExamState(

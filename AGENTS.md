@@ -250,7 +250,34 @@ use `dist-normal|student|chisq|fisher`.
 
 ---
 
-## 9. Gotchas
+## 9. The game layer
+
+Studying is gamified. The pieces (added 2026-07):
+
+- `src/lib/game.ts` — ONE localStorage store (`polito:game:v1`) for the daily activity log
+  (streak + heatmap), freeze tokens, rust on mastered cards (tiers at 10/21/42 days since
+  `lastSeen`), per-course readiness → projected 18–30L grade, auto-generated daily quests,
+  achievements, beers and season settings (focus courses, passed courses, exam-date overrides,
+  sound). **game.ts must not import progress.ts or the registry** — callers pass data in; that is
+  what keeps the module graph acyclic. `progress.recordAnswer`/`markLesson` mirror events into it.
+- `src/lib/bosses.ts` + `src/pages/BossPage.tsx` + `src/components/game/BossArena.tsx` — every
+  course has a final boss (procedural three.js). BossArena is lazy-loaded; NEVER import `three`
+  from non-lazy code, it must stay out of the main bundle.
+- `src/pages/PathPage.tsx` — Duolingo-style skill path generated from course data. Gates: one per
+  lesson when distinct practice-topic count equals lesson count (topic-file courses), one per
+  lecture when the lecture name doubles as the practice `topic` (the MA2 modules), else a single
+  generic gate. When authoring content, keeping `lesson.lecture` == practice `topic` per module
+  gives the path clean checkpoints.
+- `src/pages/MixPage.tsx` — cross-course Daily Mix (due → rusty → fresh, round-robin, combo meter).
+- `src/lib/sound.ts` (WebAudio synth) and `src/lib/confetti.ts` (canvas burst) — no assets, no deps.
+
+### Math Analysis II layout
+`courses/math-analysis-2/` is assembled from `modules/*.tsx`, one file per syllabus module, each
+exporting `MODULE` (the lecture/topic string), `lessons`, `practice`, `exam`. Add content by editing
+exactly one module file (or adding a new one to `index.tsx`); never let two authors touch the same
+module file.
+
+## 10. Gotchas
 
 - JSON is imported (`resolveJsonModule`); migrated banks are cast `as unknown as Question[]` because
   JSON widens `difficulty`/`correct` to `string`.

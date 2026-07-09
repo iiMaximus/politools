@@ -74,10 +74,32 @@ automatically. Full details and quality bar are in [AGENTS.md](./AGENTS.md).
    explanations + a `theory` line, tagged by lecture), written problems → `exam` with worked steps.
    Compare against the slide decks and fill any gaps. See [AGENTS.md §8](./AGENTS.md).
 
+## The game layer
+
+The hub is mission control: study streak with freeze tokens, GitHub-style activity heatmap,
+account rank (Matricola → Rettore), daily quests, and a beer counter. Each focus course shows a
+**readiness dial** (projected 18–30L grade) and an exam countdown. Ways to study:
+
+- **Daily Mix** (`/mix`) — one button, ~20 cards interleaved across your focus courses (due
+  reviews first, then rusty cards, then new), with a combo meter and bonus XP.
+- **Skill path** (`/c/<id>/path`) — a Duolingo-style road: lesson → checkpoint → … → boss.
+- **Boss fights** (`/c/<id>/boss`) — the exam as a procedural three.js boss (Lord Entropy, the
+  Limit Wraith, Σ-Prime…). Correct answers deal damage (speed/combo bonuses, crits), misses cost
+  hearts; a win is graded 18–30 e lode and earns a beer. Fights feed the same adaptive progress.
+- **Rust** — mastered cards corrode after 10/21/42 days untouched; polishing them pays XP and
+  keeps the readiness score honest. Achievements (Perpetuum Mobile, Entropy Slayer, Il Gufo…)
+  celebrate the grind.
+
+Season setup (gear icon on the hub) sets your focus courses, exam dates and the passed-course
+trophy shelf.
+
 ## Roadmap
 
 - [x] Hub + shared engine + design system + light/dark
-- [x] Thermodynamics, Math Analysis II, Mechanics, Cybersecurity (samples)
+- [x] Game layer: streaks, quests, rust, readiness, Daily Mix, skill paths, 3-D boss fights
+- [x] Math Analysis II full course (8 modules: limits → differential → Taylor/optimization →
+      multiple integrals → curves/fields → surfaces/flux → series → ODEs)
+- [x] ESMM uncertainty exam drill (28 verified questions + 2 full budgets)
 - [x] Cybersecurity full flashcard migration + practice-by-lecture
 - [ ] Per-module Cyber lessons from the slide decks
 - [ ] Fluid Mechanics, Industrial Plants, Manufacturing Processes, Safety

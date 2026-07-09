@@ -16,6 +16,7 @@ import lab2data from "./topics/lab2-data.json";
 import theoryUncB from "./topics/theory-uncertainty-b.json";
 import theoryUncCombined from "./topics/theory-uncertainty-combined.json";
 import lab3uncertainty from "./topics/lab3-uncertainty.json";
+import drillUncertainty from "./topics/drill-uncertainty.json";
 import theoryMechanical from "./topics/theory-mechanical.json";
 import excelCheatSheet from "./topics/excel-cheat-sheet.json";
 import exam from "./topics/exam.json";
@@ -34,6 +35,7 @@ const ORDER: [string, unknown, string, string, string][] = [
   ["theory-uncertainty-b", theoryUncB, "Type B uncertainty", "Uncertainty theory", "Type B uncertainty"],
   ["theory-uncertainty-combined", theoryUncCombined, "Combined & expanded uncertainty", "Uncertainty theory", "Combined & expanded uncertainty"],
   ["lab3-uncertainty", lab3uncertainty, "Lab 3 · Evaluation of Measurement Uncertainty", "Lab 3 · Evaluation of Measurement Uncertainty", "Lab 3 — Uncertainty"],
+  ["drill-uncertainty", drillUncertainty, "Uncertainty exam drill", "Uncertainty drill", "Uncertainty drill — exam bank"],
   ["theory-mechanical", theoryMechanical, "Mechanical measurements", "Mechanical measurements", "Mechanical measurements (T/F)"],
   ["excel-cheat-sheet", excelCheatSheet, "Excel exam cheat sheet", "Exam", "Excel exam cheat sheet"],
   ["exam", exam, "The exam, end to end", "Exam", "Exam simulation"],

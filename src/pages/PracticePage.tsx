@@ -19,6 +19,7 @@ import {
 } from "../lib/adaptive";
 import { recordAnswer, useCourseProgress } from "../lib/progress";
 import { clearSession, readSession, saveSession } from "../lib/session";
+import { sfx } from "../lib/sound";
 import type { Course, Question } from "../types";
 import { NotFound } from "./NotFound";
 
@@ -199,8 +200,13 @@ function PracticeRunner({
     if (picked || !q) return;
     setPicked(optionId);
     const correct = optionId === q.correct;
-    if (correct) setSessionCorrect((n) => n + 1);
-    else setSessionWrong((n) => n + 1);
+    if (correct) {
+      setSessionCorrect((n) => n + 1);
+      sfx.correct();
+    } else {
+      setSessionWrong((n) => n + 1);
+      sfx.wrong();
+    }
     recordAnswer(courseId, q.id, correct);
   }
 
@@ -299,7 +305,7 @@ function Stat({
   );
 }
 
-function QuestionCard({
+export function QuestionCard({
   q,
   picked,
   onPick,
@@ -314,6 +320,33 @@ function QuestionCard({
   const options = useMemo(() => shuffle(q.options), [q.id]);
   const answered = picked !== null;
   const correct = picked === q.correct;
+
+  // Keyboard-first play: 1–4 pick by displayed position, A–D by letter,
+  // Enter/Space advance once answered.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (!answered) {
+        const idx = ["1", "2", "3", "4"].indexOf(e.key);
+        if (idx >= 0 && options[idx]) {
+          e.preventDefault();
+          onPick(options[idx].id);
+          return;
+        }
+        const letter = e.key.toUpperCase();
+        if (["A", "B", "C", "D"].includes(letter) && q.options.some((o) => o.id === letter)) {
+          e.preventDefault();
+          onPick(letter);
+        }
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onNext();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [answered, options, q.options, onPick, onNext]);
 
   return (
     <div className="surface p-5 sm:p-6">

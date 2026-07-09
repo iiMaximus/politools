@@ -1,0 +1,618 @@
+{
+  "title": "Uncertainty — the exam recipe",
+  "summary": "A battle-card for the uncertainty part of the exam: the whole GUM workflow compressed into the moves you actually make. **Type A**: $u=s/\\sqrt n$, $\\nu=n-1$. **Type B**: half-width $a$ over the right divisor — rectangular $a/\\sqrt3$, triangular $a/\\sqrt6$, arcsine $a/\\sqrt2$, resolution $a=r/2\\Rightarrow u=r/(2\\sqrt3)$, expanded $u=U/k$. **Combine** by the law of propagation of variance $u^2(y)=\\sum_j c_j^2 u^2(x_j)$ (relative-RSS shortcut for products/quotients/powers). **Expand**: Welch–Satterthwaite $\\nu_y$ (floored), $k=$T.INV$(1-\\alpha/2,\\nu_y)$, $U=k\\,u(y)$, report $y\\pm U$ at $P$. Then drill it on 28 exam-style questions and 2 full budgets.",
+  "minutes": 12,
+  "objectives": [
+    "Decode the wording of any input in one move: a standard deviation is already $u$; a variance needs $\\sqrt V$; an expanded uncertainty needs $U/k$; a half-width needs a distribution divisor.",
+    "Compute a Type A standard uncertainty $u=s/\\sqrt n$ with $\\nu=n-1$, and only divide by $\\sqrt n$ when the reported result is the average.",
+    "Apply the Type B divisor card without hesitation: rectangular $a/\\sqrt3$, triangular $a/\\sqrt6$, arcsine $a/\\sqrt2$, resolution $r/(2\\sqrt3)$, quoted expanded value $U/k$.",
+    "Combine uncorrelated contributions with $u^2(y)=\\sum_j c_j^2 u^2(x_j)$, and use the relative-RSS shortcut $\\left(u(y)/y\\right)^2=\\sum_j p_j^2\\left(u(x_j)/x_j\\right)^2$ for products, quotients and powers.",
+    "Get the effective degrees of freedom by Welch–Satterthwaite (floored) and the coverage factor $k=$T.INV$(1-\\alpha/2,\\nu_y)$.",
+    "Report a complete result $y\\pm U$ at a stated confidence $P$, and know when $k=2$ is legitimate and when the Student-$t$ is mandatory."
+  ],
+  "blocks": [
+    {
+      "kind": "prose",
+      "text": "This is the condensed *exam recipe* for the uncertainty budget — the 12-point heart of the exam. The two theory lessons and Lab 3 teach the machinery; this card is what you replay under time pressure. Every budget, whatever the model, is the same five moves: **classify** each input (Type A or Type B), **standardise** it into a standard uncertainty $u$, **combine** through the sensitivity coefficients, **expand** with the coverage factor, **report**. The drills below hit every place where marks are usually lost."
+    },
+    { "kind": "heading", "text": "0. Read the wording: what kind of number is it?" },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "The four-way input decoder",
+      "text": "Before any formula, decide what the quoted number *is*:\n- a **standard deviation** $s$ → it is *already* a standard uncertainty, $u=s$ (divisor 1);\n- a **variance** $V$ → take the square root, $u=\\sqrt V$;\n- an **expanded uncertainty** $U$ → divide by its coverage factor, $u=U/k$;\n- a **maximum spread / range / tolerance / resolution** → it is a **half-width** $a$ and takes a distribution divisor ($\\sqrt3$, $\\sqrt2$ or $\\sqrt6$).\nMisreading this classification is the single most common way to lose marks."
+    },
+    { "kind": "heading", "text": "1. Type A — statistics on your own readings" },
+    {
+      "kind": "formula",
+      "tex": "u=\\frac{s}{\\sqrt n},\\qquad \\nu=n-1",
+      "tag": "A",
+      "caption": "Type A standard uncertainty when the reported result is the **average** of $n$ repeated readings; $s$ is the sample standard deviation (STDEV.S, divisor $n-1$). If a *single* reading is reported, $u=s$ with no $\\sqrt n$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "√n, not n — and only for an average",
+      "text": "Two classic wrong turns: dividing by $n$ instead of $\\sqrt n$ (shrinks $u$ far too much), and dividing by $\\sqrt n$ when the result is a **single reading**, not a mean. Read whether the quoted variability refers to a mean or to an individual value: they differ by a factor $\\sqrt n$ ($n$ on the variance), and mixing them up works in both directions — see the multiplicities $n_d/n_r$ in Lab 3."
+    },
+    { "kind": "heading", "text": "2. Type B — the divisor card" },
+    {
+      "kind": "steps",
+      "title": "Turn any Type B datum into a standard uncertainty",
+      "steps": [
+        { "label": "Rectangular (uniform)", "text": "The **default** when nothing is known inside the band $\\pm a$ — accuracy classes, declarations of conformity, handbook/tabled values: $u=a/\\sqrt3$ (variance $a^2/3$)." },
+        { "label": "Resolution", "text": "A reading step $r$ spans one step, so the **half-width is $a=r/2$**, rectangular: $u=\\dfrac{r/2}{\\sqrt3}=\\dfrac{r}{2\\sqrt3}$. Do not use the full step as the half-width." },
+        { "label": "Arcsine (U-shaped)", "text": "Sinusoidal factors that linger at their extremes — e.g. the day–night swing of an **unconditioned** temperature: $u=a/\\sqrt2$ (variance $a^2/2$)." },
+        { "label": "Triangular", "text": "When the centre of the band is credibly more likely than the edges (not recommended for inexpert users): $u=a/\\sqrt6$ (variance $a^2/6$)." },
+        { "label": "Quoted expanded uncertainty", "text": "A certificate value $U$ at confidence $P$: $u=U/k$, with $k=t_{1-\\alpha/2,\\nu}=$ T.INV$(1-(1-P)/2,\\nu)$ if the d.o.f. are stated, or $k=2$ for a plain \"95%, $2\\sigma$\" quote." },
+        { "label": "Degrees of freedom", "text": "Type A: $\\nu=n-1$ (regression slope: $\\nu=n-2$). Type B by convention: $\\nu=100$ extremely consolidated, $30$ consolidated, $15$ to be checked." }
+      ]
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "easy",
+        "prompt": "A gauge block certificate states only: \"maximum deviation $\\pm0.06$ mm\". No distribution information is given. Its standard uncertainty is closest to:",
+        "options": [
+          { "id": "A", "content": "$0.060$ mm" },
+          { "id": "B", "content": "$0.030$ mm" },
+          { "id": "C", "content": "$0.035$ mm" },
+          { "id": "D", "content": "$0.024$ mm" }
+        ],
+        "correct": "C",
+        "explanation": "Nothing is known inside the band → **rectangular** by default, $u=a/\\sqrt3=0.06/1.732=0.0346\\approx0.035$ mm. **A** uses no divisor, treating the half-width as if it were a standard deviation. **B** just halves the half-width — not any GUM divisor. **D** applies the triangular divisor $\\sqrt6$ ($0.06/2.449=0.024$), which requires a reason to believe the centre is more likely.",
+        "theory": "A bare \"$\\pm a$\" with no further information → rectangular, $u=a/\\sqrt3$.",
+        "tags": ["type-b", "rectangular"]
+      }
+    },
+    { "kind": "heading", "text": "3. Combine — RSS through the sensitivity coefficients" },
+    {
+      "kind": "formula",
+      "tex": "u^2(y)=\\sum_{j} c_j^2\\,u^2(x_j),\\qquad c_j=\\left(\\frac{\\partial G}{\\partial x_j}\\right)_{\\bar x_j}",
+      "tag": "RSS",
+      "caption": "Law of propagation of variance for uncorrelated inputs. Each budget row is $u_j^2(y)=c_j^2u^2(x_j)$; the rows are **summed as variances** and the square root is taken **once**, at the end. Only $c_j^2$ enters — the sign of a sensitivity never matters in the sum."
+    },
+    {
+      "kind": "callout",
+      "tone": "key",
+      "title": "Variances add, root once",
+      "text": "Never add standard uncertainties linearly ($u_1+u_2$ is *wrong*), never subtract them, never root each row. Build the budget row by row in **variance**: $u_j^2(y)=c_j^2u^2(x_j)$, sum, then $u(y)=\\sqrt{u^2(y)}$. For $y=kx$: $c_k=x$, $c_x=k$. For a product $y=\\prod x_i$: $c_j=y/x_j$. For $V=\\pi r^2 h$: $c_r=2\\pi r h$, $c_h=\\pi r^2$ — the exponent comes down as a factor."
+    },
+    {
+      "kind": "formula",
+      "tex": "y=K\\,x_1^{p_1}x_2^{p_2}\\cdots\\ \\Longrightarrow\\ \\left(\\frac{u(y)}{y}\\right)^{2}=\\sum_j p_j^{2}\\left(\\frac{u(x_j)}{x_j}\\right)^{2}",
+      "tag": "rel",
+      "caption": "Relative-uncertainty shortcut for **products, quotients and powers** (a quotient is just $p_j=-1$). It is exactly the propagation law with $c_j=p_j\\,y/x_j$ — the constant $K$ drops out. Fastest route for models like $\\rho=m/V$ or $V=\\pi d^3/6$."
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The exponent multiplies the relative uncertainty — and gets squared in the sum",
+      "text": "For $y\\propto d^3$, the relative contribution of $d$ is $3\\,u(d)/d$, i.e. $p^2=9$ times the relative *variance*. The two classic wrong turns: **forgetting the exponent** entirely (using $u(d)/d$), and **squaring the exponent twice** (using $p^2\\,u(d)/d=9\\,u(d)/d$ as if it were the relative uncertainty). Also remember the shortcut only applies to pure products/quotients/powers — a **sum or difference** must go through the absolute form $u^2(y)=\\sum c_j^2u^2(x_j)$."
+    },
+    { "kind": "heading", "text": "4. Expand and report" },
+    {
+      "kind": "prose",
+      "text": "The combined $u(y)$ is a standard deviation — a $\\pm u$ band leaves out more than 30% of the values, so the GUM scales it to a confidence interval. First get one **effective** number of degrees of freedom for $y$ with **Welch–Satterthwaite**, $\\nu_y=\\left\\lfloor u^4(y)\\big/\\sum_j\\left(u_j^4(y)/\\nu_j\\right)\\right\\rfloor$ — always the **floor** (Excel INT), never round up: fewer d.o.f. means a fatter-tailed $t$, a larger $k$ and a safely conservative $U$."
+    },
+    {
+      "kind": "formula",
+      "tex": "k=t_{1-\\alpha/2,\\,\\nu_y}=\\text{T.INV}\\!\\left(1-\\tfrac{1-P}{2},\\ \\nu_y\\right),\\qquad U=k\\,u(y),\\qquad \\text{report } y\\pm U \\text{ at } P",
+      "tag": "U",
+      "caption": "Coverage factor and expanded uncertainty. At 95% with many d.o.f., $k\\to1.96\\approx2$ (the metrological $2\\sigma$ convention); at 90% $\\to1.645$, 98% $\\to2.33$, 99% $\\to2.58$. With a small $\\nu_y$ the Student-$t$ value is mandatory ($t_{0.975,4}=2.78$, $t_{0.975,15}=2.13$)."
+    },
+    {
+      "kind": "sim",
+      "simKey": "dist-student",
+      "title": "The Student-t behind the coverage factor k",
+      "caption": "Drop the degrees of freedom and watch the 95% two-sided quantile climb above the normal $1.96$: $2.13$ at $\\nu=15$, $2.78$ at $\\nu=4$, $3.18$ at $\\nu=3$. This is why a small-sample Type A budget must never use $k=2$."
+    },
+    {
+      "kind": "steps",
+      "title": "The 7-step exam recipe (write it on your wrist)",
+      "steps": [
+        { "label": "1", "text": "Convert every datum to **base units** (µm→m, g→kg, %→pure number). A mixed-unit budget is numerically wrong even with perfect formulas." },
+        { "label": "2", "text": "Classify each input: **Type A** (statistics on repeated observations) or **Type B** (certificate, resolution, handbook, experience)." },
+        { "label": "3", "text": "Standardise: $s/\\sqrt n$ (A on a mean), $\\sqrt V$, $U/k$, or half-width over $\\sqrt3/\\sqrt2/\\sqrt6$ — and note each $\\nu_j$." },
+        { "label": "4", "text": "Sensitivities $c_j=\\partial G/\\partial x_j$ (analytically or as an incremental ratio); per-row contribution $u_j^2(y)=c_j^2u^2(x_j)$." },
+        { "label": "5", "text": "Combine: $u^2(y)=\\sum_j u_j^2(y)$, then $u(y)=\\sqrt{u^2(y)}$ — root **once**." },
+        { "label": "6", "text": "Welch–Satterthwaite → $\\nu_y$, **floored** (INT). Then $k=$T.INV$(1-\\alpha/2,\\nu_y)$." },
+        { "label": "7", "text": "$U=k\\,u(y)$; report $y\\pm U$ at the stated confidence $P$. Name the dominant contribution — that is where money improves the measurement." }
+      ]
+    },
+    {
+      "kind": "example",
+      "title": "The recipe in 60 seconds — a length with two contributions",
+      "text": "A length is the **average of $n=8$ readings** with sample standard deviation $s=0.020$ mm, taken on an instrument with **resolution $r=0.010$ mm**.\n- Type A: $u_A=s/\\sqrt8=0.00707$ mm, $\\nu=7$.\n- Type B (resolution, rectangular, $a=r/2$): $u_B=0.010/(2\\sqrt3)=0.00289$ mm, $\\nu=100$.\n- Combine ($c_j=1$): $u^2(y)=5.00\\times10^{-5}+8.33\\times10^{-6}=5.83\\times10^{-5}\\ \\text{mm}^2$, so $u(y)=0.00764$ mm.\n- Welch–Satterthwaite: raw $9.51\\to\\nu_y=9$; $k=$T.INV$(0.975,9)=2.262$.\n- $U=2.262\\times0.00764=0.0173$ mm → report $y\\pm0.017$ mm at 95%. Note $k=2$ would have understated $U$ by ~12%."
+    },
+    {
+      "kind": "checkpoint",
+      "question": {
+        "difficulty": "medium",
+        "prompt": "A budget ends with $u(y)=0.50$ mm and effective degrees of freedom $\\nu_y=4$. The expanded uncertainty at 95% confidence is closest to:",
+        "options": [
+          { "id": "A", "content": "$0.98$ mm" },
+          { "id": "B", "content": "$1.39$ mm" },
+          { "id": "C", "content": "$1.00$ mm" },
+          { "id": "D", "content": "$0.50$ mm" }
+        ],
+        "correct": "B",
+        "explanation": "With $\\nu_y=4$ the coverage factor is the Student-$t$ quantile $k=t_{0.975,4}=$T.INV$(0.975,4)=2.776$, so $U=2.776\\times0.50=1.39$ mm. **A** uses the asymptotic normal $1.96$ — valid only for large $\\nu_y$. **C** uses the metrological $k=2$ convention, which also requires many d.o.f. **D** forgets the coverage factor entirely and reports the standard uncertainty.",
+        "theory": "Small $\\nu_y$ → $k$ from the Student-$t$: $k=$T.INV$(1-\\alpha/2,\\nu_y)$, then $U=k\\,u(y)$.",
+        "tags": ["expanded", "coverage", "student-t"]
+      }
+    },
+    {
+      "kind": "callout",
+      "tone": "trap",
+      "title": "The five classic mark-losers",
+      "text": "1. **Forgetting $\\sqrt3$** (or using the full resolution step instead of $a=r/2$).\n2. **$s/n$ instead of $s/\\sqrt n$** — or applying $\\sqrt n$ when a single reading is reported.\n3. **Adding uncertainties linearly** instead of summing variances (RSS).\n4. **Dropping the exponent** (or its square) in the relative shortcut for powers.\n5. **$k=2$ with a small $\\nu_y$**, or rounding $\\nu_y$ **up** instead of flooring — both understate $U$.\nAnd always: base units before anything else."
+    }
+  ],
+  "practice": [
+    {
+      "difficulty": "easy",
+      "prompt": "A current sensor's datasheet states only: \"maximum error $\\pm0.2$ mA\". No distribution or confidence information is given. Which model do you adopt for this Type B input?",
+      "options": [
+        { "id": "A", "content": "Normal, $u=a/2$" },
+        { "id": "B", "content": "Triangular, $u=a/\\sqrt6$" },
+        { "id": "C", "content": "Rectangular (uniform), $u=a/\\sqrt3$" },
+        { "id": "D", "content": "Arcsine (U-shaped), $u=a/\\sqrt2$" }
+      ],
+      "correct": "C",
+      "explanation": "When **nothing is known** about the behaviour of the error inside its band, every value is equally likely → the **rectangular (uniform)** distribution is the default, $u=a/\\sqrt3$. **A** invents a normal model with a made-up coverage factor — a datasheet limit is a half-width, not an expanded uncertainty. **B** (triangular) requires a reason to believe the centre is more likely, and is not recommended for inexpert users. **D** (arcsine) is reserved for sinusoidal factors that linger at their extremes, like an unconditioned temperature.",
+      "theory": "Default for a bare \"$\\pm a$\" spec with no further information: rectangular, $u=a/\\sqrt3$.",
+      "tags": ["type-b", "rectangular", "datasheet"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "A voltmeter datasheet gives a maximum error of $\\pm0.15$ V, to be treated as rectangular. The standard uncertainty is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.150$ V" },
+        { "id": "B", "content": "$0.087$ V" },
+        { "id": "C", "content": "$0.061$ V" },
+        { "id": "D", "content": "$0.043$ V" }
+      ],
+      "correct": "B",
+      "explanation": "Rectangular with half-width $a=0.15$ V: $u=a/\\sqrt3=0.15/1.732=0.0866\\approx0.087$ V. **A** forgets the divisor and reports the half-width itself. **C** uses the triangular divisor $\\sqrt6$ ($0.15/2.449=0.061$). **D** treats the spec like a resolution, halving first and then dividing by $\\sqrt3$ ($0.15/(2\\sqrt3)=0.043$) — but a \"$\\pm a$\" spec is *already* a half-width; only a resolution step $r$ needs the extra halving.",
+      "theory": "Rectangular Type B: $u=a/\\sqrt3$, where $a$ is the half-width of the stated band.",
+      "tags": ["type-b", "rectangular"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "For a two-sided 95% confidence level and **many** degrees of freedom, the coverage factor is:",
+      "options": [
+        { "id": "A", "content": "$k=1.645$" },
+        { "id": "B", "content": "$k=2.58$" },
+        { "id": "C", "content": "$k=3$" },
+        { "id": "D", "content": "$k=1.96\\approx2$" }
+      ],
+      "correct": "D",
+      "explanation": "As $\\nu_y\\to\\infty$ the Student-$t$ quantile tends to the normal $z_{0.975}=1.96$, rounded to $k=2$ by the metrological $2\\sigma$ convention. **A** is the 90% two-sided factor ($z_{0.95}=1.645$). **B** is the 99% factor ($z_{0.995}=2.58$). **C** is the $3\\sigma$ level ($\\approx99.7\\%$), not the 95% convention.",
+      "theory": "Large-$\\nu$ two-sided coverage factors: 90% → 1.645, 95% → 1.96 ≈ 2, 98% → 2.33, 99% → 2.58.",
+      "tags": ["coverage", "convention"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Sixteen repeated readings have sample standard deviation $s=2.4$ mm, and the reported result is their **average**. The standard uncertainty of the result is:",
+      "options": [
+        { "id": "A", "content": "$0.60$ mm" },
+        { "id": "B", "content": "$2.40$ mm" },
+        { "id": "C", "content": "$0.15$ mm" },
+        { "id": "D", "content": "$9.60$ mm" }
+      ],
+      "correct": "A",
+      "explanation": "Type A on a mean: $u=s/\\sqrt n=2.4/\\sqrt{16}=2.4/4=0.60$ mm (with $\\nu=15$). **B** is $s$ itself — right only if a *single* reading were reported. **C** divides by $n=16$ instead of $\\sqrt n$, the classic wrong turn. **D** multiplies by $\\sqrt n$ instead of dividing — averaging *reduces* the uncertainty of the mean, never inflates it.",
+      "theory": "Type A for an average of $n$ readings: $u=s/\\sqrt n$, $\\nu=n-1$.",
+      "tags": ["type-a", "mean"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "Two independent (uncorrelated) contributions to the same result, already in output units, are $u_1(y)=0.6$ mm and $u_2(y)=0.8$ mm. The combined standard uncertainty is:",
+      "options": [
+        { "id": "A", "content": "$1.40$ mm" },
+        { "id": "B", "content": "$0.70$ mm" },
+        { "id": "C", "content": "$1.00$ mm" },
+        { "id": "D", "content": "$0.20$ mm" }
+      ],
+      "correct": "C",
+      "explanation": "Variances add: $u^2(y)=0.6^2+0.8^2=0.36+0.64=1.00\\ \\text{mm}^2$, so $u(y)=1.00$ mm. **A** adds the standard uncertainties linearly ($0.6+0.8$), which overstates the combination — RSS is always $\\le$ the linear sum. **B** averages them, which has no statistical meaning here. **D** subtracts them — uncertainties never subtract.",
+      "theory": "Uncorrelated contributions combine in quadrature (RSS): $u(y)=\\sqrt{u_1^2+u_2^2}$.",
+      "tags": ["propagation", "rss"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "You weigh a part 10 times and average the readings; the balance's calibration certificate also quotes a bias band. How do these two pieces of information enter the budget?",
+      "options": [
+        { "id": "A", "content": "Both are Type A, since both concern the same balance" },
+        { "id": "B", "content": "The repeated readings are Type A; the certificate band is Type B — and both end up as standard uncertainties $u$" },
+        { "id": "C", "content": "The readings are Type B (they contain random errors); the certificate is Type A" },
+        { "id": "D", "content": "Only the larger of the two is kept; the other is discarded" }
+      ],
+      "correct": "B",
+      "explanation": "The classification follows the **method of evaluation**: statistics on repeated observations → Type A ($u=s/\\sqrt{10}$, $\\nu=9$); prior knowledge from a certificate → Type B (band over the right divisor). Both are then just standard uncertainties and combine identically. **A** and **C** tie the types to the instrument or to random/systematic character — the classic misconception; the GUM types refer only to *how* the contribution is evaluated. **D** is wrong: independent contributions are combined by RSS, never cherry-picked.",
+      "theory": "Type A = statistical analysis of repeated observations; Type B = any other means. Both yield $u$ and combine by the same propagation law.",
+      "tags": ["type-a", "type-b", "classification"]
+    },
+    {
+      "difficulty": "easy",
+      "prompt": "A balance certificate quotes an expanded uncertainty $U=0.24$ g with coverage factor $k=2$. The standard uncertainty to put in the budget is:",
+      "options": [
+        { "id": "A", "content": "$0.24$ g" },
+        { "id": "B", "content": "$0.48$ g" },
+        { "id": "C", "content": "$0.139$ g" },
+        { "id": "D", "content": "$0.12$ g" }
+      ],
+      "correct": "D",
+      "explanation": "An expanded uncertainty is a coverage-scaled value: $u=U/k=0.24/2=0.12$ g. **A** forgets to remove the coverage and enters the expanded value directly, doubling this row's weight in the budget. **B** multiplies by $k$ instead of dividing — that direction is for *producing* $U$ at the end, not for reading a certificate. **C** applies the rectangular divisor $\\sqrt3$ ($0.24/1.732$), but a certificate's $U$ is not a half-width of a uniform band.",
+      "theory": "Quoted expanded uncertainty → standard: $u=U/k$.",
+      "tags": ["type-b", "expanded"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A digital multimeter displays voltage with a resolution of $0.01$ V. The standard uncertainty contributed by the resolution is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.0029$ V" },
+        { "id": "B", "content": "$0.0058$ V" },
+        { "id": "C", "content": "$0.0050$ V" },
+        { "id": "D", "content": "$0.0100$ V" }
+      ],
+      "correct": "A",
+      "explanation": "The true value lies anywhere within one resolution step, so the half-width is $a=r/2=0.005$ V, rectangular: $u=0.005/\\sqrt3=0.01/(2\\sqrt3)=0.00289$ V. **B** uses the full step as the half-width ($0.01/\\sqrt3=0.0058$), double-counting the spread. **C** stops at the half-width $r/2$ without the $\\sqrt3$ divisor. **D** treats the whole step as if it were the standard uncertainty.",
+      "theory": "Resolution $r$: rectangular with $a=r/2$, so $u=r/(2\\sqrt3)$.",
+      "tags": ["type-b", "resolution"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An assembly clearance is believed to lie in $\\pm0.9$ mm with the **central value more likely** than the extremes, so a triangular distribution is adopted. The standard uncertainty is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.52$ mm" },
+        { "id": "B", "content": "$0.37$ mm" },
+        { "id": "C", "content": "$0.64$ mm" },
+        { "id": "D", "content": "$0.45$ mm" }
+      ],
+      "correct": "B",
+      "explanation": "Triangular over half-width $a=0.9$ mm: $u=a/\\sqrt6=0.9/2.449=0.367$ mm. **A** uses the rectangular divisor $\\sqrt3$ ($0.9/1.732=0.52$) — that would ignore the extra knowledge that the centre is more likely. **C** uses the arcsine divisor $\\sqrt2$ ($0.64$), which models the *opposite* (probability piled at the edges). **D** simply halves $a$, which is no GUM divisor. Remember the ranking for equal $a$: arcsine > rectangular > triangular.",
+      "theory": "Triangular Type B: $u=a/\\sqrt6$ (variance $a^2/6$) — the smallest of the three divisor-based variances.",
+      "tags": ["type-b", "triangular"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Five repeated readings have sample standard deviation $s=0.80\\ \\mu$m and the reported result is their average. The Type A standard uncertainty is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.16\\ \\mu$m" },
+        { "id": "B", "content": "$0.80\\ \\mu$m" },
+        { "id": "C", "content": "$0.36\\ \\mu$m" },
+        { "id": "D", "content": "$1.79\\ \\mu$m" }
+      ],
+      "correct": "C",
+      "explanation": "$u=s/\\sqrt n=0.80/\\sqrt5=0.358\\approx0.36\\ \\mu$m, with $\\nu=n-1=4$ degrees of freedom (keep that $\\nu$ — it will make the coverage factor a Student-$t$ value later). **A** divides by $n=5$ instead of $\\sqrt5$. **B** forgets the averaging entirely. **D** multiplies by $\\sqrt5$ — the wrong direction.",
+      "theory": "Type A on a mean: $u=s/\\sqrt n$, $\\nu=n-1$; small $n$ ⇒ few d.o.f. ⇒ Student-$t$ coverage later.",
+      "tags": ["type-a", "mean"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "In which situation is the coverage factor **required** to come from the Student-$t$ distribution rather than the normal value $1.96$ (or the conventional $k=2$)?",
+      "options": [
+        { "id": "A", "content": "When the effective degrees of freedom $\\nu_y$ are small — e.g. the budget is dominated by a Type A contribution from few readings" },
+        { "id": "B", "content": "Whenever any input is evaluated as Type B" },
+        { "id": "C", "content": "Whenever the confidence level is raised from 95% to 99%" },
+        { "id": "D", "content": "When the measurand itself is not normally distributed" }
+      ],
+      "correct": "A",
+      "explanation": "The Student-$t$ is needed because the combined $u(y)$ is itself *estimated*; with **few effective degrees of freedom** its estimate is unreliable and the $t$ tails are fatter, so $k=t_{1-\\alpha/2,\\nu_y}>1.96$ (e.g. $2.78$ at $\\nu_y=4$). Using $1.96$ there would understate $U$. **B** is backwards — Type B contributions usually carry *large* conventional d.o.f. (100/30/15), pushing $\\nu_y$ up, towards $k\\to z$. **C** changes the quantile level, not the distribution — 99% with many d.o.f. is simply $2.58$. **D** confuses the output's distribution (taken normal via the CLT) with the estimation problem that forces the $t$.",
+      "theory": "$k=t_{1-\\alpha/2,\\nu_y}$; it exceeds the normal $z$ for finite $\\nu_y$ and tends to it as $\\nu_y\\to\\infty$.",
+      "tags": ["coverage", "student-t"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A budget has a Type A contribution $u_A=0.35$ mm and an independent Type B contribution $u_B=0.29$ mm (both already in output units, $c_j=1$). The combined standard uncertainty is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.64$ mm" },
+        { "id": "B", "content": "$0.32$ mm" },
+        { "id": "C", "content": "$0.20$ mm" },
+        { "id": "D", "content": "$0.45$ mm" }
+      ],
+      "correct": "D",
+      "explanation": "Type A and Type B are both standard uncertainties, so they combine identically: $u^2(y)=0.35^2+0.29^2=0.1225+0.0841=0.2066$, $u(y)=0.455\\approx0.45$ mm. **A** adds them linearly ($0.35+0.29=0.64$). **B** averages them. **C** subtracts the variances ($\\sqrt{0.35^2-0.29^2}=0.196$) — uncertainties never subtract. Note the combined value always lies between the largest contribution and the linear sum.",
+      "theory": "Once everything is a standard uncertainty, Type A and B combine by the same RSS: $u(y)=\\sqrt{u_A^2+u_B^2}$.",
+      "tags": ["propagation", "rss", "type-a", "type-b"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A cylinder volume is modelled as $V=\\pi r^2 h$ with $r=10$ mm and $h=50$ mm. The sensitivity coefficient of the **radius**, $c_r=\\partial V/\\partial r$, is closest to:",
+      "options": [
+        { "id": "A", "content": "$314\\ \\text{mm}^2$" },
+        { "id": "B", "content": "$3142\\ \\text{mm}^2$" },
+        { "id": "C", "content": "$1571\\ \\text{mm}^2$" },
+        { "id": "D", "content": "$63\\ \\text{mm}^2$" }
+      ],
+      "correct": "B",
+      "explanation": "$c_r=\\partial V/\\partial r=2\\pi r h=2\\pi\\cdot10\\cdot50=3142\\ \\text{mm}^2$ — the squared variable brings its exponent down as a factor 2. **A** is $\\pi r^2=314\\ \\text{mm}^2$, which is $c_h$ (the sensitivity of the *height*). **C** is $\\pi rh$ — the factor 2 from the exponent was dropped. **D** is $2\\pi r$, forgetting $h$ altogether. Because $r$ appears squared, its uncertainty weighs $2^2=4$ times more (in relative variance) than $h$'s.",
+      "theory": "Differentiate the model: for $V=\\pi r^2h$, $c_r=2\\pi rh$ and $c_h=\\pi r^2$; an exponent $p$ appears as the factor $p$ in the sensitivity.",
+      "tags": ["sensitivity", "propagation"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Electrical power is computed as $P=VI$. The inputs have relative standard uncertainties $u(V)/V=0.5\\%$ and $u(I)/I=1.2\\%$, uncorrelated. The relative standard uncertainty of $P$ is:",
+      "options": [
+        { "id": "A", "content": "$1.3\\%$" },
+        { "id": "B", "content": "$1.7\\%$" },
+        { "id": "C", "content": "$0.6\\%$" },
+        { "id": "D", "content": "$1.09\\%$" }
+      ],
+      "correct": "A",
+      "explanation": "For a product, relative variances add: $(u(P)/P)^2=0.5^2+1.2^2=0.25+1.44=1.69$, so $u(P)/P=\\sqrt{1.69}=1.3\\%$ exactly. **B** adds the relative uncertainties linearly ($0.5+1.2$). **C** multiplies them ($0.5\\times1.2$), which is meaningless. **D** subtracts the variances ($\\sqrt{1.44-0.25}=1.09$) — combination is always a sum for uncorrelated inputs.",
+      "theory": "Products/quotients: $(u(y)/y)^2=\\sum(u(x_j)/x_j)^2$ (exponents $\\pm1$).",
+      "tags": ["propagation", "relative"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A sphere volume is $V=\\pi d^3/6$ and the diameter is known with relative standard uncertainty $u(d)/d=0.4\\%$. The relative standard uncertainty of $V$ is:",
+      "options": [
+        { "id": "A", "content": "$0.4\\%$" },
+        { "id": "B", "content": "$3.6\\%$" },
+        { "id": "C", "content": "$0.13\\%$" },
+        { "id": "D", "content": "$1.2\\%$" }
+      ],
+      "correct": "D",
+      "explanation": "For a power $y\\propto d^p$, the relative uncertainty scales by $|p|$: $u(V)/V=3\\times0.4\\%=1.2\\%$ (the constant $\\pi/6$ carries no uncertainty). **A** forgets the exponent entirely. **B** multiplies by $p^2=9$ — the square belongs inside the *variance* sum, $(u(V)/V)^2=3^2(u(d)/d)^2$, not on the relative uncertainty itself. **C** divides by the exponent instead of multiplying.",
+      "theory": "Single power $y=Kx^p$: $u(y)/y=|p|\\,u(x)/x$; in the variance sum the exponent enters as $p^2$.",
+      "tags": ["propagation", "power", "relative"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A reproducibility contribution is quoted as a **variance** of $0.0625\\ \\text{mm}^2$ (referring to a single measurement, and a single measurement is reported). What standard uncertainty enters the budget?",
+      "options": [
+        { "id": "A", "content": "$0.0625$ mm" },
+        { "id": "B", "content": "$0.031$ mm" },
+        { "id": "C", "content": "$0.25$ mm" },
+        { "id": "D", "content": "$0.036$ mm" }
+      ],
+      "correct": "C",
+      "explanation": "A variance needs one square root: $u=\\sqrt{V}=\\sqrt{0.0625}=0.25$ mm. **A** copies the variance as if it were a standard uncertainty — wrong value *and* wrong units ($\\text{mm}^2$ vs mm). **B** halves the variance, which is no operation of the decoder. **D** applies the rectangular divisor $\\sqrt3$ — divisors are for half-widths, not variances. No $\\sqrt n$ correction applies because both the datum and the result refer to a single measurement.",
+      "theory": "Input decoder: variance → $u=\\sqrt V$; std deviation → $u=s$; expanded → $u=U/k$; half-width → divisor.",
+      "tags": ["type-a", "variance", "decoder"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "An exercise gives you the **reproducibility** of the measurement (from a test that repeated the whole procedure, operators included) *and* the **repeatability** of the same instrument. How do they enter the budget?",
+      "options": [
+        { "id": "A", "content": "Both as separate rows — more rows means a more complete budget" },
+        { "id": "B", "content": "Only the reproducibility: it already includes the repeatability, so adding both double-counts the random scatter" },
+        { "id": "C", "content": "Only the repeatability: it is the more fundamental property" },
+        { "id": "D", "content": "Their average, as a single row" }
+      ],
+      "correct": "B",
+      "explanation": "Reproducibility is the scatter of the *complete* procedure — it contains the instrument's repeatability inside it. Entering both inflates $u(y)$ by counting the same physical scatter twice; the professor's sheets mark repeatability \"*not present*\" when reproducibility is given. **A** confuses completeness with correctness — a budget row must be an *independent* contribution. **C** throws away the larger, more representative information. **D** has no statistical basis; contributions are never averaged.",
+      "theory": "Never double-count: if reproducibility (which embeds repeatability) is in the budget, repeatability is marked not present.",
+      "tags": ["budget", "reproducibility", "double-counting"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "What is the **purpose** of the Welch–Satterthwaite formula in the GUM workflow?",
+      "options": [
+        { "id": "A", "content": "To combine the input variances into $u^2(y)$" },
+        { "id": "B", "content": "To convert Type B contributions into Type A ones" },
+        { "id": "C", "content": "To compute the sensitivity coefficients numerically" },
+        { "id": "D", "content": "To assign one effective number of degrees of freedom $\\nu_y$ to the combined $u(y)$, so a single coverage factor can be read from the Student-$t$" }
+      ],
+      "correct": "D",
+      "explanation": "The budget mixes contributions of different reliability ($\\nu=n-1$, $n-2$ for a regression slope, conventional 100/30/15 for Type B). Welch–Satterthwaite condenses them into one **effective** $\\nu_y=\\lfloor u^4(y)/\\sum_j(u_j^4(y)/\\nu_j)\\rfloor$, which then fixes $k=$T.INV$(1-\\alpha/2,\\nu_y)$. **A** is the law of propagation of variance — a different, earlier step. **B** is impossible: the types describe how a value was *evaluated*, and nothing converts one into the other. **C** is the incremental-ratio technique, unrelated.",
+      "theory": "W–S: $\\nu_y=\\lfloor u^4(y)/\\sum_j(u_j^4(y)/\\nu_j)\\rfloor$ — the bridge between the budget and the coverage factor.",
+      "tags": ["welch-satterthwaite", "dof"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Measurements are taken in an **air-conditioned** laboratory whose control keeps the temperature within $\\pm1\\,^{\\circ}$C of the set point, with no further information on its behaviour inside the band. The temperature input is modelled as:",
+      "options": [
+        { "id": "A", "content": "Rectangular, $u=1/\\sqrt3=0.58\\,^{\\circ}$C" },
+        { "id": "B", "content": "Arcsine (U-shaped), $u=1/\\sqrt2=0.71\\,^{\\circ}$C" },
+        { "id": "C", "content": "Triangular, $u=1/\\sqrt6=0.41\\,^{\\circ}$C" },
+        { "id": "D", "content": "Normal with $k=2$, $u=0.5\\,^{\\circ}$C" }
+      ],
+      "correct": "A",
+      "explanation": "Inside a *conditioned* band with nothing else known, every value is equally likely → **rectangular**, $u=a/\\sqrt3=0.58\\,^{\\circ}$C. **B** is the model for an **unconditioned** temperature swinging sinusoidally day–night, which lingers at the extremes — the opposite situation. **C** would need a reason to prefer the centre; the controller specification gives none. **D** invents a normal model and a coverage factor that the specification never stated.",
+      "theory": "Conditioned temperature band → rectangular ($a/\\sqrt3$); unconditioned sinusoidal swing → arcsine ($a/\\sqrt2$).",
+      "tags": ["type-b", "rectangular", "temperature"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "Which of the following inputs is evaluated as **Type B**?",
+      "options": [
+        { "id": "A", "content": "The sample standard deviation of 20 repeated readings" },
+        { "id": "B", "content": "The variance obtained from a repeatability test on the same part" },
+        { "id": "C", "content": "The bias band of an instrument declared conforming to an accuracy class, with no calibration data" },
+        { "id": "D", "content": "The standard uncertainty of a regression slope fitted to calibration data" }
+      ],
+      "correct": "C",
+      "explanation": "A declaration of conformity gives only a *variability interval* known from prior information — no statistics of your own — so it is evaluated by \"other means\": **Type B**, rectangular by default. **A** and **B** are textbook Type A: statistical analysis of repeated observations. **D** is also statistical — a regression is fitted to measured data, and its slope uncertainty carries $\\nu=n-2$ degrees of freedom, a Type A signature.",
+      "theory": "Type B = evaluated from prior knowledge (certificates, classes, handbooks, resolution); Type A = statistics on observations (including regression, $\\nu=n-n_p$).",
+      "tags": ["type-b", "classification"]
+    },
+    {
+      "difficulty": "medium",
+      "prompt": "A data sheet states, with no qualifier: \"uncertainty: $0.5$ mm\". According to the course convention, how do you read this value, and what does a *complete* uncertainty statement require?",
+      "options": [
+        { "id": "A", "content": "It is a standard uncertainty; a complete statement needs only $y$ and $u$" },
+        { "id": "B", "content": "It is an **expanded** uncertainty; a complete statement reports $y\\pm U$ with the confidence level $P$ (and the d.o.f. used)" },
+        { "id": "C", "content": "It is a variance; a complete statement reports $y\\pm s^2$" },
+        { "id": "D", "content": "It is a rectangular half-width; a complete statement reports $y\\pm a/\\sqrt3$" }
+      ],
+      "correct": "B",
+      "explanation": "The convention is explicit: *if a value is quoted simply as \"uncertainty\", it is to be read as the expanded uncertainty* $U$. And the expression of a result is complete only as $y\\pm U$ **with the confidence level $P$** (and the degrees of freedom) stated. **A** would make budgets built on that number too optimistic by the coverage factor. **C** is dimensionally wrong ($\\text{mm}^2$). **D** confuses a finished, coverage-scaled uncertainty with a raw Type B band.",
+      "theory": "Bare \"uncertainty\" = expanded $U$; complete report = $y\\pm U$ at stated $P$ (with d.o.f.).",
+      "tags": ["expanded", "reporting", "convention"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A voltmeter's accuracy specification is \"$\\pm0.2\\%$ **of full scale**\" on the 10 V range (rectangular). You read $4.00$ V. The standard uncertainty of the reading is closest to:",
+      "options": [
+        { "id": "A", "content": "$11.5$ mV" },
+        { "id": "B", "content": "$4.6$ mV" },
+        { "id": "C", "content": "$5.8$ mV" },
+        { "id": "D", "content": "$20$ mV" }
+      ],
+      "correct": "A",
+      "explanation": "\"Of full scale\" means the half-width is computed on the range, not the reading: $a=0.002\\times10\\ \\text{V}=0.02$ V, so $u=a/\\sqrt3=11.5$ mV — the same absolute value anywhere on the range. **B** applies the percentage to the *reading* ($0.002\\times4/\\sqrt3=4.6$ mV), the classic misread; that would be correct only for a \"% of reading\" spec. **C** treats the band like a resolution and halves it again ($0.02/(2\\sqrt3)$) — the spec is already a half-width. **D** forgets the $\\sqrt3$ divisor.",
+      "theory": "Read the reference of a relative spec: \"% of full scale\" → $a=\\%\\times$range; \"% of reading\" → $a=\\%\\times$reading. Then rectangular $u=a/\\sqrt3$.",
+      "tags": ["type-b", "rectangular", "datasheet"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A budget has two contributions: $u_1^2(y)=0.30\\ \\mu\\text{m}^2$ with $\\nu_1=4$, and $u_2^2(y)=0.20\\ \\mu\\text{m}^2$ with $\\nu_2=30$. The effective degrees of freedom by Welch–Satterthwaite are:",
+      "options": [
+        { "id": "A", "content": "$\\nu_y=34$" },
+        { "id": "B", "content": "$\\nu_y=11$" },
+        { "id": "C", "content": "$\\nu_y=10$" },
+        { "id": "D", "content": "$\\nu_y=4$" }
+      ],
+      "correct": "C",
+      "explanation": "$\\nu_y=\\dfrac{u^4(y)}{u_1^4/\\nu_1+u_2^4/\\nu_2}=\\dfrac{(0.30+0.20)^2}{0.30^2/4+0.20^2/30}=\\dfrac{0.25}{0.0225+0.00133}=10.49$, floored to $\\nu_y=10$. **A** simply adds the d.o.f. ($4+30$) — W–S never does that. **B** rounds $10.49$ up; the convention is the **floor** (Excel INT), because rounding up shrinks $k$ and understates $U$. **D** takes the smallest input d.o.f., which is over-conservative and not the GUM rule.",
+      "theory": "W–S: $\\nu_y=\\lfloor u^4(y)/\\sum_j(u_j^4(y)/\\nu_j)\\rfloor$ — note $u^4$ means the *variance squared*, and the result is floored.",
+      "tags": ["welch-satterthwaite", "dof"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A force is modelled as $F=kx$ with $k=500$ N/m, $u(k)=4$ N/m, $x=0.020$ m, $u(x)=0.0002$ m (uncorrelated). The combined standard uncertainty $u(F)$ is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.18$ N" },
+        { "id": "B", "content": "$4.00$ N" },
+        { "id": "C", "content": "$0.06$ N" },
+        { "id": "D", "content": "$0.13$ N" }
+      ],
+      "correct": "D",
+      "explanation": "Sensitivities: $c_k=\\partial F/\\partial k=x=0.020$ m, $c_x=\\partial F/\\partial x=k=500$ N/m. Contributions: $(0.020\\times4)^2=0.08^2=0.0064$ and $(500\\times0.0002)^2=0.10^2=0.0100$, so $u(F)=\\sqrt{0.0164}=0.128\\approx0.13$ N. **A** adds the two contributions linearly ($0.08+0.10$). **B** combines the raw input uncertainties without sensitivity coefficients ($\\sqrt{4^2+0.0002^2}\\approx4$) — a unit-inconsistent nonsense. **C** subtracts the variances ($\\sqrt{0.0100-0.0064}$). Note both contributions are comparable, so neither input can be neglected.",
+      "theory": "For $y=kx$: $c_k=x$, $c_x=k$; each row is $(c_ju(x_j))^2$ and rows add as variances.",
+      "tags": ["propagation", "sensitivity"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A density is modelled as $\\rho=\\dfrac{4m}{\\pi d^2 h}$, with relative standard uncertainties $u(m)/m=0.1\\%$, $u(d)/d=0.3\\%$, $u(h)/h=0.2\\%$ (uncorrelated). The relative standard uncertainty of $\\rho$ is closest to:",
+      "options": [
+        { "id": "A", "content": "$0.37\\%$" },
+        { "id": "B", "content": "$0.64\\%$" },
+        { "id": "C", "content": "$0.90\\%$" },
+        { "id": "D", "content": "$0.60\\%$" }
+      ],
+      "correct": "B",
+      "explanation": "Exponents: $m^{+1}$, $d^{-2}$, $h^{-1}$. Relative variances add with $p_j^2$: $(u(\\rho)/\\rho)^2=0.1^2+(2\\times0.3)^2+0.2^2=0.01+0.36+0.04=0.41$, so $u(\\rho)/\\rho=\\sqrt{0.41}=0.64\\%$. **A** forgets the exponent 2 on the diameter ($\\sqrt{0.01+0.09+0.04}=0.37\\%$) — the most tempting wrong turn. **C** adds linearly with the factor 2 ($0.1+0.6+0.2$). **D** keeps only the dominant diameter term ($2\\times0.3$) and drops the others. The sign of the exponents ($-2$, $-1$) is irrelevant: only $p_j^2$ enters.",
+      "theory": "$(u(y)/y)^2=\\sum p_j^2(u(x_j)/x_j)^2$; a squared variable in the denominator contributes with $p^2=4$.",
+      "tags": ["propagation", "relative", "power"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A resistance is measured $n=5$ times: sample standard deviation $s=1.2\\ \\Omega$, the mean is reported, and Type A is the only contribution. The expanded uncertainty at 95% confidence is closest to:",
+      "options": [
+        { "id": "A", "content": "$1.49\\ \\Omega$" },
+        { "id": "B", "content": "$1.05\\ \\Omega$" },
+        { "id": "C", "content": "$3.33\\ \\Omega$" },
+        { "id": "D", "content": "$1.14\\ \\Omega$" }
+      ],
+      "correct": "A",
+      "explanation": "$u=s/\\sqrt5=0.537\\ \\Omega$ with $\\nu=4$; the coverage factor is the Student-$t$ quantile $k=t_{0.975,4}=$T.INV$(0.975,4)=2.776$, so $U=2.776\\times0.537=1.49\\ \\Omega$. **B** uses the asymptotic $1.96$ ($1.05\\ \\Omega$) — with only 4 d.o.f. that understates $U$ by ~30%. **C** forgets the $\\sqrt5$ and expands $s$ itself ($2.776\\times1.2$). **D** uses the one-sided quantile $t_{0.95,4}=2.132$ instead of the two-sided $t_{0.975,4}$ — a 95% *two-sided* interval splits the risk into $2.5\\%$ per tail.",
+      "theory": "Small-sample Type A: $u=s/\\sqrt n$, $\\nu=n-1$, $k=t_{1-\\alpha/2,\\nu}$ (two-sided), $U=k\\,u$.",
+      "tags": ["type-a", "expanded", "student-t"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A certificate quotes a standard deviation $s(m)=0.05$ mm that refers to the **mean of $n_d=4$ readings**. Your procedure reports a **single** reading. What standard uncertainty does this contribution give your result?",
+      "options": [
+        { "id": "A", "content": "$0.05$ mm — use the quoted value directly" },
+        { "id": "B", "content": "$0.025$ mm — divide by $\\sqrt{4}$" },
+        { "id": "C", "content": "$0.20$ mm — multiply by $n_d=4$" },
+        { "id": "D", "content": "$0.10$ mm — multiply by $\\sqrt{n_d}=2$" }
+      ],
+      "correct": "D",
+      "explanation": "The quoted variability refers to a *mean*: $s^2(m)=s^2(x)/n_d$, so the single-value standard deviation is $s(x)=s(m)\\sqrt{n_d}=0.05\\times2=0.10$ mm — that is what a single reading inherits. **A** uses the mean's (smaller) scatter for an individual value, understating the row by half. **B** divides again, compounding the error. **C** multiplies the *standard deviation* by $n_d$; the factor $n_d$ belongs on the **variance** ($s^2(x)=n_d\\,s^2(m)$), so the standard deviation takes $\\sqrt{n_d}$.",
+      "theory": "Input multiplicity: $s^2(x)=n_d\\,s^2(m)$. Mean-referred and single-value variability differ by $n$ on the variance, $\\sqrt n$ on $u$.",
+      "tags": ["multiplicity", "type-a"]
+    },
+    {
+      "difficulty": "hard",
+      "prompt": "A finished budget shows three contributions: $u_1^2(y)=9.0$, $u_2^2(y)=1.0$, $u_3^2(y)=0.25$ (all $\\mu\\text{m}^2$), so $u(y)=3.20\\ \\mu$m. You can spend money to halve the standard uncertainty of exactly **one** input. Which choice, and why?",
+      "options": [
+        { "id": "A", "content": "Input 3 — improving the smallest term is cheapest and always most efficient" },
+        { "id": "B", "content": "Spread the effort equally — all contributions matter the same in an RSS" },
+        { "id": "C", "content": "Input 1 — contributions add as variances, so the dominant row rules: halving $u_1$ drops $u(y)$ from $3.20$ to $1.87\\ \\mu$m, while halving $u_3$ leaves it at $3.17\\ \\mu$m" },
+        { "id": "D", "content": "Impossible to say without knowing the sensitivity coefficients" }
+      ],
+      "correct": "C",
+      "explanation": "Because variances add, the budget is a tyranny of the largest term. Halving $u_1$: $u(y)=\\sqrt{9/4+1+0.25}=\\sqrt{3.5}=1.87\\ \\mu$m — a 42% improvement. Halving $u_3$ instead: $\\sqrt{9+1+0.0625}=3.17\\ \\mu$m — barely a 1% change. **A** is exactly backwards: small rows are where you can *relax* the instrument to save cost. **B** ignores the quadratic weighting. **D** is a distractor: the listed $u_j^2(y)$ are the **contributions to $y$**, i.e. $c_j^2u^2(x_j)$ — the sensitivities are already inside them.",
+      "theory": "Read the budget's $u_j^2(y)$ column: improve the biggest row to reduce $u(y)$; relax the smallest rows to cut cost.",
+      "tags": ["budget", "dominant-contribution"]
+    }
+  ],
+  "exam": [
+    {
+      "title": "TU — density of a steel cylinder (full budget, k = 2)",
+      "meta": "Drill · full uncertainty budget · 12 pts",
+      "difficulty": "hard",
+      "statement": "The density of a cylinder is determined as $\\rho=m/V$.\n\n- **Mass**: $n=10$ repeated weighings give an average $\\bar m=158.42$ g with sample standard deviation $s=0.10$ g. The balance's calibration certificate also quotes a bias as an **expanded uncertainty $U=0.04$ g with $k=2$**.\n- **Volume**: $V=20.00\\ \\text{cm}^3$, measured with an instrument whose **resolution is $0.05\\ \\text{cm}^3$** (no other volume contribution).\n\nEvaluate every standard uncertainty, combine them into the **relative** combined standard uncertainty of $\\rho$, compute the expanded uncertainty at 95% confidence using the metrological convention $k=2$, report the result, and identify the dominant contribution.",
+      "given": "$\\bar m=158.42$ g; $s=0.10$ g on $n=10$ (mean reported); certificate $U=0.04$ g, $k=2$; $V=20.00\\ \\text{cm}^3$; resolution $r=0.05\\ \\text{cm}^3$; $P=95\\%$, $k=2$.",
+      "steps": [
+        {
+          "title": "1 · Classify the inputs",
+          "content": "Three contributions:\n- mass repeatability — **Type A** (statistics on 10 readings, mean reported);\n- balance bias from the certificate — **Type B** (quoted expanded uncertainty);\n- volume resolution — **Type B** (rectangular, half-width $a=r/2$).\nEverything is already in coherent units (g, cm³), so no conversion is needed."
+        },
+        {
+          "title": "2 · Standard uncertainties of the mass",
+          "content": "Type A on the mean:\n$$u_A(m)=\\frac{s}{\\sqrt n}=\\frac{0.10}{\\sqrt{10}}=0.0316\\ \\text{g},\\qquad \\nu=n-1=9.$$\nCertificate bias (expanded → standard):\n$$u_{cert}(m)=\\frac{U}{k}=\\frac{0.04}{2}=0.02\\ \\text{g}.$$\nBoth act on the same input, independently, so they combine in quadrature **on the input**:\n$$u(m)=\\sqrt{0.0316^2+0.02^2}=\\sqrt{0.0014}=0.0374\\ \\text{g}.$$\n**Trap:** entering the certificate's $0.04$ g without dividing by $k$ doubles that row."
+        },
+        {
+          "title": "3 · Standard uncertainty of the volume",
+          "content": "The resolution step is $r=0.05\\ \\text{cm}^3$, so the half-width is $a=r/2=0.025\\ \\text{cm}^3$, rectangular:\n$$u(V)=\\frac{r}{2\\sqrt3}=\\frac{0.05}{2\\sqrt3}=0.0144\\ \\text{cm}^3.$$\n**Trap:** using the full step as the half-width ($0.05/\\sqrt3=0.0289$) doubles this contribution."
+        },
+        {
+          "title": "4 · Combine in relative terms",
+          "content": "The model $\\rho=m/V$ is a pure quotient (exponents $+1$ and $-1$), so the relative-RSS shortcut applies:\n$$\\left(\\frac{u(\\rho)}{\\rho}\\right)^2=\\left(\\frac{u(m)}{m}\\right)^2+\\left(\\frac{u(V)}{V}\\right)^2.$$\nNumerically: $u(m)/m=0.0374/158.42=2.36\\times10^{-4}$ and $u(V)/V=0.0144/20.00=7.22\\times10^{-4}$, hence\n$$\\frac{u(\\rho)}{\\rho}=\\sqrt{(2.36\\times10^{-4})^2+(7.22\\times10^{-4})^2}=7.59\\times10^{-4}.$$"
+        },
+        {
+          "title": "5 · Absolute combined uncertainty (and a cross-check)",
+          "content": "$$\\rho=\\frac{158.42}{20.00}=7.921\\ \\text{g/cm}^3,\\qquad u(\\rho)=7.921\\times7.59\\times10^{-4}=6.01\\times10^{-3}\\ \\text{g/cm}^3.$$\nCross-check by sensitivities: $c_m=\\partial\\rho/\\partial m=1/V=0.05\\ \\text{cm}^{-3}$, $c_V=\\partial\\rho/\\partial V=-m/V^2=-0.396$; then $u^2(\\rho)=(0.05\\times0.0374)^2+(0.396\\times0.0144)^2=3.62\\times10^{-5}$, i.e. $u(\\rho)=6.01\\times10^{-3}$ — identical. The negative $c_V$ enters **squared**, so its sign is irrelevant."
+        },
+        {
+          "title": "6 · Expand and report",
+          "content": "At $P=95\\%$ with the metrological convention $k=2$ (the Type B contributions carry large conventional d.o.f., so $\\nu_y$ is large and $k\\approx2$ is legitimate):\n$$U=k\\,u(\\rho)=2\\times6.01\\times10^{-3}=0.012\\ \\text{g/cm}^3.$$\nReport: $$\\rho=(7.921\\pm0.012)\\ \\text{g/cm}^3\\ \\text{at 95% confidence } (k=2).$$\n**Dominant contribution:** the volume resolution — its relative variance $(7.22\\times10^{-4})^2$ is $\\approx90\\%$ of the total, the mass only $\\approx10\\%$. To improve the measurement, buy a better volume determination, not a better balance."
+        }
+      ],
+      "finalAnswer": "$u(m)=0.0374$ g (Type A $0.0316$ g on the mean + certificate $0.020$ g); $u(V)=0.0144\\ \\text{cm}^3$; relative combined $u(\\rho)/\\rho=7.59\\times10^{-4}$; $u(\\rho)=0.0060\\ \\text{g/cm}^3$; $U=0.012\\ \\text{g/cm}^3$. **Report: $\\rho=(7.921\\pm0.012)\\ \\text{g/cm}^3$ at 95% ($k=2$).** Dominant contribution: the volume resolution ($\\approx90\\%$ of the variance).",
+      "tips": "The three decoder moves in one problem: $s/\\sqrt n$ for the Type A mean (÷$\\sqrt{10}$, not ÷10), $U/k$ for the certificate (never enter the expanded value raw), $r/(2\\sqrt3)$ for the resolution (half-step!). Relative uncertainties combine by RSS — adding them linearly ($9.6\\times10^{-4}$) loses the marks of step 4. The quotient's $-1$ exponent and the negative $c_V$ disappear when squared."
+    },
+    {
+      "title": "TU — pin diameter with five readings (Student-t coverage)",
+      "meta": "Drill · small-sample Type A · 10 pts",
+      "difficulty": "hard",
+      "statement": "The diameter of a pin is measured $n=5$ times with a micrometer whose **resolution is $0.001$ mm**. The readings (mm) are:\n$$12.502,\\quad 12.508,\\quad 12.505,\\quad 12.510,\\quad 12.500$$\nThe reported result is the **average**. Build the budget (Type A + resolution), find the effective degrees of freedom by Welch–Satterthwaite, choose the coverage factor at 95% confidence, and report $d\\pm U$.",
+      "given": "5 readings as above; resolution $r=0.001$ mm (rectangular, $\\nu=100$ conventional); result = mean of the 5 readings; $P=95\\%$ two-sided.",
+      "steps": [
+        {
+          "title": "1 · Type A: mean and standard deviation of the sample",
+          "content": "With AVERAGE and STDEV.S (divisor $n-1$):\n$$\\bar d=\\frac{62.525}{5}=12.5050\\ \\text{mm},\\qquad s=\\sqrt{\\frac{\\sum(d_i-\\bar d)^2}{4}}=\\sqrt{\\frac{6.8\\times10^{-5}}{4}}=0.00412\\ \\text{mm}.$$\nThe mean is reported, so\n$$u_A=\\frac{s}{\\sqrt5}=0.00184\\ \\text{mm},\\qquad \\nu_A=n-1=4.$$"
+        },
+        {
+          "title": "2 · Type B: resolution",
+          "content": "Half-width $a=r/2=0.0005$ mm, rectangular:\n$$u_B=\\frac{r}{2\\sqrt3}=\\frac{0.001}{2\\sqrt3}=0.000289\\ \\text{mm},\\qquad \\nu_B=100\\ \\text{(extremely consolidated, conventional)}.$$"
+        },
+        {
+          "title": "3 · Combine",
+          "content": "Both sensitivities are 1 (the model is $d=\\bar d$ plus a resolution error), so\n$$u^2(y)=u_A^2+u_B^2=3.40\\times10^{-6}+8.33\\times10^{-8}=3.48\\times10^{-6}\\ \\text{mm}^2,$$\n$$u(y)=0.00187\\ \\text{mm}.$$\nThe resolution is only $\\approx2.4\\%$ of the combined variance — but it still gets its budget row."
+        },
+        {
+          "title": "4 · Effective degrees of freedom (Welch–Satterthwaite)",
+          "content": "$$\\nu_y=\\left\\lfloor\\frac{u^4(y)}{\\dfrac{u_A^4}{\\nu_A}+\\dfrac{u_B^4}{\\nu_B}}\\right\\rfloor=\\left\\lfloor\\frac{(3.48\\times10^{-6})^2}{\\dfrac{(3.40\\times10^{-6})^2}{4}+\\dfrac{(8.33\\times10^{-8})^2}{100}}\\right\\rfloor=\\lfloor4.198\\rfloor=4.$$\nThe Type A term dominates, so $\\nu_y$ stays close to its $\\nu_A=4$. Remember: **floor** (INT), never round up."
+        },
+        {
+          "title": "5 · Coverage factor from the Student-t",
+          "content": "With only 4 effective degrees of freedom the asymptotic $1.96$ (or $k=2$) is **not** allowed:\n$$k=t_{0.975,4}=\\text{T.INV}(0.975,\\ 4)=2.776.$$"
+        },
+        {
+          "title": "6 · Expand and report",
+          "content": "$$U=k\\,u(y)=2.776\\times0.001866=0.0052\\ \\text{mm}.$$\nReport: $$d=(12.5050\\pm0.0052)\\ \\text{mm at 95% confidence } (\\nu_y=4,\\ k=2.776).$$\nHad you used $k=2$, you would have reported $U=0.0037$ mm — an interval **28% too narrow**: exactly the underestimation the Student-$t$ exists to prevent."
+        }
+      ],
+      "finalAnswer": "$\\bar d=12.5050$ mm; $s=0.00412$ mm; $u_A=0.00184$ mm ($\\nu=4$); $u_B=0.000289$ mm ($\\nu=100$); $u(y)=0.00187$ mm; $\\nu_y=\\lfloor4.198\\rfloor=4$; $k=t_{0.975,4}=2.776$. **Report: $d=(12.5050\\pm0.0052)$ mm at 95% confidence.**",
+      "tips": "Use STDEV.S (divisor $n-1$), not STDEV.P. Divide by $\\sqrt5$ because the *mean* is reported. Resolution takes the half-step: $0.001/(2\\sqrt3)$, not $0.001/\\sqrt3$. Floor the Welch–Satterthwaite value ($4.198\\to4$) and read $k$ from T.INV$(0.975,\\nu_y)$ — the pair \"$k=1.96$/$k=2$ with tiny $\\nu_y$\" is the most expensive mistake in this problem."
+    }
+  ]
+}
