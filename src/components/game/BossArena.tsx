@@ -13,7 +13,7 @@ import type { BossVariant } from "../../lib/bosses";
  * ================================================================== */
 
 export interface ArenaSignal {
-  kind: "hit" | "crit" | "attack" | "defeat" | null;
+  kind: "hit" | "crit" | "attack" | "defeat" | "enrage" | null;
   nonce: number;
 }
 
@@ -22,6 +22,8 @@ interface ArenaProps {
   colors: { primary: number; secondary: number; glow: number };
   hp: number;
   signal: ArenaSignal;
+  /** mini-bosses render smaller */
+  mini?: boolean;
 }
 
 interface FxState {
@@ -33,7 +35,7 @@ interface FxState {
 
 const MAX_PARTICLES = 220;
 
-export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
+export default function BossArena({ variant, colors, hp, signal, mini = false }: ArenaProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const hpRef = useRef(hp);
   const fxRef = useRef<FxState>({ shake: 0, flash: 0, attackP: -1, defeatP: -1 });
@@ -66,6 +68,11 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
         fx.flash = 2;
         burstRef.current(160, 7);
         break;
+      case "enrage":
+        fx.shake = Math.max(fx.shake, 0.8);
+        fx.flash = 2.4;
+        burstRef.current(120, 8);
+        break;
     }
   }, [signal.nonce, signal.kind]);
 
@@ -88,9 +95,12 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
       0.1,
       100
     );
-    const camBase = new THREE.Vector3(0, 1.7, 7.2);
+    // frame the boss in the upper part of the view — the question HUD
+    // floats over the lower third in full-screen fights
+    const BOSS_Y = 1.7;
+    const camBase = new THREE.Vector3(0, 2.0, 7.8);
     camera.position.copy(camBase);
-    camera.lookAt(0, 1.2, 0);
+    camera.lookAt(0, BOSS_Y - 0.2, 0);
 
     scene.add(new THREE.AmbientLight(0x334, 1.6));
     const key = new THREE.PointLight(colors.glow, 260, 40);
@@ -107,9 +117,33 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
     grid.position.y = -0.6;
     scene.add(grid);
 
+    /* ---------- starfield ---------- */
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(360 * 3);
+    for (let k = 0; k < 360; k++) {
+      const r = 18 + Math.random() * 28;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      starPos[k * 3] = r * Math.sin(phi) * Math.cos(theta);
+      starPos[k * 3 + 1] = Math.abs(r * Math.cos(phi)) * 0.6 - 2;
+      starPos[k * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+    }
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({
+      color: 0x8fa4d9,
+      size: 0.07,
+      transparent: true,
+      opacity: 0.75,
+      depthWrite: false,
+    });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
     /* ---------- boss ---------- */
+    const baseScale = mini ? 0.72 : 1;
     const boss = new THREE.Group();
-    boss.position.y = 1.2;
+    boss.position.y = BOSS_Y;
+    boss.scale.setScalar(baseScale);
     scene.add(boss);
 
     const pulseMats: THREE.MeshStandardMaterial[] = [];
@@ -323,7 +357,7 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
       if (fx.defeatP < 0) {
         // idle motion
         boss.rotation.y += dt * 0.35 * rage;
-        boss.position.y = 1.2 + Math.sin(t * 1.3) * 0.12;
+        boss.position.y = BOSS_Y + Math.sin(t * 1.3) * 0.12;
         if (hpNow < 0.4) {
           boss.position.x = (Math.random() - 0.5) * 0.05 * (1 - hpNow);
         }
@@ -342,10 +376,11 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
         fx.defeatP = Math.min(1, fx.defeatP + dt * 0.55);
         const p = fx.defeatP;
         boss.rotation.y += dt * (2 + p * 9);
-        const s = Math.max(0.02, 1 - p);
+        const s = Math.max(0.02, 1 - p) * baseScale;
         boss.scale.set(s, s, s);
-        boss.position.y = 1.2 - p * 0.9;
+        boss.position.y = BOSS_Y - p * 0.9;
       }
+      stars.rotation.y += dt * 0.012;
 
       for (const sp of spinners) sp.obj.rotation[sp.axis] += dt * sp.speed * rage;
       for (const o of orbiters) {
@@ -366,7 +401,7 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
         camBase.y + (Math.random() - 0.5) * fx.shake,
         camBase.z
       );
-      camera.lookAt(0, 1.2, 0);
+      camera.lookAt(0, BOSS_Y - 0.2, 0);
       fx.shake *= Math.pow(0.01, dt);
 
       // particles
@@ -407,12 +442,14 @@ export default function BossArena({ variant, colors, hp, signal }: ArenaProps) {
       for (const d of disposables) d.dispose();
       (grid.material as THREE.Material).dispose();
       grid.geometry.dispose();
+      starGeo.dispose();
+      starMat.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     };
     // colors/variant are stable for a given fight
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variant, colors.primary, colors.secondary, colors.glow]);
+  }, [variant, colors.primary, colors.secondary, colors.glow, mini]);
 
   return <div ref={containerRef} className="h-full w-full" aria-hidden />;
 }

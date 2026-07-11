@@ -85,6 +85,8 @@ export interface GameState {
   bonusXp: number;
   beers: number;
   boss: Record<string, BossRecord[]>;
+  /** mini-boss victories: courseId → section title → best grade */
+  miniBoss: Record<string, Record<string, number>>;
   achievements: Record<string, number>;
   totals: GameTotals;
   quests: { date: string; items: QuestInstance[] };
@@ -114,6 +116,7 @@ const defaultState = (): GameState => ({
   bonusXp: 0,
   beers: 0,
   boss: {},
+  miniBoss: {},
   achievements: {},
   totals: emptyTotals(),
   quests: { date: "", items: [] },
@@ -141,6 +144,7 @@ function read(): GameState {
         totals: { ...emptyTotals(), ...(parsed.totals ?? {}) },
         settings: { ...value.settings, ...(parsed.settings ?? {}) },
         quests: parsed.quests ?? value.quests,
+        miniBoss: parsed.miniBoss ?? {},
       };
     }
   } catch {
@@ -759,6 +763,22 @@ export function logBossResult(courseId: string, rec: BossRecord) {
     emit({ type: "beer" });
   }
   afterMutation(state);
+}
+
+export function logMiniBossResult(courseId: string, section: string, won: boolean, grade: number) {
+  if (!won) return;
+  const state = read();
+  const forCourse = state.miniBoss[courseId] ?? {};
+  const best = Math.max(forCourse[section] ?? 0, grade);
+  afterMutation({
+    ...state,
+    miniBoss: { ...state.miniBoss, [courseId]: { ...forCourse, [section]: best } },
+    bonusXp: state.bonusXp + 25,
+  });
+}
+
+export function miniBossGrade(courseId: string, section: string, state: GameState = read()): number | null {
+  return state.miniBoss[courseId]?.[section] ?? null;
 }
 
 export function addBonusXp(amount: number) {

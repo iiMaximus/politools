@@ -6,13 +6,13 @@ import { cn } from "../lib/cn";
 export function CourseNav({ courseId, due }: { courseId: string; due?: number }) {
   const { pathname } = useLocation();
   const base = `/c/${courseId}`;
+  // Keep this strip tight: Scroll lives on the Learn page's "Drill & test"
+  // cards and the Boss is reached from the path / hub / Learn page.
   const tabs = [
-    { id: "overview", label: "Overview", icon: "LayoutDashboard", to: base, match: pathname === base || pathname.includes("/learn/") },
     { id: "path", label: "Path", icon: "Map", to: `${base}/path`, match: pathname.includes("/path") },
-    { id: "scroll", label: "Scroll", icon: "Sparkles", to: `${base}/scroll`, match: pathname.includes("/scroll") },
+    { id: "overview", label: "Learn", icon: "GraduationCap", to: base, match: pathname === base || pathname.includes("/learn/") || pathname.includes("/scroll") },
     { id: "practice", label: "Practice", icon: "Dumbbell", to: `${base}/practice`, match: pathname.includes("/practice") },
     { id: "exams", label: "Exams", icon: "FileText", to: `${base}/exams`, match: pathname.includes("/exams") },
-    { id: "boss", label: "Boss", icon: "Swords", to: `${base}/boss`, match: pathname.includes("/boss") },
   ];
   return (
     <div className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-1.5">

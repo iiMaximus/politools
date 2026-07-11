@@ -263,11 +263,17 @@ Studying is gamified. The pieces (added 2026-07):
 - `src/lib/bosses.ts` + `src/pages/BossPage.tsx` + `src/components/game/BossArena.tsx` — every
   course has a final boss (procedural three.js). BossArena is lazy-loaded; NEVER import `three`
   from non-lazy code, it must stay out of the main bundle.
-- `src/pages/PathPage.tsx` — Duolingo-style skill path generated from course data. Gates: one per
-  lesson when distinct practice-topic count equals lesson count (topic-file courses), one per
-  lecture when the lecture name doubles as the practice `topic` (the MA2 modules), else a single
-  generic gate. When authoring content, keeping `lesson.lecture` == practice `topic` per module
-  gives the path clean checkpoints.
+- `src/pages/PathPage.tsx` + `src/lib/path.ts` — Duolingo-style skill path generated from course
+  data: per section (lecture group) lessons → checkpoint gate → MINI-BOSS, final boss at the end.
+  Topic mapping strategies live in `lib/path.ts` (`courseSections`): per-lesson topics when the
+  distinct practice-topic count equals the lesson count (topic-file courses), lecture-name==topic
+  (the MA2 modules), else one generic gate. Keeping `lesson.lecture` == practice `topic` per module
+  gives the path clean checkpoints. Mini-boss fights are `/c/<id>/boss?mini=<section>` (60 HP,
+  2 hearts, section-scoped deck); victories persist in `game.miniBoss`.
+- Boss fights are FULL-SCREEN (BossPage renders `fixed inset-0`, no TopBar/Page); question timers
+  scale with difficulty (easy 25s / medium 40s / hard 60s). The CourseNav strip is deliberately
+  four tabs (Path · Learn · Practice · Exams) — Scroll and Boss are reached from cards/path, don't
+  re-add tabs.
 - `src/pages/MixPage.tsx` — cross-course Daily Mix (due → rusty → fresh, round-robin, combo meter).
 - `src/lib/sound.ts` (WebAudio synth) and `src/lib/confetti.ts` (canvas burst) — no assets, no deps.
 

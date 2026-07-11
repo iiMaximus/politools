@@ -1,145 +1,121 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
 import { TopBar, Page } from "../components/Layout";
 import { CourseNav } from "../components/CourseNav";
 import { Icon } from "../components/Icon";
-import { Kicker } from "../components/ui";
 import { useCourseProgress } from "../lib/progress";
 import { dueCount } from "../lib/adaptive";
-import { bestBossGrade, useGame } from "../lib/game";
+import { bestBossGrade, miniBossGrade, useGame } from "../lib/game";
 import { bossFor } from "../lib/bosses";
+import { courseSections, topicMastery, GATE_MASTERY } from "../lib/path";
+import { fireConfetti } from "../lib/confetti";
 import { cn } from "../lib/cn";
-import type { Course, Lesson } from "../types";
+import type { Course } from "../types";
 import type { CourseProgress } from "../lib/progress";
+import type { GameState } from "../lib/game";
 import { NotFound } from "./NotFound";
 
 /* ================================================================== *
- *  SKILL PATH — a Duolingo-style course map. Lessons and per-lecture
- *  quiz gates unlock in order; the exam boss waits at the end. Built
- *  entirely from the course data + real progress, so it works for
- *  every course automatically.
+ *  SKILL PATH v2 — a Duolingo-style adventure map. Each section:
+ *  lessons → checkpoint gate → MINI-BOSS, and the final exam boss at
+ *  the end of the road. Nodes are chunky pressable buttons on a road
+ *  whose conquered segments fill with the course accent.
  * ================================================================== */
 
 interface PathNode {
   id: string;
-  kind: "lesson" | "gate" | "boss";
+  kind: "lesson" | "gate" | "miniboss" | "boss";
   title: string;
   sub?: string;
   to: string;
   done: boolean;
-  header?: string;
+  /** section banner rendered before this node */
+  banner?: { title: string; done: number; total: number };
+  badge?: string;
 }
 
-const GATE_MASTERY = 0.5;
-
-function buildPath(course: Course, progress: CourseProgress, bossDone: boolean): PathNode[] {
-  const { lessons, practice } = course;
+function buildPath(course: Course, progress: CourseProgress, game: GameState): PathNode[] {
+  const sections = courseSections(course);
+  const multi = sections.length > 1;
   const nodes: PathNode[] = [];
 
-  // distinct practice topics in first-appearance order
-  const topics: string[] = [];
-  for (const q of practice) {
-    if (q.topic && !topics.includes(q.topic)) topics.push(q.topic);
-  }
-
-  const gateDone = (topic: string | null) => {
-    const pool = topic ? practice.filter((q) => q.topic === topic) : practice;
-    if (!pool.length) return true;
-    const mastered = pool.filter((q) => progress.cards[q.id]?.mastered).length;
-    return mastered / pool.length >= GATE_MASTERY;
+  const gateState = (topics: string[]) => {
+    const { mastered, total } = topicMastery(course, topics, progress);
+    const need = Math.max(1, Math.ceil(total * GATE_MASTERY));
+    return { done: total > 0 && mastered >= need, mastered: Math.min(mastered, need), need };
   };
 
-  const gateSub = (topic: string | null) => {
-    const pool = topic ? practice.filter((q) => q.topic === topic) : practice;
-    const mastered = pool.filter((q) => progress.cards[q.id]?.mastered).length;
-    const need = Math.ceil(pool.length * GATE_MASTERY);
-    return `lock in ${Math.min(mastered, need)}/${need} cards`;
-  };
-
-  // group lessons by lecture (preserving order)
-  const groups: { lecture: string; items: Lesson[] }[] = [];
-  {
-    const idx = new Map<string, { lecture: string; items: Lesson[] }>();
-    for (const l of lessons) {
-      const key = l.lecture ?? "Lessons";
-      let g = idx.get(key);
-      if (!g) {
-        g = { lecture: key, items: [] };
-        idx.set(key, g);
-        groups.push(g);
-      }
-      g.items.push(l);
-    }
-  }
-
-  // strategy: one topic per lesson (topic-file courses like thermo/ESMM),
-  // else one gate per lecture when lecture names double as practice topics
-  // (the MA2 modules), else a single generic gate at the end.
-  const perLessonTopics = topics.length === lessons.length ? topics : null;
-  let lessonIndex = 0;
-  let usedLectureGates = false;
-
-  for (const g of groups) {
-    g.items.forEach((l, k) => {
-      nodes.push({
+  for (const s of sections) {
+    const sectionNodes: PathNode[] = [];
+    for (const l of s.lessons) {
+      sectionNodes.push({
         id: `lesson:${l.id}`,
         kind: "lesson",
         title: l.title,
-        sub: `${l.minutes} min lesson`,
+        sub: `${l.minutes} min`,
         to: `/c/${course.meta.id}/learn/${l.id}`,
         done: !!progress.lessons[l.id]?.completed,
-        header: k === 0 && groups.length > 1 ? g.lecture : undefined,
       });
-      if (perLessonTopics) {
-        const topic = perLessonTopics[lessonIndex];
-        const pool = practice.filter((q) => q.topic === topic);
-        if (pool.length > 0) {
-          nodes.push({
-            id: `gate:${topic}`,
-            kind: "gate",
-            title: topic,
-            sub: gateSub(topic),
-            to: `/c/${course.meta.id}/practice?topic=${encodeURIComponent(topic)}`,
-            done: gateDone(topic),
-          });
-        }
-      }
-      lessonIndex += 1;
-    });
-    if (!perLessonTopics && practice.some((q) => q.topic === g.lecture)) {
-      usedLectureGates = true;
-      nodes.push({
-        id: `gate:${g.lecture}`,
+    }
+    if (s.topics.length) {
+      const g = gateState(s.topics);
+      sectionNodes.push({
+        id: `gate:${s.title}`,
         kind: "gate",
-        title: `${g.lecture} — checkpoint`,
-        sub: gateSub(g.lecture),
-        to: `/c/${course.meta.id}/practice?topic=${encodeURIComponent(g.lecture)}`,
-        done: gateDone(g.lecture),
+        title: "Checkpoint",
+        sub: g.done ? "cleared" : `lock in ${g.mastered}/${g.need} cards`,
+        to:
+          s.topics.length === 1
+            ? `/c/${course.meta.id}/practice?topic=${encodeURIComponent(s.topics[0])}`
+            : `/c/${course.meta.id}/practice`,
+        done: g.done,
       });
+      if (multi) {
+        const grade = miniBossGrade(course.meta.id, s.title, game);
+        sectionNodes.push({
+          id: `mini:${s.title}`,
+          kind: "miniboss",
+          title: `${s.title} guardian`,
+          sub: grade ? `defeated · best ${grade === 31 ? "30L" : grade}` : "mini-boss fight",
+          to: `/c/${course.meta.id}/boss?mini=${encodeURIComponent(s.title)}`,
+          done: grade !== null,
+          badge: grade ? String(grade === 31 ? "30L" : grade) : undefined,
+        });
+      }
+    }
+    if (sectionNodes.length) {
+      const done = sectionNodes.filter((n) => n.done).length;
+      sectionNodes[0].banner = { title: s.title, done, total: sectionNodes.length };
+      nodes.push(...sectionNodes);
     }
   }
 
-  if (!perLessonTopics && !usedLectureGates && practice.length > 0) {
+  // generic gate when nothing produced topic gates
+  if (!nodes.some((n) => n.kind === "gate") && course.practice.length) {
+    const g = gateState([]);
     nodes.push({
       id: "gate:all",
       kind: "gate",
       title: "Grand checkpoint",
-      sub: gateSub(null),
+      sub: g.done ? "cleared" : `lock in ${g.mastered}/${g.need} cards`,
       to: `/c/${course.meta.id}/practice`,
-      done: gateDone(null),
+      done: g.done,
     });
   }
 
   const boss = bossFor(course.meta.id);
+  const bossBest = bestBossGrade(course.meta.id, game);
   nodes.push({
     id: "boss",
     kind: "boss",
     title: boss.name,
-    sub: bossDone ? "defeated — rematch for a better grade" : "the final exam awaits",
+    sub: bossBest
+      ? `defeated · best ${bossBest.grade === 31 ? "30 e lode" : bossBest.grade} — rematch?`
+      : "THE FINAL EXAM",
     to: `/c/${course.meta.id}/boss`,
-    done: bossDone,
+    done: bossBest !== null,
   });
 
   return nodes;
@@ -149,191 +125,316 @@ export function PathPage() {
   const { courseId = "" } = useParams();
   const course = getCourse(courseId);
   const progress = useCourseProgress(courseId);
-  useGame();
-  const bossDone = bestBossGrade(courseId) !== null;
+  const game = useGame();
 
   const nodes = useMemo(
-    () => (course ? buildPath(course, progress, bossDone) : []),
-    [course, progress, bossDone]
+    () => (course ? buildPath(course, progress, game) : []),
+    [course, progress, game]
   );
+
+  // returning from a won fight → celebrate the fallen guardian on the map
+  const [conquest, setConquest] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("polito:conquest");
+      if (!raw) return;
+      const data = JSON.parse(raw) as { courseId: string; section: string | null };
+      if (data.courseId !== courseId) return;
+      sessionStorage.removeItem("polito:conquest");
+      setConquest(
+        data.section ? `Guardian of ${data.section} has fallen!` : `${bossFor(courseId).name} has fallen!`
+      );
+      fireConfetti({ count: 160, originY: 0.3 });
+      const t = window.setTimeout(() => setConquest(null), 5000);
+      return () => window.clearTimeout(t);
+    } catch {
+      /* ignore */
+    }
+  }, [courseId]);
 
   if (!course) return <NotFound />;
   const { meta } = course;
   const due = dueCount(course.practice, progress);
 
-  // sequential unlock; the boss also unlocks once 80% of the road is done
   const doneCount = nodes.filter((n) => n.done).length;
   const firstNotDone = nodes.findIndex((n) => !n.done);
-  const unlockedUpTo = firstNotDone === -1 ? nodes.length - 1 : firstNotDone;
+  const currentIdx = firstNotDone === -1 ? nodes.length - 1 : firstNotDone;
   const isUnlocked = (i: number) =>
-    i <= unlockedUpTo ||
+    i <= currentIdx ||
     (nodes[i].kind === "boss" && doneCount / Math.max(1, nodes.length - 1) >= 0.8);
 
-  const AMP = 26; // serpentine amplitude, in % of width
-  const STEP = 108; // vertical distance between nodes, px
-  const x = (i: number) => 50 + AMP * Math.sin(i * 1.05);
-  const y = (i: number) => 60 + i * STEP;
-  const height = y(nodes.length - 1) + 90;
-
-  // svg path through the nodes (smooth quadratics through midpoints)
-  let d = `M ${x(0)} ${y(0)}`;
-  for (let i = 1; i < nodes.length; i++) {
-    const mx = (x(i - 1) + x(i)) / 2;
-    const my = (y(i - 1) + y(i)) / 2;
-    d += ` Q ${x(i - 1)} ${my - STEP / 4}, ${mx} ${my} T ${x(i)} ${y(i)}`;
+  /* geometry: gentle 3-lane weave, banners add extra vertical room */
+  const STEP = 128;
+  const BANNER_EXTRA = 86;
+  const ys: number[] = [];
+  {
+    let y = 40;
+    for (const n of nodes) {
+      if (n.banner) y += BANNER_EXTRA;
+      ys.push(y + 44);
+      y += STEP;
+    }
   }
+  const x = (i: number) => 50 + 27 * Math.sin(i * 0.95 + 0.4);
+  const height = ys[ys.length - 1] + 120;
 
   return (
     <CourseTheme accent={meta.accent} accent2={meta.accent2}>
-      <TopBar crumbs={[{ label: meta.short, to: `/c/${courseId}` }, { label: "Path" }]} />
-      <Page className="max-w-3xl">
-        <div className="mb-4">
+      <TopBar crumbs={[{ label: meta.short, to: `/c/${courseId}` }, { label: "Path" }]}>
+        <span className="hidden items-center gap-1 text-sm font-bold text-[var(--accent)] sm:flex">
+          <Icon name="Flag" size={15} />
+          {doneCount}/{nodes.length}
+        </span>
+      </TopBar>
+      <Page className="max-w-2xl">
+        {conquest && (
+          <div className="pointer-events-none fixed inset-x-0 top-20 z-[60] flex justify-center px-4">
+            <div
+              className="flex items-center gap-2.5 rounded-2xl px-5 py-3 text-sm font-black text-white shadow-2xl"
+              style={{
+                background: "linear-gradient(120deg,var(--accent),var(--accent-2))",
+                animation: "conquestDrop 0.5s cubic-bezier(0.2,1.4,0.4,1)",
+              }}
+            >
+              <Icon name="Trophy" size={18} className="text-[#ffd45e]" />
+              {conquest}
+            </div>
+          </div>
+        )}
+        <div className="mb-6">
           <CourseNav courseId={courseId} due={due} />
         </div>
 
-        <div className="mb-2 flex items-end justify-between">
-          <div>
-            <Kicker>Skill path</Kicker>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight">{meta.title}</h1>
-          </div>
-          <span className="text-sm font-semibold text-[var(--color-muted)]">
-            {doneCount}/{nodes.length} conquered
-          </span>
-        </div>
-        <p className="mb-6 text-sm text-[var(--color-muted)]">
-          Follow the road: read the lesson, pass its checkpoint, repeat — the boss guards the end.
-          Checkpoints open when the previous step is done.
-        </p>
-
         <div className="relative" style={{ height }}>
-          {/* the road */}
+          {/* road segments */}
           <svg
             viewBox={`0 0 100 ${height}`}
             preserveAspectRatio="none"
             className="absolute inset-0 h-full w-full"
           >
-            <path
-              d={d}
-              fill="none"
-              stroke="var(--color-line)"
-              strokeWidth={5}
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              strokeDasharray="0.1 9"
-            />
+            {nodes.slice(1).map((n, i) => {
+              const x1 = x(i);
+              const y1 = ys[i];
+              const x2 = x(i + 1);
+              const y2 = ys[i + 1];
+              const my = (y1 + y2) / 2;
+              const conquered = nodes[i].done && n.done;
+              const open = nodes[i].done;
+              return (
+                <path
+                  key={n.id}
+                  d={`M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`}
+                  fill="none"
+                  stroke={conquered ? "var(--accent)" : open ? "var(--accent-line)" : "var(--color-line)"}
+                  strokeWidth={conquered ? 10 : 9}
+                  strokeLinecap="round"
+                  vectorEffect="non-scaling-stroke"
+                  opacity={conquered ? 0.95 : 0.9}
+                />
+              );
+            })}
           </svg>
 
           {nodes.map((n, i) => {
             const unlocked = isUnlocked(i);
-            const isCurrent = i === unlockedUpTo && !n.done;
+            const current = i === currentIdx && !n.done;
             return (
               <div key={n.id}>
-                {n.header && (
+                {n.banner && (
                   <div
-                    className="absolute left-0 right-0 -translate-y-1/2 text-center"
-                    style={{ top: y(i) - STEP / 2 - 4 }}
+                    className="absolute left-0 right-0"
+                    style={{ top: ys[i] - 44 - BANNER_EXTRA }}
                   >
-                    <span className="rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-faint)]">
-                      {n.header}
-                    </span>
+                    <div
+                      className="flex items-center justify-between rounded-2xl px-5 py-3.5 text-white shadow-lg"
+                      style={{
+                        background: "linear-gradient(120deg, var(--accent), var(--accent-2))",
+                        boxShadow: "0 10px 24px -14px var(--accent)",
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Icon name="MapPinned" size={18} className="opacity-90" />
+                        <span className="text-sm font-extrabold uppercase tracking-wide">
+                          {n.banner.title}
+                        </span>
+                      </div>
+                      <span className="rounded-full bg-white/20 px-2.5 py-0.5 font-mono text-xs font-bold">
+                        {n.banner.done}/{n.banner.total}
+                      </span>
+                    </div>
                   </div>
                 )}
-                <PathNodeDot
-                  node={n}
-                  unlocked={unlocked}
-                  current={isCurrent}
-                  style={{ left: `${x(i)}%`, top: y(i) }}
-                  labelSide={x(i) > 50 ? "left" : "right"}
-                />
+                <NodeButton node={n} unlocked={unlocked} current={current} x={x(i)} y={ys[i]} />
               </div>
             );
           })}
         </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-[var(--color-faint)]">
+          <span className="flex items-center gap-1.5">
+            <Icon name="BookOpen" size={12} /> lesson
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Icon name="ShieldCheck" size={12} /> checkpoint
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Icon name="Ghost" size={12} /> mini-boss
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Icon name="Swords" size={12} /> final boss
+          </span>
+        </div>
       </Page>
 
-      <style>{`@keyframes pathPulse { 0%,100% { box-shadow: 0 0 0 0 var(--accent-soft), 0 0 0 6px var(--accent-soft); } 50% { box-shadow: 0 0 0 6px var(--accent-soft), 0 0 0 14px transparent; } }`}</style>
+      <style>{`
+        @keyframes pathStart { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -7px); } }
+        @keyframes pathHalo { 0%,100% { box-shadow: 0 0 0 0 var(--accent-soft), 0 0 0 10px var(--accent-soft); } 50% { box-shadow: 0 0 0 10px var(--accent-soft), 0 0 0 22px transparent; } }
+        @keyframes miniFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes conquestDrop { 0% { opacity: 0; transform: translateY(-24px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+      `}</style>
     </CourseTheme>
   );
 }
 
-function PathNodeDot({
+/* --------------------------- node button --------------------------- */
+
+const NODE_ICON: Record<PathNode["kind"], string> = {
+  lesson: "BookOpen",
+  gate: "ShieldCheck",
+  miniboss: "Ghost",
+  boss: "Swords",
+};
+
+function NodeButton({
   node,
   unlocked,
   current,
-  style,
-  labelSide,
+  x,
+  y,
 }: {
   node: PathNode;
   unlocked: boolean;
   current: boolean;
-  style: React.CSSProperties;
-  labelSide: "left" | "right";
+  x: number;
+  y: number;
 }) {
-  const size = node.kind === "boss" ? 76 : node.kind === "gate" ? 60 : 56;
-  const icon =
-    node.kind === "boss" ? (node.done ? "Trophy" : "Swords") : node.kind === "gate" ? "ShieldCheck" : "BookOpen";
+  const size = node.kind === "boss" ? 92 : node.kind === "miniboss" ? 76 : 66;
+  // locked nodes keep their kind icon (grayed) — a wall of padlocks reads
+  // as noise; gray + no link already says "locked"
+  const iconName = node.done
+    ? node.kind === "boss" || node.kind === "miniboss"
+      ? "Trophy"
+      : "Check"
+    : NODE_ICON[node.kind];
 
-  const dot = (
+  const villain = node.kind === "miniboss" || node.kind === "boss";
+  // pressable 3-D face: solid shadow "edge" below the disc
+  const face = node.done
+    ? "linear-gradient(180deg, var(--accent), var(--accent-2))"
+    : unlocked
+    ? villain
+      ? "linear-gradient(180deg, #2b2f45, #171a2c)"
+      : "var(--color-surface)"
+    : "var(--color-bg)";
+  const edgeColor = node.done
+    ? "color-mix(in oklab, var(--accent-2) 60%, #000)"
+    : unlocked
+    ? villain
+      ? "#0b0d18"
+      : "color-mix(in oklab, var(--color-line) 70%, #000 12%)"
+    : "var(--color-line)";
+  const iconColor = node.done
+    ? "#fff"
+    : unlocked
+    ? villain
+      ? "#ff8f8f"
+      : "var(--accent)"
+    : "var(--color-faint)";
+
+  const disc = (
     <span
-      className={cn(
-        "grid shrink-0 place-items-center rounded-full border-4 transition",
-        current && "animate-[pathPulse_2s_ease-in-out_infinite]"
-      )}
+      className={cn("relative grid place-items-center rounded-full transition-transform", current && "animate-[pathHalo_2.2s_ease-in-out_infinite]", villain && unlocked && !node.done && "animate-[miniFloat_2.6s_ease-in-out_infinite]")}
       style={{
         width: size,
         height: size,
-        borderColor: node.done
-          ? "var(--accent)"
-          : unlocked
-          ? "var(--accent-line)"
-          : "var(--color-line)",
-        background: node.done
-          ? "linear-gradient(180deg,var(--accent),var(--accent-2))"
-          : unlocked
-          ? "var(--color-surface)"
-          : "var(--color-bg)",
-        color: node.done ? "#fff" : unlocked ? "var(--accent)" : "var(--color-faint)",
+        background: face,
+        border: `3px solid ${node.done ? "transparent" : unlocked ? "var(--accent-line)" : "var(--color-line)"}`,
+        boxShadow: `0 6px 0 ${edgeColor}`,
+        color: iconColor,
       }}
     >
-      <Icon name={node.done && node.kind !== "boss" ? "Check" : unlocked ? icon : "Lock"} size={size * 0.42} />
+      <Icon name={iconName} size={size * 0.42} />
+      {node.done && (
+        <span className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-[#ffd45e] text-[#6b4a00] shadow">
+          <Icon name="Star" size={13} />
+        </span>
+      )}
+      {node.badge && !node.done && (
+        <span className="absolute -right-1 -top-1 rounded-full bg-[var(--warn)] px-1.5 text-[10px] font-black text-white">
+          {node.badge}
+        </span>
+      )}
     </span>
   );
 
   const label = (
-    <span
-      className={cn(
-        "max-w-[160px] text-xs leading-snug sm:max-w-[220px]",
-        labelSide === "left" ? "text-right" : "text-left"
+    <span className="mt-2 block w-44 text-center leading-tight">
+      <span
+        className={cn(
+          "block text-[13px] font-extrabold",
+          !unlocked && "text-[var(--color-faint)]",
+          node.kind === "boss" && unlocked && "text-[15px] uppercase tracking-wide"
+        )}
+        style={node.done ? { color: "var(--accent)" } : undefined}
+      >
+        {node.title}
+      </span>
+      {node.sub && (
+        <span className="block text-[11px] font-medium text-[var(--color-faint)]">{node.sub}</span>
       )}
-    >
-      <span className={cn("block font-bold", !unlocked && "text-[var(--color-faint)]")}>{node.title}</span>
-      {node.sub && <span className="block text-[10px] text-[var(--color-faint)]">{node.sub}</span>}
     </span>
   );
 
-  const content = (
-    <div className={cn("flex items-center gap-3", labelSide === "left" && "flex-row-reverse")}>
-      {dot}
+  const body = (
+    <div className="flex flex-col items-center">
+      {current && (
+        <span
+          className="absolute -top-9 left-1/2 z-10 animate-[pathStart_1.4s_ease-in-out_infinite] rounded-xl px-3 py-1 text-xs font-black uppercase tracking-wider text-white shadow-lg"
+          style={{ background: "var(--accent)" }}
+        >
+          Start
+          <span
+            className="absolute left-1/2 top-full -ml-1.5 border-8 border-transparent"
+            style={{ borderTopColor: "var(--accent)", borderBottomWidth: 0 }}
+          />
+        </span>
+      )}
+      {disc}
       {label}
     </div>
   );
 
-  const positioning: React.CSSProperties = {
-    ...style,
+  const pos: React.CSSProperties = {
     position: "absolute",
-    transform: "translate(-50%, -50%)",
+    left: `${x}%`,
+    top: y,
+    transform: "translate(-50%, -44px)",
   };
 
   if (!unlocked) {
     return (
-      <div style={positioning} title="Complete the previous step to unlock">
-        {content}
+      <div style={pos} className="select-none" title="Finish the previous step to unlock">
+        {body}
       </div>
     );
   }
   return (
-    <Link to={node.to} style={positioning} className="group">
-      {content}
+    <Link
+      to={node.to}
+      style={pos}
+      className="group select-none [&>div>span:first-of-type]:hover:brightness-105 active:[&_span]:translate-y-0.5"
+    >
+      {body}
     </Link>
   );
 }

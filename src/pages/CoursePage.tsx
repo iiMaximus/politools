@@ -177,7 +177,14 @@ export function CoursePage() {
             <Icon name="Target" size={20} style={{ color: "var(--accent)" }} />
             <h2 className="text-xl font-bold tracking-tight">Drill &amp; test</h2>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ActionCard
+              to={`/c/${courseId}/boss`}
+              icon="Swords"
+              title="Boss fight"
+              desc="Face the exam as a 3-D boss. Correct answers deal damage; wins are graded 18–30L."
+              footer="Full-screen arena"
+            />
             <ActionCard
               to={`/c/${courseId}/scroll`}
               icon="Sparkles"
