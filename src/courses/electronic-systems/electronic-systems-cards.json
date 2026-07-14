@@ -353,9 +353,9 @@
         "content": "10kHz"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 02test30Jan2021-solution.pdf, question 3 selects **B**. A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit.",
+    "correct": "C",
+    "explanation": "A first-order attenuation of 20 dB/dec needs two decades above the 100 Hz corner to reach 40 dB, so the relevant stop-band edge is 10 kHz. Nyquist then requires a sampling frequency of at least 2 × 10 kHz = 20 kHz, making C correct. D is only the stop-band edge, while A and B oversample by unnecessary factors of ten and five.",
+    "theory": "For an anti-alias filter with slope M dB/dec, the frequency ratio needed for attenuation A is 10^(A/M). The sampling frequency must then be at least twice that attenuated band edge.",
     "source": "02test30Jan2021-solution.pdf, question 3",
     "tags": [
       "data conversion",
@@ -386,9 +386,9 @@
         "content": "infinite input resistance and zero output resistance"
       }
     ],
-    "correct": "A",
-    "explanation": "The circled solution in 02test30Jan2021-solution.pdf, question 4 selects **A**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is the one consistent with that rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "B",
+    "explanation": "A transresistance amplifier senses input current and produces output voltage. Its ideal input is a short circuit so all source current enters the amplifier, and its ideal output is a voltage source with zero output resistance; therefore B is correct. A and C incorrectly use an infinite output resistance, while C and D also use an infinite input resistance.",
+    "theory": "Match ideal port resistance to the port variable: a current input uses zero input resistance, a voltage input uses infinite input resistance, a current output uses infinite output resistance, and a voltage output uses zero output resistance.",
     "source": "02test30Jan2021-solution.pdf, question 4",
     "tags": [
       "operational amplifiers",
@@ -419,8 +419,8 @@
         "content": "both the nMOS and pMOS are ON"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 02test30Jan2021-solution.pdf, question 5 selects **C**. Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
+    "correct": "A",
+    "explanation": "A LOW CMOS-inverter output is produced when the nMOS pull-down is ON and the pMOS pull-up is OFF, so A is correct. B describes the HIGH state. C would leave the output floating, and D would create a direct VDD-to-ground path rather than a stable logic state.",
     "theory": "Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level.",
     "source": "02test30Jan2021-solution.pdf, question 5",
     "tags": [
@@ -452,9 +452,9 @@
         "content": "none of the above"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 02test30Jan2021-solution.pdf, question 6 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "C",
+    "explanation": "Port 1 drives the non-inverting input through R3, and an ideal op-amp draws no input current. The only input-current path is therefore through R3 and then R4 to ground, so the resistance seen at port 1 is R3 + R4: option C. R3 alone ignores the series return through R4, while the port is not open-circuit because the divider provides a path to ground.",
+    "theory": "An ideal op-amp input draws zero current. To find the resistance seen by a source, trace the remaining passive current path; here R3 and R4 carry the same input current and are in series.",
     "source": "02test30Jan2021-solution.pdf, question 6",
     "tags": [
       "operational amplifiers",
@@ -485,9 +485,9 @@
         "content": "-4.01"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 02test30Jan2021-solution.pdf, question 7 selects **C**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "B",
+    "explanation": "With v+ = 0 and vo = -Ad·v-, KCL at the inverting node gives 4(v- - vi) + 4v- + (v- - vo) = 0 after multiplying by 200 Ω. Substituting Ad = 100 yields 109v- = 4vi and vo/vi = -400/109 = -3.67, so B is correct. The other values result from omitting the finite-gain correction or a branch in the node equation.",
+    "theory": "For a finite-gain op-amp, do not impose v+ = v-. Use vo = Ad(v+ - v-) together with KCL; the virtual-short approximation is only the Ad → ∞ limit.",
     "source": "02test30Jan2021-solution.pdf, question 7",
     "tags": [
       "operational amplifiers",
@@ -551,8 +551,8 @@
         "content": "Problems may arise when the output is low and the load is connected to the supply voltage"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 03test18Feb2021-solution.pdf, question 1 selects **C**. Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
+    "correct": "D",
+    "explanation": "In an nMOS R/SW inverter, a LOW output is produced by the nMOS conducting to ground. A load connected to VDD then sources additional current into that pull-down path and can raise the LOW level or exceed the gate's sink capability, so D is correct. Loads tied to the same rail as the present output state do not create that conflict, and a supply voltage is essential to the inverter.",
     "theory": "Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level.",
     "source": "03test18Feb2021-solution.pdf, question 1",
     "tags": [
@@ -617,8 +617,8 @@
         "content": "Problems may arise when the output is low and the load is connected to the supply voltage"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 04test30Jun2021-solution.pdf, question 1 selects **C**. Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
+    "correct": "D",
+    "explanation": "In an nMOS R/SW inverter, a LOW output is produced by the nMOS conducting to ground. A load connected to VDD then sources additional current into that pull-down path and can raise the LOW level or exceed the gate's sink capability, so D is correct. Loads tied to the same rail as the present output state do not create that conflict, and a supply voltage is essential to the inverter.",
     "theory": "Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level.",
     "source": "04test30Jun2021-solution.pdf, question 1",
     "tags": [
@@ -881,9 +881,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 08test17Feb2022-solution.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "A transconductance amplifier converts an input voltage into an output current. Its ideal voltage input has infinite resistance so it does not load the source, and its ideal current output has infinite resistance so the delivered current is load-independent; therefore A is correct. B models a voltage output, while C and D incorrectly short the voltage input.",
+    "theory": "A transconductance amplifier is a voltage-controlled current source: ideal Rin = ∞ and Rout = ∞.",
     "source": "08test17Feb2022-solution.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -895,7 +895,7 @@
     "module": "Past exams",
     "topic": "Digital logic and registers",
     "difficulty": "medium",
-    "prompt": "Counter In a counter",
+    "prompt": "Counter In an asynchronous ripple counter",
     "options": [
       {
         "id": "A",
@@ -1027,19 +1027,19 @@
     "options": [
       {
         "id": "A",
-        "content": "NMH = VOH VIH, NML = VIL VOL"
+        "content": "NMH = VOH - VIH, NML = VIL - VOL"
       },
       {
         "id": "B",
-        "content": "NMH = VIH VOH, NML = VIL VOL"
+        "content": "NMH = VIH - VOH, NML = VIL - VOL"
       },
       {
         "id": "C",
-        "content": "NMH = VIH VOH, NML = VOL VIL"
+        "content": "NMH = VIH - VOH, NML = VOL - VIL"
       },
       {
         "id": "D",
-        "content": "NMH = VOH VIH, NML = VOL VIL"
+        "content": "NMH = VOH - VIH, NML = VOL - VIL"
       }
     ],
     "correct": "A",
@@ -1075,9 +1075,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 11test14Jul2022-solution.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "A transconductance amplifier converts an input voltage into an output current. Its ideal voltage input has infinite resistance so it does not load the source, and its ideal current output has infinite resistance so the delivered current is load-independent; therefore A is correct. B models a voltage output, while C and D incorrectly short the voltage input.",
+    "theory": "A transconductance amplifier is a voltage-controlled current source: ideal Rin = ∞ and Rout = ∞.",
     "source": "11test14Jul2022-solution.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -1273,9 +1273,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 14test19Jan2023-solution.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "A transconductance amplifier converts an input voltage into an output current. Its ideal voltage input has infinite resistance so it does not load the source, and its ideal current output has infinite resistance so the delivered current is load-independent; therefore A is correct. B models a voltage output, while C and D incorrectly short the voltage input.",
+    "theory": "A transconductance amplifier is a voltage-controlled current source: ideal Rin = ∞ and Rout = ∞.",
     "source": "14test19Jan2023-solution.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -1401,9 +1401,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 16test06Jun2023-solution.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "C",
+    "explanation": "An ideal current amplifier senses current without developing an input voltage, so its input resistance is zero. It delivers an output current independent of load voltage, so its output resistance is infinite. C is therefore correct; A and B use the wrong input resistance, while B and D use the wrong output resistance.",
+    "theory": "An ideal current amplifier is a current-controlled current source: ideal Rin = 0 and Rout = ∞.",
     "source": "16test06Jun2023-solution.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -1434,9 +1434,9 @@
         "content": "the physical distance between the output pins of a digital port"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 16test06Jun2023-solution.pdf, question 2 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "Fan-out is the maximum number of standard logic inputs that one gate output can drive while still guaranteeing valid logic levels, so A is correct. B describes noise variation, C describes level uncertainty, and D is a package-layout dimension unrelated to electrical loading.",
+    "theory": "Fan-out is limited by the output gate's source/sink capability and the input-current requirements of the driven gates.",
     "source": "16test06Jun2023-solution.pdf, question 2",
     "tags": [
       "operational amplifiers",
@@ -1467,9 +1467,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 17test08Jun2023a-solution.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "A transconductance amplifier converts an input voltage into an output current. Its ideal voltage input has infinite resistance so it does not load the source, and its ideal current output has infinite resistance so the delivered current is load-independent; therefore A is correct. B models a voltage output, while C and D incorrectly short the voltage input.",
+    "theory": "A transconductance amplifier is a voltage-controlled current source: ideal Rin = ∞ and Rout = ∞.",
     "source": "17test08Jun2023a-solution.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -1580,11 +1580,11 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "D/A converter A simple digital to analog converter can be implemented using a weighted series of resistors and a operational amplifier configured in which of the following modes?",
+    "prompt": "D/A converter A simple digital-to-analog converter can be implemented using a weighted series of resistors and an operational amplifier configured in which of the following modes?",
     "options": [
       {
         "id": "A",
-        "content": "Diferentiator circuit"
+        "content": "Differentiator circuit"
       },
       {
         "id": "B",
@@ -1962,9 +1962,9 @@
         "content": "the common mode gain expressed in dB"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 23test10Jun2024-solution.pdf, question 2 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "CMRR is defined as the magnitude ratio of differential gain to common-mode gain, |Ad/Ac|, so A is correct. In decibels it is 20 log10|Ad/Ac|. B omits Ad and is only equivalent under the unstated special case Ad = 1; C reverses the ratio, and D is merely the common-mode gain.",
+    "theory": "A high CMRR means the amplifier strongly amplifies differential signals while rejecting signals common to both inputs.",
     "source": "23test10Jun2024-solution.pdf, question 2",
     "tags": [
       "operational amplifiers",
@@ -2178,7 +2178,7 @@
       },
       {
         "id": "B",
-        "content": "the nMOS is approximately an open circuit between source and drain (cut-of region)"
+        "content": "the nMOS is approximately an open circuit between source and drain (cutoff region)"
       },
       {
         "id": "C",
@@ -2222,9 +2222,9 @@
         "content": "sample and hold, conditioning amplifier, anti-aliasing filter, A/D converter"
       }
     ],
-    "correct": "A",
-    "explanation": "The circled solution in 26test04Jul2024-solution.pdf, question 2 selects **A**. A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit. Option A is the one consistent with that rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit.",
+    "correct": "B",
+    "explanation": "The conditioning amplifier first scales and offsets the sensor signal. The anti-aliasing filter then limits the bandwidth of that conditioned signal before the sample-and-hold captures it, and the A/D converter finally quantizes it; therefore B is correct. A places filtering before conditioning, C filters after conversion, and D samples before the analog front end is complete.",
+    "theory": "The standard acquisition chain is conditioning amplifier → anti-aliasing filter → sample-and-hold → A/D converter.",
     "source": "26test04Jul2024-solution.pdf, question 2",
     "tags": [
       "data conversion",
@@ -2252,7 +2252,7 @@
       },
       {
         "id": "D",
-        "content": "the pMOS is in the cut-of region"
+        "content": "the pMOS is in the cutoff region"
       }
     ],
     "correct": "B",
@@ -2269,7 +2269,7 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "-channel acquisition front-end In the implementation of a -channel acquisition front-end,",
+    "prompt": "N-channel acquisition front-end In the implementation of an N-channel acquisition front-end,",
     "options": [
       {
         "id": "A",
@@ -2321,9 +2321,9 @@
         "content": "the minimum time interval after the active clock transition in which input signals are not allowed to change"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 28test06Sep2024-solution.pdf, question 1 selects **C**. Sequential logic stores state; combinational logic does not. Flip-flops are bistable memory elements, registers group flip-flops, and a full-adder sum bit is the odd-parity XOR of A, B and carry-in. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Sequential logic stores state; combinational logic does not. Flip-flops are bistable memory elements, registers group flip-flops, and a full-adder sum bit is the odd-parity XOR of A, B and carry-in.",
+    "correct": "D",
+    "explanation": "Hold time is the minimum interval after the active clock edge during which the data input must remain stable, so D is correct. B defines setup time, C is propagation delay, and A is unrelated reset timing.",
+    "theory": "Setup time is measured before the active edge; hold time is measured after it; clock-to-output propagation delay is a separate parameter.",
     "source": "28test06Sep2024-solution.pdf, question 1",
     "tags": [
       "digital logic",
@@ -2434,7 +2434,7 @@
     "options": [
       {
         "id": "A",
-        "content": "VDS < VGS VTH"
+        "content": "VDS < VGS - VTH"
       },
       {
         "id": "B",
@@ -2442,7 +2442,7 @@
       },
       {
         "id": "C",
-        "content": "VDS > VGS VTH"
+        "content": "VDS > VGS - VTH"
       },
       {
         "id": "D",
@@ -2548,9 +2548,9 @@
         "content": "sample and hold, conditioning amplifier, anti-aliasing filter, A/D converter"
       }
     ],
-    "correct": "A",
-    "explanation": "The circled solution in 31test28May2025-solution.pdf, question 2 selects **A**. A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit. Option A is the one consistent with that rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit.",
+    "correct": "B",
+    "explanation": "The conditioning amplifier first scales and offsets the sensor signal. The anti-aliasing filter then limits the bandwidth of that conditioned signal before the sample-and-hold captures it, and the A/D converter finally quantizes it; therefore B is correct. A places filtering before conditioning, C filters after conversion, and D samples before the analog front end is complete.",
+    "theory": "The standard acquisition chain is conditioning amplifier → anti-aliasing filter → sample-and-hold → A/D converter.",
     "source": "31test28May2025-solution.pdf, question 2",
     "tags": [
       "data conversion",
@@ -2614,9 +2614,9 @@
         "content": "NAND"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 32test03Jun2025-solution.pdf, question 2 selects **B**. Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level.",
+    "correct": "A",
+    "explanation": "An AND gate is TRUE if and only if both inputs are TRUE, so A is correct. NOR is TRUE only when both inputs are FALSE, XOR is TRUE when the inputs differ, and NAND is the complement of AND.",
+    "theory": "For two inputs, AND implements A·B, NAND implements its complement, XOR detects unequal inputs, and NOR is the complement of OR.",
     "source": "32test03Jun2025-solution.pdf, question 2",
     "tags": [
       "logic families",
@@ -2647,9 +2647,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 33test05Jun2025a-solution.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "A transconductance amplifier converts an input voltage into an output current. Its ideal voltage input has infinite resistance so it does not load the source, and its ideal current output has infinite resistance so the delivered current is load-independent; therefore A is correct. B models a voltage output, while C and D incorrectly short the voltage input.",
+    "theory": "A transconductance amplifier is a voltage-controlled current source: ideal Rin = ∞ and Rout = ∞.",
     "source": "33test05Jun2025a-solution.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -3039,9 +3039,9 @@
         "content": "zero input and output resistance"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 37test14Jan2026-recorded.pdf, question 1 selects **B**. Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Ideal amplifier models are defined by their input and output resistances, while real OA questions add finite gain, offset, bias current, loading and feedback effects. Always identify the source variable and the quantity the output source controls.",
+    "correct": "A",
+    "explanation": "A transconductance amplifier converts an input voltage into an output current. Its ideal voltage input has infinite resistance so it does not load the source, and its ideal current output has infinite resistance so the delivered current is load-independent; therefore A is correct. B models a voltage output, while C and D incorrectly short the voltage input.",
+    "theory": "A transconductance amplifier is a voltage-controlled current source: ideal Rin = ∞ and Rout = ∞.",
     "source": "37test14Jan2026-recorded.pdf, question 1",
     "tags": [
       "operational amplifiers",
@@ -3082,28 +3082,28 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "Quantization error bound For a uniform N-bit A/D converter with input swing S, the quantization error satisfies:",
+    "prompt": "Quantization error bound For a uniform N-bit A/D converter with input swing S, the magnitude of the quantization error satisfies:",
     "options": [
       {
         "id": "A",
-        "content": "✏Q < S/2"
+        "content": "|εQ| < S/2"
       },
       {
         "id": "B",
-        "content": "✏Q < S/2N+1"
+        "content": "|εQ| < S/2^(N+1)"
       },
       {
         "id": "C",
-        "content": "✏Q < 2N S"
+        "content": "|εQ| < 2^N S"
       },
       {
         "id": "D",
-        "content": "✏Q < S/2N"
+        "content": "|εQ| < S/(2N)"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 38test20May2026-solution.pdf, question 1 selects **C**. A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit.",
+    "correct": "B",
+    "explanation": "A uniform N-bit converter divides the input swing into 2^N intervals, so one LSB is Δ = S/2^N. Rounding to the nearest code produces at most half an LSB of error: |εQ| < Δ/2 = S/2^(N+1), making B correct. A ignores resolution, while C grows with N and D divides by 2N instead of 2^(N+1).",
+    "theory": "For an ideal uniform N-bit ADC, Δ = S/2^N and the rounding quantization-error magnitude is bounded by Δ/2.",
     "source": "38test20May2026-solution.pdf, question 1",
     "tags": [
       "data conversion",
@@ -3134,9 +3134,9 @@
         "content": "a current generator between drain and source"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 38test20May2026-solution.pdf, question 2 selects **B**. Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level.",
+    "correct": "A",
+    "explanation": "In the nMOS switch model, the ON state creates a conducting drain-source channel represented by a finite resistance, so A is correct. B is the OFF-state model, C places resistance at the insulated gate, and D is not the basic switch approximation.",
+    "theory": "An nMOS used as a switch is approximated by an open drain-source circuit when OFF and a small drain-source resistance RON when ON.",
     "source": "38test20May2026-solution.pdf, question 2",
     "tags": [
       "logic families",
@@ -3167,9 +3167,9 @@
         "content": "fs < 2B"
       }
     ],
-    "correct": "B",
-    "explanation": "The circled solution in 39test21May2026-solution.pdf, question 1 selects **B**. A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is the one consistent with that rule. Option C is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "A conditioning amplifier maps the sensor swing onto the ADC input swing to minimize quantization error. Sampling questions combine the anti-alias filter attenuation requirement with the Nyquist limit.",
+    "correct": "A",
+    "explanation": "For a baseband signal whose highest frequency is B, the sampling theorem requires fs > 2B (or at least 2B in the ideal limiting case), so A is correct. B and C are below the Nyquist rate, and D explicitly permits rates that can be below 2B and therefore alias.",
+    "theory": "Sampling above twice the highest signal frequency prevents shifted spectral replicas from overlapping in the ideal band-limited case.",
     "source": "39test21May2026-solution.pdf, question 1",
     "tags": [
       "data conversion",
@@ -3233,9 +3233,9 @@
         "content": "VIH,VIL"
       }
     ],
-    "correct": "C",
-    "explanation": "The circled solution in 40test27May2026-solution.pdf, question 1 selects **C**. Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level. Option A is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option B is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule. Option C is the one consistent with that rule. Option D is a distractor: it swaps a state/inequality/model assumption or omits the loading, offset or mapping condition required by the rule.",
-    "theory": "Logic compatibility and inverter behavior are checked from guaranteed voltage levels and the conducting pull-up/pull-down path. In CMOS, one transistor network conducts in each stable output state; in R/SW logic the load can disturb the intended level.",
+    "correct": "B",
+    "explanation": "VOH is the guaranteed minimum HIGH output voltage and VOL is the guaranteed maximum LOW output voltage, so B is correct. VIH and VIL are input thresholds, VIMIN/VIMAX are not the standard output-level pair, and VTR/VDD mixes a transition parameter with the supply.",
+    "theory": "Digital compatibility compares output guarantees VOH and VOL with receiver input requirements VIH and VIL; the differences define the noise margins.",
     "source": "40test27May2026-solution.pdf, question 1",
     "tags": [
       "logic families",
@@ -3445,7 +3445,7 @@
     "module": "Past exams",
     "topic": "Logic families and inverters",
     "difficulty": "medium",
-    "prompt": "In an R/SW inverter implemented with an NMOS transistor and a pull-up resistor, if RON ↑ RPU, then typically:",
+    "prompt": "In an R/SW inverter implemented with an NMOS transistor and a pull-up resistor, if RON ≪ RPU, then typically:",
     "options": [
       {
         "id": "A",
