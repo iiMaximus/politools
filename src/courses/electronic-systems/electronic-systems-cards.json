@@ -2203,7 +2203,7 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "Acquisition front-end In an acquisition front-end, the correct sequence is (from input analog signal to output digital signal)",
+    "prompt": "Acquisition front-end In the single-channel acquisition-front-end architecture used by this course, the correct sequence is (from input analog signal to output digital signal)",
     "options": [
       {
         "id": "A",
@@ -2222,9 +2222,9 @@
         "content": "sample and hold, conditioning amplifier, anti-aliasing filter, A/D converter"
       }
     ],
-    "correct": "B",
-    "explanation": "The conditioning amplifier first scales and offsets the sensor signal. The anti-aliasing filter then limits the bandwidth of that conditioned signal before the sample-and-hold captures it, and the A/D converter finally quantizes it; therefore B is correct. A places filtering before conditioning, C filters after conversion, and D samples before the analog front end is complete.",
-    "theory": "The standard acquisition chain is conditioning amplifier → anti-aliasing filter → sample-and-hold → A/D converter.",
+    "correct": "A",
+    "explanation": "The course's stated single-channel architecture is anti-aliasing filter → conditioning amplifier → sample-and-hold → A/D converter, so A is the intended exam answer. The anti-aliasing filter must be before sampling and conversion; C and D violate that requirement. Real converter designs can also put a gain or driver stage before the anti-aliasing filter, so B is a valid implementation in other architectures, but it is not the ordering keyed in this course.",
+    "theory": "The non-negotiable rule is that analog anti-alias filtering occurs before the sample-and-hold/ADC. The relative order of filtering and amplification is architecture-dependent; for these course questions, use filter → conditioning amplifier → sample-and-hold → ADC.",
     "source": "26test04Jul2024-solution.pdf, question 2",
     "tags": [
       "data conversion",
@@ -2529,7 +2529,7 @@
     "module": "Past exams",
     "topic": "Data conversion and conditioning",
     "difficulty": "medium",
-    "prompt": "In an acquisition front-end, the correct sequence is (from input analog signal to output digital signal)",
+    "prompt": "In the single-channel acquisition-front-end architecture used by this course, the correct sequence is (from input analog signal to output digital signal)",
     "options": [
       {
         "id": "A",
@@ -2548,9 +2548,9 @@
         "content": "sample and hold, conditioning amplifier, anti-aliasing filter, A/D converter"
       }
     ],
-    "correct": "B",
-    "explanation": "The conditioning amplifier first scales and offsets the sensor signal. The anti-aliasing filter then limits the bandwidth of that conditioned signal before the sample-and-hold captures it, and the A/D converter finally quantizes it; therefore B is correct. A places filtering before conditioning, C filters after conversion, and D samples before the analog front end is complete.",
-    "theory": "The standard acquisition chain is conditioning amplifier → anti-aliasing filter → sample-and-hold → A/D converter.",
+    "correct": "A",
+    "explanation": "The course's stated single-channel architecture is anti-aliasing filter → conditioning amplifier → sample-and-hold → A/D converter, so A is the intended exam answer. The anti-aliasing filter must be before sampling and conversion; C and D violate that requirement. Real converter designs can also put a gain or driver stage before the anti-aliasing filter, so B is a valid implementation in other architectures, but it is not the ordering keyed in this course.",
+    "theory": "The non-negotiable rule is that analog anti-alias filtering occurs before the sample-and-hold/ADC. The relative order of filtering and amplification is architecture-dependent; for these course questions, use filter → conditioning amplifier → sample-and-hold → ADC.",
     "source": "31test28May2025-solution.pdf, question 2",
     "tags": [
       "data conversion",
