@@ -137,13 +137,13 @@ export function HubPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <Kicker>Today</Kicker>
-                <h2 className="mt-0.5 text-xl font-bold tracking-tight">
+                <h2 className="pixel-font mt-0.5 text-3xl uppercase leading-none tracking-wide">
                   {totalDue > 0 ? (
                     <>
                       <span style={{ color: "var(--warn)" }}>{totalDue}</span> reviews waiting
                     </>
                   ) : (
-                    "All clear — build something new"
+                    "All clear — new stage?"
                   )}
                 </h2>
               </div>
@@ -152,8 +152,10 @@ export function HubPage() {
                 className="btn btn-primary !px-5"
                 title="~20 cards interleaved across your focus courses"
               >
-                <Icon name="Shuffle" size={18} />
-                {totalDue > 0 ? `Clear ${Math.min(totalDue, 20)} now` : "Daily Mix"}
+                <span className="arcade-blink">▶</span>
+                <span className="pixel-font text-xl uppercase leading-none">
+                  {totalDue > 0 ? `Clear ${Math.min(totalDue, 20)} now` : "Press start"}
+                </span>
               </Link>
             </div>
             <div className="mt-4 flex-1">
@@ -178,7 +180,9 @@ export function HubPage() {
           <div className="mb-5 flex items-end justify-between">
             <div>
               <Kicker>This season</Kicker>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight">Your battles</h2>
+              <h2 className="pixel-font mt-1 text-4xl uppercase leading-none tracking-wide">
+                Choose your battle
+              </h2>
             </div>
             <button
               onClick={() => setShowSettings(true)}
@@ -207,8 +211,8 @@ export function HubPage() {
         {/* ============ other courses ============ */}
         {otherEntries.length > 0 && (
           <section className="mt-12">
-            <Kicker>World map</Kicker>
-            <h2 className="mt-1 mb-5 text-2xl font-bold tracking-tight">Other lands</h2>
+            <Kicker>Stage select</Kicker>
+            <h2 className="pixel-font mt-1 mb-5 text-4xl uppercase leading-none tracking-wide">World map</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {otherEntries.map((entry) =>
                 entry.kind === "course" ? (
@@ -224,8 +228,8 @@ export function HubPage() {
         {/* ============ trophy shelf ============ */}
         {passedCourses.length > 0 && (
           <section className="mt-12">
-            <Kicker>Trophy shelf</Kicker>
-            <h2 className="mt-1 mb-5 text-2xl font-bold tracking-tight">Conquered</h2>
+            <Kicker>Victory road</Kicker>
+            <h2 className="pixel-font mt-1 mb-5 text-4xl uppercase leading-none tracking-wide">Conquered</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {passedCourses.map((c) => (
                 <CourseTheme key={c.meta.id} accent={c.meta.accent} accent2={c.meta.accent2}>
@@ -249,7 +253,7 @@ export function HubPage() {
           <div className="mb-5 flex items-end justify-between">
             <div>
               <Kicker>Achievements</Kicker>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight">Hall of fame</h2>
+              <h2 className="pixel-font mt-1 text-4xl uppercase leading-none tracking-wide">Hall of fame</h2>
             </div>
             <span className="text-sm text-[var(--color-faint)]">
               {Object.keys(game.achievements).length}/{ACHIEVEMENTS.length} unlocked
@@ -261,23 +265,18 @@ export function HubPage() {
               return (
                 <div
                   key={a.id}
-                  className="surface flex flex-col items-center p-3.5 text-center"
-                  style={unlocked ? { borderColor: "var(--accent-line)" } : { opacity: 0.55 }}
+                  className="mc-panel flex flex-col items-center p-3 text-center"
+                  style={unlocked ? undefined : { opacity: 0.65 }}
                   title={a.desc}
                 >
                   <span
-                    className="mb-2 grid h-10 w-10 place-items-center rounded-xl"
-                    style={{
-                      background: unlocked
-                        ? "linear-gradient(180deg,var(--accent),var(--accent-2))"
-                        : "var(--color-bg)",
-                      color: unlocked ? "#fff" : "var(--color-faint)",
-                    }}
+                    className="mc-slot mb-2 grid h-12 w-12 place-items-center"
+                    style={{ color: unlocked ? "#ffff55" : "#5a5a5a" }}
                   >
-                    <Icon name={unlocked ? a.icon : "Lock"} size={18} />
+                    <Icon name={unlocked ? a.icon : "Lock"} size={22} />
                   </span>
-                  <div className="text-xs font-bold leading-tight">{a.title}</div>
-                  <div className="mt-1 text-[10px] leading-snug text-[var(--color-faint)]">{a.desc}</div>
+                  <div className="pixel-font text-lg leading-none text-white">{a.title}</div>
+                  <div className="mt-1.5 text-[10px] leading-snug text-white/45">{a.desc}</div>
                 </div>
               );
             })}
@@ -290,7 +289,7 @@ export function HubPage() {
         {/* ============ roadmap & legacy ============ */}
         <section className="mt-12">
           <Kicker>On the roadmap</Kicker>
-          <h2 className="mt-1 mb-5 text-2xl font-bold tracking-tight">Coming next</h2>
+          <h2 className="pixel-font mt-1 mb-5 text-4xl uppercase leading-none tracking-wide">Coming next</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {PLANNED.map((p) => (
               <CourseTheme key={p.title} accent={p.accent} accent2={p.accent}>
@@ -543,38 +542,43 @@ function PlayerHud({ totalXp, game }: { totalXp: number; game: GameState }) {
   const streak = streakInfo(game);
   const beers = availableBeers(game);
   return (
-    <section className="surface relative overflow-hidden p-5">
-      <div
-        className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full blur-3xl"
-        style={{ background: "var(--accent, #6a8bff)", opacity: 0.13 }}
-      />
-      <div className="relative flex flex-wrap items-center gap-x-5 gap-y-4">
-        {/* level gem */}
-        <div className="relative h-16 w-16 shrink-0" title={`Level ${rank.level} · ${rank.rank}`}>
-          <div
-            className="absolute inset-1 rotate-45 rounded-xl"
-            style={{
-              background: "linear-gradient(135deg,#ffd45e,#e8a412)",
-              boxShadow: "0 8px 20px -8px rgba(232,164,18,0.7)",
-            }}
-          />
-          <div className="absolute inset-[9px] grid rotate-45 place-items-center rounded-lg bg-[var(--color-surface)]">
-            <span className="-rotate-45 text-xl font-black leading-none">{rank.level}</span>
-          </div>
+    <section className="mc-panel relative overflow-hidden p-4 text-white sm:p-5">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-4">
+        {/* avatar slot */}
+        <div className="mc-slot grid h-16 w-16 shrink-0 place-items-center text-4xl" title="STUDENT">
+          🎓
         </div>
 
-        {/* name + XP bar */}
+        {/* name + Minecraft XP bar */}
         <div className="min-w-[12rem] flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-2">
-            <span className="text-lg font-black tracking-tight">STUDENT</span>
-            <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#e8a412" }}>
-              {rank.rank}
+          <div className="pixel-font flex flex-wrap items-baseline gap-x-3 text-2xl leading-none">
+            <span>STUDENT</span>
+            <span style={{ color: "#ffff55" }}>{rank.rank.toUpperCase()}</span>
+          </div>
+          <div className="relative mt-4">
+            <span
+              className="pixel-font absolute -top-3.5 left-1/2 -translate-x-1/2 text-xl leading-none"
+              style={{
+                color: "#7fdc39",
+                textShadow: "1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000",
+              }}
+            >
+              {rank.level}
             </span>
+            <div
+              className="h-2.5 overflow-hidden rounded-sm"
+              style={{ background: "#0d0d0d", border: "1px solid #000", boxShadow: "inset 0 1px 0 #3c3c3c" }}
+            >
+              <div
+                className="h-full"
+                style={{
+                  width: `${Math.max(2, rank.pct)}%`,
+                  background: "linear-gradient(180deg,#a0e81f,#7fdc39 45%,#3f8f1f)",
+                }}
+              />
+            </div>
           </div>
-          <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-[var(--color-bg)] ring-1 ring-inset ring-[var(--color-line)]">
-            <div className="xp-bar h-full rounded-full" style={{ width: `${Math.max(3, rank.pct)}%` }} />
-          </div>
-          <div className="mt-1 flex justify-between font-mono text-[10px] font-bold text-[var(--color-faint)]">
+          <div className="pixel-font mt-1.5 flex justify-between text-base leading-none text-white/55">
             <span>{totalXp.toLocaleString()} XP</span>
             <span>
               {rank.needed - rank.into} XP → LV {rank.level + 1}
@@ -582,24 +586,25 @@ function PlayerHud({ totalXp, game }: { totalXp: number; game: GameState }) {
           </div>
         </div>
 
-        {/* status chips */}
-        <div className="flex shrink-0 gap-2">
-          <HudStat
+        {/* hotbar */}
+        <div className="flex shrink-0 gap-1.5">
+          <McStat
             icon="Flame"
             value={streak.current}
-            label={streak.atRisk ? "at risk!" : "streak"}
+            label={streak.atRisk ? "risk!" : "streak"}
             color="#ff7a1a"
             pulse={streak.atRisk && streak.current > 0}
           />
-          <HudStat icon="Snowflake" value={game.freezeTokens} label="freezes" color="#6aa6ff" />
-          <HudStat icon="Beer" value={beers} label="beers" color="#f5b942" />
+          <McStat icon="Snowflake" value={game.freezeTokens} label="freeze" color="#6aa6ff" />
+          <McStat icon="Beer" value={beers} label="beers" color="#ffd45e" />
         </div>
       </div>
     </section>
   );
 }
 
-function HudStat({
+/** hotbar slot: icon + Minecraft-style stack count in the corner */
+function McStat({
   icon,
   value,
   label,
@@ -613,21 +618,18 @@ function HudStat({
   pulse?: boolean;
 }) {
   return (
-    <div
-      className={cnPulse(pulse)}
-      style={{ borderColor: "var(--color-line)" }}
-    >
-      <Icon name={icon} size={18} style={{ color }} />
-      <span className="text-lg font-black leading-none">{value}</span>
-      <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--color-faint)]">{label}</span>
+    <div className="flex flex-col items-center gap-1">
+      <div className={"mc-slot relative grid h-14 w-14 place-items-center" + (pulse ? " animate-pulse" : "")}>
+        <Icon name={icon} size={22} style={{ color }} />
+        <span
+          className="pixel-font absolute bottom-0 right-1 text-xl leading-none text-white"
+          style={{ textShadow: "1px 1px 0 #000" }}
+        >
+          {value}
+        </span>
+      </div>
+      <span className="pixel-font text-sm uppercase leading-none text-white/50">{label}</span>
     </div>
-  );
-}
-
-function cnPulse(pulse?: boolean) {
-  return (
-    "flex w-[4.2rem] flex-col items-center gap-0.5 rounded-2xl border bg-[var(--color-bg)] px-2 py-2.5" +
-    (pulse ? " animate-pulse" : "")
   );
 }
 
@@ -639,13 +641,17 @@ function BossLine({ courseId, game }: { courseId: string; game: GameState }) {
   return (
     <Link
       to={`/c/${courseId}/boss`}
-      className="mt-2.5 flex items-center gap-1.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-muted)] transition hover:border-[var(--accent-line)]"
+      className="mc-panel pixel-font mt-2.5 flex items-center gap-2 px-3 py-2 text-lg leading-none text-white transition hover:brightness-125"
     >
-      <Icon name="Swords" size={12} style={{ color: "var(--accent)" }} />
-      <span className="truncate">Boss: {boss.name}</span>
-      <span className="ml-auto shrink-0 font-bold" style={{ color: best ? "#e8a412" : "var(--color-faint)" }}>
-        {best ? `best ${best.grade === 31 ? "30L" : best.grade}` : "undefeated"}
+      <span className="text-white/65">YOU</span>
+      <span style={{ color: "#ff5555", textShadow: "1px 1px 0 #000" }}>VS</span>
+      <span className="truncate" style={{ color: "#ffff55" }}>
+        {boss.name.toUpperCase()}
       </span>
+      <span className="ml-auto shrink-0" style={{ color: best ? "#7fdc39" : "#888" }}>
+        {best ? `BEST ${best.grade === 31 ? "30L" : best.grade}` : "NEW"}
+      </span>
+      <span className="arcade-blink shrink-0 text-white/80">▶</span>
     </Link>
   );
 }

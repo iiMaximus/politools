@@ -385,3 +385,32 @@ main {
   from { transform: translateX(-100%); }
   to { transform: translateX(100%); }
 }
+
+/* ---------- retro game chrome (hub) ---------- */
+
+.pixel-font {
+  font-family: "VT323", "JetBrains Mono", monospace;
+}
+
+/* Minecraft-style beveled panel + item slot — deliberately theme-independent */
+.mc-panel {
+  background: #212121;
+  border: 2px solid #000;
+  border-radius: 8px;
+  box-shadow: inset 2px 2px 0 #555, inset -2px -2px 0 #2b2b2b;
+}
+.mc-slot {
+  background: #3a3a3a;
+  border: 2px solid #1a1a1a;
+  border-radius: 4px;
+  box-shadow: inset 2px 2px 0 #4f4f4f, inset -2px -2px 0 #262626;
+}
+
+/* arcade "PRESS START" blink — hard steps, no fade */
+@keyframes arcadeBlink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+.arcade-blink {
+  animation: arcadeBlink 1.1s steps(1) infinite;
+}
