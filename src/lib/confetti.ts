@@ -17,6 +17,18 @@ interface Particle {
 }
 
 const PALETTE = ["#ffb454", "#ff7a59", "#6aa6ff", "#8b7bff", "#5fe0a8", "#ffd166"];
+// "Golden confetti" beer-shop cosmetic
+const GOLD_PALETTE = ["#ffd45e", "#f5b942", "#e8a412", "#fff3c4", "#b8860b", "#ffe28a"];
+
+function activePalette(): string[] {
+  try {
+    const raw = localStorage.getItem("polito:game:v1");
+    if (raw && (JSON.parse(raw).unlocks ?? []).includes("skin-gold")) return GOLD_PALETTE;
+  } catch {
+    /* ignore */
+  }
+  return PALETTE;
+}
 
 export function fireConfetti(opts: { count?: number; originY?: number } = {}) {
   if (typeof document === "undefined") return;
@@ -36,6 +48,7 @@ export function fireConfetti(opts: { count?: number; originY?: number } = {}) {
     zIndex: "9999",
   } as CSSStyleDeclaration);
   document.body.appendChild(canvas);
+  const palette = activePalette();
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     canvas.remove();
@@ -56,7 +69,7 @@ export function fireConfetti(opts: { count?: number; originY?: number } = {}) {
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed - 6,
       size: 5 + Math.random() * 6,
-      color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
+      color: palette[Math.floor(Math.random() * palette.length)],
       rot: Math.random() * Math.PI,
       vrot: (Math.random() - 0.5) * 0.3,
       shape: Math.random() > 0.5 ? 0 : 1,

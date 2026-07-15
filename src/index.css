@@ -367,3 +367,21 @@ main {
     scroll-behavior: auto !important;
   }
 }
+
+/* player HUD XP bar — gradient with a moving shine */
+.xp-bar {
+  position: relative;
+  background: linear-gradient(90deg, #ffd45e, #e8a412);
+  overflow: hidden;
+}
+.xp-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+  animation: xpShine 2.8s linear infinite;
+}
+@keyframes xpShine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}

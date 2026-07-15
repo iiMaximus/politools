@@ -7,7 +7,6 @@ import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
 import { Kicker, Meter } from "../components/ui";
 import { Heatmap } from "../components/game/Heatmap";
-import { StreakBadge, RankBadge, BeerCounter } from "../components/game/HudBits";
 import { QuestBoard } from "../components/game/QuestBoard";
 import { ReadinessDial } from "../components/game/ReadinessDial";
 import { GameSettingsModal } from "../components/game/GameSettings";
@@ -16,15 +15,22 @@ import { aggregate, summarize, summarizeFromStorage, type CourseSummary } from "
 import { dueCount } from "../lib/adaptive";
 import {
   ACHIEVEMENTS,
+  SHOP,
+  availableBeers,
+  bestBossGrade,
+  buyShopItem,
   ensureQuests,
+  rankFromXp,
   readiness,
   reconcileFreezes,
   rustyCount,
   streakInfo,
   syncRank,
   useGame,
+  type GameState,
   type QuestInstance,
 } from "../lib/game";
+import { bossFor } from "../lib/bosses";
 import type { Course } from "../types";
 
 const PLANNED = [
@@ -104,7 +110,6 @@ export function HubPage() {
   const allSummaries = courses.map((c) => summarizeFromStorage(c));
   const overall = aggregate(allSummaries);
   const totalXp = overall.xp + game.bonusXp;
-  const streak = streakInfo(game);
 
   // record peak XP + fire the rank-up toast when a level boundary is crossed
   useEffect(() => {
@@ -123,12 +128,8 @@ export function HubPage() {
         </button>
       </TopBar>
       <Page className="pt-6">
-        {/* ============ mission control ============ */}
-        <section className="grid gap-3 sm:grid-cols-3">
-          <StreakBadge streak={streak} />
-          <RankBadge totalXp={totalXp} />
-          <BeerCounter beers={game.beers} />
-        </section>
+        {/* ============ player HUD ============ */}
+        <PlayerHud totalXp={totalXp} game={game} />
 
         <section className="mt-4 grid gap-4 lg:grid-cols-5">
           {/* Daily Mix CTA + heatmap */}
@@ -206,8 +207,8 @@ export function HubPage() {
         {/* ============ other courses ============ */}
         {otherEntries.length > 0 && (
           <section className="mt-12">
-            <Kicker>Library</Kicker>
-            <h2 className="mt-1 mb-5 text-2xl font-bold tracking-tight">Other courses</h2>
+            <Kicker>World map</Kicker>
+            <h2 className="mt-1 mb-5 text-2xl font-bold tracking-tight">Other lands</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {otherEntries.map((entry) =>
                 entry.kind === "course" ? (
@@ -282,6 +283,9 @@ export function HubPage() {
             })}
           </div>
         </section>
+
+        {/* ============ beer shop ============ */}
+        <BeerShop game={game} />
 
         {/* ============ roadmap & legacy ============ */}
         <section className="mt-12">
@@ -392,6 +396,7 @@ function FocusCard({ course }: { course: Course }) {
               </span>
             )}
           </div>
+          <BossLine courseId={meta.id} game={game} />
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2">
@@ -527,5 +532,170 @@ function CardBody({
         </span>
       </div>
     </>
+  );
+}
+
+
+/* --------------------------- player HUD ---------------------------- */
+
+function PlayerHud({ totalXp, game }: { totalXp: number; game: GameState }) {
+  const rank = rankFromXp(totalXp);
+  const streak = streakInfo(game);
+  const beers = availableBeers(game);
+  return (
+    <section className="surface relative overflow-hidden p-5">
+      <div
+        className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full blur-3xl"
+        style={{ background: "var(--accent, #6a8bff)", opacity: 0.13 }}
+      />
+      <div className="relative flex flex-wrap items-center gap-x-5 gap-y-4">
+        {/* level gem */}
+        <div className="relative h-16 w-16 shrink-0" title={`Level ${rank.level} · ${rank.rank}`}>
+          <div
+            className="absolute inset-1 rotate-45 rounded-xl"
+            style={{
+              background: "linear-gradient(135deg,#ffd45e,#e8a412)",
+              boxShadow: "0 8px 20px -8px rgba(232,164,18,0.7)",
+            }}
+          />
+          <div className="absolute inset-[9px] grid rotate-45 place-items-center rounded-lg bg-[var(--color-surface)]">
+            <span className="-rotate-45 text-xl font-black leading-none">{rank.level}</span>
+          </div>
+        </div>
+
+        {/* name + XP bar */}
+        <div className="min-w-[12rem] flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <span className="text-lg font-black tracking-tight">STUDENT</span>
+            <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#e8a412" }}>
+              {rank.rank}
+            </span>
+          </div>
+          <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-[var(--color-bg)] ring-1 ring-inset ring-[var(--color-line)]">
+            <div className="xp-bar h-full rounded-full" style={{ width: `${Math.max(3, rank.pct)}%` }} />
+          </div>
+          <div className="mt-1 flex justify-between font-mono text-[10px] font-bold text-[var(--color-faint)]">
+            <span>{totalXp.toLocaleString()} XP</span>
+            <span>
+              {rank.needed - rank.into} XP → LV {rank.level + 1}
+            </span>
+          </div>
+        </div>
+
+        {/* status chips */}
+        <div className="flex shrink-0 gap-2">
+          <HudStat
+            icon="Flame"
+            value={streak.current}
+            label={streak.atRisk ? "at risk!" : "streak"}
+            color="#ff7a1a"
+            pulse={streak.atRisk && streak.current > 0}
+          />
+          <HudStat icon="Snowflake" value={game.freezeTokens} label="freezes" color="#6aa6ff" />
+          <HudStat icon="Beer" value={beers} label="beers" color="#f5b942" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HudStat({
+  icon,
+  value,
+  label,
+  color,
+  pulse,
+}: {
+  icon: string;
+  value: number;
+  label: string;
+  color: string;
+  pulse?: boolean;
+}) {
+  return (
+    <div
+      className={cnPulse(pulse)}
+      style={{ borderColor: "var(--color-line)" }}
+    >
+      <Icon name={icon} size={18} style={{ color }} />
+      <span className="text-lg font-black leading-none">{value}</span>
+      <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--color-faint)]">{label}</span>
+    </div>
+  );
+}
+
+function cnPulse(pulse?: boolean) {
+  return (
+    "flex w-[4.2rem] flex-col items-center gap-0.5 rounded-2xl border bg-[var(--color-bg)] px-2 py-2.5" +
+    (pulse ? " animate-pulse" : "")
+  );
+}
+
+/* ---------------------------- boss line ---------------------------- */
+
+function BossLine({ courseId, game }: { courseId: string; game: GameState }) {
+  const boss = bossFor(courseId);
+  const best = bestBossGrade(courseId, game);
+  return (
+    <Link
+      to={`/c/${courseId}/boss`}
+      className="mt-2.5 flex items-center gap-1.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-muted)] transition hover:border-[var(--accent-line)]"
+    >
+      <Icon name="Swords" size={12} style={{ color: "var(--accent)" }} />
+      <span className="truncate">Boss: {boss.name}</span>
+      <span className="ml-auto shrink-0 font-bold" style={{ color: best ? "#e8a412" : "var(--color-faint)" }}>
+        {best ? `best ${best.grade === 31 ? "30L" : best.grade}` : "undefeated"}
+      </span>
+    </Link>
+  );
+}
+
+/* --------------------------- La Birreria --------------------------- */
+
+function BeerShop({ game }: { game: GameState }) {
+  const beers = availableBeers(game);
+  return (
+    <section className="mt-12">
+      <div className="mb-5 flex items-end justify-between">
+        <div>
+          <Kicker>La Birreria</Kicker>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight">Spend your beers</h2>
+        </div>
+        <span className="text-sm font-black" style={{ color: "#e8a412" }}>
+          🍺 ×{beers}
+        </span>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {SHOP.map((item) => {
+          const owned = item.kind === "cosmetic" && game.unlocks.includes(item.id);
+          const pending = item.kind === "boss-heart" ? game.unlocks.filter((u) => u === "boss-heart").length : 0;
+          const afford = beers >= item.cost;
+          return (
+            <div key={item.id} className="surface flex flex-col p-5">
+              <span
+                className="grid h-11 w-11 place-items-center rounded-xl"
+                style={{ background: "#f5b94222", color: "#e8a412" }}
+              >
+                <Icon name={item.icon} size={22} />
+              </span>
+              <h3 className="mt-3 font-bold">{item.title}</h3>
+              <p className="mt-1 flex-1 text-sm text-[var(--color-muted)]">{item.desc}</p>
+              {pending > 0 && (
+                <span className="mt-2 w-fit rounded-full bg-[var(--good-bg)] px-2 py-0.5 text-[11px] font-bold text-[var(--good)]">
+                  ×{pending} ready for your next fight
+                </span>
+              )}
+              <button
+                onClick={() => buyShopItem(item.id)}
+                disabled={owned || !afford}
+                className="btn btn-primary mt-4 disabled:opacity-40"
+              >
+                {owned ? "Owned ✓" : `Buy · ${item.cost} 🍺`}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }

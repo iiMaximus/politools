@@ -7,7 +7,7 @@ import { rt, rtInline } from "../components/RichText";
 import { cn } from "../lib/cn";
 import { buildSession, shuffle } from "../lib/adaptive";
 import { readProgress, recordAnswer } from "../lib/progress";
-import { bestBossGrade, logBossResult, logMiniBossResult, miniBossGrade } from "../lib/game";
+import { bestBossGrade, consumeUnlock, logBossResult, logMiniBossResult, miniBossGrade } from "../lib/game";
 import { bossFor, timeFor } from "../lib/bosses";
 import { courseSections, sectionQuestions } from "../lib/path";
 import { sfx } from "../lib/sound";
@@ -160,6 +160,18 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
   const send = (kind: ArenaSignal["kind"]) => setSignal((s) => ({ kind, nonce: s.nonce + 1 }));
 
+  /* a purchased retry heart (La Birreria) applies to the next fight */
+  const heartRef = useRef(false);
+  const [bonusHeart, setBonusHeart] = useState(false);
+  useEffect(() => {
+    if (heartRef.current) return;
+    heartRef.current = true;
+    if (consumeUnlock("boss-heart")) {
+      setBonusHeart(true);
+      setHearts((h) => h + 1);
+    }
+  }, []);
+
   /* lock page scroll while in the arena */
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -192,7 +204,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
     if (phase !== "victory") return 17;
     const heartBonus = isMini ? hearts * 1.5 : hearts;
     const g = Math.min(30, 18 + Math.round(accuracy * 9 + heartBonus));
-    return g === 30 && accuracy === 1 && hearts === cfg.hearts ? 31 : g;
+    return g === 30 && accuracy === 1 && hearts >= cfg.hearts ? 31 : g;
   }, [phase, accuracy, hearts, cfg.hearts, isMini]);
 
   useEffect(() => {
@@ -550,7 +562,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               >
                 <span className="text-lg leading-none">STUDENT</span>
                 <span className="flex gap-0.5">
-                  {Array.from({ length: cfg.hearts }, (_, k) => (
+                  {Array.from({ length: cfg.hearts + (bonusHeart ? 1 : 0) }, (_, k) => (
                     <Icon
                       key={k}
                       name="Heart"

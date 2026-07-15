@@ -232,7 +232,8 @@ export type GameEvent =
   | { type: "rank-up"; rank: string; level: number }
   | { type: "freeze-used"; day: string }
   | { type: "freeze-earned" }
-  | { type: "beer" };
+  | { type: "beer" }
+  | { type: "purchase"; title: string; icon: string };
 
 const eventListeners = new Set<(e: GameEvent) => void>();
 
@@ -956,6 +957,52 @@ export function logMiniBossResult(courseId: string, section: string, won: boolea
 
 export function miniBossGrade(courseId: string, section: string, state: GameState = read()): number | null {
   return state.miniBoss[courseId]?.[section] ?? null;
+}
+
+/* ----------------------------- beer shop --------------------------- */
+
+export interface ShopItem {
+  id: string;
+  title: string;
+  desc: string;
+  icon: string;
+  cost: number;
+  kind: "freeze" | "boss-heart" | "cosmetic";
+}
+
+export const SHOP: ShopItem[] = [
+  { id: "boss-heart", title: "Boss retry heart", desc: "+1 heart in your next boss fight. Liquid courage.", icon: "Heart", cost: 1, kind: "boss-heart" },
+  { id: "freeze-token", title: "Extra freeze token", desc: "One more day of streak insurance — can exceed the usual cap of 2.", icon: "Snowflake", cost: 2, kind: "freeze" },
+  { id: "skin-gold", title: "Golden confetti", desc: "Every celebration rains gold. Permanent. Pure class.", icon: "Sparkles", cost: 3, kind: "cosmetic" },
+];
+
+export function availableBeers(state: GameState = read()): number {
+  return Math.max(0, state.beers - state.spentBeers);
+}
+
+export function buyShopItem(id: string): "ok" | "poor" | "owned" {
+  const item = SHOP.find((i) => i.id === id);
+  if (!item) return "poor";
+  const state = read();
+  if (item.kind === "cosmetic" && state.unlocks.includes(id)) return "owned";
+  if (availableBeers(state) < item.cost) return "poor";
+  let next: GameState = { ...state, spentBeers: state.spentBeers + item.cost };
+  if (item.kind === "freeze") next = { ...next, freezeTokens: next.freezeTokens + 1 };
+  else next = { ...next, unlocks: [...next.unlocks, id] };
+  write(next);
+  emit({ type: "purchase", title: item.title, icon: item.icon });
+  return "ok";
+}
+
+/** Consume a one-shot unlock (e.g. the boss retry heart). */
+export function consumeUnlock(id: string): boolean {
+  const state = read();
+  const idx = state.unlocks.indexOf(id);
+  if (idx < 0) return false;
+  const unlocks = [...state.unlocks];
+  unlocks.splice(idx, 1);
+  write({ ...state, unlocks });
+  return true;
 }
 
 export function addBonusXp(amount: number) {

@@ -33,6 +33,8 @@ function toToast(e: GameEvent): Toast | null {
       return { id: nextId++, icon: "Snowflake", title: "Streak freeze used", sub: "Your flame survived yesterday", tone: "info" };
     case "freeze-earned":
       return { id: nextId++, icon: "Snowflake", title: "Freeze token earned", sub: "7-day streak bonus", tone: "info" };
+    case "purchase":
+      return { id: nextId++, icon: e.icon, title: "Purchased!", sub: `${e.title} · salute 🍻`, tone: "beer" };
     case "beer":
       return { id: nextId++, icon: "Beer", title: "🍺 Beer earned!", sub: "Boss defeated — redeem responsibly", tone: "beer" };
     default:
