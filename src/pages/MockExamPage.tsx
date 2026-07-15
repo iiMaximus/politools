@@ -7,7 +7,7 @@ import { rt, rtInline } from "../components/RichText";
 import { cn } from "../lib/cn";
 import { shuffle } from "../lib/adaptive";
 import { checkNumeric } from "../lib/answer";
-import { gradeFromScore, logMockExam } from "../lib/game";
+import { gradeFromScore, logMockExam, readGame } from "../lib/game";
 import { recordAnswer } from "../lib/progress";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
@@ -62,14 +62,20 @@ function clearSnapshot(courseId: string) {
 
 /** stratified draw: proportional per topic, slightly biased to medium/hard */
 function buildMockDeck(course: Course, count: number): Question[] {
+  // topic focus (course page) narrows the paper to the topics that matter
+  const focusT = readGame().settings.focusTopics?.[course.meta.id];
+  const focused = focusT?.length
+    ? course.practice.filter((q) => q.topic && focusT.includes(q.topic))
+    : course.practice;
+  const pool = focused.length >= 10 ? focused : course.practice;
   const byTopic = new Map<string, Question[]>();
-  for (const q of course.practice) {
+  for (const q of pool) {
     const key = q.topic ?? "General";
     const list = byTopic.get(key) ?? [];
     list.push(q);
     byTopic.set(key, list);
   }
-  const total = course.practice.length;
+  const total = pool.length;
   const bias = (q: Question) =>
     Math.random() + (q.difficulty === "hard" ? 0.3 : q.difficulty === "medium" ? 0.2 : 0);
   const picked: Question[] = [];
@@ -82,7 +88,7 @@ function buildMockDeck(course: Course, count: number): Question[] {
   const deck = shuffle(picked).slice(0, count);
   if (deck.length < count) {
     const have = new Set(deck.map((q) => q.id));
-    deck.push(...shuffle(course.practice.filter((q) => !have.has(q.id))).slice(0, count - deck.length));
+    deck.push(...shuffle(pool.filter((q) => !have.has(q.id))).slice(0, count - deck.length));
   }
   return deck;
 }

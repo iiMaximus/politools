@@ -9,6 +9,8 @@ import { ProgressRing } from "../components/ProgressRing";
 import { rtInline } from "../components/RichText";
 import { levelFromXp } from "../lib/adaptive";
 import { useCourseProgress } from "../lib/progress";
+import { updateSettings, useGame } from "../lib/game";
+import { topicStats, weakestTopics } from "../lib/stats";
 import { summarize } from "../lib/summary";
 import { NotFound } from "./NotFound";
 
@@ -22,8 +24,22 @@ export function CoursePage() {
   const { courseId = "" } = useParams();
   const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
+  const game = useGame();
   if (loading) return <PageLoader />;
   if (!course) return <NotFound />;
+
+  const stats = topicStats(course, progress).filter((t) => t.total >= 3);
+  const weakest = weakestTopics(stats, 1)[0];
+  const focusTopics = new Set(game.settings.focusTopics?.[courseId] ?? []);
+
+  function toggleFocusTopic(topic: string) {
+    const next = new Set(focusTopics);
+    if (next.has(topic)) next.delete(topic);
+    else next.add(topic);
+    updateSettings({
+      focusTopics: { ...(game.settings.focusTopics ?? {}), [courseId]: [...next] },
+    });
+  }
 
   const { meta, lessons } = course;
   const s = summarize(course, progress);
@@ -107,6 +123,93 @@ export function CoursePage() {
             </div>
           </div>
         </section>
+
+        {/* Topics heat table */}
+        {stats.length > 1 && (
+          <section className="surface mt-4 p-5">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <Kicker>Topics</Kicker>
+              {focusTopics.size > 0 && (
+                <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-bold text-[var(--accent)]">
+                  focus: {focusTopics.size} topic{focusTopics.size > 1 ? "s" : ""} — Mix & mocks narrow to these
+                </span>
+              )}
+            </div>
+
+            {weakest && weakest.weakness > 0.35 && (
+              <Link
+                to={`/c/${courseId}/practice?topic=${encodeURIComponent(weakest.topic)}`}
+                className="card-hover mt-2 flex items-center gap-3 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] p-3"
+              >
+                <Icon name="Crosshair" size={18} style={{ color: "var(--bad)" }} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-bold">Drill: {weakest.topic}</span>
+                  <span className="block text-xs text-[var(--color-faint)]">
+                    {weakest.accuracy !== null
+                      ? `${Math.round(weakest.accuracy * 100)}% accuracy`
+                      : "not started"}
+                    {weakest.due ? ` · ${weakest.due} due` : ""} — your weakest topic right now
+                  </span>
+                </span>
+                <Icon name="ArrowRight" size={16} className="shrink-0 text-[var(--color-faint)]" />
+              </Link>
+            )}
+
+            <div className="mt-3 grid gap-1.5">
+              {stats.map((t) => {
+                const mastery = t.total ? t.mastered / t.total : 0;
+                return (
+                  <div key={t.topic} className="flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => toggleFocusTopic(t.topic)}
+                      title={focusTopics.has(t.topic) ? "Remove from focus" : "Focus this topic (narrows Mix & mocks)"}
+                      className="shrink-0"
+                    >
+                      <Icon
+                        name="Star"
+                        size={15}
+                        style={{
+                          color: focusTopics.has(t.topic) ? "#f5b942" : "var(--color-line)",
+                          fill: focusTopics.has(t.topic) ? "#f5b942" : "none",
+                        }}
+                      />
+                    </button>
+                    <Link
+                      to={`/c/${courseId}/practice?topic=${encodeURIComponent(t.topic)}`}
+                      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-1 py-0.5 hover:bg-[var(--color-bg)]"
+                    >
+                      <span className="w-36 shrink-0 truncate text-sm sm:w-56">{t.topic}</span>
+                      <span className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-bg)]">
+                        <span
+                          className="block h-full rounded-full"
+                          style={{
+                            width: `${mastery * 100}%`,
+                            background:
+                              mastery >= 0.8
+                                ? "linear-gradient(90deg,#ffd45e,#e8a412)"
+                                : "linear-gradient(90deg,var(--accent),var(--accent-2))",
+                          }}
+                        />
+                      </span>
+                      <span className="hidden w-14 shrink-0 text-right font-mono text-[11px] text-[var(--color-faint)] sm:block">
+                        {t.mastered}/{t.total}
+                      </span>
+                      <span className="w-12 shrink-0 text-right text-[11px] font-bold" style={{ color: t.accuracy === null ? "var(--color-faint)" : t.accuracy >= 0.75 ? "var(--good)" : t.accuracy >= 0.5 ? "var(--warn)" : "var(--bad)" }}>
+                        {t.accuracy === null ? "—" : `${Math.round(t.accuracy * 100)}%`}
+                      </span>
+                      {t.due > 0 && (
+                        <span className="shrink-0 rounded-full bg-[var(--warn-bg)] px-1.5 text-[10px] font-bold text-[var(--warn)]">
+                          {t.due}
+                        </span>
+                      )}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Continue */}
         {firstUnread && (

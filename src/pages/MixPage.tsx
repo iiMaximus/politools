@@ -40,7 +40,10 @@ async function buildMixDeck(): Promise<Entry[]> {
     const rusty: Entry[] = [];
     const fresh: Entry[] = [];
     const mcq = course.practice.filter((qq): qq is McqQuestion => !isNumeric(qq));
-    for (const q of buildSession(mcq, progress) as McqQuestion[]) {
+    // topic focus (set on the course page) narrows the mix to what matters
+    const focusT = game.settings.focusTopics?.[course.meta.id];
+    const pool = focusT?.length ? mcq.filter((qq) => qq.topic && focusT.includes(qq.topic)) : mcq;
+    for (const q of buildSession(pool, progress) as McqQuestion[]) {
       const card = progress.cards[q.id];
       // SRS: overdue unmastered = review, overdue mastered = polish the rust
       if (isDue(card)) {

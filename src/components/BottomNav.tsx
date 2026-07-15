@@ -18,6 +18,7 @@ export function BottomNav() {
   const tabs = [
     { id: "home", label: "Home", icon: "House", to: "/", active: pathname === "/" },
     { id: "mix", label: "Mix", icon: "Shuffle", to: "/mix", active: pathname === "/mix" },
+    { id: "stats", label: "Stats", icon: "Activity", to: "/stats", active: pathname === "/stats" },
     ...(inCourse
       ? [
           {

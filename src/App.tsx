@@ -11,6 +11,7 @@ import { MixPage } from "./pages/MixPage";
 import { MockExamPage } from "./pages/MockExamPage";
 import { PathPage } from "./pages/PathPage";
 import { NotFound } from "./pages/NotFound";
+import { StatsPage } from "./pages/StatsPage";
 import { GameToasts } from "./components/game/Toasts";
 import { BottomNav } from "./components/BottomNav";
 
@@ -24,6 +25,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<HubPage />} />
         <Route path="/mix" element={<MixPage />} />
+        <Route path="/stats" element={<StatsPage />} />
         <Route path="/g/:groupId" element={<CourseGroupPage />} />
         <Route path="/c/:courseId" element={<CoursePage />} />
         <Route path="/c/:courseId/path" element={<PathPage />} />
