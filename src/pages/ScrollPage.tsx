@@ -6,7 +6,7 @@ import { rt, rtInline } from "../components/RichText";
 import { getCourse } from "../courses/registry";
 import { cn } from "../lib/cn";
 import { TexBlock } from "../lib/math";
-import { recordAnswer } from "../lib/progress";
+import { readProgress, recordAnswer, recordSelfRating } from "../lib/progress";
 import type { Lesson, LessonBlock, Question } from "../types";
 import { NotFound } from "./NotFound";
 
@@ -61,6 +61,22 @@ export function ScrollPage() {
     setActive(0);
   }, [courseId, mode]);
 
+  // Hydrate formula Known/Again from saved progress (the ratings feed the
+  // SRS via recordSelfRating, so they survive reloads); allow one fresh
+  // re-rating per card per session.
+  const ratedRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    ratedRef.current = new Set();
+    const cards = readProgress(courseId).cards;
+    const marks: Record<string, FormulaMark> = {};
+    for (const item of feed) {
+      if (item.kind !== "formula") continue;
+      const card = cards[item.id];
+      if (card && card.attempts > 0) marks[item.id] = card.streak > 0 ? "known" : "again";
+    }
+    setFormulaMarks(marks);
+  }, [courseId, feed]);
+
   useEffect(() => {
     const root = feedRef.current;
     if (!root || !feed.length) return;
@@ -103,6 +119,14 @@ export function ScrollPage() {
     if (answers[question.id]) return;
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
     recordAnswer(courseId, question.id, optionId === question.correct);
+  }
+
+  function markFormula(itemId: string, mark: FormulaMark) {
+    if (!ratedRef.current.has(itemId)) {
+      ratedRef.current.add(itemId);
+      recordSelfRating(courseId, itemId, mark === "known");
+    }
+    setFormulaMarks((prev) => ({ ...prev, [itemId]: mark }));
   }
 
   function scrollToIndex(index: number) {
@@ -170,7 +194,7 @@ export function ScrollPage() {
                 formulaMark={formulaMarks[item.id]}
                 onPick={choose}
                 onReveal={() => setRevealed((prev) => ({ ...prev, [item.id]: true }))}
-                onFormulaMark={(mark) => setFormulaMarks((prev) => ({ ...prev, [item.id]: mark }))}
+                onFormulaMark={(mark) => markFormula(item.id, mark)}
               />
             </article>
           ))}

@@ -46,7 +46,7 @@ const thermodynamics: Course = {
     year: 2,
     semester: 2,
     credits: 8,
-    examDate: "2026-07-10",
+    examDate: "2026-09-16",
     syllabus: [
       "Properties & ideal gas",
       "First Law",

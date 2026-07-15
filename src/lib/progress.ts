@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { logAnswer, logLessonCompleted, rustLevel } from "./game";
+import { logAnswer, logLessonCompleted } from "./game";
+import { effectiveDue, schedule } from "./srs";
 
 /* ================================================================== *
  *  PROGRESS STORE
@@ -16,6 +17,12 @@ export interface CardState {
   streak: number;
   mastered: boolean;
   lastSeen: number;
+  /** SRS fields (lib/srs.ts) — absent on cards from before SRS shipped;
+   *  effectiveDue() bridges those until their next answer stamps them. */
+  ease?: number;
+  intervalDays?: number;
+  due?: number;
+  lapses?: number;
 }
 
 export interface CourseProgress {
@@ -65,6 +72,9 @@ export const MASTERY_STREAK = 2;
 export function recordAnswer(courseId: string, cardId: string, isCorrect: boolean): number {
   const p = read(courseId);
   const prev = p.cards[cardId] ?? newCard();
+  const now = Date.now();
+  // "due" = past its review date (legacy cards bridged by effectiveDue)
+  const overdue = effectiveDue(prev, now) <= now;
   const streak = isCorrect ? prev.streak + 1 : 0;
   const card: CardState = {
     attempts: prev.attempts + 1,
@@ -72,7 +82,8 @@ export function recordAnswer(courseId: string, cardId: string, isCorrect: boolea
     wrong: prev.wrong + (isCorrect ? 0 : 1),
     streak,
     mastered: prev.mastered || streak >= MASTERY_STREAK,
-    lastSeen: Date.now(),
+    lastSeen: now,
+    ...schedule(cardId, prev, isCorrect ? "good" : "again", now),
   };
   // XP: solid reward for correct, streak bonus, token reward for trying.
   const gained = isCorrect ? 12 + Math.min(streak - 1, 4) * 3 : 2;
@@ -81,9 +92,32 @@ export function recordAnswer(courseId: string, cardId: string, isCorrect: boolea
     courseId,
     isCorrect,
     xp: gained,
-    wasDue: prev.wrong > 0 && !prev.mastered,
-    wasRusty: rustLevel(prev) > 0,
+    wasDue: overdue,
+    wasRusty: overdue && prev.mastered,
   });
+  return gained;
+}
+
+/** Record a self-graded recall (Scroll formula cards: Known / Drill again).
+ *  Feeds the SRS and the streak, but game.ts treats it as self-rated so it
+ *  never inflates accuracy-based quests. Returns the awarded XP. */
+export function recordSelfRating(courseId: string, cardId: string, known: boolean): number {
+  const p = read(courseId);
+  const prev = p.cards[cardId] ?? newCard();
+  const now = Date.now();
+  const streak = known ? prev.streak + 1 : 0;
+  const card: CardState = {
+    attempts: prev.attempts + 1,
+    correct: prev.correct + (known ? 1 : 0),
+    wrong: prev.wrong + (known ? 0 : 1),
+    streak,
+    mastered: prev.mastered || streak >= MASTERY_STREAK,
+    lastSeen: now,
+    ...schedule(cardId, prev, known ? "good" : "again", now),
+  };
+  const gained = known ? 2 : 1;
+  write(courseId, { ...p, xp: p.xp + gained, cards: { ...p.cards, [cardId]: card } });
+  logAnswer({ courseId, isCorrect: known, xp: gained, wasDue: false, wasRusty: false, selfRated: true });
   return gained;
 }
 

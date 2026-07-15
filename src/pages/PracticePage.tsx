@@ -17,7 +17,8 @@ import {
   masteredCount,
   shuffle,
 } from "../lib/adaptive";
-import { recordAnswer, useCourseProgress } from "../lib/progress";
+import { readProgress, recordAnswer, useCourseProgress } from "../lib/progress";
+import { nextReviewLabel } from "../lib/srs";
 import { clearSession, readSession, saveSession } from "../lib/session";
 import { sfx } from "../lib/sound";
 import type { Course, Question } from "../types";
@@ -43,11 +44,16 @@ export function PracticePage() {
     if (dueOnly) pool = pool.filter((q) => isDue(progress.cards[q.id]));
     const built = buildSession(pool, progress).map((q) => q.id);
     const saved = readSession(courseId);
+    // Resume when the scope matches and every card still exists. Don't
+    // compare against the freshly built pool: for mode=due the pool is
+    // time-varying (an answered-wrong card leaves it for 10 minutes under
+    // the SRS), and the deck was correct when the session started.
     if (
       saved &&
       saved.topic === topic &&
       saved.mode === mode &&
-      saved.ids.length === built.length &&
+      saved.ids.length > 0 &&
+      saved.i < saved.ids.length &&
       saved.ids.every((id) => course.practice.some((q) => q.id === id))
     ) {
       return { ids: saved.ids, i: saved.i, correct: saved.correct, wrong: saved.wrong };
@@ -164,6 +170,7 @@ function PracticeRunner({
 
   const [i, setI] = useState(initialI);
   const [picked, setPicked] = useState<string | null>(null);
+  const [nextReview, setNextReview] = useState<string | null>(null);
   const [sessionCorrect, setSessionCorrect] = useState(initialCorrect);
   const [sessionWrong, setSessionWrong] = useState(initialWrong);
 
@@ -208,10 +215,12 @@ function PracticeRunner({
       sfx.wrong();
     }
     recordAnswer(courseId, q.id, correct);
+    setNextReview(nextReviewLabel(readProgress(courseId).cards[q.id]?.due));
   }
 
   function next() {
     setPicked(null);
+    setNextReview(null);
     setI((n) => n + 1);
   }
 
@@ -262,7 +271,7 @@ function PracticeRunner({
             }}
           />
         ) : q ? (
-          <QuestionCard key={q.id} q={q} picked={picked} onPick={answer} onNext={next} />
+          <QuestionCard key={q.id} q={q} picked={picked} nextReview={nextReview} onPick={answer} onNext={next} />
         ) : (
           <div className="surface p-8 text-center">
             <Icon name="PartyPopper" size={36} className="mx-auto mb-3 text-[var(--accent)]" />
@@ -308,11 +317,14 @@ function Stat({
 export function QuestionCard({
   q,
   picked,
+  nextReview,
   onPick,
   onNext,
 }: {
   q: Question;
   picked: string | null;
+  /** human label for the card's next SRS review, shown after answering */
+  nextReview?: string | null;
   onPick: (id: string) => void;
   onNext: () => void;
 }) {
@@ -419,6 +431,11 @@ export function QuestionCard({
           >
             <Icon name={correct ? "CircleCheck" : "CircleX"} size={18} />
             {correct ? "Correct" : `Correct answer: ${q.correct}`}
+            {nextReview && (
+              <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold opacity-80">
+                <Icon name="CalendarClock" size={14} /> Next review {nextReview}
+              </span>
+            )}
           </div>
 
           <div className="rounded-xl bg-[var(--color-bg)] p-4">

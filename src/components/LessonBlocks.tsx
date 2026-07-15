@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { LessonBlock, Question } from "../types";
 import { TexBlock } from "../lib/math";
 import { shuffle } from "../lib/adaptive";
+import { recordAnswer } from "../lib/progress";
 import { rt, rtInline } from "./RichText";
 import { Icon } from "./Icon";
 import { cn } from "../lib/cn";
@@ -125,10 +126,17 @@ function Steps({ title, steps }: { title?: string; steps: { label?: string; cont
 }
 
 /* --------------------------- Checkpoint --------------------------- */
-export function InlineCheck({ question }: { question: Question }) {
+export function InlineCheck({ question, courseId }: { question: Question; courseId?: string }) {
   const [picked, setPicked] = useState<string | null>(null);
   const options = useMemo(() => shuffle(question.options), [question]);
   const answered = picked !== null;
+
+  function pick(optionId: string) {
+    if (answered) return;
+    setPicked(optionId);
+    // checkpoints count: XP, streak and SRS credit like any practice answer
+    if (courseId) recordAnswer(courseId, question.id, optionId === question.correct);
+  }
   return (
     <div className="my-6 rounded-2xl border border-[var(--accent-line)] bg-[var(--color-surface)] p-4">
       <div className="mb-3 flex items-center gap-2">
@@ -144,7 +152,7 @@ export function InlineCheck({ question }: { question: Question }) {
             <button
               key={o.id}
               disabled={answered}
-              onClick={() => setPicked(o.id)}
+              onClick={() => pick(o.id)}
               className={cn(
                 "flex items-start gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition",
                 !answered && "border-[var(--color-line)] hover:border-[var(--accent-line)]",
@@ -174,7 +182,7 @@ export function InlineCheck({ question }: { question: Question }) {
 }
 
 /* --------------------------- Dispatcher --------------------------- */
-export function Block({ block }: { block: LessonBlock }) {
+export function Block({ block, courseId }: { block: LessonBlock; courseId?: string }) {
   switch (block.kind) {
     case "prose":
       return <div className="prose-lesson">{rt(block.content)}</div>;
@@ -199,6 +207,6 @@ export function Block({ block }: { block: LessonBlock }) {
     case "steps":
       return <Steps title={block.title} steps={block.steps} />;
     case "checkpoint":
-      return <InlineCheck question={block.question} />;
+      return <InlineCheck question={block.question} courseId={courseId} />;
   }
 }

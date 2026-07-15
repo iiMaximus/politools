@@ -1,13 +1,15 @@
 import type { Question } from "../types";
 import type { CardState, CourseProgress } from "./progress";
+import { dueWithin, effectiveDue } from "./srs";
 
 /* ================================================================== *
  *  ADAPTIVE SCHEDULING
  *  Decides the order questions appear in a practice session:
- *   - due (answered wrong, not yet remastered) first
+ *   - overdue reviews first (including mastered cards whose SRS
+ *     interval has expired — rust re-enters the queue here)
  *   - unseen preferred over repeats
  *   - weak cards weighted above mastered ones
- *   - mastered cards appear rarely
+ *   - freshly mastered cards appear rarely
  * ================================================================== */
 
 export const XP_PER_LEVEL = 120;
@@ -18,15 +20,23 @@ export function levelFromXp(xp: number) {
   return { level, into, perLevel: XP_PER_LEVEL, pct: Math.round((into / XP_PER_LEVEL) * 100) };
 }
 
+/** Past its SRS review date (unseen cards are new, never due). */
 export function isDue(state: CardState | undefined): boolean {
-  return !!state && state.wrong > 0 && !state.mastered;
+  return effectiveDue(state) <= Date.now();
 }
 
 function weight(state: CardState | undefined): number {
   if (!state || state.attempts === 0) return 60; // unseen
-  if (state.wrong > 0 && !state.mastered) return 100; // due review
-  if (state.mastered) return 8; // keep mastered out of the way
+  const overdue = effectiveDue(state) <= Date.now();
+  if (overdue && !state.mastered) return 100; // due review
+  if (overdue) return 90; // mastered but expired — polish the rust
+  if (state.mastered) return 5; // keep fresh mastered out of the way
   return 40; // seen but not locked in
+}
+
+/** How many cards come due within the next `days` days (review forecast). */
+export function dueForecast(questions: Question[], progress: CourseProgress, days: number): number {
+  return questions.filter((q) => dueWithin(progress.cards[q.id], days)).length;
 }
 
 /**

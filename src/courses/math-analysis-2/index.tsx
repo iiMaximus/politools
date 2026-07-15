@@ -37,7 +37,7 @@ const mathAnalysis2: Course = {
     year: 2,
     semester: 1,
     credits: 10,
-    examDate: "2026-09-02",
+    examDate: "2026-09-09",
     syllabus: MODULES.map((m) => m.MODULE),
     status: "complete",
   },

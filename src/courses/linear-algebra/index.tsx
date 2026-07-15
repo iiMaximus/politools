@@ -55,7 +55,7 @@ const linearAlgebra: Course = {
     year: 1,
     semester: 2,
     credits: 10,
-    examDate: "2026-06-21",
+    examDate: "2026-09-14",
     syllabus: [
       "MATLAB: syntax, matrices, indexing & plotting",
       "Floating point, errors & conditioning",

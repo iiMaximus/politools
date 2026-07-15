@@ -8,7 +8,7 @@ import { Pill } from "../components/ui";
 import { QuestionCard } from "./PracticePage";
 import { buildSession, isDue, shuffle } from "../lib/adaptive";
 import { readProgress, recordAnswer } from "../lib/progress";
-import { addBonusXp, logMixSession, readGame, rustLevel, useGame } from "../lib/game";
+import { addBonusXp, logMixSession, readGame, useGame } from "../lib/game";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
 import type { Course, Question } from "../types";
@@ -41,9 +41,11 @@ function buildMixDeck(): Entry[] {
     const fresh: Entry[] = [];
     for (const q of buildSession(course.practice, progress)) {
       const card = progress.cards[q.id];
-      if (isDue(card)) due.push({ course, q, kind: "due" });
-      else if (rustLevel(card) > 0) rusty.push({ course, q, kind: "rusty" });
-      else fresh.push({ course, q, kind: "fresh" });
+      // SRS: overdue unmastered = review, overdue mastered = polish the rust
+      if (isDue(card)) {
+        if (card?.mastered) rusty.push({ course, q, kind: "rusty" });
+        else due.push({ course, q, kind: "due" });
+      } else fresh.push({ course, q, kind: "fresh" });
     }
     return [...shuffle(due), ...shuffle(rusty), ...fresh];
   });
@@ -63,7 +65,7 @@ function buildMixDeck(): Entry[] {
 
 export function MixPage() {
   useGame(); // re-render on game-state changes (quests completing, etc.)
-  const [deck] = useState<Entry[]>(() => buildMixDeck());
+  const [deck, setDeck] = useState<Entry[]>(() => buildMixDeck());
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
@@ -90,6 +92,18 @@ export function MixPage() {
       fireConfetti({ count: perfect ? 200 : 120 });
     }
   }, [done, correctCount, deck.length]);
+
+  function anotherMix() {
+    loggedRef.current = false;
+    setDeck(buildMixDeck());
+    setI(0);
+    setPicked(null);
+    setCorrectCount(0);
+    setCombo(0);
+    setBestCombo(0);
+    setBonus(0);
+    setByCourse({});
+  }
 
   function answer(optionId: string) {
     if (picked || !entry) return;
@@ -177,10 +191,7 @@ export function MixPage() {
               <Link to="/" className="btn btn-primary">
                 <Icon name="House" size={16} /> Back to hub
               </Link>
-              <button
-                onClick={() => window.location.reload()}
-                className="btn btn-ghost"
-              >
+              <button onClick={anotherMix} className="btn btn-ghost">
                 <Icon name="RotateCcw" size={16} /> Another mix
               </button>
             </div>

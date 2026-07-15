@@ -121,12 +121,18 @@ const defaultState = (): GameState => ({
   totals: emptyTotals(),
   quests: { date: "", items: [] },
   settings: {
-    focusCourses: ["thermodynamics", "math-analysis-2", "statistics"],
+    focusCourses: [...DEFAULT_FOCUS],
     passedCourses: [],
     examDates: {},
     sound: true,
   },
 });
+
+/** The September 2026 session: MA2 (Sep 9), LAG (Sep 14), Thermo (Sep 16). */
+const DEFAULT_FOCUS = ["math-analysis-2", "linear-algebra", "thermodynamics"] as const;
+/** previous seasons' defaults — stored settings that still match one of these
+ *  were never hand-picked, so they follow the new default */
+const STALE_FOCUS_DEFAULTS = [["thermodynamics", "math-analysis-2", "statistics"]];
 
 let cached: GameState | null = null;
 const listeners = new Set<() => void>();
@@ -146,6 +152,12 @@ function read(): GameState {
         quests: parsed.quests ?? value.quests,
         miniBoss: parsed.miniBoss ?? {},
       };
+      // stored focus list that still equals an old season's default was
+      // never hand-picked — roll it forward to the current session
+      const focusKey = [...value.settings.focusCourses].sort().join("|");
+      if (STALE_FOCUS_DEFAULTS.some((d) => [...d].sort().join("|") === focusKey)) {
+        value.settings = { ...value.settings, focusCourses: [...DEFAULT_FOCUS] };
+      }
     }
   } catch {
     /* corrupt storage → fresh start */
@@ -319,12 +331,25 @@ export function reconcileFreezes() {
 
 /* ------------------------------- rust ----------------------------- */
 
-/** Days after which a mastered card starts to corrode. */
+/** Days after which a legacy (pre-SRS) mastered card starts to corrode. */
 export const RUST_TIERS = [10, 21, 42] as const;
 export const RUST_LABELS = ["", "tarnished", "rusty", "corroded"] as const;
 
-export function rustLevel(card: Pick<CardState, "mastered" | "lastSeen"> | undefined): 0 | 1 | 2 | 3 {
-  if (!card || !card.mastered || !card.lastSeen) return 0;
+/** How far past its SRS due date a mastered card is, in units of its own
+ *  interval, decides the rust tier. Legacy cards (no SRS fields yet) fall
+ *  back to the original fixed day tiers. */
+export function rustLevel(
+  card: Pick<CardState, "mastered" | "lastSeen" | "due" | "intervalDays"> | undefined
+): 0 | 1 | 2 | 3 {
+  if (!card || !card.mastered) return 0;
+  if (card.due != null && card.intervalDays != null) {
+    const over = (Date.now() - card.due) / (Math.max(1, card.intervalDays) * 86_400_000);
+    if (over >= 3) return 3;
+    if (over >= 1.5) return 2;
+    if (over >= 0.5) return 1;
+    return 0;
+  }
+  if (!card.lastSeen) return 0;
   const days = (Date.now() - card.lastSeen) / 86_400_000;
   if (days >= RUST_TIERS[2]) return 3;
   if (days >= RUST_TIERS[1]) return 2;
@@ -693,24 +718,28 @@ export interface AnswerLog {
   xp: number;
   wasDue: boolean;
   wasRusty: boolean;
+  /** self-graded recall (Scroll "Known"/"Again") — counts toward the day's
+   *  activity and streak, but never toward accuracy-based quests/totals */
+  selfRated?: boolean;
 }
 
-export function logAnswer({ courseId, isCorrect, xp, wasDue, wasRusty }: AnswerLog) {
+export function logAnswer({ courseId, isCorrect, xp, wasDue, wasRusty, selfRated }: AnswerLog) {
   const hour = new Date().getHours();
+  const scored = !selfRated; // honest accuracy signals only
   let state = withDay(read(), (d) => ({
     ...d,
     answers: d.answers + 1,
-    correct: d.correct + (isCorrect ? 1 : 0),
+    correct: d.correct + (scored && isCorrect ? 1 : 0),
     xp: d.xp + xp,
-    polished: d.polished + (isCorrect && wasRusty ? 1 : 0),
-    dueCleared: d.dueCleared + (isCorrect && wasDue ? 1 : 0),
+    polished: d.polished + (scored && isCorrect && wasRusty ? 1 : 0),
+    dueCleared: d.dueCleared + (scored && isCorrect && wasDue ? 1 : 0),
     earlyBird: d.earlyBird || hour < 7,
     nightOwl: d.nightOwl || hour >= 23,
     byCourse: {
       ...d.byCourse,
       [courseId]: {
         answers: (d.byCourse[courseId]?.answers ?? 0) + 1,
-        correct: (d.byCourse[courseId]?.correct ?? 0) + (isCorrect ? 1 : 0),
+        correct: (d.byCourse[courseId]?.correct ?? 0) + (scored && isCorrect ? 1 : 0),
       },
     },
   }));
@@ -719,9 +748,9 @@ export function logAnswer({ courseId, isCorrect, xp, wasDue, wasRusty }: AnswerL
     totals: {
       ...state.totals,
       answers: state.totals.answers + 1,
-      correct: state.totals.correct + (isCorrect ? 1 : 0),
-      polished: state.totals.polished + (isCorrect && wasRusty ? 1 : 0),
-      dueCleared: state.totals.dueCleared + (isCorrect && wasDue ? 1 : 0),
+      correct: state.totals.correct + (scored && isCorrect ? 1 : 0),
+      polished: state.totals.polished + (scored && isCorrect && wasRusty ? 1 : 0),
+      dueCleared: state.totals.dueCleared + (scored && isCorrect && wasDue ? 1 : 0),
     },
   };
   afterMutation(state);

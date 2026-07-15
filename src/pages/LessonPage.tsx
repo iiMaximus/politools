@@ -179,7 +179,11 @@ export function LessonPage() {
             {/* body */}
             <div className={focusMode ? "mt-0" : "mt-8"}>
               {lesson.blocks.map((b, i) => (
-                <Block key={i} block={b.kind === "heading" ? { ...b, id: b.id ?? `h-${i}` } : b} />
+                <Block
+                  key={i}
+                  block={b.kind === "heading" ? { ...b, id: b.id ?? `h-${i}` } : b}
+                  courseId={courseId}
+                />
               ))}
             </div>
 
