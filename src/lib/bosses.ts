@@ -125,13 +125,16 @@ const READ_CHARS_PER_SEC = 14;
  *  figures. A one-line easy card gets ~15 s; a loaded hard integral with
  *  four long options gets up to 90 s. */
 export function timeFor(q: Question): number {
-  const text = [q.prompt, ...q.options.map((o) => o.content)].join(" ");
+  const parts: unknown[] = [q.prompt];
+  if (q.type !== "numeric") parts.push(...q.options.map((o) => o.content));
+  const text = parts.join(" ");
   const mathBits = (text.match(/\$[^$]+\$/g) ?? []).length;
   const plain = text.replace(/\$[^$]+\$/g, " ").replace(/\s+/g, " ");
   const t =
     TIME_BASE[q.difficulty] +
     plain.length / READ_CHARS_PER_SEC +
     mathBits * 6 +
-    (q.visual ? 8 : 0);
+    (q.visual ? 8 : 0) +
+    (q.type === "numeric" ? 10 : 0); // working out + typing a number takes longer
   return Math.round(Math.max(15, Math.min(90, t)));
 }

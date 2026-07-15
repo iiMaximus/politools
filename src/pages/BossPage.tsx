@@ -13,7 +13,7 @@ import { courseSections, sectionQuestions } from "../lib/path";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
 import type { ArenaSignal } from "../components/game/BossArena";
-import type { Question } from "../types";
+import { isNumeric, type McqQuestion } from "../types";
 import { NotFound } from "./NotFound";
 
 const BossArena = lazy(() => import("../components/game/BossArena"));
@@ -114,11 +114,12 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
   const [timeLeft, setTimeLeft] = useState(30);
   const [signal, setSignal] = useState<ArenaSignal>({ kind: null, nonce: 0 });
   const [suddenDeath, setSuddenDeath] = useState(false);
-  const [missed, setMissed] = useState<Question[]>([]);
+  const [missed, setMissed] = useState<McqQuestion[]>([]);
   const [bestCombo, setBestCombo] = useState(0);
   const loggedRef = useRef(false);
 
-  // deck is state, not memo: sudden death appends a refill wave
+  // deck is state, not memo: sudden death appends a refill wave.
+  // Numeric questions stay out of boss decks — combat wants snap answers.
   const buildDeck = () => {
     const progress = readProgress(courseId);
     let pool = course.practice;
@@ -127,9 +128,10 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
       const scoped = section ? sectionQuestions(course, section) : [];
       if (scoped.length >= 4) pool = scoped;
     }
-    return buildSession(pool, progress).slice(0, cfg.deck);
+    const mcq = pool.filter((qq): qq is McqQuestion => !isNumeric(qq));
+    return buildSession(mcq, progress).slice(0, cfg.deck) as McqQuestion[];
   };
-  const [deck, setDeck] = useState<Question[]>(buildDeck);
+  const [deck, setDeck] = useState<McqQuestion[]>(buildDeck);
 
   function rematch() {
     loggedRef.current = false;
@@ -282,7 +284,9 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
     if (i + 1 >= deck.length) {
       // still alive with an empty deck → SUDDEN DEATH: refill with this
       // fight's missed questions (fallback: fresh pool draw), double damage
-      const refillPool = missed.length ? missed : course.practice;
+      const refillPool = missed.length
+        ? missed
+        : course.practice.filter((qq): qq is McqQuestion => !isNumeric(qq));
       const refill = shuffle(refillPool).slice(0, Math.max(4, Math.min(10, refillPool.length)));
       setDeck((d) => [...d, ...refill]);
       setSuddenDeath(true);

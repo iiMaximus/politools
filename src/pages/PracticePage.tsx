@@ -19,9 +19,10 @@ import {
 } from "../lib/adaptive";
 import { readProgress, recordAnswer, useCourseProgress } from "../lib/progress";
 import { nextReviewLabel } from "../lib/srs";
+import { checkNumeric } from "../lib/answer";
 import { clearSession, readSession, saveSession } from "../lib/session";
 import { sfx } from "../lib/sound";
-import type { Course, Question } from "../types";
+import { isNumeric, type Course, type NumericQuestion, type Question } from "../types";
 import { NotFound } from "./NotFound";
 
 /** the path's checkpoint quiz: short, fresh-shuffled, pass ≥ 75% */
@@ -229,10 +230,10 @@ function PracticeRunner({
   const courseDue = dueCount(course.practice, progress); // whole course — drives the nav badge
   const { level, pct } = levelFromXp(progress.xp);
 
-  function answer(optionId: string) {
+  function answer(value: string) {
     if (picked || !q) return;
-    setPicked(optionId);
-    const correct = optionId === q.correct;
+    setPicked(value);
+    const correct = isNumeric(q) ? checkNumeric(value, q) : value === q.correct;
     if (correct) {
       setSessionCorrect((n) => n + 1);
       setHotStreak((s) => s + 1);
@@ -377,9 +378,10 @@ export function QuestionCard({
   onNext: () => void;
 }) {
   // Shuffle option display order, but keep the original letters in feedback.
-  const options = useMemo(() => shuffle(q.options), [q.id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => (isNumeric(q) ? [] : shuffle(q.options)), [q.id]);
   const answered = picked !== null;
-  const correct = picked === q.correct;
+  const correct = answered && (isNumeric(q) ? checkNumeric(picked!, q) : picked === q.correct);
 
   // Keyboard-first play: 1–4 pick by displayed position, A–D by letter,
   // Enter/Space advance once answered.
@@ -395,7 +397,7 @@ export function QuestionCard({
           return;
         }
         const letter = e.key.toUpperCase();
-        if (["A", "B", "C", "D"].includes(letter) && q.options.some((o) => o.id === letter)) {
+        if (!isNumeric(q) && ["A", "B", "C", "D"].includes(letter) && q.options.some((o) => o.id === letter)) {
           e.preventDefault();
           onPick(letter);
         }
@@ -406,7 +408,8 @@ export function QuestionCard({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [answered, options, q.options, onPick, onNext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answered, options, q, onPick, onNext]);
 
   return (
     <div className="surface p-5 sm:p-6">
@@ -433,6 +436,9 @@ export function QuestionCard({
         </figure>
       )}
 
+      {isNumeric(q) ? (
+        <NumericAnswer q={q} picked={picked} onSubmit={onPick} />
+      ) : (
       <div className="grid gap-2.5">
         {options.map((o) => {
           const isCorrect = o.id === q.correct;
@@ -467,6 +473,7 @@ export function QuestionCard({
           );
         })}
       </div>
+      )}
 
       {answered && (
         <div className="mt-5 space-y-4">
@@ -481,7 +488,11 @@ export function QuestionCard({
             }}
           >
             <Icon name={correct ? "CircleCheck" : "CircleX"} size={18} />
-            {correct ? "Correct" : `Correct answer: ${q.correct}`}
+            {correct
+              ? "Correct"
+              : isNumeric(q)
+              ? `Correct answer: ${q.answer}${q.unit ? ` ${q.unit}` : ""}`
+              : `Correct answer: ${q.correct}`}
             {nextReview && (
               <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold opacity-80">
                 <Icon name="CalendarClock" size={14} /> Next review {nextReview}
@@ -511,6 +522,45 @@ export function QuestionCard({
         </div>
       )}
     </div>
+  );
+}
+
+function NumericAnswer({
+  q,
+  picked,
+  onSubmit,
+}: {
+  q: NumericQuestion;
+  picked: string | null;
+  onSubmit: (value: string) => void;
+}) {
+  const [value, setValue] = useState("");
+  const answered = picked !== null;
+  return (
+    <form
+      className="flex flex-wrap items-center gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!answered && value.trim()) onSubmit(value);
+      }}
+    >
+      <input
+        inputMode="decimal"
+        enterKeyHint="done"
+        autoFocus
+        value={answered ? picked ?? "" : value}
+        disabled={answered}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={q.placeholder ?? "your result"}
+        className="w-44 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-3.5 py-2.5 font-mono outline-none focus:border-[var(--accent)] disabled:opacity-60"
+      />
+      {q.unit && <span className="font-semibold text-[var(--color-muted)]">{q.unit}</span>}
+      {!answered && (
+        <button type="submit" className="btn btn-primary" disabled={!value.trim()}>
+          Check
+        </button>
+      )}
+    </form>
   );
 }
 

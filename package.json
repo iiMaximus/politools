@@ -12,7 +12,8 @@
     "verify:excel": "node scripts/verify-excel-engine.mjs",
     "verify:labs": "node scripts/verify-labs.mjs",
     "verify:srs": "node scripts/verify-srs.mjs",
-    "verify": "node scripts/verify-excel-engine.mjs && node scripts/verify-labs.mjs && node scripts/verify-srs.mjs"
+    "verify:grade": "node scripts/verify-grade.mjs",
+    "verify": "node scripts/verify-excel-engine.mjs && node scripts/verify-labs.mjs && node scripts/verify-srs.mjs && node scripts/verify-grade.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",

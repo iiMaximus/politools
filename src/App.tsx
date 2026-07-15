@@ -8,6 +8,7 @@ import { ExamPage } from "./pages/ExamPage";
 import { ScrollPage } from "./pages/ScrollPage";
 import { CourseGroupPage } from "./pages/CourseGroupPage";
 import { MixPage } from "./pages/MixPage";
+import { MockExamPage } from "./pages/MockExamPage";
 import { PathPage } from "./pages/PathPage";
 import { NotFound } from "./pages/NotFound";
 import { GameToasts } from "./components/game/Toasts";
@@ -30,6 +31,7 @@ export function App() {
         <Route path="/c/:courseId/scroll" element={<ScrollPage />} />
         <Route path="/c/:courseId/practice" element={<PracticePage />} />
         <Route path="/c/:courseId/exams" element={<ExamPage />} />
+        <Route path="/c/:courseId/mock" element={<MockExamPage />} />
         <Route
           path="/c/:courseId/boss"
           element={

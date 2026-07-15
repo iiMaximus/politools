@@ -11,7 +11,7 @@ import { readProgress, recordAnswer } from "../lib/progress";
 import { addBonusXp, logMixSession, readGame, useGame } from "../lib/game";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
-import type { Course, Question } from "../types";
+import { isNumeric, type Course, type McqQuestion } from "../types";
 
 /* ================================================================== *
  *  DAILY MIX — the one-button session. Interleaves due reviews,
@@ -24,7 +24,7 @@ const COMBO_BONUS_FROM = 3;
 
 interface Entry {
   course: Course;
-  q: Question;
+  q: McqQuestion;
   kind: "due" | "rusty" | "fresh";
 }
 
@@ -39,7 +39,8 @@ async function buildMixDeck(): Promise<Entry[]> {
     const due: Entry[] = [];
     const rusty: Entry[] = [];
     const fresh: Entry[] = [];
-    for (const q of buildSession(course.practice, progress)) {
+    const mcq = course.practice.filter((qq): qq is McqQuestion => !isNumeric(qq));
+    for (const q of buildSession(mcq, progress) as McqQuestion[]) {
       const card = progress.cards[q.id];
       // SRS: overdue unmastered = review, overdue mastered = polish the rust
       if (isDue(card)) {

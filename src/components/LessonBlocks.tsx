@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import type { LessonBlock, Question } from "../types";
+import { isNumeric, type LessonBlock, type McqQuestion, type NumericQuestion, type Question } from "../types";
 import { TexBlock } from "../lib/math";
 import { shuffle } from "../lib/adaptive";
+import { checkNumeric } from "../lib/answer";
 import { recordAnswer } from "../lib/progress";
 import { rt, rtInline } from "./RichText";
 import { Icon } from "./Icon";
@@ -127,6 +128,64 @@ function Steps({ title, steps }: { title?: string; steps: { label?: string; cont
 
 /* --------------------------- Checkpoint --------------------------- */
 export function InlineCheck({ question, courseId }: { question: Question; courseId?: string }) {
+  if (isNumeric(question)) return <InlineNumericCheck question={question} courseId={courseId} />;
+  return <InlineMcqCheck question={question} courseId={courseId} />;
+}
+
+function InlineNumericCheck({ question, courseId }: { question: NumericQuestion; courseId?: string }) {
+  const [value, setValue] = useState("");
+  const [checked, setChecked] = useState(false);
+  const correct = checked && checkNumeric(value, question);
+
+  function submit() {
+    if (checked || !value.trim()) return;
+    setChecked(true);
+    if (courseId) recordAnswer(courseId, question.id, checkNumeric(value, question));
+  }
+
+  return (
+    <div className="my-6 rounded-2xl border border-[var(--accent-line)] bg-[var(--color-surface)] p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <Icon name="CircleHelp" size={16} style={{ color: "var(--accent)" }} />
+        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Quick check</span>
+      </div>
+      <div className="prose-lesson mb-3 font-medium !text-[1rem] !text-[var(--color-ink)]">{rt(question.prompt)}</div>
+      <form
+        className="flex flex-wrap items-center gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+      >
+        <input
+          inputMode="decimal"
+          enterKeyHint="done"
+          value={value}
+          disabled={checked}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={question.placeholder ?? "your result"}
+          className="w-40 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-3 py-2 font-mono text-sm outline-none focus:border-[var(--accent)]"
+        />
+        {question.unit && <span className="text-sm font-semibold text-[var(--color-muted)]">{question.unit}</span>}
+        {!checked && (
+          <button type="submit" className="btn btn-primary !py-2 !text-sm">
+            Check
+          </button>
+        )}
+      </form>
+      {checked && (
+        <div className="prose-lesson mt-3 rounded-xl bg-[var(--color-bg)] p-3 !text-[0.92rem]">
+          <span className="font-semibold" style={{ color: correct ? "var(--good)" : "var(--bad)" }}>
+            {correct ? "Correct. " : `Expected ${question.answer}${question.unit ? ` ${question.unit}` : ""}. `}
+          </span>
+          {rt(question.explanation)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InlineMcqCheck({ question, courseId }: { question: McqQuestion; courseId?: string }) {
   const [picked, setPicked] = useState<string | null>(null);
   const options = useMemo(() => shuffle(question.options), [question]);
   const answered = picked !== null;

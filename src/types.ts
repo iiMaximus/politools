@@ -85,7 +85,7 @@ export interface QuestionVisual {
   caption?: ReactNode;
 }
 
-export interface Question {
+interface QuestionBase {
   id: string;
   /** the lecture this card belongs to — powers practice-by-lecture */
   topic?: string;
@@ -93,9 +93,6 @@ export interface Question {
   module?: string;
   difficulty: Difficulty;
   prompt: ReactNode;
-  options: Option[];
-  /** id of the correct option */
-  correct: string;
   /** why the right answer is right and the others wrong */
   explanation: ReactNode;
   /** optional source figure needed to answer the card */
@@ -104,6 +101,32 @@ export interface Question {
   theory?: ReactNode;
   source?: string;
   tags?: string[];
+}
+
+/** the classic 4-option MCQ — `type` optional so all existing content compiles */
+export interface McqQuestion extends QuestionBase {
+  type?: "mcq";
+  options: Option[];
+  /** id of the correct option */
+  correct: string;
+}
+
+/** free numeric answer — engineering exams want a number, not a letter */
+export interface NumericQuestion extends QuestionBase {
+  type: "numeric";
+  /** expected value */
+  answer: number;
+  /** relative tolerance (default 1e-2); comma decimals accepted */
+  tolerance?: number;
+  /** unit shown after the input, e.g. "kJ/kg" */
+  unit?: string;
+  placeholder?: string;
+}
+
+export type Question = McqQuestion | NumericQuestion;
+
+export function isNumeric(q: Question): q is NumericQuestion {
+  return q.type === "numeric";
 }
 
 /* ------------------------------ Exams ----------------------------- */

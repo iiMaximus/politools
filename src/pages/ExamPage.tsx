@@ -60,6 +60,27 @@ export function ExamPage() {
 
         {showPicker ? (
           <>
+            {/* the timed simulator is the closest thing to the real thing */}
+            <Link
+              to={`/c/${courseId}/mock`}
+              className="card-hover surface mb-5 flex items-center gap-3 p-4"
+              style={{ borderColor: "var(--accent-line)" }}
+            >
+              <span
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-white"
+                style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
+              >
+                <Icon name="Timer" size={22} />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-bold">Take a timed mock exam</span>
+                <span className="block text-xs text-[var(--color-faint)]">
+                  Exam conditions · auto-graded 18–30L · feeds your review queue
+                </span>
+              </span>
+              <Icon name="ArrowRight" size={16} className="ml-auto shrink-0 text-[var(--color-faint)]" />
+            </Link>
+
             <SectionHeading kicker="Exam problems" title="Pick a tutorial">
               <Pill tone="accent">
                 {solvedCount(course.exam)}/{course.exam.length} solved

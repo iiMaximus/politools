@@ -43,7 +43,8 @@ export type QuestKind =
   | "polish"
   | "lesson"
   | "mix"
-  | "boss";
+  | "boss"
+  | "mock";
 
 export interface QuestInstance {
   id: string;
@@ -76,10 +77,21 @@ export interface GameSettings {
   passedCourses: string[];
   examDates: Record<string, string>;
   sound: boolean;
+  /** per-course topic focus (empty/absent = whole course) — Phase 6 */
+  focusTopics?: Record<string, string[]>;
+}
+
+export interface MockExamRecord {
+  at: number;
+  grade: number; // 17..31 via gradeFromScore
+  pct: number; // 0..1
+  byTopic: Record<string, { correct: number; total: number }>;
+  durationSec: number;
+  questionCount: number;
 }
 
 export interface GameState {
-  v: 1;
+  v: number;
   activity: Record<string, DayActivity>;
   frozenDays: string[];
   freezeTokens: number;
@@ -93,6 +105,11 @@ export interface GameState {
   totals: GameTotals;
   quests: { date: string; items: QuestInstance[] };
   settings: GameSettings;
+  /** timed mock-exam history per course */
+  mockExams: Record<string, MockExamRecord[]>;
+  /** beer-shop purchases (cosmetics, boss perks) — Phase 7 */
+  unlocks: string[];
+  spentBeers: number;
   /** account level at the last rank sync — guards the rank-up toast */
   lastRankLevel?: number;
   /** highest total XP ever observed (via syncRank) */
@@ -116,7 +133,7 @@ const emptyTotals = (): GameTotals => ({
 });
 
 const defaultState = (): GameState => ({
-  v: 1,
+  v: 2,
   activity: {},
   frozenDays: [],
   freezeTokens: 1,
@@ -127,6 +144,9 @@ const defaultState = (): GameState => ({
   miniBoss: {},
   achievements: {},
   totals: emptyTotals(),
+  mockExams: {},
+  unlocks: [],
+  spentBeers: 0,
   quests: { date: "", items: [] },
   settings: {
     focusCourses: [...DEFAULT_FOCUS],
@@ -159,6 +179,10 @@ function read(): GameState {
         settings: { ...value.settings, ...(parsed.settings ?? {}) },
         quests: parsed.quests ?? value.quests,
         miniBoss: parsed.miniBoss ?? {},
+        mockExams: parsed.mockExams ?? {},
+        unlocks: parsed.unlocks ?? [],
+        spentBeers: parsed.spentBeers ?? 0,
+        v: 2,
       };
       // stored focus list that still equals an old season's default was
       // never hand-picked — roll it forward to the current session
@@ -384,6 +408,20 @@ export interface Readiness {
 
 const RUST_CREDIT = [1, 0.65, 0.4, 0.2] as const;
 
+/** One grading law for readiness, boss fights and mock exams:
+ *  score 0..100 → 17 (below pass) .. 31 (30 e lode). */
+export function gradeFromScore(score: number): number {
+  return score < 35 ? 17 : Math.min(31, Math.round(18 + ((score - 35) / 65) * 13));
+}
+
+/** Best mock grade for a course within the last `days` days. */
+export function bestRecentMock(courseId: string, days: number, state: GameState = read()): MockExamRecord | null {
+  const cutoff = Date.now() - days * 86_400_000;
+  const recent = (state.mockExams[courseId] ?? []).filter((r) => r.at >= cutoff);
+  if (!recent.length) return null;
+  return recent.reduce((a, b) => (b.grade > a.grade ? b : a));
+}
+
 export function readiness(course: Course, progress: CourseProgress, state: GameState = read()): Readiness {
   const qs = course.practice;
   const total = qs.length;
@@ -409,13 +447,18 @@ export function readiness(course: Course, progress: CourseProgress, state: GameS
     : 0;
   const duePenalty = total ? due / total : 0;
 
-  const raw = 0.55 * mastery + 0.2 * lessons + 0.25 * exams - 0.12 * duePenalty;
+  // a recent timed mock is the strongest signal there is
+  const recentMock = bestRecentMock(course.meta.id, 21, state);
+  const mock = recentMock ? recentMock.pct : 0;
+
+  const raw =
+    0.5 * mastery + 0.15 * lessons + 0.2 * exams + 0.15 * mock - 0.12 * duePenalty;
   const score = Math.round(Math.max(0, Math.min(1, raw)) * 100);
 
   const attempted = qs.some((q) => (progress.cards[q.id]?.attempts ?? 0) > 0);
   let grade: number | null = null;
   if (attempted || lessons > 0) {
-    grade = score < 35 ? 17 : Math.min(31, Math.round(18 + ((score - 35) / 65) * 13));
+    grade = gradeFromScore(score);
   }
   const gradeLabel =
     grade === null ? "—" : grade < 18 ? "<18" : grade >= 31 ? "30L" : String(grade);
@@ -608,6 +651,10 @@ export function ensureQuests(ctx: QuestContext): QuestInstance[] {
   return items;
 }
 
+function mockCount(state: GameState): number {
+  return Object.values(state.mockExams).reduce((n, rs) => n + rs.length, 0);
+}
+
 export function questProgress(q: QuestInstance, state: GameState = read()): number {
   const day = todayActivity(state);
   const t = state.totals;
@@ -633,6 +680,9 @@ export function questProgress(q: QuestInstance, state: GameState = read()): numb
       break;
     case "boss":
       value = t.bossWins - q.baseline;
+      break;
+    case "mock":
+      value = mockCount(state) - q.baseline;
       break;
   }
   return Math.max(0, Math.min(q.target, value));
@@ -749,6 +799,9 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "combo-breaker", title: "C-C-C-Combo Breaker!", desc: "Hit a ×10 combo in a boss fight.", icon: "Activity", check: (s) => allBossRecords(s).some((r) => (r.bestCombo ?? 0) >= 10) },
   { id: "leeroy", title: "Leeroy Jenkins", desc: "Win a boss fight with under 70% accuracy. At least you have chicken.", icon: "Megaphone", check: (s) => allBossRecords(s).some((r) => r.won && r.accuracy < 0.7) },
   { id: "all-your-base", title: "All Your Base", desc: "Score 28+ against three different final bosses. All your base are belong to you.", icon: "Castle", check: (s) => Object.entries(s.boss).filter(([, rs]) => rs.some((r) => r.won && r.grade >= 28)).length >= 3 },
+  { id: "simulazione", title: "Simulazione", desc: "Take your first timed mock exam.", icon: "FileCheck", check: (s) => mockCount(s) >= 1 },
+  { id: "prova-generale", title: "Prova Generale", desc: "Score 27+ on a mock exam. The real thing should be scared.", icon: "GraduationCap", check: (s) => Object.values(s.mockExams).some((rs) => rs.some((r) => r.grade >= 27)) },
+  { id: "trenta-lode-casa", title: "Trenta e Lode (in casa)", desc: "A perfect 30 e lode on a mock exam.", icon: "Crown", check: (s) => Object.values(s.mockExams).some((rs) => rs.some((r) => r.grade >= 31)) },
   { id: "one-more-turn", title: "One More Turn", desc: "Study past 23:00 and before 07:00 within the same day. A true Civilization moment.", icon: "Hourglass", check: (s) => Object.values(s.activity).some((a) => a.earlyBird && a.nightOwl) },
   { id: "achievement-get", title: "Achievement Get!", desc: "Unlock 20 achievements. Yes, this one counts toward itself.", icon: "Award", check: (s) => Object.keys(s.achievements).length >= 20 },
 ];
@@ -878,6 +931,15 @@ export function logBossResult(courseId: string, rec: BossRecord) {
     emit({ type: "beer" });
   }
   afterMutation(state);
+}
+
+export function logMockExam(courseId: string, rec: MockExamRecord) {
+  const state = read();
+  afterMutation({
+    ...state,
+    mockExams: { ...state.mockExams, [courseId]: [...(state.mockExams[courseId] ?? []), rec] },
+    bonusXp: state.bonusXp + 50,
+  });
 }
 
 export function logMiniBossResult(courseId: string, section: string, won: boolean, grade: number) {

@@ -1,5 +1,6 @@
 import type { Course } from "../../types";
 import { loadTopic } from "./load";
+import { numericDrills } from "./numeric";
 
 // Authored from the real course material (course_material/thermo_course).
 // Regenerate JSON with: node scripts/extract-thermo.mjs <workflow-output>
@@ -62,7 +63,7 @@ const thermodynamics: Course = {
     status: "complete",
   },
   lessons: loaded.map((l) => l.lesson),
-  practice: loaded.flatMap((l) => l.practice),
+  practice: [...loaded.flatMap((l) => l.practice), ...numericDrills],
   exam: loaded.flatMap((l) => l.exam),
 };
 

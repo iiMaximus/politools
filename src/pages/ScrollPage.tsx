@@ -9,7 +9,7 @@ import { cn } from "../lib/cn";
 import { TexBlock } from "../lib/math";
 import type { CardState } from "../lib/progress";
 import { readProgress, recordAnswer, recordSelfRating } from "../lib/progress";
-import type { Lesson, LessonBlock, Question } from "../types";
+import { isNumeric, type Lesson, type LessonBlock, type McqQuestion } from "../types";
 import { NotFound } from "./NotFound";
 
 type ScrollMode = "story" | "drill" | "formula";
@@ -65,7 +65,7 @@ function clearScroll(courseId: string) {
 const RETRY_CAP = 2;
 const RETRY_GAPS = [4, 7];
 
-function reviewItem(q: Question, lesson: Lesson, n: number): FeedItem {
+function reviewItem(q: McqQuestion, lesson: Lesson, n: number): FeedItem {
   return {
     id: `${q.id}:review:${n}`,
     kind: "beat",
@@ -76,7 +76,7 @@ function reviewItem(q: Question, lesson: Lesson, n: number): FeedItem {
   };
 }
 
-function retryItem(q: Question, lesson: Lesson, n: number): FeedItem {
+function retryItem(q: McqQuestion, lesson: Lesson, n: number): FeedItem {
   return { id: `${q.id}:retry:${n}`, kind: "question", lesson, question: q, retry: true };
 }
 
@@ -85,7 +85,7 @@ function retryItem(q: Question, lesson: Lesson, n: number): FeedItem {
 function rebuildView(
   order: string[],
   base: FeedItem[],
-  questionIndex: Map<string, { q: Question; lesson: Lesson }>
+  questionIndex: Map<string, { q: McqQuestion; lesson: Lesson }>
 ): FeedItem[] | null {
   const baseById = new Map(base.map((it) => [it.id, it] as const));
   const orderSet = new Set(order);
@@ -121,7 +121,7 @@ type FeedItem =
       caption?: ReactNode;
     }
   | { id: string; kind: "example"; lesson: Lesson; title?: string; text: ReactNode; part?: string }
-  | { id: string; kind: "question"; lesson: Lesson; question: Question; retry?: boolean }
+  | { id: string; kind: "question"; lesson: Lesson; question: McqQuestion; retry?: boolean }
   | { id: string; kind: "finish"; totalLessons: number };
 
 const MAX_STORY_FORMULAS_PER_LESSON = 2;
@@ -163,7 +163,7 @@ export function ScrollPage() {
 
   /** every question reachable in this feed, for rebuilding retry items */
   const questionIndex = useMemo(() => {
-    const byId = new Map<string, { q: Question; lesson: Lesson }>();
+    const byId = new Map<string, { q: McqQuestion; lesson: Lesson }>();
     for (const item of feed) {
       if (item.kind === "question") byId.set(item.question.id, { q: item.question, lesson: item.lesson });
     }
@@ -308,7 +308,7 @@ export function ScrollPage() {
 
   /** wrong answer → a "rewind" teaching card + a retry of the same
    *  question appear a few cards downstream (twice per question, max) */
-  function queueRemediation(q: Question, lesson: Lesson) {
+  function queueRemediation(q: McqQuestion, lesson: Lesson) {
     const n = (retryCount.current.get(q.id) ?? 0) + 1;
     if (n > RETRY_CAP) return;
     retryCount.current.set(q.id, n);
@@ -443,13 +443,15 @@ export function ScrollPage() {
 
 function buildFeed(
   lessons: Lesson[],
-  practice: Question[],
+  practice: import("../types").Question[],
   mode: ScrollMode,
   cards: Record<string, CardState>
 ): FeedItem[] {
-  const questionsByTopic = new Map<string, Question[]>();
+  // the snap feed is MCQ-only — numeric answers live in Practice/Mock
+  const mcqBank = practice.filter((q): q is McqQuestion => !isNumeric(q));
+  const questionsByTopic = new Map<string, McqQuestion[]>();
   const topicOrder: string[] = [];
-  for (const q of practice) {
+  for (const q of mcqBank) {
     const key = q.topic ?? "";
     if (!questionsByTopic.has(key)) topicOrder.push(key);
     const list = questionsByTopic.get(key) ?? [];
@@ -473,10 +475,11 @@ function buildFeed(
     const examples = blocks.filter((block) => block.kind === "example") as Extract<LessonBlock, { kind: "example" }>[];
     const checkpoints = blocks
       .filter((block) => block.kind === "checkpoint")
-      .map((block) => (block as Extract<LessonBlock, { kind: "checkpoint" }>).question);
+      .map((block) => (block as Extract<LessonBlock, { kind: "checkpoint" }>).question)
+      .filter((q): q is McqQuestion => !isNumeric(q));
     const lessonTopic = topicOrder[lessonIndex] ?? "";
     const topicQuestions = questionsByTopic.get(lessonTopic) ?? [];
-    const directQuestions = practice.filter((q) => q.topic === lesson.title || q.topic?.includes(lesson.title));
+    const directQuestions = mcqBank.filter((q) => q.topic === lesson.title || q.topic?.includes(lesson.title));
     const questionLimit = mode === "drill" ? DRILL_QUESTIONS_PER_LESSON : MAX_QUESTIONS_PER_LESSON;
     const pool = dedupeQuestions([...checkpoints, ...directQuestions, ...topicQuestions]);
     // drill mode serves SRS-due cards first (stable sort keeps lesson order within groups)
@@ -583,7 +586,7 @@ function buildFeed(
   return items;
 }
 
-function dedupeQuestions(questions: Question[]) {
+function dedupeQuestions(questions: McqQuestion[]) {
   const seen = new Set<string>();
   return questions.filter((q) => {
     if (seen.has(q.id)) return false;
