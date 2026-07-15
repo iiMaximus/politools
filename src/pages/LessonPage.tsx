@@ -47,10 +47,38 @@ export function LessonPage() {
     [lesson]
   );
 
+  // restore the reading position when returning to a lesson ("continue
+  // where you left off"); save it as you scroll
   useEffect(() => {
-    window.scrollTo(0, 0);
     setActiveTocId(null);
-  }, [lessonId]);
+    if (!lesson) return;
+    const key = `polito:lessonpos:${courseId}:${lessonId}`;
+    const saved = Number(sessionStorage.getItem(key) ?? "0");
+    requestAnimationFrame(() => window.scrollTo(0, saved > 300 ? saved : 0));
+    let t = 0;
+    const onScroll = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        try {
+          sessionStorage.setItem(key, String(window.scrollY));
+        } catch {
+          /* ignore */
+        }
+      }, 250);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("scroll", onScroll);
+      // flush on unmount — a debounced save must not be lost to navigation
+      try {
+        sessionStorage.setItem(key, String(window.scrollY));
+      } catch {
+        /* ignore */
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId, lessonId, !!lesson]);
 
   useEffect(() => {
     if (!toc.length) return;
@@ -141,7 +169,7 @@ export function LessonPage() {
 
       <Page className={focusMode ? "!max-w-4xl py-8 sm:py-10" : undefined}>
         <div className={cn("grid gap-8", !focusMode && "lg:grid-cols-[1fr_220px]")}>
-          <article className="min-w-0">
+          <article className="min-w-0 max-w-[70ch]">
             {!focusMode && (
               <>
                 <Kicker>Lesson {idx + 1}</Kicker>
@@ -175,6 +203,27 @@ export function LessonPage() {
                   </ul>
                 </div>
               </>
+            )}
+
+            {/* collapsible TOC for phones (the sidebar only exists on lg+) */}
+            {!focusMode && toc.length > 1 && (
+              <details className="mt-5 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 lg:hidden">
+                <summary className="cursor-pointer select-none text-sm font-bold text-[var(--color-muted)]">
+                  On this page · {toc.length} sections
+                </summary>
+                <nav className="mt-2 space-y-0.5 border-l border-[var(--color-line)]">
+                  {toc.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => scrollToSection(t.id)}
+                      className="block w-full py-1 pl-3 text-left text-sm text-[var(--color-muted)]"
+                    >
+                      {rtInline(t.text)}
+                    </button>
+                  ))}
+                </nav>
+              </details>
             )}
 
             {/* body */}

@@ -151,7 +151,8 @@ export function HubPage() {
                 className="btn btn-primary !px-5"
                 title="~20 cards interleaved across your focus courses"
               >
-                <Icon name="Shuffle" size={18} /> Daily Mix
+                <Icon name="Shuffle" size={18} />
+                {totalDue > 0 ? `Clear ${Math.min(totalDue, 20)} now` : "Daily Mix"}
               </Link>
             </div>
             <div className="mt-4 flex-1">
@@ -440,7 +441,9 @@ function CourseCard({ course }: { course: Course }) {
           title={meta.title}
           tagline={meta.tagline}
           s={s}
-          footer={`Year ${meta.year} · Sem ${meta.semester}`}
+          footer={`Year ${meta.year} · Sem ${meta.semester}${
+            meta.status !== "complete" ? ` · ⚠ ${meta.status === "sample" ? "sample content" : "in progress"}` : ""
+          }`}
           cta={s.started ? "Continue" : "Start"}
         />
       </Link>

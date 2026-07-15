@@ -330,3 +330,40 @@ input[type="range"]::-moz-range-thumb {
     height: 2.4rem;
   }
 }
+
+/* ---------- app-wide juice (Phase 4) ---------- */
+
+/* gentle page entrance on route change (Page remounts per route) */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+main {
+  animation: pageIn 0.22s ease-out;
+}
+
+/* answer feedback: a pop for correct, a shake for wrong */
+@keyframes feedbackPop {
+  0% { transform: scale(0.97); }
+  60% { transform: scale(1.012); }
+  100% { transform: scale(1); }
+}
+@keyframes feedbackShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.feedback-pop { animation: feedbackPop 0.3s ease-out; }
+.feedback-shake { animation: feedbackShake 0.36s ease-in-out; }
+
+/* one switch turns the whole circus off */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -192,6 +192,7 @@ function PracticeRunner({
   const [nextReview, setNextReview] = useState<string | null>(null);
   const [sessionCorrect, setSessionCorrect] = useState(initialCorrect);
   const [sessionWrong, setSessionWrong] = useState(initialWrong);
+  const [hotStreak, setHotStreak] = useState(0);
 
   const done = i >= queue.length;
   const q: Question | undefined = queue[i];
@@ -234,9 +235,11 @@ function PracticeRunner({
     const correct = optionId === q.correct;
     if (correct) {
       setSessionCorrect((n) => n + 1);
+      setHotStreak((s) => s + 1);
       sfx.correct();
     } else {
       setSessionWrong((n) => n + 1);
+      setHotStreak(0);
       sfx.wrong();
     }
     recordAnswer(courseId, q.id, correct);
@@ -275,10 +278,29 @@ function PracticeRunner({
           <Stat icon="Trophy" label="Locked-in" value={`${mastered}/${total}`} />
         </div>
 
+        {/* session progress */}
+        <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-bg)]">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: `${queue.length ? (Math.min(i, queue.length) / queue.length) * 100 : 0}%`,
+              background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
+              transition: "width 0.3s ease",
+            }}
+          />
+        </div>
+
         <div className="surface mb-6 p-4">
           <div className="mb-1.5 flex items-center justify-between text-sm">
             <span className="font-semibold">Level {level}</span>
-            <span className="text-[var(--color-faint)]">{progress.xp} XP</span>
+            <span className="flex items-center gap-3 text-[var(--color-faint)]">
+              {hotStreak >= 2 && (
+                <span className="flex items-center gap-1 font-extrabold text-[#ff7a1a]">
+                  <Icon name="Flame" size={14} /> ×{hotStreak}
+                </span>
+              )}
+              {progress.xp} XP
+            </span>
           </div>
           <Meter value={pct / 100} />
         </div>
@@ -449,7 +471,10 @@ export function QuestionCard({
       {answered && (
         <div className="mt-5 space-y-4">
           <div
-            className="flex items-center gap-2 rounded-xl px-4 py-3 font-bold"
+            className={cn(
+              "flex items-center gap-2 rounded-xl px-4 py-3 font-bold",
+              correct ? "feedback-pop" : "feedback-shake"
+            )}
             style={{
               background: correct ? "var(--good-bg)" : "var(--bad-bg)",
               color: correct ? "var(--good)" : "var(--bad)",
