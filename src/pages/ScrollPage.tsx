@@ -4,14 +4,107 @@ import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
 import { rt, rtInline } from "../components/RichText";
 import { getCourse } from "../courses/registry";
+import { isDue } from "../lib/adaptive";
 import { cn } from "../lib/cn";
 import { TexBlock } from "../lib/math";
+import type { CardState } from "../lib/progress";
 import { readProgress, recordAnswer, recordSelfRating } from "../lib/progress";
 import type { Lesson, LessonBlock, Question } from "../types";
 import { NotFound } from "./NotFound";
 
 type ScrollMode = "story" | "drill" | "formula";
 type FormulaMark = "known" | "again";
+
+/* ------------------------- saved position -------------------------- *
+ * The whole session — item order (including injected remediation cards),
+ * answers, reveals and position — persists per course, so closing the
+ * feed mid-ride resumes exactly where you left off. */
+
+interface ScrollSave {
+  mode: ScrollMode;
+  index: number;
+  /** full item-id order; retry/review ids encode what to rebuild */
+  order: string[];
+  answers: Record<string, string>;
+  revealed: Record<string, boolean>;
+  updated: number;
+}
+
+const SCROLL_KEY = (courseId: string) => `polito:scroll:${courseId}`;
+
+function readScroll(courseId: string): ScrollSave | null {
+  try {
+    const raw = localStorage.getItem(SCROLL_KEY(courseId));
+    return raw ? (JSON.parse(raw) as ScrollSave) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeScroll(courseId: string, s: ScrollSave) {
+  try {
+    localStorage.setItem(SCROLL_KEY(courseId), JSON.stringify(s));
+  } catch {
+    /* storage full / unavailable */
+  }
+}
+
+function clearScroll(courseId: string) {
+  try {
+    localStorage.removeItem(SCROLL_KEY(courseId));
+  } catch {
+    /* ignore */
+  }
+}
+
+/* ------------------------ remediation items ------------------------ *
+ * TikTok-style corrective loop: get a question wrong and a "rewind"
+ * teaching card plus a retry of the same question surface a few cards
+ * downstream (max twice per question per session). */
+
+const RETRY_CAP = 2;
+const RETRY_GAPS = [4, 7];
+
+function reviewItem(q: Question, lesson: Lesson, n: number): FeedItem {
+  return {
+    id: `${q.id}:review:${n}`,
+    kind: "beat",
+    lesson,
+    label: "Rewind",
+    title: "Wait — let's fix that",
+    text: q.theory ?? q.explanation,
+  };
+}
+
+function retryItem(q: Question, lesson: Lesson, n: number): FeedItem {
+  return { id: `${q.id}:retry:${n}`, kind: "question", lesson, question: q, retry: true };
+}
+
+/** Rebuild a saved item order against the current base feed; null when the
+ *  content changed underneath (→ start fresh). */
+function rebuildView(
+  order: string[],
+  base: FeedItem[],
+  questionIndex: Map<string, { q: Question; lesson: Lesson }>
+): FeedItem[] | null {
+  const baseById = new Map(base.map((it) => [it.id, it] as const));
+  const orderSet = new Set(order);
+  for (const it of base) if (!orderSet.has(it.id)) return null;
+  const items: FeedItem[] = [];
+  for (const id of order) {
+    const b = baseById.get(id);
+    if (b) {
+      items.push(b);
+      continue;
+    }
+    const m = id.match(/^(.+):(review|retry):(\d+)$/);
+    if (!m) return null;
+    const hit = questionIndex.get(m[1]);
+    if (!hit) return null;
+    items.push(m[2] === "review" ? reviewItem(hit.q, hit.lesson, Number(m[3])) : retryItem(hit.q, hit.lesson, Number(m[3])));
+  }
+  return items;
+}
 
 type FeedItem =
   | { id: string; kind: "lesson"; lesson: Lesson; index: number; hook: string }
@@ -28,7 +121,7 @@ type FeedItem =
       caption?: ReactNode;
     }
   | { id: string; kind: "example"; lesson: Lesson; title?: string; text: ReactNode; part?: string }
-  | { id: string; kind: "question"; lesson: Lesson; question: Question }
+  | { id: string; kind: "question"; lesson: Lesson; question: Question; retry?: boolean }
   | { id: string; kind: "finish"; totalLessons: number };
 
 const MAX_STORY_FORMULAS_PER_LESSON = 2;
@@ -52,14 +145,94 @@ export function ScrollPage() {
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [formulaMarks, setFormulaMarks] = useState<Record<string, FormulaMark>>({});
   const [active, setActive] = useState(0);
-  const [mode, setMode] = useState<ScrollMode>("story");
+  // reopen in the mode you left — otherwise the saved session can't restore
+  const [mode, setMode] = useState<ScrollMode>(() => readScroll(courseId)?.mode ?? "story");
+  // the rendered feed = base feed + injected remediation cards
+  const [view, setView] = useState<FeedItem[]>([]);
+  const [resumed, setResumed] = useState<number | null>(null);
+  const activeRef = useRef(0);
+  const retryCount = useRef(new Map<string, number>());
 
-  const feed = useMemo(() => (course ? buildFeed(course.lessons, course.practice, mode) : []), [course, mode]);
+  const feed = useMemo(
+    () => (course ? buildFeed(course.lessons, course.practice, mode, readProgress(courseId).cards) : []),
+    // readProgress is a snapshot on purpose: re-keying on live progress would
+    // reshuffle the deck under the reader
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [course, mode]
+  );
 
+  /** every question reachable in this feed, for rebuilding retry items */
+  const questionIndex = useMemo(() => {
+    const byId = new Map<string, { q: Question; lesson: Lesson }>();
+    for (const item of feed) {
+      if (item.kind === "question") byId.set(item.question.id, { q: item.question, lesson: item.lesson });
+    }
+    return byId;
+  }, [feed]);
+
+  // init or restore the session for this course+mode
   useEffect(() => {
-    feedRef.current?.scrollTo({ top: 0 });
+    activeRef.current = 0;
+    retryCount.current = new Map();
+    setResumed(null);
+    if (!feed.length) {
+      setView([]);
+      return;
+    }
+    const saved = readScroll(courseId);
+    if (saved && saved.mode === mode && saved.order?.length) {
+      const rebuilt = rebuildView(saved.order, feed, questionIndex);
+      if (rebuilt) {
+        for (const id of saved.order) {
+          const m = id.match(/^(.+):retry:(\d+)$/);
+          if (m) retryCount.current.set(m[1], Math.max(retryCount.current.get(m[1]) ?? 0, Number(m[2])));
+        }
+        setView(rebuilt);
+        setAnswers(saved.answers ?? {});
+        setRevealed(saved.revealed ?? {});
+        const idx = Math.max(0, Math.min(saved.index ?? 0, rebuilt.length - 1));
+        if (idx > 0) {
+          setResumed(idx);
+          setActive(idx);
+          activeRef.current = idx;
+          requestAnimationFrame(() => {
+            feedRef.current
+              ?.querySelector<HTMLElement>(`[data-feed-index="${idx}"]`)
+              ?.scrollIntoView({ block: "start" });
+          });
+        }
+        return;
+      }
+    }
+    setView(feed);
+    setAnswers({});
+    setRevealed({});
     setActive(0);
-  }, [courseId, mode]);
+    feedRef.current?.scrollTo({ top: 0 });
+  }, [courseId, mode, feed, questionIndex]);
+
+  // persist position + answers (debounced) so the feed resumes next time
+  useEffect(() => {
+    if (!view.length) return;
+    const t = window.setTimeout(() => {
+      writeScroll(courseId, {
+        mode,
+        index: activeRef.current,
+        order: view.map((it) => it.id),
+        answers,
+        revealed,
+        updated: Date.now(),
+      });
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [courseId, mode, view, answers, revealed, active]);
+
+  // the resume pill dismisses itself
+  useEffect(() => {
+    if (resumed === null) return;
+    const t = window.setTimeout(() => setResumed(null), 6000);
+    return () => window.clearTimeout(t);
+  }, [resumed]);
 
   // Hydrate formula Known/Again from saved progress (the ratings feed the
   // SRS via recordSelfRating, so they survive reloads); allow one fresh
@@ -79,21 +252,23 @@ export function ScrollPage() {
 
   useEffect(() => {
     const root = feedRef.current;
-    if (!root || !feed.length) return;
+    if (!root || !view.length) return;
     const observer = new IntersectionObserver(
       (entries) => {
         const best = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (!best) return;
-        setActive(Number((best.target as HTMLElement).dataset.feedIndex ?? 0));
+        const idx = Number((best.target as HTMLElement).dataset.feedIndex ?? 0);
+        activeRef.current = idx;
+        setActive(idx);
       },
       { root, threshold: [0.55, 0.7, 0.85] }
     );
     const nodes = Array.from(root.querySelectorAll<HTMLElement>("[data-feed-index]"));
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [feed.length, mode]);
+  }, [view.length, mode]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -111,14 +286,46 @@ export function ScrollPage() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active, feed.length]);
+  }, [active, view.length]);
 
   if (!course) return <NotFound />;
 
-  function choose(question: Question, optionId: string) {
-    if (answers[question.id]) return;
-    setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
-    recordAnswer(courseId, question.id, optionId === question.correct);
+  /** answers are keyed by feed-item id (not question id) so an injected
+   *  retry of the same question is answerable again */
+  function choose(item: Extract<FeedItem, { kind: "question" }>, optionId: string) {
+    if (answers[item.id]) return;
+    setAnswers((prev) => ({ ...prev, [item.id]: optionId }));
+    const correct = optionId === item.question.correct;
+    recordAnswer(courseId, item.question.id, correct);
+    if (!correct) queueRemediation(item.question, item.lesson);
+  }
+
+  /** wrong answer → a "rewind" teaching card + a retry of the same
+   *  question appear a few cards downstream (twice per question, max) */
+  function queueRemediation(q: Question, lesson: Lesson) {
+    const n = (retryCount.current.get(q.id) ?? 0) + 1;
+    if (n > RETRY_CAP) return;
+    retryCount.current.set(q.id, n);
+    const gap = RETRY_GAPS[Math.min(n - 1, RETRY_GAPS.length - 1)];
+    setView((prev) => {
+      if (!prev.length) return prev;
+      const at = Math.min(activeRef.current + gap, prev.length - 1); // never after the finish card
+      const next = [...prev];
+      next.splice(at, 0, reviewItem(q, lesson, n), retryItem(q, lesson, n));
+      return next;
+    });
+  }
+
+  function startOver() {
+    clearScroll(courseId);
+    retryCount.current = new Map();
+    setView(feed);
+    setAnswers({});
+    setRevealed({});
+    setResumed(null);
+    setActive(0);
+    activeRef.current = 0;
+    feedRef.current?.scrollTo({ top: 0 });
   }
 
   function markFormula(itemId: string, mark: FormulaMark) {
@@ -130,7 +337,7 @@ export function ScrollPage() {
   }
 
   function scrollToIndex(index: number) {
-    const clamped = Math.max(0, Math.min(index, feed.length - 1));
+    const clamped = Math.max(0, Math.min(index, view.length - 1));
     const node = feedRef.current?.querySelector<HTMLElement>(`[data-feed-index="${clamped}"]`);
     node?.scrollIntoView({ block: "start", behavior: "smooth" });
   }
@@ -168,7 +375,7 @@ export function ScrollPage() {
             <ModeButton active={mode === "formula"} icon="Sigma" label="Formula" onClick={() => setMode("formula")} />
           </div>
           <div className="pointer-events-none min-w-10 text-right font-mono text-[11px] font-semibold text-white/45">
-            {feed.length ? active + 1 : 0}/{feed.length}
+            {view.length ? active + 1 : 0}/{view.length}
           </div>
         </header>
         <section
@@ -177,7 +384,7 @@ export function ScrollPage() {
           className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-auto overscroll-contain scroll-smooth no-scrollbar"
           aria-label="Microlearning scroll feed"
         >
-          {feed.map((item, index) => (
+          {view.map((item, index) => (
             <article
               key={item.id}
               data-feed-index={index}
@@ -189,7 +396,7 @@ export function ScrollPage() {
             >
               <FeedCard
                 item={item}
-                picked={item.kind === "question" ? answers[item.question.id] : undefined}
+                picked={item.kind === "question" ? answers[item.id] : undefined}
                 revealed={Boolean(revealed[item.id])}
                 formulaMark={formulaMarks[item.id]}
                 onPick={choose}
@@ -199,11 +406,26 @@ export function ScrollPage() {
             </article>
           ))}
         </section>
+        {resumed !== null && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-8 z-30 flex justify-center px-4">
+            <div className="pointer-events-auto flex items-center gap-2.5 rounded-full border border-white/10 bg-black/60 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-xl">
+              <Icon name="History" size={14} className="text-[var(--accent)]" />
+              Resumed at card {resumed + 1}
+              <button
+                type="button"
+                onClick={startOver}
+                className="rounded-full bg-white/15 px-2.5 py-1 transition hover:bg-white/25"
+              >
+                Start over
+              </button>
+            </div>
+          </div>
+        )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
           <div
             className="h-1 origin-left"
             style={{
-              transform: `scaleX(${feed.length ? (active + 1) / feed.length : 0})`,
+              transform: `scaleX(${view.length ? (active + 1) / view.length : 0})`,
               background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
             }}
           />
@@ -213,7 +435,12 @@ export function ScrollPage() {
   );
 }
 
-function buildFeed(lessons: Lesson[], practice: Question[], mode: ScrollMode): FeedItem[] {
+function buildFeed(
+  lessons: Lesson[],
+  practice: Question[],
+  mode: ScrollMode,
+  cards: Record<string, CardState>
+): FeedItem[] {
   const questionsByTopic = new Map<string, Question[]>();
   const topicOrder: string[] = [];
   for (const q of practice) {
@@ -245,7 +472,13 @@ function buildFeed(lessons: Lesson[], practice: Question[], mode: ScrollMode): F
     const topicQuestions = questionsByTopic.get(lessonTopic) ?? [];
     const directQuestions = practice.filter((q) => q.topic === lesson.title || q.topic?.includes(lesson.title));
     const questionLimit = mode === "drill" ? DRILL_QUESTIONS_PER_LESSON : MAX_QUESTIONS_PER_LESSON;
-    const questions = dedupeQuestions([...checkpoints, ...directQuestions, ...topicQuestions]).slice(0, questionLimit);
+    const pool = dedupeQuestions([...checkpoints, ...directQuestions, ...topicQuestions]);
+    // drill mode serves SRS-due cards first (stable sort keeps lesson order within groups)
+    const ranked =
+      mode === "drill"
+        ? [...pool].sort((a, b) => (isDue(cards[b.id]) ? 1 : 0) - (isDue(cards[a.id]) ? 1 : 0))
+        : pool;
+    const questions = ranked.slice(0, questionLimit);
 
     items.push({ id: `${lesson.id}:intro`, kind: "lesson", lesson, index: lessonIndex, hook: firstBeat(lesson.summary) });
     if (mode === "story") {
@@ -664,7 +897,7 @@ function FeedCard({
   picked?: string;
   revealed: boolean;
   formulaMark?: FormulaMark;
-  onPick: (question: Question, optionId: string) => void;
+  onPick: (item: Extract<FeedItem, { kind: "question" }>, optionId: string) => void;
   onReveal: () => void;
   onFormulaMark: (mark: FormulaMark) => void;
 }) {
@@ -820,7 +1053,7 @@ function QuestionScrollCard({
 }: {
   item: Extract<FeedItem, { kind: "question" }>;
   picked?: string;
-  onPick: (question: Question, optionId: string) => void;
+  onPick: (item: Extract<FeedItem, { kind: "question" }>, optionId: string) => void;
 }) {
   const answered = Boolean(picked);
   const correct = picked === item.question.correct;
@@ -828,7 +1061,13 @@ function QuestionScrollCard({
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <span className={FEED_KICKER}>Quick check</span>
+        <span className={FEED_KICKER}>{item.retry ? "Round 2 — remember this one?" : "Quick check"}</span>
+        {item.retry && (
+          <span className="rounded-full bg-[var(--accent)]/25 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white/80">
+            <Icon name="RotateCcw" size={11} className="mr-1 inline" />
+            retry
+          </span>
+        )}
         <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white/55">
           {item.question.difficulty}
         </span>
@@ -845,7 +1084,7 @@ function QuestionScrollCard({
               key={option.id}
               type="button"
               disabled={answered}
-              onClick={() => onPick(item.question, option.id)}
+              onClick={() => onPick(item, option.id)}
               className={cn(
                 "flex items-start gap-3 rounded-2xl border px-4 py-3 text-left text-[clamp(0.95rem,3.5vw,1.15rem)] font-bold leading-snug text-white/75 transition",
                 !answered && "border-white/10 bg-white/8 hover:border-[var(--accent-line)] hover:bg-white/12",

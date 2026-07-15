@@ -32,6 +32,8 @@ export interface BossRecord {
   grade: number; // 18..31 (31 = 30 e lode)
   heartsLeft: number;
   accuracy: number; // 0..1
+  /** highest hit combo of the fight (absent on old records) */
+  bestCombo?: number;
 }
 
 export type QuestKind =
@@ -91,6 +93,12 @@ export interface GameState {
   totals: GameTotals;
   quests: { date: string; items: QuestInstance[] };
   settings: GameSettings;
+  /** account level at the last rank sync — guards the rank-up toast */
+  lastRankLevel?: number;
+  /** highest total XP ever observed (via syncRank) */
+  peakXp?: number;
+  /** fastest perfect Daily Mix (seconds, 10+ cards) */
+  fastestPerfectMix?: number;
 }
 
 const KEY = "polito:game:v1";
@@ -456,6 +464,19 @@ export function rankFromXp(totalXp: number): RankInfo {
   return { level, rank, into, needed, pct: Math.round((into / needed) * 100) };
 }
 
+/** Called wherever total XP is summed (hub/stats). Records the peak and,
+ *  on crossing a level boundary, fires the rank-up toast — exactly once.
+ *  The first-ever sync only records a baseline (no retroactive toast). */
+export function syncRank(totalXp: number) {
+  const state = read();
+  const { level, rank } = rankFromXp(totalXp);
+  const prevLevel = state.lastRankLevel ?? 0;
+  const peakXp = Math.max(state.peakXp ?? 0, totalXp);
+  if (level === prevLevel && peakXp === (state.peakXp ?? 0)) return;
+  if (level > prevLevel && prevLevel > 0) emit({ type: "rank-up", rank, level });
+  afterMutation({ ...state, lastRankLevel: level, peakXp }); // peakXp achievements unlock here
+}
+
 /* ------------------------------ quests ----------------------------- */
 
 export interface QuestContext {
@@ -652,6 +673,47 @@ export interface AchievementDef {
   check: (s: GameState) => boolean;
 }
 
+const allBossRecords = (s: GameState): BossRecord[] => Object.values(s.boss).flat();
+
+/** a win in some course that came after ≥5 losses in that same course */
+function wonAfterLosses(s: GameState, losses: number): boolean {
+  return Object.values(s.boss).some((records) => {
+    let lost = 0;
+    for (const r of records) {
+      if (r.won && lost >= losses) return true;
+      if (!r.won) lost += 1;
+    }
+    return false;
+  });
+}
+
+/** a later win in some course that beats an earlier win's grade */
+function beatOwnGrade(s: GameState): boolean {
+  return Object.values(s.boss).some((records) => {
+    let best = -1;
+    for (const r of records) {
+      if (!r.won) continue;
+      if (best >= 0 && r.grade > best) return true;
+      best = Math.max(best, r.grade);
+    }
+    return false;
+  });
+}
+
+/** a qualifying study day after a gap of 3+ empty days */
+function returnedAfterBreak(s: GameState): boolean {
+  const days = Object.keys(s.activity)
+    .filter((k) => dayQualifies(s.activity[k]))
+    .sort();
+  for (let i = 1; i < days.length; i++) {
+    const [y1, m1, d1] = days[i - 1].split("-").map(Number);
+    const [y2, m2, d2] = days[i].split("-").map(Number);
+    const gap = (new Date(y2, m2 - 1, d2).getTime() - new Date(y1, m1 - 1, d1).getTime()) / 86_400_000;
+    if (gap >= 4) return true; // 3+ full days of grass between sessions
+  }
+  return false;
+}
+
 export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "first-blood", title: "First Blood", desc: "Answer your first question correctly.", icon: "Swords", check: (s) => s.totals.correct >= 1 },
   { id: "prima-fiamma", title: "Prima Fiamma", desc: "Reach a 3-day study streak.", icon: "Flame", check: (s) => streakInfo(s).current >= 3 },
@@ -671,6 +733,24 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "gufo", title: "Il Gufo", desc: "Study after 23:00.", icon: "Moon", check: (s) => Object.values(s.activity).some((a) => a.nightOwl) },
   { id: "questaiolo", title: "Questaiolo", desc: "Complete 25 daily quests.", icon: "ScrollText", check: (s) => s.totals.questsDone >= 25 },
   { id: "collezionista", title: "Il Collezionista", desc: "Unlock 12 achievements.", icon: "Medal", check: (s) => Object.keys(s.achievements).length >= 12 },
+  // ---- the pop-culture wing ----
+  { id: "how-did-we-get-here", title: "How Did We Get Here?", desc: "Study 5 different courses in a single day. Speedrunning the whole degree.", icon: "Blocks", check: (s) => Object.values(s.activity).some((a) => Object.keys(a.byCourse).length >= 5) },
+  { id: "over-9000", title: "It's Over 9000!", desc: "Break 9000 total XP. The scouter did not survive.", icon: "Zap", check: (s) => (s.peakXp ?? 0) >= 9000 },
+  { id: "you-died", title: "YOU DIED", desc: "Lose 5 boss fights. The bonfire is lit — rest, then try again.", icon: "Skull", check: (s) => allBossRecords(s).filter((r) => !r.won).length >= 5 },
+  { id: "git-gud", title: "Git Gud", desc: "Beat a boss you had already lost to five times. Hesitation is defeat.", icon: "Swords", check: (s) => wonAfterLosses(s, 5) },
+  { id: "still-alive", title: "Still Alive", desc: "Beat a final boss with exactly one heart left. This was a triumph.", icon: "HeartPulse", check: (s) => allBossRecords(s).some((r) => r.won && r.heartsLeft === 1) },
+  { id: "new-game-plus", title: "New Game+", desc: "Rematch a beaten boss and top your previous grade.", icon: "Gamepad2", check: beatOwnGrade },
+  { id: "speedrun", title: "Speedrun any%", desc: "Perfect Daily Mix (10+ cards) in under 3 minutes. World-record pace.", icon: "Timer", check: (s) => (s.fastestPerfectMix ?? Infinity) <= 180 },
+  { id: "99-problems", title: "99 Problems", desc: "Clear 99 due reviews, total. A card ain't one.", icon: "ListChecks", check: (s) => s.totals.dueCleared >= 99 },
+  { id: "sicko-mode", title: "Sicko Mode", desc: "50 correct answers in one day.", icon: "Flame", check: (s) => Object.values(s.activity).some((a) => a.correct >= 50) },
+  { id: "touch-grass", title: "Touch Grass", desc: "Return after 3+ days away. The grass was touched. Welcome back.", icon: "Sprout", check: returnedAfterBreak },
+  { id: "hollow-knight", title: "Hollow Knight", desc: "Defeat the final boss of 5 different courses.", icon: "Ghost", check: (s) => Object.entries(s.boss).filter(([, rs]) => rs.some((r) => r.won)).length >= 5 },
+  { id: "cake-is-a-lie", title: "The Cake Is a Lie", desc: "Three perfect sessions. The cake remains theoretical.", icon: "Cake", check: (s) => s.totals.perfectSessions >= 3 },
+  { id: "combo-breaker", title: "C-C-C-Combo Breaker!", desc: "Hit a ×10 combo in a boss fight.", icon: "Activity", check: (s) => allBossRecords(s).some((r) => (r.bestCombo ?? 0) >= 10) },
+  { id: "leeroy", title: "Leeroy Jenkins", desc: "Win a boss fight with under 70% accuracy. At least you have chicken.", icon: "Megaphone", check: (s) => allBossRecords(s).some((r) => r.won && r.accuracy < 0.7) },
+  { id: "all-your-base", title: "All Your Base", desc: "Score 28+ against three different final bosses. All your base are belong to you.", icon: "Castle", check: (s) => Object.entries(s.boss).filter(([, rs]) => rs.some((r) => r.won && r.grade >= 28)).length >= 3 },
+  { id: "one-more-turn", title: "One More Turn", desc: "Study past 23:00 and before 07:00 within the same day. A true Civilization moment.", icon: "Hourglass", check: (s) => Object.values(s.activity).some((a) => a.earlyBird && a.nightOwl) },
+  { id: "achievement-get", title: "Achievement Get!", desc: "Unlock 20 achievements. Yes, this one counts toward itself.", icon: "Award", check: (s) => Object.keys(s.achievements).length >= 20 },
 ];
 
 function evaluateAchievements(state: GameState): GameState {
@@ -762,17 +842,23 @@ export function logLessonCompleted() {
   afterMutation(state);
 }
 
-export function logMixSession(perfect: boolean, questionCount: number) {
+export function logMixSession(perfect: boolean, questionCount: number, durationSec?: number) {
   let state = withDay(read(), (d) => ({ ...d, mixSessions: d.mixSessions + 1 }));
+  const countsPerfect = perfect && questionCount >= 10;
   state = {
     ...state,
     totals: {
       ...state.totals,
       mixSessions: state.totals.mixSessions + 1,
-      perfectSessions:
-        state.totals.perfectSessions + (perfect && questionCount >= 10 ? 1 : 0),
+      perfectSessions: state.totals.perfectSessions + (countsPerfect ? 1 : 0),
     },
   };
+  if (countsPerfect && durationSec != null) {
+    state = {
+      ...state,
+      fastestPerfectMix: Math.min(state.fastestPerfectMix ?? Infinity, Math.round(durationSec)),
+    };
+  }
   afterMutation(state);
 }
 

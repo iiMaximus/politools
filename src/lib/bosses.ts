@@ -1,3 +1,5 @@
+import type { Question } from "../types";
+
 /* ================================================================== *
  *  BOSS CONFIGS — every course gets a final boss. The 3-D look is a
  *  procedural variant; names/taunts give each exam a personality.
@@ -69,6 +71,25 @@ const BOSSES: Record<string, BossConfig> = {
     ],
     colors: { primary: 0x8b7bff, secondary: 0xb18cff, glow: 0x9d7bff },
   },
+  "linear-algebra": {
+    variant: "generic",
+    name: "The Determinant",
+    epithet: "Judge of Singularity",
+    intro:
+      "It reduces every argument to a single number. If that number is zero, you do not exist.",
+    taunts: [
+      "Your answer space… trivial.",
+      "Rank-deficient. As I suspected.",
+      "You are not invertible, student.",
+      "det(you) = 0.",
+    ],
+    hurts: [
+      "My kernel… it grows?!",
+      "Full rank?! Impossible!",
+      "You… diagonalized ME?!",
+    ],
+    colors: { primary: 0x2f7dd1, secondary: 0x24b39b, glow: 0x3fa8e6 },
+  },
   statistics: {
     variant: "sigma",
     name: "Σ-Prime",
@@ -92,4 +113,25 @@ const BOSSES: Record<string, BossConfig> = {
 
 export function bossFor(courseId: string): BossConfig {
   return BOSSES[courseId] ?? GENERIC;
+}
+
+/* --------------------------- question time ------------------------- */
+
+const TIME_BASE: Record<Question["difficulty"], number> = { easy: 12, medium: 18, hard: 28 };
+const READ_CHARS_PER_SEC = 14;
+
+/** Thinking time for one question: a difficulty base, plus reading time
+ *  for the actual prompt+options length, plus surcharges for math and
+ *  figures. A one-line easy card gets ~15 s; a loaded hard integral with
+ *  four long options gets up to 90 s. */
+export function timeFor(q: Question): number {
+  const text = [q.prompt, ...q.options.map((o) => o.content)].join(" ");
+  const mathBits = (text.match(/\$[^$]+\$/g) ?? []).length;
+  const plain = text.replace(/\$[^$]+\$/g, " ").replace(/\s+/g, " ");
+  const t =
+    TIME_BASE[q.difficulty] +
+    plain.length / READ_CHARS_PER_SEC +
+    mathBits * 6 +
+    (q.visual ? 8 : 0);
+  return Math.round(Math.max(15, Math.min(90, t)));
 }

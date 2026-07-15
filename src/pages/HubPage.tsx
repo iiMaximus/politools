@@ -21,6 +21,7 @@ import {
   reconcileFreezes,
   rustyCount,
   streakInfo,
+  syncRank,
   useGame,
   type QuestInstance,
 } from "../lib/game";
@@ -98,6 +99,11 @@ export function HubPage() {
   const overall = aggregate(allSummaries);
   const totalXp = overall.xp + game.bonusXp;
   const streak = streakInfo(game);
+
+  // record peak XP + fire the rank-up toast when a level boundary is crossed
+  useEffect(() => {
+    syncRank(totalXp);
+  }, [totalXp]);
 
   return (
     <>

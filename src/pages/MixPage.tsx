@@ -74,6 +74,7 @@ export function MixPage() {
   const [bonus, setBonus] = useState(0);
   const [byCourse, setByCourse] = useState<Record<string, { correct: number; total: number }>>({});
   const loggedRef = useRef(false);
+  const startedRef = useRef(Date.now());
 
   const done = deck.length > 0 && i >= deck.length;
   const entry = deck[i];
@@ -86,7 +87,7 @@ export function MixPage() {
     if (!done || loggedRef.current) return;
     loggedRef.current = true;
     const perfect = correctCount === deck.length;
-    logMixSession(perfect, deck.length);
+    logMixSession(perfect, deck.length, (Date.now() - startedRef.current) / 1000);
     if (correctCount / deck.length >= 0.8) {
       sfx.victory();
       fireConfetti({ count: perfect ? 200 : 120 });
@@ -95,6 +96,7 @@ export function MixPage() {
 
   function anotherMix() {
     loggedRef.current = false;
+    startedRef.current = Date.now();
     setDeck(buildMixDeck());
     setI(0);
     setPicked(null);

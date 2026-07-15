@@ -24,12 +24,20 @@ import { sfx } from "../lib/sound";
 import type { Course, Question } from "../types";
 import { NotFound } from "./NotFound";
 
+/** the path's checkpoint quiz: short, fresh-shuffled, pass ≥ 75% */
+const CHECKPOINT_SIZE = 8;
+export const CHECKPOINT_PASS = 0.75;
+
 export function PracticePage() {
   const { courseId = "" } = useParams();
   const [params] = useSearchParams();
   const mode = params.get("mode");
   const dueOnly = mode === "due";
+  const checkpoint = mode === "checkpoint";
   const topic = params.get("topic");
+  // section-scoped checkpoint quizzes pass several topics, "|"-joined
+  const topicsParam = params.get("topics");
+  const topics = useMemo(() => (topicsParam ? topicsParam.split("|") : null), [topicsParam]);
   // No lecture/mode chosen yet → show the lecture-first menu (like the classic site).
   const showMenu = !topic && !mode;
   const course = getCourse(courseId);
@@ -40,8 +48,13 @@ export function PracticePage() {
   const init = useMemo(() => {
     if (!course) return { ids: [] as string[], i: 0, correct: 0, wrong: 0 };
     let pool = course.practice;
-    if (topic) pool = pool.filter((q) => q.topic === topic);
+    if (topics) pool = pool.filter((q) => q.topic && topics.includes(q.topic));
+    else if (topic) pool = pool.filter((q) => q.topic === topic);
     if (dueOnly) pool = pool.filter((q) => isDue(progress.cards[q.id]));
+    // checkpoint quizzes are one-shot: fresh shuffle, short deck, no resume
+    if (checkpoint) {
+      return { ids: shuffle(pool).slice(0, CHECKPOINT_SIZE).map((q) => q.id), i: 0, correct: 0, wrong: 0 };
+    }
     const built = buildSession(pool, progress).map((q) => q.id);
     const saved = readSession(courseId);
     // Resume when the scope matches and every card still exists. Don't
@@ -62,7 +75,7 @@ export function PracticePage() {
     // Build once per scope; deliberately not keyed on `progress` so the deck
     // doesn't reshuffle out from under you as you answer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId, dueOnly, topic, mode]);
+  }, [courseId, dueOnly, topic, topicsParam, mode]);
 
   if (!course) return <NotFound />;
 
@@ -124,10 +137,11 @@ export function PracticePage() {
 
   return (
     <PracticeRunner
-      key={`${courseId}|${topic ?? ""}|${mode ?? ""}`}
+      key={`${courseId}|${topic ?? ""}|${topicsParam ?? ""}|${mode ?? ""}`}
       courseId={courseId}
       course={course}
       topic={topic}
+      topics={topics}
       mode={mode}
       initialIds={init.ids}
       initialI={init.i}
@@ -141,6 +155,7 @@ function PracticeRunner({
   courseId,
   course,
   topic,
+  topics,
   mode,
   initialIds,
   initialI,
@@ -150,6 +165,7 @@ function PracticeRunner({
   courseId: string;
   course: Course;
   topic: string | null;
+  topics: string[] | null;
   mode: string | null;
   initialIds: string[];
   initialI: number;
@@ -158,6 +174,7 @@ function PracticeRunner({
 }) {
   const progress = useCourseProgress(courseId);
   const dueOnly = mode === "due";
+  const checkpoint = mode === "checkpoint";
 
   // Freeze the deck once, on mount. The order must NOT change mid-session:
   // React may drop a useMemo and re-run buildSession (which uses random
@@ -177,8 +194,10 @@ function PracticeRunner({
   const done = i >= queue.length;
   const q: Question | undefined = queue[i];
 
-  // Persist position + tally so closing/reopening resumes here. Clear on finish.
+  // Persist position + tally so closing/reopening resumes here. Clear on
+  // finish. Checkpoint quizzes are one-shot and never persisted.
   useEffect(() => {
+    if (checkpoint) return;
     if (done) {
       clearSession(courseId);
     } else {
@@ -192,11 +211,15 @@ function PracticeRunner({
         updated: Date.now(),
       });
     }
-  }, [courseId, topic, mode, initialIds, i, sessionCorrect, sessionWrong, done]);
+  }, [courseId, topic, mode, initialIds, i, sessionCorrect, sessionWrong, done, checkpoint]);
 
   // Stats are scoped to the current set (the selected lecture); with no
   // lecture the set IS the whole bank.
-  const statPool = topic ? course.practice.filter((qq) => qq.topic === topic) : course.practice;
+  const statPool = topics
+    ? course.practice.filter((qq) => qq.topic && topics.includes(qq.topic))
+    : topic
+    ? course.practice.filter((qq) => qq.topic === topic)
+    : course.practice;
   const total = statPool.length;
   const mastered = masteredCount(statPool, progress);
   const setDue = dueCount(statPool, progress); // this set only — shown in the stat bar
@@ -229,7 +252,7 @@ function PracticeRunner({
       <TopBar
         crumbs={[
           { label: course.meta.short, to: `/c/${courseId}` },
-          { label: topic ?? (dueOnly ? "Review mistakes" : "Practice") },
+          { label: checkpoint ? "Checkpoint quiz" : topic ?? (dueOnly ? "Review mistakes" : "Practice") },
         ]}
       >
         <Link to={`/c/${courseId}/practice`} className="btn btn-ghost !py-2 !text-sm">
@@ -263,6 +286,7 @@ function PracticeRunner({
             courseId={courseId}
             correct={sessionCorrect}
             wrong={sessionWrong}
+            checkpoint={checkpoint}
             onRestart={() => {
               setI(0);
               setPicked(null);
@@ -467,15 +491,49 @@ function SessionEnd({
   courseId,
   correct,
   wrong,
+  checkpoint,
   onRestart,
 }: {
   courseId: string;
   correct: number;
   wrong: number;
+  checkpoint?: boolean;
   onRestart: () => void;
 }) {
   const total = correct + wrong;
   const pct = total ? Math.round((correct / total) * 100) : 0;
+
+  if (checkpoint) {
+    const passed = total > 0 && correct / total >= CHECKPOINT_PASS;
+    return (
+      <div className="surface p-8 text-center">
+        <Icon
+          name={passed ? "ShieldCheck" : "ShieldAlert"}
+          size={40}
+          className="mx-auto mb-3"
+          style={{ color: passed ? "var(--good)" : "var(--warn)" }}
+        />
+        <h2 className="text-2xl font-bold">{passed ? "Checkpoint cleared!" : "Checkpoint failed"}</h2>
+        <p className="mt-1 text-[var(--color-muted)]">
+          {correct}/{total} correct · {pct}% — {passed ? "the road is yours" : `you need ${Math.round(CHECKPOINT_PASS * 100)}%`}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          {!passed && (
+            <button onClick={onRestart} className="btn btn-primary">
+              <Icon name="RotateCcw" size={16} /> Try again
+            </button>
+          )}
+          <Link to={`/c/${courseId}/path`} className={passed ? "btn btn-primary" : "btn btn-ghost"}>
+            <Icon name="Map" size={16} /> Back to the path
+          </Link>
+          <Link to={`/c/${courseId}/practice?mode=due`} className="btn btn-ghost">
+            Review mistakes
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="surface p-8 text-center">
       <Icon name="Flag" size={36} className="mx-auto mb-3 text-[var(--accent)]" />

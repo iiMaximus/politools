@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
@@ -34,6 +34,13 @@ interface PathNode {
   /** section banner rendered before this node */
   banner?: { title: string; done: number; total: number };
   badge?: string;
+  /** gold state: gate ≥80% section mastery, mini-boss ≥28, boss 30/30L */
+  legendary?: boolean;
+  /** gate extras for the popover's checkpoint quiz + progress meter */
+  topics?: string[];
+  gate?: { mastered: number; need: number; total: number };
+  /** minutes for lessons — shown in the popover */
+  minutes?: number;
 }
 
 function buildPath(course: Course, progress: CourseProgress, game: GameState): PathNode[] {
@@ -44,7 +51,13 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
   const gateState = (topics: string[]) => {
     const { mastered, total } = topicMastery(course, topics, progress);
     const need = Math.max(1, Math.ceil(total * GATE_MASTERY));
-    return { done: total > 0 && mastered >= need, mastered: Math.min(mastered, need), need };
+    return {
+      done: total > 0 && mastered >= need,
+      mastered,
+      need,
+      total,
+      legendary: total > 0 && mastered / total >= 0.8,
+    };
   };
 
   for (const s of sections) {
@@ -57,6 +70,7 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
         sub: `${l.minutes} min`,
         to: `/c/${course.meta.id}/learn/${l.id}`,
         done: !!progress.lessons[l.id]?.completed,
+        minutes: l.minutes,
       });
     }
     if (s.topics.length) {
@@ -65,12 +79,15 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
         id: `gate:${s.title}`,
         kind: "gate",
         title: "Checkpoint",
-        sub: g.done ? "cleared" : `lock in ${g.mastered}/${g.need} cards`,
+        sub: g.legendary ? "gold — 80%+ locked in" : g.done ? "cleared" : `lock in ${Math.min(g.mastered, g.need)}/${g.need} cards`,
         to:
           s.topics.length === 1
             ? `/c/${course.meta.id}/practice?topic=${encodeURIComponent(s.topics[0])}`
             : `/c/${course.meta.id}/practice`,
         done: g.done,
+        legendary: g.done && g.legendary,
+        topics: s.topics,
+        gate: { mastered: g.mastered, need: g.need, total: g.total },
       });
       if (multi) {
         const grade = miniBossGrade(course.meta.id, s.title, game);
@@ -81,6 +98,7 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
           sub: grade ? `defeated · best ${grade === 31 ? "30L" : grade}` : "mini-boss fight",
           to: `/c/${course.meta.id}/boss?mini=${encodeURIComponent(s.title)}`,
           done: grade !== null,
+          legendary: grade !== null && grade >= 28,
           badge: grade ? String(grade === 31 ? "30L" : grade) : undefined,
         });
       }
@@ -99,9 +117,12 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
       id: "gate:all",
       kind: "gate",
       title: "Grand checkpoint",
-      sub: g.done ? "cleared" : `lock in ${g.mastered}/${g.need} cards`,
+      sub: g.done ? "cleared" : `lock in ${Math.min(g.mastered, g.need)}/${g.need} cards`,
       to: `/c/${course.meta.id}/practice`,
       done: g.done,
+      legendary: g.done && g.legendary,
+      topics: [],
+      gate: { mastered: g.mastered, need: g.need, total: g.total },
     });
   }
 
@@ -116,6 +137,7 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
       : "THE FINAL EXAM",
     to: `/c/${course.meta.id}/boss`,
     done: bossBest !== null,
+    legendary: bossBest !== null && bossBest.grade >= 30,
   });
 
   return nodes;
@@ -152,9 +174,17 @@ export function PathPage() {
     }
   }, [courseId]);
 
-  if (!course) return <NotFound />;
-  const { meta } = course;
-  const due = dueCount(course.practice, progress);
+  // node action popover (tap a node → choose read/quiz/fight)
+  const [sel, setSel] = useState<PathNode | null>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSel(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const roadRef = useRef<HTMLDivElement | null>(null);
 
   const doneCount = nodes.filter((n) => n.done).length;
   const firstNotDone = nodes.findIndex((n) => !n.done);
@@ -177,6 +207,19 @@ export function PathPage() {
   }
   const x = (i: number) => 50 + 27 * Math.sin(i * 0.95 + 0.4);
   const height = ys[ys.length - 1] + 120;
+
+  // long roads used to open at the very top — jump to where you left off
+  useEffect(() => {
+    if (currentIdx < 3 || !roadRef.current || !ys.length) return;
+    const target = roadRef.current.offsetTop + ys[currentIdx] - window.innerHeight * 0.4;
+    window.scrollTo({ top: Math.max(0, target) });
+    // once per course visit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId]);
+
+  if (!course) return <NotFound />;
+  const { meta } = course;
+  const due = dueCount(course.practice, progress);
 
   return (
     <CourseTheme accent={meta.accent} accent2={meta.accent2}>
@@ -205,7 +248,7 @@ export function PathPage() {
           <CourseNav courseId={courseId} due={due} />
         </div>
 
-        <div className="relative" style={{ height }}>
+        <div ref={roadRef} className="relative" style={{ height }}>
           {/* road segments */}
           <svg
             viewBox={`0 0 100 ${height}`}
@@ -264,11 +307,20 @@ export function PathPage() {
                     </div>
                   </div>
                 )}
-                <NodeButton node={n} unlocked={unlocked} current={current} x={x(i)} y={ys[i]} />
+                <NodeButton
+                  node={n}
+                  unlocked={unlocked}
+                  current={current}
+                  x={x(i)}
+                  y={ys[i]}
+                  onSelect={() => setSel(n)}
+                />
               </div>
             );
           })}
         </div>
+
+        {sel && <NodeSheet node={sel} courseId={courseId} onClose={() => setSel(null)} />}
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-[var(--color-faint)]">
           <span className="flex items-center gap-1.5">
@@ -311,12 +363,14 @@ function NodeButton({
   current,
   x,
   y,
+  onSelect,
 }: {
   node: PathNode;
   unlocked: boolean;
   current: boolean;
   x: number;
   y: number;
+  onSelect: () => void;
 }) {
   const size = node.kind === "boss" ? 92 : node.kind === "miniboss" ? 76 : 66;
   // locked nodes keep their kind icon (grayed) — a wall of padlocks reads
@@ -328,22 +382,29 @@ function NodeButton({
     : NODE_ICON[node.kind];
 
   const villain = node.kind === "miniboss" || node.kind === "boss";
+  const gold = !!node.legendary;
   // pressable 3-D face: solid shadow "edge" below the disc
-  const face = node.done
+  const face = gold
+    ? "linear-gradient(180deg, #ffd45e, #e8a412)"
+    : node.done
     ? "linear-gradient(180deg, var(--accent), var(--accent-2))"
     : unlocked
     ? villain
       ? "linear-gradient(180deg, #2b2f45, #171a2c)"
       : "var(--color-surface)"
     : "var(--color-bg)";
-  const edgeColor = node.done
+  const edgeColor = gold
+    ? "#8a5f00"
+    : node.done
     ? "color-mix(in oklab, var(--accent-2) 60%, #000)"
     : unlocked
     ? villain
       ? "#0b0d18"
       : "color-mix(in oklab, var(--color-line) 70%, #000 12%)"
     : "var(--color-line)";
-  const iconColor = node.done
+  const iconColor = gold
+    ? "#6b4a00"
+    : node.done
     ? "#fff"
     : unlocked
     ? villain
@@ -365,8 +426,11 @@ function NodeButton({
     >
       <Icon name={iconName} size={size * 0.42} />
       {node.done && (
-        <span className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-[#ffd45e] text-[#6b4a00] shadow">
-          <Icon name="Star" size={13} />
+        <span
+          className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full shadow"
+          style={{ background: gold ? "#fff3c4" : "#ffd45e", color: "#6b4a00" }}
+        >
+          <Icon name={gold ? "Crown" : "Star"} size={13} />
         </span>
       )}
       {node.badge && !node.done && (
@@ -385,7 +449,7 @@ function NodeButton({
           !unlocked && "text-[var(--color-faint)]",
           node.kind === "boss" && unlocked && "text-[15px] uppercase tracking-wide"
         )}
-        style={node.done ? { color: "var(--accent)" } : undefined}
+        style={gold ? { color: "#c8901a" } : node.done ? { color: "var(--accent)" } : undefined}
       >
         {node.title}
       </span>
@@ -429,12 +493,107 @@ function NodeButton({
     );
   }
   return (
-    <Link
-      to={node.to}
+    <button
+      type="button"
+      onClick={onSelect}
       style={pos}
-      className="group select-none [&>div>span:first-of-type]:hover:brightness-105 active:[&_span]:translate-y-0.5"
+      className="group select-none text-inherit [&>div>span:first-of-type]:hover:brightness-105 active:[&_span]:translate-y-0.5"
     >
       {body}
-    </Link>
+    </button>
+  );
+}
+
+/* ------------------------ node action sheet ------------------------ */
+
+function NodeSheet({ node, courseId, onClose }: { node: PathNode; courseId: string; onClose: () => void }) {
+  const quizTo = node.topics?.length
+    ? `/c/${courseId}/practice?mode=checkpoint&topics=${encodeURIComponent(node.topics.join("|"))}`
+    : `/c/${courseId}/practice?mode=checkpoint`;
+
+  const actions: { label: string; icon: string; to: string; primary?: boolean }[] =
+    node.kind === "lesson"
+      ? [{ label: node.done ? "Read again" : "Read lesson", icon: "BookOpen", to: node.to, primary: !node.done }]
+      : node.kind === "gate"
+      ? [
+          { label: node.done ? "Retake checkpoint quiz" : "Take checkpoint quiz (8Q · 75%)", icon: "ShieldCheck", to: quizTo, primary: true },
+          { label: "Drill these cards", icon: "Dumbbell", to: node.to },
+        ]
+      : node.kind === "miniboss"
+      ? [{ label: node.done ? "Rematch the guardian" : "Fight the guardian", icon: "Ghost", to: node.to, primary: true }]
+      : [{ label: node.done ? "Rematch" : "Challenge the boss", icon: "Swords", to: node.to, primary: true }];
+
+  return (
+    <div className="fixed inset-0 z-[70]" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/40" style={{ animation: "sheetFade 0.18s ease-out" }} />
+      <div
+        className="absolute inset-x-0 bottom-0 mx-auto max-w-lg rounded-t-3xl border border-b-0 border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-2xl"
+        style={{
+          paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))",
+          animation: "sheetUp 0.22s cubic-bezier(0.2, 1.1, 0.4, 1)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--color-line)]" />
+        <div className="flex items-center gap-3">
+          <span
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-white"
+            style={{
+              background: node.legendary
+                ? "linear-gradient(180deg,#ffd45e,#e8a412)"
+                : "linear-gradient(180deg,var(--accent),var(--accent-2))",
+              color: node.legendary ? "#6b4a00" : undefined,
+            }}
+          >
+            <Icon name={NODE_ICON[node.kind]} size={22} />
+          </span>
+          <div className="min-w-0">
+            <div className="truncate font-extrabold">{node.title}</div>
+            <div className="text-xs text-[var(--color-faint)]">
+              {node.legendary ? "★ legendary — " : ""}
+              {node.sub ?? (node.minutes ? `${node.minutes} min` : "")}
+            </div>
+          </div>
+        </div>
+
+        {node.kind === "gate" && node.gate && node.gate.total > 0 && (
+          <div className="mt-4">
+            <div className="mb-1 flex justify-between text-[11px] font-semibold text-[var(--color-faint)]">
+              <span>section mastery</span>
+              <span>
+                {node.gate.mastered}/{node.gate.total} cards
+              </span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-[var(--color-bg)]">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${Math.min(100, (node.gate.mastered / node.gate.total) * 100)}%`,
+                  background:
+                    node.gate.mastered / node.gate.total >= 0.8
+                      ? "linear-gradient(90deg,#ffd45e,#e8a412)"
+                      : "linear-gradient(90deg,var(--accent),var(--accent-2))",
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="mt-4 grid gap-2">
+          {actions.map((a) => (
+            <Link key={a.label} to={a.to} className={a.primary ? "btn btn-primary w-full" : "btn btn-ghost w-full"}>
+              <Icon name={a.icon} size={16} /> {a.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+      <style>{`
+        @keyframes sheetUp { 0% { transform: translateY(28px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes sheetFade { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) {
+          [style*="sheetUp"], [style*="sheetFade"] { animation: none !important; }
+        }
+      `}</style>
+    </div>
   );
 }

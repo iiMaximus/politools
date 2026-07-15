@@ -8,12 +8,12 @@ import { cn } from "../lib/cn";
 import { buildSession, shuffle } from "../lib/adaptive";
 import { readProgress, recordAnswer } from "../lib/progress";
 import { bestBossGrade, logBossResult, logMiniBossResult, miniBossGrade } from "../lib/game";
-import { bossFor } from "../lib/bosses";
+import { bossFor, timeFor } from "../lib/bosses";
 import { courseSections, sectionQuestions } from "../lib/path";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
 import type { ArenaSignal } from "../components/game/BossArena";
-import type { Difficulty, Question } from "../types";
+import type { Question } from "../types";
 import { NotFound } from "./NotFound";
 
 const BossArena = lazy(() => import("../components/game/BossArena"));
@@ -22,11 +22,13 @@ const BossArena = lazy(() => import("../components/game/BossArena"));
  *  BOSS FIGHT v2 — a full-screen arena. The whole viewport is the
  *  three.js scene; the HUD and question float over it as glass panels.
  *  `?mini=<section>` fights that section's guardian: smaller boss,
- *  scoped deck, 2 hearts. Timers scale with question difficulty so a
- *  hard integral gets a real amount of thinking time.
+ *  scoped deck, 2 hearts. Timers scale with each question's actual
+ *  length/difficulty (lib/bosses timeFor), so a one-liner is snappy and
+ *  a loaded integral gets real thinking time. Running out of questions
+ *  while still alive triggers SUDDEN DEATH: missed questions return at
+ *  double damage — the fight ends by KO, never by attrition.
  * ================================================================== */
 
-const TIME_FOR: Record<Difficulty, number> = { easy: 25, medium: 40, hard: 60 };
 /** below this HP fraction the boss ENRAGES: timers shrink, your hits harden */
 const ENRAGE_AT = 0.3;
 const ENRAGE_TIME_FACTOR = 0.7;
@@ -35,8 +37,42 @@ const ENRAGE_LINES = [
   "You dare wound me?! FEEL THE PRESSURE.",
   "The clock bends to MY will now!",
 ];
+const SUDDEN_DEATH_FACTOR = 2;
+const SUDDEN_DEATH_LINE = "SUDDEN DEATH — your missed questions return. Everything hits double.";
+
+/** classic battle-box palette (theme-independent — it looks like the game) */
+const PKMN = {
+  cream: "#f8f8e8",
+  ink: "#22221a",
+  frame: "3px solid #22221a",
+  shadow: "3px 3px 0 rgba(0,0,0,0.45)",
+  font: '"VT323", "JetBrains Mono", monospace',
+};
 
 type Phase = "intro" | "fight" | "victory" | "defeat";
+
+/** Pokémon-style text crawl. Skips straight to the full line under
+ *  prefers-reduced-motion. */
+function useTypewriter(text: string | null, speed = 24): string {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!text) {
+      setN(0);
+      return;
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setN(text.length);
+      return;
+    }
+    setN(0);
+    const id = window.setInterval(
+      () => setN((k) => (k >= text.length ? k : k + 1)),
+      speed
+    );
+    return () => window.clearInterval(id);
+  }, [text, speed]);
+  return text ? text.slice(0, n) : "";
+}
 
 export default function BossPage() {
   const { courseId = "" } = useParams();
@@ -71,9 +107,13 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
   const [taunt, setTaunt] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(30);
   const [signal, setSignal] = useState<ArenaSignal>({ kind: null, nonce: 0 });
+  const [suddenDeath, setSuddenDeath] = useState(false);
+  const [missed, setMissed] = useState<Question[]>([]);
+  const [bestCombo, setBestCombo] = useState(0);
   const loggedRef = useRef(false);
 
-  const deck = useMemo<Question[]>(() => {
+  // deck is state, not memo: sudden death appends a refill wave
+  const buildDeck = () => {
     const progress = readProgress(courseId);
     let pool = course.practice;
     if (isMini) {
@@ -82,14 +122,31 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
       if (scoped.length >= 4) pool = scoped;
     }
     return buildSession(pool, progress).slice(0, cfg.deck);
-    // deck frozen per fight
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId, miniSection]);
+  };
+  const [deck, setDeck] = useState<Question[]>(buildDeck);
+
+  function rematch() {
+    loggedRef.current = false;
+    setPhase("intro");
+    setHp(cfg.hp);
+    setHearts(cfg.hearts);
+    setI(0);
+    setPicked(null);
+    setCombo(0);
+    setBestCombo(0);
+    setCorrect(0);
+    setAsked(0);
+    setLastHit(null);
+    setTaunt(null);
+    setSuddenDeath(false);
+    setMissed([]);
+    setDeck(buildDeck());
+  }
 
   const q = deck[i];
   const enraged = hp > 0 && hp / cfg.hp <= ENRAGE_AT;
   const qTime = q
-    ? Math.round(TIME_FOR[q.difficulty] * (enraged ? ENRAGE_TIME_FACTOR : 1))
+    ? Math.round(timeFor(q) * (enraged ? ENRAGE_TIME_FACTOR : 1))
     : 30;
   const options = useMemo(() => (q ? shuffle(q.options) : []), [q?.id]);
 
@@ -142,6 +199,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
         grade,
         heartsLeft: hearts,
         accuracy,
+        bestCombo,
       });
     }
     if (phase === "victory") {
@@ -171,12 +229,14 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
     if (isCorrect) {
       const newCombo = combo + 1;
       setCombo(newCombo);
+      setBestCombo((b) => Math.max(b, newCombo));
       setCorrect((n) => n + 1);
       const speed = timeLeft / qTime;
       const crit = newCombo >= 3 && speed > 0.5;
       let dmg = 8 + Math.round(speed * 6) + Math.min(newCombo - 1, 4);
       if (crit) dmg = Math.round(dmg * 1.5);
       if (enraged) dmg = Math.round(dmg * 1.2); // enraged bosses bleed harder
+      if (suddenDeath) dmg *= SUDDEN_DEATH_FACTOR;
       setLastHit({ dmg, crit });
       sfx.hit(crit);
       const newHp = Math.max(0, hp - dmg);
@@ -198,6 +258,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
     } else {
       setCombo(0);
       setLastHit(null);
+      setMissed((m) => [...m, q]);
       setTaunt(boss.taunts[Math.floor(Math.random() * boss.taunts.length)]);
       sfx.hurt();
       send("attack");
@@ -212,8 +273,19 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
     setPicked(null);
     setLastHit(null);
     setTaunt(null);
-    if (i + 1 >= deck.length) setPhase("defeat");
-    else setI((n) => n + 1);
+    if (i + 1 >= deck.length) {
+      // still alive with an empty deck → SUDDEN DEATH: refill with this
+      // fight's missed questions (fallback: fresh pool draw), double damage
+      const refillPool = missed.length ? missed : course.practice;
+      const refill = shuffle(refillPool).slice(0, Math.max(4, Math.min(10, refillPool.length)));
+      setDeck((d) => [...d, ...refill]);
+      setSuddenDeath(true);
+      setTaunt(SUDDEN_DEATH_LINE);
+      send("enrage");
+      setI((n) => n + 1);
+    } else {
+      setI((n) => n + 1);
+    }
   }
 
   useEffect(() => {
@@ -242,6 +314,15 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
   const backTo = `/c/${courseId}/path`;
   const timerFrac = timeLeft / qTime;
+
+  /* Pokémon battle text */
+  const encounterLine = isMini
+    ? `${cfg.name.toUpperCase()} wants to fight!`
+    : `A wild ${cfg.name.toUpperCase()} appeared!`;
+  const introTyped = useTypewriter(phase === "intro" ? encounterLine : null);
+  const dialogTyped = useTypewriter(
+    phase === "fight" && taunt ? `${cfg.name.toUpperCase()}: ${taunt}` : null
+  );
 
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
@@ -278,41 +359,86 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
             <div className="mt-1 text-sm font-medium italic text-white/60">{cfg.epithet}</div>
           </div>
 
-          <div className="relative z-10 mx-4 max-w-lg rounded-3xl bg-black/35 p-4 text-center backdrop-blur-sm">
-            <p className="text-sm text-white/75" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.9)" }}>
-              {boss.intro}
-            </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-white/80">
+          <div className="relative z-10 mx-4 w-full max-w-lg space-y-2.5">
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-white/80">
               <RuleChip icon="Swords" text="correct = damage · speed & combos hit harder" />
               <RuleChip icon="Heart" text={`${cfg.hearts} hearts — miss or timeout costs one`} />
-              <RuleChip
-                icon="Clock"
-                text="25s easy · 40s medium · 60s hard"
-              />
+              <RuleChip icon="Clock" text="the clock fits the question — long ones get more time" />
               <RuleChip icon="Flame" text="below 30% HP it ENRAGES — less time, bigger hits" />
               <RuleChip
                 icon={isMini ? "Ghost" : "Beer"}
                 text={isMini ? "win = path node conquered · +25 XP" : "win = graded 18–30L · +1 beer"}
               />
             </div>
-            {(best || bestMini) && (
-              <div className="mt-3 text-xs text-white/50">
-                Personal best:{" "}
-                <strong className="text-[#ffd45e]">
-                  {best ? (best.grade === 31 ? "30 e lode" : best.grade) : bestMini === 31 ? "30L" : bestMini}
-                </strong>
-              </div>
-            )}
-            <div className="mt-5 flex items-center justify-center gap-3">
-              <Link to={backTo} className="btn btn-ghost !border-white/20 !bg-white/10 !text-white">
-                <Icon name="ArrowLeft" size={16} /> Retreat
-              </Link>
-              <button onClick={() => setPhase("fight")} className="btn btn-primary !px-10 !py-3 !text-base">
-                <Icon name="Swords" size={18} /> Fight
-              </button>
+
+            {/* encounter dialog box */}
+            <div
+              className="px-4 py-3"
+              style={{
+                background: PKMN.cream,
+                border: PKMN.frame,
+                borderRadius: 12,
+                boxShadow: PKMN.shadow,
+                fontFamily: PKMN.font,
+                color: PKMN.ink,
+              }}
+            >
+              <p className="text-2xl leading-tight sm:text-3xl">
+                {introTyped}
+                <span className="animate-pulse">▌</span>
+              </p>
+              <p className="mt-1.5 text-lg leading-snug opacity-75">{boss.intro}</p>
             </div>
-            <div className="mt-2 text-[10px] uppercase tracking-wider text-white/35">
-              press Enter to begin
+
+            {/* action menu */}
+            <div
+              className="grid grid-cols-2 gap-x-6 gap-y-1 px-5 py-3"
+              style={{
+                background: PKMN.cream,
+                border: PKMN.frame,
+                borderRadius: 12,
+                boxShadow: PKMN.shadow,
+                fontFamily: PKMN.font,
+                color: PKMN.ink,
+              }}
+            >
+              <button
+                onClick={() => setPhase("fight")}
+                className="group flex items-center gap-1 text-left text-2xl uppercase leading-tight hover:text-[#c0392b]"
+              >
+                <span className="w-4 opacity-0 transition group-hover:opacity-100">▶</span>Fight
+              </button>
+              <button
+                disabled
+                title="No items. You are an engineer."
+                className="flex cursor-not-allowed items-center gap-1 text-left text-2xl uppercase leading-tight opacity-40"
+              >
+                <span className="w-4" />Bag
+              </button>
+              <div className="flex items-center gap-1 text-2xl uppercase leading-tight opacity-70">
+                <span className="w-4" />
+                Best{" "}
+                <span className="text-[#b8860b]">
+                  {best
+                    ? best.grade === 31
+                      ? "30L"
+                      : best.grade
+                    : bestMini
+                    ? bestMini === 31
+                      ? "30L"
+                      : bestMini
+                    : "—"}
+                </span>
+              </div>
+              <Link
+                to={backTo}
+                className="group flex items-center gap-1 text-2xl uppercase leading-tight hover:text-[#c0392b]"
+              >
+                <span className="w-4 opacity-0 transition group-hover:opacity-100">▶</span>Run
+              </Link>
+            </div>
+            <div className="text-center text-[10px] uppercase tracking-wider text-white/35">
+              press Enter to fight
             </div>
           </div>
         </div>
@@ -329,46 +455,58 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
             >
               <Icon name="DoorOpen" size={14} /> Flee
             </Link>
-            <div className="mx-auto w-full max-w-xl">
-              <div className="mb-1 flex items-center justify-between text-[11px] font-bold text-white/85">
-                <span className="flex min-w-0 items-center gap-2 truncate">
-                  {cfg.name}
-                  <span className="hidden font-normal text-white/45 sm:inline">· {cfg.epithet}</span>
+            {/* enemy HP box — classic battle frame */}
+            <div
+              className="mx-auto w-full max-w-md px-3.5 py-2"
+              style={{
+                background: PKMN.cream,
+                border: PKMN.frame,
+                borderRadius: 10,
+                boxShadow: PKMN.shadow,
+                fontFamily: PKMN.font,
+                color: PKMN.ink,
+              }}
+            >
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="truncate text-xl leading-none">{cfg.name.toUpperCase()}</span>
+                <span className="shrink-0 text-lg leading-none">Lv.30</span>
+              </div>
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <span
+                  className="rounded-sm px-1 pb-0.5 text-[11px] font-black leading-none"
+                  style={{ background: PKMN.ink, color: "#f8b830", fontFamily: "Inter, sans-serif" }}
+                >
+                  HP
+                </span>
+                <div className="h-2.5 flex-1 overflow-hidden rounded-full" style={{ background: "#565650" }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${(hp / cfg.hp) * 100}%`,
+                      background: hp / cfg.hp > 0.5 ? "#4caf50" : hp / cfg.hp > 0.2 ? "#ffb300" : "#e53935",
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="mt-0.5 flex items-center justify-between">
+                <span className="text-base leading-none">{hp}/{cfg.hp}</span>
+                <span className="flex gap-1" style={{ fontFamily: "Inter, sans-serif" }}>
                   {enraged && (
-                    <span className="animate-pulse rounded-full bg-[#ff2d55] px-2 py-0.5 text-[9px] font-black tracking-widest text-white">
-                      ENRAGED
+                    <span className="animate-pulse rounded px-1.5 py-0.5 text-[9px] font-black tracking-wider text-white" style={{ background: "#e53935" }}>
+                      RAGE
+                    </span>
+                  )}
+                  {suddenDeath && (
+                    <span className="animate-pulse rounded px-1.5 py-0.5 text-[9px] font-black tracking-wider text-white" style={{ background: "#f57f17" }}>
+                      SUDDEN ×2
                     </span>
                   )}
                 </span>
-                <span className="ml-2 font-mono">{hp}/{cfg.hp}</span>
-              </div>
-              <div className="h-3 overflow-hidden rounded-full bg-black/60 ring-1 ring-white/25">
-                <div
-                  className="h-full rounded-full transition-all duration-300"
-                  style={{
-                    width: `${(hp / cfg.hp) * 100}%`,
-                    background:
-                      hp / cfg.hp > 0.4 ? "linear-gradient(90deg,#ff5e57,#ff9f43)" : "#ff2d55",
-                  }}
-                />
               </div>
             </div>
-            <div className="flex flex-col items-end gap-1.5">
-              <div className="flex gap-1">
-                {Array.from({ length: cfg.hearts }, (_, k) => (
-                  <Icon
-                    key={k}
-                    name="Heart"
-                    size={22}
-                    className={k < hearts ? "text-[#ff2d55]" : "text-white/15"}
-                    style={k < hearts ? { fill: "#ff2d55" } : undefined}
-                  />
-                ))}
-              </div>
-              <span className="rounded-full bg-white/10 px-2 py-0.5 font-mono text-[10px] font-bold text-white/70">
-                {i + 1}/{deck.length}
-              </span>
-            </div>
+            <span className="rounded-full bg-white/10 px-2 py-1 font-mono text-[10px] font-bold text-white/70">
+              {i + 1}/{deck.length}
+            </span>
           </div>
 
           {/* damage pop + taunt */}
@@ -385,17 +523,44 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               {lastHit.crit && <span className="ml-2 text-lg font-extrabold">CRIT!</span>}
             </div>
           )}
-          {taunt && (
-            <div className="pointer-events-none absolute inset-x-0 top-[38%] z-10 text-center">
-              <span className="inline-block max-w-md rounded-2xl bg-black/60 px-5 py-2 text-sm font-medium italic text-white/90 backdrop-blur">
-                “{taunt}”
-              </span>
+          {/* question panel — the battle dialog box */}
+          <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center p-3 sm:p-5">
+            {/* player status box */}
+            <div className="mb-2 flex w-full max-w-3xl justify-end">
+              <div
+                className="flex items-center gap-2.5 px-3 py-1.5"
+                style={{
+                  background: PKMN.cream,
+                  border: PKMN.frame,
+                  borderRadius: 10,
+                  boxShadow: PKMN.shadow,
+                  fontFamily: PKMN.font,
+                  color: PKMN.ink,
+                }}
+              >
+                <span className="text-lg leading-none">STUDENT</span>
+                <span className="flex gap-0.5">
+                  {Array.from({ length: cfg.hearts }, (_, k) => (
+                    <Icon
+                      key={k}
+                      name="Heart"
+                      size={16}
+                      className={k < hearts ? "text-[#e53935]" : "text-black/15"}
+                      style={k < hearts ? { fill: "#e53935" } : undefined}
+                    />
+                  ))}
+                </span>
+                {combo >= 2 && (
+                  <span className="text-base leading-none" style={{ color: "#c0392b" }}>
+                    ×{combo}
+                  </span>
+                )}
+              </div>
             </div>
-          )}
-
-          {/* question panel */}
-          <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center p-3 sm:p-5">
-            <div className="w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-[#0b0f20]/85 shadow-2xl backdrop-blur-xl">
+            <div
+              className="w-full max-w-3xl overflow-hidden rounded-2xl bg-[#0b0f20]/85 shadow-2xl backdrop-blur-xl"
+              style={{ border: "3px solid #e8e8d8" }}
+            >
               {/* timer bar */}
               {picked === null && (
                 <div className="h-1.5 w-full bg-white/10">
@@ -409,6 +574,20 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                 </div>
               )}
               <div className="max-h-[46vh] overflow-y-auto p-4 sm:p-5">
+                {/* battle dialog line */}
+                <div
+                  className="mb-2 text-xl leading-tight text-white sm:text-2xl"
+                  style={{ fontFamily: PKMN.font }}
+                >
+                  {taunt ? (
+                    <>
+                      {dialogTyped}
+                      <span className="animate-pulse">▌</span>
+                    </>
+                  ) : (
+                    "What will STUDENT do?"
+                  )}
+                </div>
                 <div className="mb-2.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/50">
                   <span
                     className={cn(
@@ -420,7 +599,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                         : "bg-emerald-500/25 text-emerald-200"
                     )}
                   >
-                    {q.difficulty} · {TIME_FOR[q.difficulty]}s
+                    {q.difficulty} · {timeFor(q)}s
                   </span>
                   {picked === null && (
                     <span className={cn("ml-auto font-mono text-sm", timeLeft < 8 ? "text-[#ff2d55]" : "text-white/60")}>
@@ -497,8 +676,8 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               className="mx-auto mb-3"
               style={{ color: phase === "victory" ? "#ffd45e" : "rgba(255,255,255,0.35)" }}
             />
-            <h1 className="text-3xl font-black">
-              {phase === "victory" ? (isMini ? "Guardian down!" : `${boss.name} defeated!`) : "You were defeated…"}
+            <h1 className="text-4xl" style={{ fontFamily: PKMN.font }}>
+              {phase === "victory" ? `${cfg.name.toUpperCase()} fainted!` : "STUDENT blacked out…"}
             </h1>
             {phase === "victory" ? (
               <>
@@ -520,7 +699,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               </p>
             )}
             <div className="mt-6 flex flex-wrap justify-center gap-2">
-              <button onClick={() => window.location.reload()} className="btn btn-primary">
+              <button onClick={rematch} className="btn btn-primary">
                 <Icon name="Swords" size={16} /> Rematch
               </button>
               <Link

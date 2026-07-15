@@ -15,7 +15,7 @@ interface Toast {
   icon: string;
   title: string;
   sub?: string;
-  tone: "accent" | "good" | "info" | "beer";
+  tone: "accent" | "good" | "info" | "beer" | "mc";
 }
 
 let nextId = 1;
@@ -23,7 +23,8 @@ let nextId = 1;
 function toToast(e: GameEvent): Toast | null {
   switch (e.type) {
     case "achievement":
-      return { id: nextId++, icon: e.icon, title: "Achievement unlocked!", sub: e.title, tone: "accent" };
+      // rendered as a Minecraft advancement popup (MinecraftToast)
+      return { id: nextId++, icon: e.icon, title: "Achievement Get!", sub: e.title, tone: "mc" };
     case "quest":
       return { id: nextId++, icon: "ScrollText", title: "Quest complete", sub: `${e.label} · +${e.rewardXp} XP`, tone: "good" };
     case "rank-up":
@@ -39,6 +40,42 @@ function toToast(e: GameEvent): Toast | null {
   }
 }
 
+/** The classic Minecraft advancement popup: dark beveled panel, item-slot
+ *  icon frame, yellow "Achievement Get!" over the white achievement name.
+ *  Deliberately theme-independent — it looks like the game, not the app. */
+function MinecraftToast({ icon, name }: { icon: string; name: string }) {
+  return (
+    <div
+      className="flex items-center gap-3 px-3.5 py-2.5"
+      style={{
+        background: "#212121",
+        border: "2px solid #000",
+        borderRadius: 6,
+        boxShadow: "inset 2px 2px 0 #555, inset -2px -2px 0 #2b2b2b, 0 8px 22px rgba(0,0,0,0.55)",
+        fontFamily: '"VT323", "JetBrains Mono", monospace',
+      }}
+    >
+      <span
+        className="grid h-11 w-11 shrink-0 place-items-center"
+        style={{
+          background: "#3a3a3a",
+          border: "2px solid #1a1a1a",
+          boxShadow: "inset 2px 2px 0 #4f4f4f, inset -2px -2px 0 #262626",
+          color: "#ffff55",
+        }}
+      >
+        <Icon name={icon} size={24} />
+      </span>
+      <div className="min-w-0">
+        <div style={{ color: "#ffff55", fontSize: 21, lineHeight: 1 }}>Achievement Get!</div>
+        <div className="truncate" style={{ color: "#fff", fontSize: 19, lineHeight: 1.2 }}>
+          {name}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function GameToasts() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -49,7 +86,9 @@ export function GameToasts() {
         if (!t) return;
         if (e.type === "achievement") {
           sfx.achievement();
-          fireConfetti({ count: 90, originY: 0.25 });
+          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            fireConfetti({ count: 90, originY: 0.25 });
+          }
         }
         setToasts((prev) => [...prev.slice(-3), t]);
         window.setTimeout(() => {
@@ -62,36 +101,49 @@ export function GameToasts() {
   return (
     <div className="pointer-events-none fixed inset-x-0 top-20 z-[95] flex flex-col items-center gap-2 px-4">
       <AnimatePresence>
-        {toasts.map((t) => (
-          <motion.div
-            key={t.id}
-            initial={{ opacity: 0, y: -16, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.97 }}
-            className="surface pointer-events-auto flex w-full max-w-sm items-center gap-3 px-4 py-3 shadow-lg"
-          >
-            <span
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white"
-              style={{
-                background:
-                  t.tone === "good"
-                    ? "var(--good)"
-                    : t.tone === "info"
-                    ? "var(--info)"
-                    : t.tone === "beer"
-                    ? "#f5b942"
-                    : "linear-gradient(180deg,var(--accent),var(--accent-2))",
-                color: t.tone === "beer" ? "#4a2c00" : undefined,
-              }}
+        {toasts.map((t) =>
+          t.tone === "mc" ? (
+            <motion.div
+              key={t.id}
+              initial={{ opacity: 0, y: -24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              className="pointer-events-auto w-full max-w-sm"
             >
-              <Icon name={t.icon} size={20} />
-            </span>
-            <div className="min-w-0">
-              <div className="text-sm font-bold">{t.title}</div>
-              {t.sub && <div className="truncate text-xs text-[var(--color-muted)]">{t.sub}</div>}
-            </div>
-          </motion.div>
-        ))}
+              <MinecraftToast icon={t.icon} name={t.sub ?? ""} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={t.id}
+              initial={{ opacity: 0, y: -16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.97 }}
+              className="surface pointer-events-auto flex w-full max-w-sm items-center gap-3 px-4 py-3 shadow-lg"
+            >
+              <span
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white"
+                style={{
+                  background:
+                    t.tone === "good"
+                      ? "var(--good)"
+                      : t.tone === "info"
+                      ? "var(--info)"
+                      : t.tone === "beer"
+                      ? "#f5b942"
+                      : "linear-gradient(180deg,var(--accent),var(--accent-2))",
+                  color: t.tone === "beer" ? "#4a2c00" : undefined,
+                }}
+              >
+                <Icon name={t.icon} size={20} />
+              </span>
+              <div className="min-w-0">
+                <div className="text-sm font-bold">{t.title}</div>
+                {t.sub && <div className="truncate text-xs text-[var(--color-muted)]">{t.sub}</div>}
+              </div>
+            </motion.div>
+          )
+        )}
       </AnimatePresence>
     </div>
   );
