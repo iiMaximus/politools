@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getCourse } from "../courses/registry";
+import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
-import { TopBar, Page } from "../components/Layout";
+import { TopBar, Page, PageLoader } from "../components/Layout";
 import { CourseNav } from "../components/CourseNav";
 import { Icon } from "../components/Icon";
 import { useCourseProgress } from "../lib/progress";
@@ -145,7 +145,7 @@ function buildPath(course: Course, progress: CourseProgress, game: GameState): P
 
 export function PathPage() {
   const { courseId = "" } = useParams();
-  const course = getCourse(courseId);
+  const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
   const game = useGame();
 
@@ -217,6 +217,7 @@ export function PathPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
+  if (loading) return <PageLoader />;
   if (!course) return <NotFound />;
   const { meta } = course;
   const due = dueCount(course.practice, progress);

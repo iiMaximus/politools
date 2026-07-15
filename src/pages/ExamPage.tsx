@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { getCourse } from "../courses/registry";
+import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
-import { TopBar, Page } from "../components/Layout";
+import { TopBar, Page, PageLoader } from "../components/Layout";
 import { CourseNav } from "../components/CourseNav";
 import { Icon } from "../components/Icon";
 import { Kicker, Meter, Pill, SectionHeading } from "../components/ui";
@@ -16,8 +16,9 @@ export function ExamPage() {
   const { courseId = "" } = useParams();
   const [params] = useSearchParams();
   const topic = params.get("topic");
-  const course = getCourse(courseId);
+  const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
+  if (loading) return <PageLoader />;
   if (!course) return <NotFound />;
 
   // group exam problems by tutorial (their topic label)

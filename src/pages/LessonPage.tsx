@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getCourse } from "../courses/registry";
+import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
-import { TopBar, Page } from "../components/Layout";
+import { TopBar, Page, PageLoader } from "../components/Layout";
 import { Icon } from "../components/Icon";
 import { Kicker, Pill } from "../components/ui";
 import { Block } from "../components/LessonBlocks";
@@ -28,7 +28,7 @@ function useScrollProgress() {
 
 export function LessonPage() {
   const { courseId = "", lessonId = "" } = useParams();
-  const course = getCourse(courseId);
+  const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
   const scroll = useScrollProgress();
   const [focusMode, setFocusMode] = useState(false);
@@ -93,6 +93,7 @@ export function LessonPage() {
     setActiveTocId(id);
   }, []);
 
+  if (loading) return <PageLoader />;
   if (!course || !lesson) return <NotFound />;
 
   const next = course.lessons[idx + 1];

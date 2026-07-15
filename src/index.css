@@ -319,3 +319,14 @@ input[type="range"]::-moz-range-thumb {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Excel labs on touch: 28px desktop rows are too small for thumbs. */
+@media (pointer: coarse) {
+  .excel-grid [data-cell] {
+    height: 2.4rem;
+    min-width: 78px;
+  }
+  .excel-grid th {
+    height: 2.4rem;
+  }
+}

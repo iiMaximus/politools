@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { allCourses } from "../courses/registry";
+import { useAllCourses } from "../courses/registry";
 import { COURSE_GROUPS, getCourseGroupCourses, type CourseGroup } from "../courses/groups";
 import { TopBar, Page } from "../components/Layout";
 import { CourseTheme } from "../components/CourseTheme";
@@ -45,7 +45,8 @@ type HubEntry =
 export function HubPage() {
   const game = useGame();
   const [showSettings, setShowSettings] = useState(false);
-  const courses = allCourses();
+  // course chunks stream in progressively; the hub renders as they arrive
+  const { courses } = useAllCourses();
 
   useEffect(() => {
     reconcileFreezes();
@@ -54,6 +55,10 @@ export function HubPage() {
   const focusCourses = game.settings.focusCourses
     .map((id) => courses.find((c) => c.meta.id === id))
     .filter((c): c is Course => !!c && !game.settings.passedCourses.includes(c.meta.id));
+  // all non-passed focus chunks loaded → safe to generate quests/dues
+  const focusReady =
+    focusCourses.length ===
+    game.settings.focusCourses.filter((id) => !game.settings.passedCourses.includes(id)).length;
 
   const passedCourses = courses.filter((c) => game.settings.passedCourses.includes(c.meta.id));
 
@@ -68,6 +73,7 @@ export function HubPage() {
   // quests need live due/rust numbers for the focus courses
   const [quests, setQuests] = useState<QuestInstance[]>(game.quests.items);
   useEffect(() => {
+    if (!focusReady) return; // don't generate quests from a partial course list
     const ctx = {
       courses: focusCourses.map((c) => {
         const p = readProgress(c.meta.id);
@@ -83,16 +89,16 @@ export function HubPage() {
     setQuests(ensureQuests(ctx));
     // regenerate when the day's quest set is stale; game changes re-run via useGame
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game.quests.date, game.settings.focusCourses.join(",")]);
+  }, [game.quests.date, game.settings.focusCourses.join(","), focusReady]);
 
   const liveQuests = game.quests.items.length ? game.quests.items : quests;
 
   const totalDue = useMemo(
     () =>
       focusCourses.reduce((sum, c) => sum + dueCount(c.practice, readProgress(c.meta.id)), 0),
-    // recompute on any game tick (answers mutate game state too)
+    // recompute on any game tick (answers mutate game state too) or as chunks load
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [game, game.settings.focusCourses.join(",")]
+    [game, game.settings.focusCourses.join(","), courses.length]
   );
 
   const allSummaries = courses.map((c) => summarizeFromStorage(c));

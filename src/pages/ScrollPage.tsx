@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
 import { rt, rtInline } from "../components/RichText";
-import { getCourse } from "../courses/registry";
+import { useCourse } from "../courses/registry";
 import { isDue } from "../lib/adaptive";
 import { cn } from "../lib/cn";
 import { TexBlock } from "../lib/math";
@@ -139,7 +139,7 @@ const FEED_NOTE =
 
 export function ScrollPage() {
   const { courseId = "" } = useParams();
-  const course = getCourse(courseId);
+  const { course, loading } = useCourse(courseId);
   const feedRef = useRef<HTMLElement | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
@@ -288,6 +288,12 @@ export function ScrollPage() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [active, view.length]);
 
+  if (loading)
+    return (
+      <div className="fixed inset-0 z-50 grid place-items-center bg-[#070b16] text-sm font-semibold text-white/50">
+        Loading course…
+      </div>
+    );
   if (!course) return <NotFound />;
 
   /** answers are keyed by feed-item id (not question id) so an injected

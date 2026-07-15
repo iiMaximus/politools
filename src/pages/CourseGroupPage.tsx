@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { getCourseGroup, getCourseGroupCourses } from "../courses/groups";
+import { getCourseGroup } from "../courses/groups";
+import { useCourses } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
 import { TopBar, Page } from "../components/Layout";
 import { Icon } from "../components/Icon";
@@ -12,9 +13,9 @@ import { NotFound } from "./NotFound";
 export function CourseGroupPage() {
   const { groupId = "" } = useParams();
   const group = getCourseGroup(groupId);
+  const { courses } = useCourses(group?.courseIds ?? []);
   if (!group) return <NotFound />;
 
-  const courses = getCourseGroupCourses(group);
   const overall = aggregate(courses.map(summarizeFromStorage));
 
   return (

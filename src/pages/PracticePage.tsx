@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { getCourse } from "../courses/registry";
+import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
-import { TopBar, Page } from "../components/Layout";
+import { TopBar, Page, PageLoader } from "../components/Layout";
 import { CourseNav } from "../components/CourseNav";
 import { LecturePicker } from "../components/LecturePicker";
 import { Icon } from "../components/Icon";
@@ -40,7 +40,7 @@ export function PracticePage() {
   const topics = useMemo(() => (topicsParam ? topicsParam.split("|") : null), [topicsParam]);
   // No lecture/mode chosen yet → show the lecture-first menu (like the classic site).
   const showMenu = !topic && !mode;
-  const course = getCourse(courseId);
+  const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
 
   // Build the deck once per scope. If a saved session matches this exact
@@ -73,10 +73,12 @@ export function PracticePage() {
     }
     return { ids: built, i: 0, correct: 0, wrong: 0 };
     // Build once per scope; deliberately not keyed on `progress` so the deck
-    // doesn't reshuffle out from under you as you answer.
+    // doesn't reshuffle out from under you as you answer. `!!course` re-runs
+    // the build exactly once when the lazy course chunk arrives.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId, dueOnly, topic, topicsParam, mode]);
+  }, [courseId, dueOnly, topic, topicsParam, mode, !!course]);
 
+  if (loading) return <PageLoader />;
   if (!course) return <NotFound />;
 
   const due = dueCount(course.practice, progress);

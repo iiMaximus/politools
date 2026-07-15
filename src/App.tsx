@@ -11,6 +11,7 @@ import { MixPage } from "./pages/MixPage";
 import { PathPage } from "./pages/PathPage";
 import { NotFound } from "./pages/NotFound";
 import { GameToasts } from "./components/game/Toasts";
+import { BottomNav } from "./components/BottomNav";
 
 // Boss fights pull in three.js — keep it out of the main bundle.
 const BossPage = lazy(() => import("./pages/BossPage"));
@@ -39,6 +40,7 @@ export function App() {
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <BottomNav />
     </>
   );
 }

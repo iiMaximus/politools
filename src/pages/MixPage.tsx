@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { allCourses } from "../courses/registry";
+import { loadCourses } from "../courses/registry";
 import { TopBar, Page } from "../components/Layout";
 import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
@@ -28,10 +28,10 @@ interface Entry {
   kind: "due" | "rusty" | "fresh";
 }
 
-function buildMixDeck(): Entry[] {
+async function buildMixDeck(): Promise<Entry[]> {
   const game = readGame();
   const focus = game.settings.focusCourses.filter((id) => !game.settings.passedCourses.includes(id));
-  const courses = allCourses().filter((c) => focus.includes(c.meta.id));
+  const courses = await loadCourses(focus); // only the focus chunks
   if (!courses.length) return [];
 
   const perCourse: Entry[][] = courses.map((course) => {
@@ -65,7 +65,7 @@ function buildMixDeck(): Entry[] {
 
 export function MixPage() {
   useGame(); // re-render on game-state changes (quests completing, etc.)
-  const [deck, setDeck] = useState<Entry[]>(() => buildMixDeck());
+  const [deck, setDeck] = useState<Entry[] | null>(null); // null = chunks loading
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
@@ -76,15 +76,29 @@ export function MixPage() {
   const loggedRef = useRef(false);
   const startedRef = useRef(Date.now());
 
-  const done = deck.length > 0 && i >= deck.length;
-  const entry = deck[i];
+  // build the deck once the focus course chunks are in
+  useEffect(() => {
+    let on = true;
+    void buildMixDeck().then((d) => {
+      if (on) {
+        setDeck(d);
+        startedRef.current = Date.now();
+      }
+    });
+    return () => {
+      on = false;
+    };
+  }, []);
 
-  const dueInDeck = useMemo(() => deck.filter((e) => e.kind === "due").length, [deck]);
-  const rustyInDeck = useMemo(() => deck.filter((e) => e.kind === "rusty").length, [deck]);
+  const done = !!deck && deck.length > 0 && i >= deck.length;
+  const entry = deck?.[i];
+
+  const dueInDeck = useMemo(() => deck?.filter((e) => e.kind === "due").length ?? 0, [deck]);
+  const rustyInDeck = useMemo(() => deck?.filter((e) => e.kind === "rusty").length ?? 0, [deck]);
 
   // Log the session exactly once at the end (feeds quests/achievements).
   useEffect(() => {
-    if (!done || loggedRef.current) return;
+    if (!done || !deck || loggedRef.current) return;
     loggedRef.current = true;
     const perfect = correctCount === deck.length;
     logMixSession(perfect, deck.length, (Date.now() - startedRef.current) / 1000);
@@ -92,12 +106,11 @@ export function MixPage() {
       sfx.victory();
       fireConfetti({ count: perfect ? 200 : 120 });
     }
-  }, [done, correctCount, deck.length]);
+  }, [done, correctCount, deck]);
 
   function anotherMix() {
     loggedRef.current = false;
-    startedRef.current = Date.now();
-    setDeck(buildMixDeck());
+    setDeck(null);
     setI(0);
     setPicked(null);
     setCorrectCount(0);
@@ -105,6 +118,10 @@ export function MixPage() {
     setBestCombo(0);
     setBonus(0);
     setByCourse({});
+    void buildMixDeck().then((d) => {
+      setDeck(d);
+      startedRef.current = Date.now();
+    });
   }
 
   function answer(optionId: string) {
@@ -133,6 +150,22 @@ export function MixPage() {
       setCombo(0);
       sfx.wrong();
     }
+  }
+
+  if (deck === null) {
+    return (
+      <>
+        <TopBar crumbs={[{ label: "Daily Mix" }]} />
+        <Page className="max-w-2xl">
+          <div className="grid min-h-[40vh] place-items-center">
+            <div className="flex items-center gap-2.5 text-sm font-semibold text-[var(--color-faint)]">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--accent)]" />
+              Shuffling your mix…
+            </div>
+          </div>
+        </Page>
+      </>
+    );
   }
 
   if (!deck.length) {
@@ -174,7 +207,7 @@ export function MixPage() {
             </p>
             <div className="mx-auto mt-6 grid max-w-sm gap-2 text-left">
               {Object.entries(byCourse).map(([id, s]) => {
-                const course = allCourses().find((c) => c.meta.id === id);
+                const course = deck.find((e) => e.course.meta.id === id)?.course;
                 if (!course) return null;
                 return (
                   <div
@@ -202,6 +235,8 @@ export function MixPage() {
       </>
     );
   }
+
+  if (!entry) return null;
 
   return (
     <CourseTheme accent={entry.course.meta.accent} accent2={entry.course.meta.accent2}>

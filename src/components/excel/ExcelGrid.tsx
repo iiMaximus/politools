@@ -461,6 +461,24 @@ export function ExcelGrid({ sheet, given, user, onEdit, rows, cols, answerCells,
       return;
     }
 
+    // touch: tap selects, tapping the selected cell again edits — no drag
+    // capture, so the grid still pans with a finger
+    if (e.pointerType === "touch") {
+      if (selected === addr && !editing && !isLocked(addr)) {
+        setSelected(addr);
+        startEdit();
+        return;
+      }
+      setSelected(addr);
+      setSelectedRange({ anchor: addr, focus: addr });
+      selectedRangeRef.current = { anchor: addr, focus: addr };
+      setEditing(false);
+      setInline(false);
+      setFormulaRefRange(null);
+      formulaRefEdit.current = null;
+      return;
+    }
+
     setSelected(addr);
     setSelectedRange({ anchor: addr, focus: addr });
     selectedRangeRef.current = { anchor: addr, focus: addr };
@@ -529,7 +547,7 @@ export function ExcelGrid({ sheet, given, user, onEdit, rows, cols, answerCells,
       </div>
 
       {/* grid */}
-      <div className="overflow-auto rounded-lg border border-[var(--color-line)]">
+      <div className="excel-grid overflow-auto rounded-lg border border-[var(--color-line)]">
         <table className="border-collapse font-mono">
           <thead>
             <tr>

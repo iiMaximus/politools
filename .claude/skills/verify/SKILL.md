@@ -14,7 +14,12 @@ npm run verify    # Excel engine (594) + labs (396) + SRS (32) checks
 ## Launch
 ```bash
 npm run dev       # http://localhost:5173, HashRouter → routes live under /#/
+npm run preview -- --port 4173 --strictPort   # production build + service worker (PWA tests need this)
 ```
+PWA checks (offline, install, precache) only work against `preview` — the dev server has no SW.
+For offline: load once, `await navigator.serviceWorker.ready`, wait ~4s for precache, then
+`context.setOffline(true)` and reload. Courses are code-split; `useCourse` chunks resolve async,
+so after navigation wait for actual content, not just DOM load.
 
 ## Drive (Playwright, no install needed)
 Playwright + chromium are already cached — require it directly in a `.cjs` script:

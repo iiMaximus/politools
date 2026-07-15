@@ -81,6 +81,10 @@ export function ExcelLab({ ex }: { ex: LabExercise }) {
   return (
     <div className="relative rounded-2xl border border-[var(--color-line)] bg-[var(--color-bg)] p-4">
       <CorrectBurst trigger={burst} />
+      <div className="mb-3 flex items-center gap-1.5 rounded-lg bg-[var(--color-surface)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-faint)] sm:hidden">
+        <Icon name="Info" size={13} />
+        Labs are best on a desktop — tap a cell to select, tap again to type.
+      </div>
       <div className="prose-lesson mb-3 !text-[0.95rem] !text-[var(--color-ink)]">{ex.prompt}</div>
       {ex.hint && (
         <div className="mb-3">

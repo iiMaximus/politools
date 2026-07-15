@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { getCourse } from "../courses/registry";
+import { getCourse, useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
 import { rt, rtInline } from "../components/RichText";
@@ -78,7 +78,13 @@ export default function BossPage() {
   const { courseId = "" } = useParams();
   const [params] = useSearchParams();
   const mini = params.get("mini");
-  const course = getCourse(courseId);
+  const { course, loading } = useCourse(courseId);
+  if (loading)
+    return (
+      <div className="fixed inset-0 z-50 grid place-items-center bg-[#070a16] text-sm text-white/50">
+        Summoning the boss…
+      </div>
+    );
   if (!course) return <NotFound />;
   return <BossFight key={`${courseId}|${mini ?? ""}`} courseId={courseId} miniSection={mini} />;
 }

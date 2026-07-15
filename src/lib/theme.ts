@@ -11,7 +11,12 @@ export function getTheme(): Theme {
   } catch {
     /* ignore */
   }
-  return "light"; // light by default
+  // no explicit choice → follow the system
+  try {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  } catch {
+    return "light";
+  }
 }
 
 export function applyTheme(t: Theme) {
@@ -31,6 +36,18 @@ export function setTheme(t: Theme) {
 /** Call once before render to avoid a flash of the wrong theme. */
 export function initTheme() {
   applyTheme(getTheme());
+  // track system changes while the user hasn't pinned a choice
+  try {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      const stored = localStorage.getItem(KEY);
+      if (stored !== "light" && stored !== "dark") {
+        applyTheme(getTheme());
+        subs.forEach((fn) => fn());
+      }
+    });
+  } catch {
+    /* older browsers */
+  }
 }
 
 export function useTheme(): [Theme, () => void] {

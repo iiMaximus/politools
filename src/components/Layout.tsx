@@ -64,7 +64,27 @@ export function TopBar({
 export function Page({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className="min-h-screen">
-      <main className={cn("mx-auto max-w-6xl px-4 py-8 sm:px-6", className)}>{children}</main>
+      {/* bottom padding clears the mobile tab bar */}
+      <main
+        className={cn(
+          "mx-auto max-w-6xl px-4 py-8 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:px-6 sm:pb-10",
+          className
+        )}
+      >
+        {children}
+      </main>
+    </div>
+  );
+}
+
+/** Course-chunk loading state (code-split registry). */
+export function PageLoader() {
+  return (
+    <div className="grid min-h-[60vh] place-items-center">
+      <div className="flex items-center gap-2.5 text-sm font-semibold text-[var(--color-faint)]">
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--accent)]" />
+        Loading course…
+      </div>
     </div>
   );
 }
