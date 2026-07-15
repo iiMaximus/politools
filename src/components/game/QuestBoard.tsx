@@ -11,21 +11,71 @@ import {
  *  and pay bonus XP.
  * ================================================================== */
 
-export function QuestBoard({ quests, state }: { quests: QuestInstance[]; state: GameState }) {
+export function QuestBoard({
+  quests,
+  state,
+  retro,
+}: {
+  quests: QuestInstance[];
+  state: GameState;
+  /** dark RPG quest-log styling (hub arcade mode) */
+  retro?: boolean;
+}) {
   if (!quests.length) return null;
   return (
     <div className="grid gap-2.5">
       {quests.map((q) => (
-        <QuestRow key={q.id} q={q} state={state} />
+        <QuestRow key={q.id} q={q} state={state} retro={retro} />
       ))}
     </div>
   );
 }
 
-function QuestRow({ q, state }: { q: QuestInstance; state: GameState }) {
+function QuestRow({ q, state, retro }: { q: QuestInstance; state: GameState; retro?: boolean }) {
   const value = q.completedAt ? q.target : questProgress(q, state);
   const done = !!q.completedAt || value >= q.target;
   const pct = q.target ? Math.round((value / q.target) * 100) : 0;
+
+  if (retro) {
+    return (
+      <div className="mc-slot flex items-center gap-3 px-3 py-2.5">
+        <span
+          className="grid h-9 w-9 shrink-0 place-items-center rounded"
+          style={{ background: "#1a1a1a", color: done ? "#7fdc39" : "#ffff55" }}
+        >
+          <Icon name={done ? "Check" : q.icon} size={18} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div
+            className="pixel-font truncate text-lg leading-tight"
+            style={{ color: done ? "#7fdc39" : "#fff" }}
+          >
+            {q.label}
+          </div>
+          {!done && (
+            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-sm" style={{ background: "#141414" }}>
+              <div
+                className="h-full"
+                style={{
+                  width: `${pct}%`,
+                  background: "linear-gradient(180deg,#a0e81f,#7fdc39 45%,#3f8f1f)",
+                  transition: "width 0.4s ease",
+                }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="pixel-font shrink-0 text-right leading-tight">
+          <div className="text-lg text-white/80">
+            {value}/{q.target}
+          </div>
+          <div className="text-sm" style={{ color: done ? "#7fdc39" : "#888" }}>
+            +{q.rewardXp} XP
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

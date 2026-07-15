@@ -8,7 +8,7 @@ import { Pill } from "../components/ui";
 import { QuestionCard } from "./PracticePage";
 import { buildSession, isDue, shuffle } from "../lib/adaptive";
 import { readProgress, recordAnswer } from "../lib/progress";
-import { addBonusXp, logMixSession, readGame, useGame } from "../lib/game";
+import { addBonusXp, consumeUnlock, logMixSession, readGame, useGame } from "../lib/game";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
 import { isNumeric, type Course, type McqQuestion } from "../types";
@@ -80,6 +80,15 @@ export function MixPage() {
   const loggedRef = useRef(false);
   const startedRef = useRef(Date.now());
 
+  // a purchased Double-XP Mix (La Birreria) applies to this session
+  const doubleRef = useRef(false);
+  const [doubleXp, setDoubleXp] = useState(false);
+  useEffect(() => {
+    if (doubleRef.current) return;
+    doubleRef.current = true;
+    if (consumeUnlock("double-mix")) setDoubleXp(true);
+  }, []);
+
   // build the deck once the focus course chunks are in
   useEffect(() => {
     let on = true;
@@ -105,6 +114,7 @@ export function MixPage() {
     if (!done || !deck || loggedRef.current) return;
     loggedRef.current = true;
     const perfect = correctCount === deck.length;
+    if (doubleXp) addBonusXp(20); // Double-XP Mix finish bonus
     logMixSession(perfect, deck.length, (Date.now() - startedRef.current) / 1000);
     if (correctCount / deck.length >= 0.8) {
       sfx.victory();
@@ -147,8 +157,9 @@ export function MixPage() {
       setCorrectCount((n) => n + 1);
       sfx.correct(next);
       if (next >= COMBO_BONUS_FROM) {
-        addBonusXp(2);
-        setBonus((b) => b + 2);
+        const amount = doubleXp ? 4 : 2;
+        addBonusXp(amount);
+        setBonus((b) => b + amount);
       }
     } else {
       setCombo(0);
@@ -257,6 +268,11 @@ export function MixPage() {
             {i + 1}/{deck.length}
           </div>
           <ComboMeter combo={combo} />
+          {doubleXp && (
+            <span className="pixel-font rounded-lg bg-[#f5b942] px-2 py-1 text-base leading-none text-[#4a2c00]">
+              2× XP
+            </span>
+          )}
           <div className="ml-auto flex items-center gap-2 text-xs text-[var(--color-faint)]">
             {dueInDeck > 0 && <Pill tone="warn">{dueInDeck} due</Pill>}
             {rustyInDeck > 0 && <Pill tone="neutral">{rustyInDeck} rusty</Pill>}

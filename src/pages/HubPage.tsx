@@ -8,13 +8,13 @@ import { Icon } from "../components/Icon";
 import { Kicker, Meter } from "../components/ui";
 import { Heatmap } from "../components/game/Heatmap";
 import { QuestBoard } from "../components/game/QuestBoard";
-import { ReadinessDial } from "../components/game/ReadinessDial";
 import { GameSettingsModal } from "../components/game/GameSettings";
 import { useCourseProgress, readProgress } from "../lib/progress";
 import { aggregate, summarize, summarizeFromStorage, type CourseSummary } from "../lib/summary";
 import { dueCount } from "../lib/adaptive";
 import {
   ACHIEVEMENTS,
+  CONSUMABLE_KINDS,
   SHOP,
   availableBeers,
   bestBossGrade,
@@ -25,6 +25,7 @@ import {
   reconcileFreezes,
   rustyCount,
   streakInfo,
+  streakRepairable,
   syncRank,
   useGame,
   type GameState,
@@ -132,19 +133,21 @@ export function HubPage() {
         <PlayerHud totalXp={totalXp} game={game} />
 
         <section className="mt-4 grid gap-4 lg:grid-cols-5">
-          {/* Daily Mix CTA + heatmap */}
-          <div className="surface flex flex-col p-5 lg:col-span-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Daily Mix CTA + heatmap — arcade cabinet */}
+          <div className="mc-panel relative flex flex-col overflow-hidden p-5 text-white lg:col-span-3">
+            <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.05]" />
+            <div className="relative flex flex-wrap items-center justify-between gap-3">
               <div>
-                <Kicker>Today</Kicker>
-                <h2 className="pixel-font mt-0.5 text-3xl uppercase leading-none tracking-wide">
-                  {totalDue > 0 ? (
-                    <>
-                      <span style={{ color: "var(--warn)" }}>{totalDue}</span> reviews waiting
-                    </>
-                  ) : (
-                    "All clear — new stage?"
-                  )}
+                <div className="pixel-font text-base uppercase tracking-[0.3em] text-white/45">Today</div>
+                <h2
+                  className="pixel-font mt-1 text-3xl uppercase leading-none tracking-wide"
+                  style={{
+                    color: totalDue > 0 ? "#ffd45e" : "#7fdc39",
+                    textShadow:
+                      totalDue > 0 ? "0 0 12px rgba(255,212,94,0.55)" : "0 0 12px rgba(127,220,57,0.55)",
+                  }}
+                >
+                  {totalDue > 0 ? `${totalDue} reviews waiting` : "All clear — new stage?"}
                 </h2>
               </div>
               <Link
@@ -158,20 +161,26 @@ export function HubPage() {
                 </span>
               </Link>
             </div>
-            <div className="mt-4 flex-1">
+            {/* the "screen": heatmap keeps its light look inside the cabinet */}
+            <div className="relative mt-4 flex-1 rounded-xl bg-[var(--color-surface)] p-3">
               <Heatmap state={game} />
             </div>
           </div>
 
-          {/* quest board */}
-          <div className="surface p-5 lg:col-span-2">
-            <div className="mb-3 flex items-center justify-between">
-              <Kicker>Daily quests</Kicker>
-              <span className="text-xs text-[var(--color-faint)]">
-                {liveQuests.filter((q) => q.completedAt).length}/{liveQuests.length} done
+          {/* quest log */}
+          <div className="mc-panel relative overflow-hidden p-5 lg:col-span-2">
+            <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.05]" />
+            <div className="relative mb-3 flex items-baseline justify-between">
+              <span className="pixel-font text-2xl uppercase leading-none tracking-wide text-white">
+                Quest log
+              </span>
+              <span className="pixel-font text-lg leading-none text-white/45">
+                {liveQuests.filter((q) => q.completedAt).length}/{liveQuests.length}
               </span>
             </div>
-            <QuestBoard quests={liveQuests} state={game} />
+            <div className="relative">
+              <QuestBoard quests={liveQuests} state={game} retro />
+            </div>
           </div>
         </section>
 
@@ -324,6 +333,10 @@ export function HubPage() {
         <footer className="mt-14 border-t border-[var(--color-line)] py-8 text-center text-sm text-[var(--color-faint)]">
           Polito Tools · study like it's a game, pass like it's inevitable.
         </footer>
+        {/* ============ arcade footer ============ */}
+        <div className="pixel-font mt-16 text-center text-xl uppercase leading-none tracking-widest text-[var(--color-faint)]">
+          <span className="arcade-blink">▮</span> Insert coin to continue · © 2026 Polito Tools
+        </div>
       </Page>
 
       {showSettings && (
@@ -346,67 +359,111 @@ function FocusCard({ course }: { course: Course }) {
   const s = summarize(course, progress);
   const r = readiness(course, progress, game);
 
+  // Street Fighter health bar: readiness as HP
+  const hpColor = r.score >= 70 ? "#7fdc39" : r.score >= 40 ? "#ffd45e" : "#ff5555";
+  const gradeColor =
+    r.grade === null ? "#888" : r.grade >= 24 ? "#7fdc39" : r.grade >= 18 ? "#ffd45e" : "#ff5555";
+
   return (
     <CourseTheme accent={meta.accent} accent2={meta.accent2}>
-      <div className="surface flex h-full flex-col p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span
-              className="grid h-12 w-12 place-items-center rounded-2xl text-white"
-              style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
-            >
-              <Icon name={meta.icon} size={24} />
-            </span>
-            <div>
-              <h3 className="text-lg font-bold leading-tight tracking-tight">{meta.short}</h3>
-              {r.daysLeft !== null && (
-                <div
-                  className="mt-0.5 text-xs font-semibold"
-                  style={{ color: r.daysLeft <= 14 ? "var(--warn)" : "var(--color-faint)" }}
-                >
-                  <Icon name="CalendarClock" size={11} className="mr-1 inline" />
-                  {r.daysLeft > 0
-                    ? `exam in ${r.daysLeft} day${r.daysLeft === 1 ? "" : "s"}`
-                    : r.daysLeft === 0
-                    ? "exam TODAY"
-                    : "exam date passed — update it"}
-                </div>
-              )}
-            </div>
+      <div className="mc-panel relative flex h-full flex-col overflow-hidden p-4 text-white">
+        <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.05]" />
+
+        {/* fighter header + forecast grade */}
+        <div className="relative flex items-start gap-3">
+          <span
+            className="mc-slot grid h-12 w-12 shrink-0 place-items-center"
+            style={{ color: "var(--accent)" }}
+          >
+            <Icon name={meta.icon} size={24} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="pixel-font truncate text-2xl uppercase leading-none">{meta.short}</h3>
+            {r.daysLeft !== null && (
+              <div
+                className="pixel-font mt-1 text-base leading-none"
+                style={{ color: r.daysLeft <= 14 ? "#ff5555" : "rgba(255,255,255,0.5)" }}
+              >
+                ⏱ {r.daysLeft > 0 ? `${r.daysLeft} days` : r.daysLeft === 0 ? "EXAM TODAY" : "date passed"}
+              </div>
+            )}
           </div>
-          <ReadinessDial r={r} />
+          <div className="shrink-0 text-right">
+            <div className="pixel-font text-3xl leading-none" style={{ color: gradeColor }}>
+              {r.gradeLabel}
+            </div>
+            <div className="pixel-font text-sm uppercase leading-none text-white/40">forecast</div>
+          </div>
         </div>
 
-        <div className="mt-4">
-          <Meter value={s.pct} />
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-semibold">
-            <span className="text-[var(--color-faint)]">
-              {s.lessonsDone}/{s.lessonsTotal} lessons · {s.mastered}/{s.practiceTotal} locked-in
-            </span>
-            {r.due > 0 && (
-              <span className="rounded-full bg-[var(--warn-bg)] px-2 py-0.5 text-[var(--warn)]">
-                {r.due} due
-              </span>
-            )}
-            {r.rusty > 0 && (
-              <span className="rounded-full bg-[var(--color-surface-2)] px-2 py-0.5 text-[var(--color-muted)]">
-                <Icon name="Sparkles" size={10} className="mr-0.5 inline" />
-                {r.rusty} rusty
-              </span>
-            )}
+        {/* HP bar */}
+        <div className="relative mt-3.5">
+          <div className="pixel-font mb-1 flex justify-between text-base leading-none text-white/50">
+            <span>READY</span>
+            <span>{r.score}%</span>
           </div>
+          <div
+            className="relative h-3.5 overflow-hidden rounded-sm"
+            style={{
+              background: "#3a0d0d",
+              border: "2px solid #000",
+              boxShadow: "inset 0 2px 0 rgba(0,0,0,0.5)",
+            }}
+          >
+            <div
+              className="h-full transition-all duration-500"
+              style={{
+                width: `${Math.max(2, r.score)}%`,
+                background: `linear-gradient(180deg, ${hpColor}, color-mix(in oklab, ${hpColor} 60%, #000))`,
+              }}
+            />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), rgba(0,0,0,0.4) calc(10% - 2px) 10%)",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* stat line */}
+        <div className="pixel-font relative mt-2 text-base leading-snug text-white/55">
+          {s.lessonsDone}/{s.lessonsTotal} lessons · {s.mastered}/{s.practiceTotal} locked
+          {r.due > 0 && <span style={{ color: "#ffd45e" }}> · {r.due} due</span>}
+          {r.rusty > 0 && <span style={{ color: "#c9986a" }}> · {r.rusty} rusty</span>}
+        </div>
+
+        <div className="relative">
           <BossLine courseId={meta.id} game={game} />
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          <Link to={`/c/${meta.id}/path`} className="btn btn-primary !px-2 !text-xs">
-            <Icon name="Map" size={14} /> Path
+        {/* arcade buttons */}
+        <div className="relative mt-3 grid grid-cols-3 gap-2">
+          <Link
+            to={`/c/${meta.id}/path`}
+            className="pixel-font flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-lg uppercase leading-none text-white transition hover:brightness-110"
+            style={{
+              background: "linear-gradient(180deg,var(--accent),var(--accent-2))",
+              border: "2px solid #000",
+              boxShadow: "0 3px 0 #000",
+            }}
+          >
+            <Icon name="Map" size={15} /> Path
           </Link>
-          <Link to={`/c/${meta.id}/practice`} className="btn btn-ghost !px-2 !text-xs">
-            <Icon name="Dumbbell" size={14} /> Drill
+          <Link
+            to={`/c/${meta.id}/practice`}
+            className="mc-slot pixel-font flex items-center justify-center gap-1.5 px-2 py-2 text-lg uppercase leading-none text-white/85 transition hover:brightness-125"
+          >
+            <Icon name="Dumbbell" size={15} /> Drill
           </Link>
-          <Link to={`/c/${meta.id}/boss`} className="btn btn-ghost !px-2 !text-xs" title="Fight the exam boss">
-            <Icon name="Swords" size={14} /> Boss
+          <Link
+            to={`/c/${meta.id}/boss`}
+            className="mc-slot pixel-font flex items-center justify-center gap-1.5 px-2 py-2 text-lg uppercase leading-none transition hover:brightness-125"
+            style={{ color: "#ff8f8f" }}
+            title="Fight the exam boss"
+          >
+            <Icon name="Swords" size={15} /> Boss
           </Link>
         </div>
       </div>
@@ -546,7 +603,7 @@ function PlayerHud({ totalXp, game }: { totalXp: number; game: GameState }) {
       <div className="flex flex-wrap items-center gap-x-5 gap-y-4">
         {/* avatar slot */}
         <div className="mc-slot grid h-16 w-16 shrink-0 place-items-center text-4xl" title="STUDENT">
-          🎓
+          {game.unlocks.includes("avatar-invader") ? "👾" : "🎓"}
         </div>
 
         {/* name + Minecraft XP bar */}
@@ -674,7 +731,10 @@ function BeerShop({ game }: { game: GameState }) {
       <div className="grid gap-4 sm:grid-cols-3">
         {SHOP.map((item) => {
           const owned = item.kind === "cosmetic" && game.unlocks.includes(item.id);
-          const pending = item.kind === "boss-heart" ? game.unlocks.filter((u) => u === "boss-heart").length : 0;
+          const pending = CONSUMABLE_KINDS.includes(item.kind)
+            ? game.unlocks.filter((u) => u === item.id).length
+            : 0;
+          const useless = item.kind === "repair" && !streakRepairable(game);
           const afford = beers >= item.cost;
           return (
             <div key={item.id} className="surface flex flex-col p-5">
@@ -688,15 +748,16 @@ function BeerShop({ game }: { game: GameState }) {
               <p className="mt-1 flex-1 text-sm text-[var(--color-muted)]">{item.desc}</p>
               {pending > 0 && (
                 <span className="mt-2 w-fit rounded-full bg-[var(--good-bg)] px-2 py-0.5 text-[11px] font-bold text-[var(--good)]">
-                  ×{pending} ready for your next fight
+                  ×{pending} ready to use
                 </span>
               )}
               <button
                 onClick={() => buyShopItem(item.id)}
-                disabled={owned || !afford}
+                disabled={owned || !afford || useless}
+                title={useless ? "Your streak is intact — nothing to repair" : undefined}
                 className="btn btn-primary mt-4 disabled:opacity-40"
               >
-                {owned ? "Owned ✓" : `Buy · ${item.cost} 🍺`}
+                {owned ? "Owned ✓" : useless ? "Streak intact" : `Buy · ${item.cost} 🍺`}
               </button>
             </div>
           );

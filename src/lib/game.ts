@@ -804,7 +804,14 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "prova-generale", title: "Prova Generale", desc: "Score 27+ on a mock exam. The real thing should be scared.", icon: "GraduationCap", check: (s) => Object.values(s.mockExams).some((rs) => rs.some((r) => r.grade >= 27)) },
   { id: "trenta-lode-casa", title: "Trenta e Lode (in casa)", desc: "A perfect 30 e lode on a mock exam.", icon: "Crown", check: (s) => Object.values(s.mockExams).some((rs) => rs.some((r) => r.grade >= 31)) },
   { id: "one-more-turn", title: "One More Turn", desc: "Study past 23:00 and before 07:00 within the same day. A true Civilization moment.", icon: "Hourglass", check: (s) => Object.values(s.activity).some((a) => a.earlyBird && a.nightOwl) },
-  { id: "achievement-get", title: "Achievement Get!", desc: "Unlock 20 achievements. Yes, this one counts toward itself.", icon: "Award", check: (s) => Object.keys(s.achievements).length >= 20 },
+  { id: "take-my-beers", title: "Shut Up and Take My Beers", desc: "Spend 5 beers at La Birreria.", icon: "Beer", check: (s) => s.spentBeers >= 5 },
+  { id: "appello-infinito", title: "Appello Infinito", desc: "Sit 5 mock exams. The real appello holds no surprises.", icon: "FileCheck", check: (s) => mockCount(s) >= 5 },
+  { id: "ultra-combo", title: "ULTRA COMBO", desc: "Chain a ×15 combo in a boss fight. The announcer loses it.", icon: "Zap", check: (s) => allBossRecords(s).some((r) => (r.bestCombo ?? 0) >= 15) },
+  { id: "flawless-victory", title: "Flawless Victory", desc: "30 e lode against a final boss — perfect accuracy, all hearts.", icon: "Gem", check: (s) => allBossRecords(s).some((r) => r.won && r.grade >= 31) },
+  { id: "first-try", title: "First Try!", desc: "Defeat a final boss on your very first attempt in that course.", icon: "Timer", check: (s) => Object.values(s.boss).some((rs) => rs.length >= 1 && rs[0].won) },
+  { id: "world-tour", title: "World Tour", desc: "Study in 7 different courses, ever. See the whole map.", icon: "Compass", check: (s) => { const set = new Set<string>(); for (const a of Object.values(s.activity)) for (const id of Object.keys(a.byCourse)) set.add(id); return set.size >= 7; } },
+  { id: "l33t", title: "1337", desc: "Reach 1337 total XP. Elite.", icon: "Gamepad2", check: (s) => (s.peakXp ?? 0) >= 1337 },
+  { id: "cento-quest", title: "Questmaster 100", desc: "Complete 100 daily quests.", icon: "ScrollText", check: (s) => s.totals.questsDone >= 100 },
 ];
 
 function evaluateAchievements(state: GameState): GameState {
@@ -967,29 +974,64 @@ export interface ShopItem {
   desc: string;
   icon: string;
   cost: number;
-  kind: "freeze" | "boss-heart" | "cosmetic";
+  kind: "freeze" | "boss-heart" | "cosmetic" | "repair" | "xp" | "double-mix";
 }
 
+/** consumables sit in `unlocks` until something eats them */
+export const CONSUMABLE_KINDS: ShopItem["kind"][] = ["boss-heart", "double-mix"];
+
 export const SHOP: ShopItem[] = [
+  { id: "xp-potion", title: "XP potion", desc: "Chug for +100 XP, instantly. Tastes like graduation.", icon: "Zap", cost: 1, kind: "xp" },
   { id: "boss-heart", title: "Boss retry heart", desc: "+1 heart in your next boss fight. Liquid courage.", icon: "Heart", cost: 1, kind: "boss-heart" },
+  { id: "double-mix", title: "Double-XP Mix", desc: "Your next Daily Mix pays double combo XP + a finish bonus.", icon: "Shuffle", cost: 2, kind: "double-mix" },
   { id: "freeze-token", title: "Extra freeze token", desc: "One more day of streak insurance — can exceed the usual cap of 2.", icon: "Snowflake", cost: 2, kind: "freeze" },
+  { id: "streak-repair", title: "Streak repair kit", desc: "Retroactively patches up to 3 missed days and reconnects your flame.", icon: "Flame", cost: 3, kind: "repair" },
+  { id: "avatar-invader", title: "Invader avatar", desc: "Swap the graduation cap for a space invader. Permanent drip.", icon: "Gamepad2", cost: 2, kind: "cosmetic" },
   { id: "skin-gold", title: "Golden confetti", desc: "Every celebration rains gold. Permanent. Pure class.", icon: "Sparkles", cost: 3, kind: "cosmetic" },
 ];
+
+/** is there a recent gap (≤3 days) the repair kit could patch? */
+export function streakRepairable(state: GameState = read()): boolean {
+  const frozen = new Set(state.frozenDays);
+  let cursor = shiftDay(dayKey(), -1);
+  let gap = 0;
+  while (gap < 3 && !dayQualifies(state.activity[cursor]) && !frozen.has(cursor)) {
+    gap += 1;
+    cursor = shiftDay(cursor, -1);
+  }
+  return gap > 0 && gap <= 3 && (dayQualifies(state.activity[cursor]) || frozen.has(cursor));
+}
 
 export function availableBeers(state: GameState = read()): number {
   return Math.max(0, state.beers - state.spentBeers);
 }
 
-export function buyShopItem(id: string): "ok" | "poor" | "owned" {
+export function buyShopItem(id: string): "ok" | "poor" | "owned" | "nothing" {
   const item = SHOP.find((i) => i.id === id);
   if (!item) return "poor";
   const state = read();
   if (item.kind === "cosmetic" && state.unlocks.includes(id)) return "owned";
   if (availableBeers(state) < item.cost) return "poor";
   let next: GameState = { ...state, spentBeers: state.spentBeers + item.cost };
-  if (item.kind === "freeze") next = { ...next, freezeTokens: next.freezeTokens + 1 };
-  else next = { ...next, unlocks: [...next.unlocks, id] };
-  write(next);
+  if (item.kind === "freeze") {
+    next = { ...next, freezeTokens: next.freezeTokens + 1 };
+  } else if (item.kind === "xp") {
+    next = { ...next, bonusXp: next.bonusXp + 100 };
+  } else if (item.kind === "repair") {
+    if (!streakRepairable(state)) return "nothing"; // no charge — nothing to fix
+    const frozen = new Set(state.frozenDays);
+    const patched: string[] = [];
+    let cursor = shiftDay(dayKey(), -1);
+    while (patched.length < 3 && !dayQualifies(state.activity[cursor]) && !frozen.has(cursor)) {
+      patched.push(cursor);
+      cursor = shiftDay(cursor, -1);
+    }
+    next = { ...next, frozenDays: [...next.frozenDays, ...patched] };
+  } else {
+    next = { ...next, unlocks: [...next.unlocks, id] };
+  }
+  // achievements (e.g. big spender) can unlock on a purchase
+  afterMutation(next);
   emit({ type: "purchase", title: item.title, icon: item.icon });
   return "ok";
 }
