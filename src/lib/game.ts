@@ -184,6 +184,17 @@ function read(): GameState {
         spentBeers: parsed.spentBeers ?? 0,
         v: 2,
       };
+      // renamed achievements keep their unlock timestamps
+      const renames: [string, string][] = [
+        ["sicko-mode", "warp-speed"],
+        ["99-problems", "mob-grinder"],
+      ];
+      for (const [oldId, newId] of renames) {
+        if (value.achievements[oldId] != null) {
+          value.achievements = { ...value.achievements, [newId]: value.achievements[oldId] };
+          delete value.achievements[oldId];
+        }
+      }
       // stored focus list that still equals an old season's default was
       // never hand-picked — roll it forward to the current session
       const focusKey = [...value.settings.focusCourses].sort().join("|");
@@ -792,8 +803,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "still-alive", title: "Still Alive", desc: "Beat a final boss with exactly one heart left. This was a triumph.", icon: "HeartPulse", check: (s) => allBossRecords(s).some((r) => r.won && r.heartsLeft === 1) },
   { id: "new-game-plus", title: "New Game+", desc: "Rematch a beaten boss and top your previous grade.", icon: "Gamepad2", check: beatOwnGrade },
   { id: "speedrun", title: "Speedrun any%", desc: "Perfect Daily Mix (10+ cards) in under 3 minutes. World-record pace.", icon: "Timer", check: (s) => (s.fastestPerfectMix ?? Infinity) <= 180 },
-  { id: "99-problems", title: "99 Problems", desc: "Clear 99 due reviews, total. A card ain't one.", icon: "ListChecks", check: (s) => s.totals.dueCleared >= 99 },
-  { id: "sicko-mode", title: "Sicko Mode", desc: "50 correct answers in one day.", icon: "Flame", check: (s) => Object.values(s.activity).some((a) => a.correct >= 50) },
+  { id: "mob-grinder", title: "Mob Grinder", desc: "Clear 99 due reviews, total. A fully automated XP farm.", icon: "Hammer", check: (s) => s.totals.dueCleared >= 99 },
+  { id: "warp-speed", title: "Warp Speed", desc: "50 correct answers in a single day. Engage.", icon: "Rocket", check: (s) => Object.values(s.activity).some((a) => a.correct >= 50) },
   { id: "touch-grass", title: "Touch Grass", desc: "Return after 3+ days away. The grass was touched. Welcome back.", icon: "Sprout", check: returnedAfterBreak },
   { id: "hollow-knight", title: "Hollow Knight", desc: "Defeat the final boss of 5 different courses.", icon: "Ghost", check: (s) => Object.entries(s.boss).filter(([, rs]) => rs.some((r) => r.won)).length >= 5 },
   { id: "cake-is-a-lie", title: "The Cake Is a Lie", desc: "Three perfect sessions. The cake remains theoretical.", icon: "Cake", check: (s) => s.totals.perfectSessions >= 3 },
@@ -813,6 +824,12 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "l33t", title: "1337", desc: "Reach 1337 total XP. Elite.", icon: "Gamepad2", check: (s) => (s.peakXp ?? 0) >= 1337 },
   { id: "cento-quest", title: "Questmaster 100", desc: "Complete 100 daily quests.", icon: "ScrollText", check: (s) => s.totals.questsDone >= 100 },
   { id: "konami", title: "The Konami Code", desc: "↑ ↑ ↓ ↓ ← → ← → B A — some knowledge predates the syllabus. (+100 XP)", icon: "Gamepad2", check: (s) => s.unlocks.includes("konami-code") },
+  { id: "dangerous-alone", title: "It's Dangerous to Go Alone!", desc: "Take this. Read your first lesson.", icon: "Swords", check: (s) => s.totals.lessons >= 1 },
+  { id: "study-club", title: "First Rule of Study Club", desc: "You do not talk about Study Club. You show up — 10 days in a row.", icon: "Users", check: (s) => streakInfo(s).current >= 10 },
+  { id: "the-force", title: "The Force Is Strong With This One", desc: "Win a boss fight with 90%+ accuracy.", icon: "Star", check: (s) => allBossRecords(s).some((r) => r.won && r.accuracy >= 0.9) },
+  { id: "do-or-do-not", title: "Do or Do Not", desc: "There is no try: complete all three daily quests in one day.", icon: "Target", check: (s) => s.quests.date === dayKey() && s.quests.items.length >= 3 && s.quests.items.every((q) => !!q.completedAt) },
+  { id: "make-it-so", title: "Make It So", desc: "Complete 50 daily quests. The bridge is yours, Number One.", icon: "Compass", check: (s) => s.totals.questsDone >= 50 },
+  { id: "say-my-name", title: "Say My Name", desc: "Reach the rank of Rettore. You're the one who knocks — on the rector's door.", icon: "Crown", check: (s) => (s.peakXp ?? 0) >= 21600 },
 ];
 
 function evaluateAchievements(state: GameState): GameState {
