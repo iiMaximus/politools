@@ -46,7 +46,7 @@ export function StatsPage() {
           </div>
         </section>
 
-        <div className="mt-4 grid gap-4">
+        <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4">
           {courses.map((c) => (
             <CourseStats key={c.meta.id} course={c} />
           ))}
@@ -83,7 +83,7 @@ function CourseStats({ course }: { course: Course }) {
               forecast grade <strong style={{ color: "var(--accent)" }}>{r.gradeLabel}</strong>
             </div>
           </div>
-          <ReadinessDial r={r} size={64} />
+          <div className="shrink-0"><ReadinessDial r={r} size={64} /></div>
         </div>
 
         {/* 7-day review forecast */}

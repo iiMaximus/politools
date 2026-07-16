@@ -376,13 +376,13 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
       {/* ======== INTRO ======== */}
       {phase === "intro" && (
-        <div className="absolute inset-0 flex flex-col items-center justify-end overflow-y-auto pb-10 pt-24">
-          <div className="pointer-events-none absolute inset-x-0 top-16 text-center">
+        <div className="absolute inset-0 flex flex-col overflow-y-auto px-4 pb-6 pt-12 sm:pt-16">
+          <div className="pointer-events-none relative shrink-0 text-center">
             <div className="text-xs font-bold uppercase tracking-[0.35em] text-white/50">
               {isMini ? `Mini-boss · ${course.meta.short}` : `Final boss · ${course.meta.title}`}
             </div>
             <h1
-              className="mt-2 px-4 text-4xl font-black tracking-tight sm:text-6xl"
+              className="mt-2 px-4 text-3xl font-black tracking-tight sm:text-6xl"
               style={{ textShadow: "0 4px 30px rgba(0,0,0,0.8)" }}
             >
               {cfg.name}
@@ -390,7 +390,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
             <div className="mt-1 text-sm font-medium italic text-white/60">{cfg.epithet}</div>
           </div>
 
-          <div className="relative z-10 mx-4 w-full max-w-lg space-y-2.5">
+          <div className="relative z-10 mx-auto mt-auto w-full max-w-lg space-y-2.5 pt-6">
             <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-white/80">
               <RuleChip icon="Swords" text="correct = damage · speed & combos hit harder" />
               <RuleChip icon="Heart" text={`${cfg.hearts} hearts — miss or timeout costs one`} />
@@ -616,7 +616,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                   />
                 </div>
               )}
-              <div className="max-h-[46vh] overflow-y-auto p-4 sm:p-5">
+              <div className="max-h-[52vh] overflow-y-auto p-3.5 sm:max-h-[46vh] sm:p-5">
                 {/* battle dialog line */}
                 <div
                   className="mb-2 text-xl leading-tight text-white sm:text-2xl"

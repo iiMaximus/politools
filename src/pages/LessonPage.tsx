@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
@@ -6,8 +6,9 @@ import { TopBar, Page, PageLoader } from "../components/Layout";
 import { Icon } from "../components/Icon";
 import { Kicker, Pill } from "../components/ui";
 import { Block } from "../components/LessonBlocks";
-import { rtInline } from "../components/RichText";
+import { rt, rtInline } from "../components/RichText";
 import { markLesson, useCourseProgress } from "../lib/progress";
+import { pickFacts, type FunFact } from "../lib/funfacts";
 import { cn } from "../lib/cn";
 import { NotFound } from "./NotFound";
 
@@ -127,6 +128,9 @@ export function LessonPage() {
   const next = course.lessons[idx + 1];
   const completed = progress.lessons[lesson.id]?.completed;
   const activeToc = activeTocId ?? toc[0]?.id;
+  // memory hooks: one fact up top, one dropped mid-lesson
+  const facts = pickFacts(courseId, lesson);
+  const midIdx = Math.floor(lesson.blocks.length / 2);
 
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
@@ -226,14 +230,18 @@ export function LessonPage() {
               </details>
             )}
 
+            {facts[0] && !focusMode && <FunFactCard fact={facts[0]} />}
+
             {/* body */}
             <div className={focusMode ? "mt-0" : "mt-8"}>
               {lesson.blocks.map((b, i) => (
-                <Block
-                  key={i}
-                  block={b.kind === "heading" ? { ...b, id: b.id ?? `h-${i}` } : b}
-                  courseId={courseId}
-                />
+                <Fragment key={i}>
+                  <Block
+                    block={b.kind === "heading" ? { ...b, id: b.id ?? `h-${i}` } : b}
+                    courseId={courseId}
+                  />
+                  {i === midIdx && facts[1] && <FunFactCard fact={facts[1]} />}
+                </Fragment>
               ))}
             </div>
 
@@ -291,5 +299,31 @@ export function LessonPage() {
         </div>
       </Page>
     </CourseTheme>
+  );
+}
+
+/* ------------------------- fun fact card -------------------------- */
+
+const FACT_META = {
+  fact: { label: "FUN FACT", icon: "Sparkles" },
+  analogy: { label: "ANALOGY", icon: "Lightbulb" },
+  mnemonic: { label: "MNEMONIC", icon: "KeyRound" },
+} as const;
+
+function FunFactCard({ fact }: { fact: FunFact }) {
+  const meta = FACT_META[fact.kind];
+  return (
+    <aside
+      className="my-6 rounded-2xl border-2 p-4"
+      style={{ borderColor: "var(--accent-line)", background: "var(--accent-soft)" }}
+    >
+      <div
+        className="pixel-font mb-1.5 flex items-center gap-1.5 text-lg leading-none"
+        style={{ color: "var(--accent)" }}
+      >
+        <Icon name={meta.icon} size={15} /> {meta.label}
+      </div>
+      <div className="prose-lesson !text-[0.95rem]">{rt(fact.text)}</div>
+    </aside>
   );
 }

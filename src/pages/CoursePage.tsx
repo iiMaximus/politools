@@ -142,7 +142,7 @@ export function CoursePage() {
               Finish each part by its date — the last {REVIEW_BUFFER_DAYS} days before the exam are
               reserved for mock exams and review.
             </p>
-            <div className="mt-3 grid gap-1.5">
+            <div className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-1.5">
               {plan.items.map((it) => (
                 <div
                   key={it.section.title}
@@ -236,7 +236,7 @@ export function CoursePage() {
               </Link>
             )}
 
-            <div className="mt-3 grid gap-1.5">
+            <div className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-1.5">
               {stats.map((t) => {
                 const mastery = t.total ? t.mastered / t.total : 0;
                 return (

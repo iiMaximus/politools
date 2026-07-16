@@ -237,7 +237,7 @@ export function HubPage() {
               and pick what you're fighting this session.
             </div>
           ) : (
-            <div className="grid gap-4 lg:grid-cols-3">
+            <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-3">
               {focusCourses.map((c) => (
                 <FocusCard key={c.meta.id} course={c} />
               ))}
@@ -692,7 +692,7 @@ function PlayerHud({
               />
             </div>
           </div>
-          <div className="pixel-font mt-1.5 flex justify-between text-base leading-none text-white/55">
+          <div className="pixel-font mt-1.5 flex flex-wrap justify-between gap-x-3 gap-y-1 text-base leading-none text-white/55">
             <span>{totalXp.toLocaleString()} XP</span>
             {nextExam && (
               <span style={{ color: nextExam.days <= 14 ? "#ff5555" : "#ffd45e" }}>
@@ -790,7 +790,7 @@ function BeerShop({ game }: { game: GameState }) {
           🍺 ×{beers}
         </span>
       </div>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-3">
         {SHOP.map((item) => {
           const owned = item.kind === "cosmetic" && game.unlocks.includes(item.id);
           const pending = CONSUMABLE_KINDS.includes(item.kind)

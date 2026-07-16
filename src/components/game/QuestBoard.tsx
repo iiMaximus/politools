@@ -23,7 +23,7 @@ export function QuestBoard({
 }) {
   if (!quests.length) return null;
   return (
-    <div className="grid gap-2.5">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5">
       {quests.map((q) => (
         <QuestRow key={q.id} q={q} state={state} retro={retro} />
       ))}
