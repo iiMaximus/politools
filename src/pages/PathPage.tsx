@@ -225,7 +225,7 @@ export function PathPage() {
   return (
     <CourseTheme accent={meta.accent} accent2={meta.accent2}>
       <TopBar crumbs={[{ label: meta.short, to: `/c/${courseId}` }, { label: "Path" }]}>
-        <span className="hidden items-center gap-1 text-sm font-bold text-[var(--accent)] sm:flex">
+        <span className="pixel-font hidden items-center gap-1 text-lg leading-none text-[var(--accent)] sm:flex">
           <Icon name="Flag" size={15} />
           {doneCount}/{nodes.length}
         </span>
@@ -234,14 +234,11 @@ export function PathPage() {
         {conquest && (
           <div className="pointer-events-none fixed inset-x-0 top-20 z-[60] flex justify-center px-4">
             <div
-              className="flex items-center gap-2.5 rounded-2xl px-5 py-3 text-sm font-black text-white shadow-2xl"
-              style={{
-                background: "linear-gradient(120deg,var(--accent),var(--accent-2))",
-                animation: "conquestDrop 0.5s cubic-bezier(0.2,1.4,0.4,1)",
-              }}
+              className="mc-panel pixel-font flex items-center gap-2.5 px-5 py-3 text-xl leading-none text-white shadow-2xl"
+              style={{ animation: "conquestDrop 0.5s cubic-bezier(0.2,1.4,0.4,1)" }}
             >
               <Icon name="Trophy" size={18} className="text-[#ffd45e]" />
-              {conquest}
+              <span style={{ color: "#ffd45e" }}>{conquest}</span>
             </div>
           </div>
         )}
@@ -289,20 +286,16 @@ export function PathPage() {
                     className="absolute left-0 right-0"
                     style={{ top: ys[i] - 44 - BANNER_EXTRA }}
                   >
-                    <div
-                      className="flex items-center justify-between rounded-2xl px-5 py-3.5 text-white shadow-lg"
-                      style={{
-                        background: "linear-gradient(120deg, var(--accent), var(--accent-2))",
-                        boxShadow: "0 10px 24px -14px var(--accent)",
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Icon name="MapPinned" size={18} className="opacity-90" />
-                        <span className="text-sm font-extrabold uppercase tracking-wide">
+                    <div className="mc-panel flex items-center justify-between px-4 py-3 text-white">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <span className="mc-slot grid h-8 w-8 shrink-0 place-items-center" style={{ color: "var(--accent)" }}>
+                          <Icon name="MapPinned" size={16} />
+                        </span>
+                        <span className="pixel-font truncate text-xl uppercase leading-none">
                           {n.banner.title}
                         </span>
                       </div>
-                      <span className="rounded-full bg-white/20 px-2.5 py-0.5 font-mono text-xs font-bold">
+                      <span className="pixel-font shrink-0 text-lg leading-none" style={{ color: "#ffd45e" }}>
                         {n.banner.done}/{n.banner.total}
                       </span>
                     </div>
@@ -323,7 +316,7 @@ export function PathPage() {
 
         {sel && <NodeSheet node={sel} courseId={courseId} onClose={() => setSel(null)} />}
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-[var(--color-faint)]">
+        <div className="pixel-font mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-base leading-none text-[var(--color-faint)]">
           <span className="flex items-center gap-1.5">
             <Icon name="BookOpen" size={12} /> lesson
           </span>
@@ -446,16 +439,16 @@ function NodeButton({
     <span className="mt-2 block w-44 text-center leading-tight">
       <span
         className={cn(
-          "block text-[13px] font-extrabold",
+          "pixel-font block text-base leading-tight",
           !unlocked && "text-[var(--color-faint)]",
-          node.kind === "boss" && unlocked && "text-[15px] uppercase tracking-wide"
+          node.kind === "boss" && unlocked && "text-xl uppercase tracking-wide"
         )}
         style={gold ? { color: "#c8901a" } : node.done ? { color: "var(--accent)" } : undefined}
       >
         {node.title}
       </span>
       {node.sub && (
-        <span className="block text-[11px] font-medium text-[var(--color-faint)]">{node.sub}</span>
+        <span className="pixel-font block text-sm leading-tight text-[var(--color-faint)]">{node.sub}</span>
       )}
     </span>
   );
@@ -464,10 +457,10 @@ function NodeButton({
     <div className="flex flex-col items-center">
       {current && (
         <span
-          className="absolute -top-9 left-1/2 z-10 animate-[pathStart_1.4s_ease-in-out_infinite] rounded-xl px-3 py-1 text-xs font-black uppercase tracking-wider text-white shadow-lg"
-          style={{ background: "var(--accent)" }}
+          className="pixel-font absolute -top-9 left-1/2 z-10 animate-[pathStart_1.4s_ease-in-out_infinite] rounded-xl px-3 py-1 text-lg uppercase leading-none tracking-wider text-white shadow-lg"
+          style={{ background: "var(--accent)", border: "2px solid #000" }}
         >
-          Start
+          ▶ Start
           <span
             className="absolute left-1/2 top-full -ml-1.5 border-8 border-transparent"
             style={{ borderTopColor: "var(--accent)", borderBottomWidth: 0 }}
@@ -528,30 +521,25 @@ function NodeSheet({ node, courseId, onClose }: { node: PathNode; courseId: stri
     <div className="fixed inset-0 z-[70]" onClick={onClose}>
       <div className="absolute inset-0 bg-black/40" style={{ animation: "sheetFade 0.18s ease-out" }} />
       <div
-        className="absolute inset-x-0 bottom-0 mx-auto max-w-lg rounded-t-3xl border border-b-0 border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-2xl"
+        className="mc-panel absolute inset-x-0 bottom-0 mx-auto max-w-lg !rounded-b-none p-5 text-white shadow-2xl"
         style={{
           paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))",
           animation: "sheetUp 0.22s cubic-bezier(0.2, 1.1, 0.4, 1)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--color-line)]" />
+        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
         <div className="flex items-center gap-3">
           <span
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-white"
-            style={{
-              background: node.legendary
-                ? "linear-gradient(180deg,#ffd45e,#e8a412)"
-                : "linear-gradient(180deg,var(--accent),var(--accent-2))",
-              color: node.legendary ? "#6b4a00" : undefined,
-            }}
+            className="mc-slot grid h-11 w-11 shrink-0 place-items-center"
+            style={{ color: node.legendary ? "#ffd45e" : "var(--accent)" }}
           >
             <Icon name={NODE_ICON[node.kind]} size={22} />
           </span>
           <div className="min-w-0">
-            <div className="truncate font-extrabold">{node.title}</div>
-            <div className="text-xs text-[var(--color-faint)]">
-              {node.legendary ? "★ legendary — " : ""}
+            <div className="pixel-font truncate text-2xl leading-none">{node.title}</div>
+            <div className="pixel-font mt-1 text-sm leading-none text-white/50">
+              {node.legendary ? "★ LEGENDARY — " : ""}
               {node.sub ?? (node.minutes ? `${node.minutes} min` : "")}
             </div>
           </div>
@@ -559,13 +547,13 @@ function NodeSheet({ node, courseId, onClose }: { node: PathNode; courseId: stri
 
         {node.kind === "gate" && node.gate && node.gate.total > 0 && (
           <div className="mt-4">
-            <div className="mb-1 flex justify-between text-[11px] font-semibold text-[var(--color-faint)]">
-              <span>section mastery</span>
+            <div className="pixel-font mb-1 flex justify-between text-sm leading-none text-white/50">
+              <span>SECTION MASTERY</span>
               <span>
-                {node.gate.mastered}/{node.gate.total} cards
+                {node.gate.mastered}/{node.gate.total}
               </span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-[var(--color-bg)]">
+            <div className="h-2 overflow-hidden rounded-full bg-black/50">
               <div
                 className="h-full rounded-full"
                 style={{
@@ -580,12 +568,31 @@ function NodeSheet({ node, courseId, onClose }: { node: PathNode; courseId: stri
           </div>
         )}
 
-        <div className="mt-4 grid gap-2">
-          {actions.map((a) => (
-            <Link key={a.label} to={a.to} className={a.primary ? "btn btn-primary w-full" : "btn btn-ghost w-full"}>
-              <Icon name={a.icon} size={16} /> {a.label}
-            </Link>
-          ))}
+        <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-2">
+          {actions.map((a) =>
+            a.primary ? (
+              <Link
+                key={a.label}
+                to={a.to}
+                className="pixel-font flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xl uppercase leading-none text-white transition hover:brightness-110"
+                style={{
+                  background: "linear-gradient(180deg,var(--accent),var(--accent-2))",
+                  border: "2px solid #000",
+                  boxShadow: "0 3px 0 #000",
+                }}
+              >
+                <Icon name={a.icon} size={17} /> {a.label}
+              </Link>
+            ) : (
+              <Link
+                key={a.label}
+                to={a.to}
+                className="mc-slot pixel-font flex items-center justify-center gap-2 px-3 py-2.5 text-xl uppercase leading-none text-white/85 transition hover:brightness-125"
+              >
+                <Icon name={a.icon} size={17} /> {a.label}
+              </Link>
+            )
+          )}
         </div>
       </div>
       <style>{`

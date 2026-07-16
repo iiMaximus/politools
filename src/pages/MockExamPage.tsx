@@ -46,6 +46,10 @@ interface ExamBlueprint {
   problemPoints: number;
   /** prefer numeric questions for the problem section */
   problemNumeric: boolean;
+  /** what the real quizzes look like: computational exercises vs theory MCQs */
+  quizStyle: "exercise" | "theory";
+  /** how the real paper names its open problem */
+  problemLabel: string;
   maxPoints: number;
   note: string;
 }
@@ -60,6 +64,8 @@ const BLUEPRINTS: Record<string, ExamBlueprint> = {
     problemCount: 3,
     problemPoints: 3,
     problemNumeric: true,
+    quizStyle: "exercise", // the real MA2 quizzes are computed results, not recall
+    problemLabel: "Exercise 8 (9 points)",
     maxPoints: 30,
     note: "Mirrors the real paper: 7 single-answer quizzes, then the 9-point open problem (here: numeric parts).",
   },
@@ -72,6 +78,8 @@ const BLUEPRINTS: Record<string, ExamBlueprint> = {
     problemCount: 4,
     problemPoints: 2.5,
     problemNumeric: false, // LAG bank is MCQ — hard cards stand in for the exercise
+    quizStyle: "exercise", // real LAG quizzes ask for computed results too
+    problemLabel: "Exercise (open)",
     maxPoints: 30,
     note: "Mirrors the real 60-minute paper: 8 quizzes plus the open exercise (here: 4 hard exercise-style parts).",
   },
@@ -84,6 +92,8 @@ const BLUEPRINTS: Record<string, ExamBlueprint> = {
     problemCount: 4,
     problemPoints: 5,
     problemNumeric: true,
+    quizStyle: "theory", // the real thermo quiz pools are concept MCQs
+    problemLabel: "Written-test problems",
     maxPoints: 30,
     note: "Quiz rules straight from the real sheet: correct 1 pt, blank 0, wrong −0.25. Leave a quiz blank if you'd only guess.",
   },
@@ -178,13 +188,33 @@ function buildGenericDeck(course: Course, count: number): DeckItem[] {
   }));
 }
 
+/** does this MCQ look like the real paper's quizzes — a computed result
+ *  (numeric options / "compute…", "closest to…") vs a recall question? */
+function isExerciseStyle(q: Question): boolean {
+  if (isNumeric(q)) return true;
+  const prompt = typeof q.prompt === "string" ? q.prompt : "";
+  const computey =
+    /(compute|closest to|evaluate|equal(s| to)?|the value|find|determine|calculate|result is|is worth|how (much|many))/i.test(
+      prompt
+    );
+  const numericOptions =
+    q.options.filter((o) => typeof o.content === "string" && /^\s*\$?\s*[-\d(]/.test(o.content)).length >= 3;
+  return computey || numericOptions;
+}
+
 /** the official paper for this course, per its blueprint */
 function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
   const pool = topicFocusPool(course);
   const mcq = pool.filter((q) => !isNumeric(q));
   const numeric = pool.filter(isNumeric);
 
-  const quiz = stratified(mcq, bp.quizCount).map<DeckItem>((q) => ({
+  // match the real paper's quiz TYPE: computational exercises (MA2/LAG)
+  // or concept MCQs (thermo's quiz pools) — topping up when short
+  const styled = mcq.filter((q) =>
+    bp.quizStyle === "exercise" ? isExerciseStyle(q) : !isExerciseStyle(q)
+  );
+  const quizPool = styled.length >= bp.quizCount ? styled : mcq;
+  const quiz = stratified(quizPool, bp.quizCount).map<DeckItem>((q) => ({
     q,
     section: "quiz",
     points: bp.quizPoints,
@@ -687,7 +717,7 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
         {/* palette */}
         <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-b border-[var(--color-line)] px-4 py-2">
           {deck.map((it, idx) => (
-            <span key={it.q.id} className="flex items-center">
+            <span key={it.q.id} className="flex shrink-0 items-center">
               {official && idx === problemStart && (
                 <span className="pixel-font mx-1.5 shrink-0 text-sm uppercase leading-none text-[var(--color-faint)]">
                   · problem ·
@@ -716,7 +746,11 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
             <div className="mb-3 flex items-center gap-2 text-xs font-bold text-[var(--color-faint)]">
               {official ? (
                 <>
-                  {item.section === "quiz" ? "Quiz" : "Problem"} {i + 1}/{deck.length}
+                  {item.section === "quiz"
+                    ? `Quiz ${i + 1}/${blueprint?.quizCount ?? deck.length}`
+                    : `${blueprint?.problemLabel ?? "Problem"} — part ${String.fromCharCode(
+                        97 + Math.max(0, i - (blueprint?.quizCount ?? 0))
+                      )})`}
                   <span className="rounded-full bg-[var(--color-surface)] px-2 py-0.5">
                     {item.points} pt{item.points !== 1 ? "s" : ""}
                     {item.penalty > 0 && <span style={{ color: "var(--bad)" }}> · wrong −{item.penalty}</span>}

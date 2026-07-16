@@ -126,7 +126,7 @@ export function PracticePage() {
           )}
           <div className="mb-5">
             <Kicker>Practice</Kicker>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight">Choose a set</h1>
+            <h1 className="pixel-font mt-1 text-4xl uppercase leading-none tracking-wide">Select your set</h1>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
               Pick a tutorial / lecture below, or mix everything. Cards lock in after two correct in a
               row and come back to you when you miss them.
@@ -590,7 +590,9 @@ function SessionEnd({
           className="mx-auto mb-3"
           style={{ color: passed ? "var(--good)" : "var(--warn)" }}
         />
-        <h2 className="text-2xl font-bold">{passed ? "Checkpoint cleared!" : "Checkpoint failed"}</h2>
+        <h2 className="pixel-font text-4xl uppercase leading-none tracking-wide" style={{ color: passed ? "var(--good)" : "var(--bad)" }}>
+          {passed ? "Checkpoint cleared!" : "Checkpoint failed"}
+        </h2>
         <p className="mt-1 text-[var(--color-muted)]">
           {correct}/{total} correct · {pct}% — {passed ? "the road is yours" : `you need ${Math.round(CHECKPOINT_PASS * 100)}%`}
         </p>
@@ -614,7 +616,12 @@ function SessionEnd({
   return (
     <div className="surface p-8 text-center">
       <Icon name="Flag" size={36} className="mx-auto mb-3 text-[var(--accent)]" />
-      <h2 className="text-2xl font-bold">Session complete</h2>
+      <h2
+        className="pixel-font text-4xl uppercase leading-none tracking-wide"
+        style={{ color: pct >= 50 ? "var(--good)" : "var(--warn)" }}
+      >
+        {pct >= 50 ? "Stage clear!" : "Continue?"}
+      </h2>
       <p className="mt-1 text-[var(--color-muted)]">
         {correct}/{total} correct · {pct}% this round
       </p>

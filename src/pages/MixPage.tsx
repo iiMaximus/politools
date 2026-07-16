@@ -215,7 +215,12 @@ export function MixPage() {
               size={40}
               className="mx-auto mb-3 text-[var(--accent)]"
             />
-            <h1 className="text-2xl font-extrabold">Mix complete!</h1>
+            <h1
+              className="pixel-font text-4xl uppercase leading-none tracking-wide"
+              style={{ color: pct >= 80 ? "var(--good)" : "var(--color-ink)" }}
+            >
+              {pct >= 80 ? "Stage clear!" : "Mix complete"}
+            </h1>
             <p className="mt-1 text-[var(--color-muted)]">
               {correctCount}/{deck.length} correct · {pct}% · best combo ×{bestCombo}
               {bonus > 0 && <> · +{bonus} combo XP</>}

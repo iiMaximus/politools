@@ -33,6 +33,7 @@ export function StatsPage() {
     <>
       <TopBar crumbs={[{ label: "Stats" }]} />
       <Page className="max-w-4xl">
+        <h1 className="pixel-font mb-4 text-4xl uppercase leading-none tracking-wide">Brain scan</h1>
         <section className="grid gap-3 sm:grid-cols-3">
           <StreakBadge streak={streak} />
           <RankBadge totalXp={totalXp} />

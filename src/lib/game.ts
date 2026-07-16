@@ -1076,6 +1076,18 @@ export function addBonusXp(amount: number) {
   write({ ...state, bonusXp: state.bonusXp + amount });
 }
 
+/** Wipe one course's game-side history (boss fights, mini-bosses, mocks). */
+export function resetCourseGame(courseId: string) {
+  const state = read();
+  const boss = { ...state.boss };
+  const miniBoss = { ...state.miniBoss };
+  const mockExams = { ...state.mockExams };
+  delete boss[courseId];
+  delete miniBoss[courseId];
+  delete mockExams[courseId];
+  write({ ...state, boss, miniBoss, mockExams });
+}
+
 export function updateSettings(patch: Partial<GameSettings>) {
   const state = read();
   write({ ...state, settings: { ...state.settings, ...patch } });

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
@@ -8,8 +9,9 @@ import { Kicker, Meter, Pill } from "../components/ui";
 import { ProgressRing } from "../components/ProgressRing";
 import { rtInline } from "../components/RichText";
 import { levelFromXp } from "../lib/adaptive";
-import { useCourseProgress } from "../lib/progress";
-import { updateSettings, useGame } from "../lib/game";
+import { resetCourse, useCourseProgress } from "../lib/progress";
+import { clearSession } from "../lib/session";
+import { resetCourseGame, updateSettings, useGame } from "../lib/game";
 import { REVIEW_BUFFER_DAYS, coursePlan, planDateLabel } from "../lib/plan";
 import { topicStats, weakestTopics } from "../lib/stats";
 import { summarize } from "../lib/summary";
@@ -26,6 +28,7 @@ export function CoursePage() {
   const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
   const game = useGame();
+  const [confirmReset, setConfirmReset] = useState(false);
   if (loading) return <PageLoader />;
   if (!course) return <NotFound />;
 
@@ -310,8 +313,8 @@ export function CoursePage() {
         <section className="mt-8">
           <div className="mb-4 flex items-center gap-2">
             <Icon name="GraduationCap" size={20} style={{ color: "var(--accent)" }} />
-            <h2 className="text-xl font-bold tracking-tight">Lessons</h2>
-            <span className="text-sm text-[var(--color-faint)]">· learn the theory, lecture by lecture</span>
+            <h2 className="pixel-font text-3xl uppercase leading-none tracking-wide">Lesson select</h2>
+            <span className="hidden text-sm text-[var(--color-faint)] sm:inline">· learn the theory, lecture by lecture</span>
           </div>
           <div className="space-y-6">
             {lectureGroups.map((g, gi) => (
@@ -360,7 +363,7 @@ export function CoursePage() {
         <section className="mt-8">
           <div className="mb-4 flex items-center gap-2">
             <Icon name="Target" size={20} style={{ color: "var(--accent)" }} />
-            <h2 className="text-xl font-bold tracking-tight">Drill &amp; test</h2>
+            <h2 className="pixel-font text-3xl uppercase leading-none tracking-wide">Drill &amp; test</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ActionCard
@@ -392,6 +395,41 @@ export function CoursePage() {
               footer={`${s.examSolved}/${s.examTotal} solved`}
             />
           </div>
+        </section>
+
+        {/* danger zone: per-course progress reset */}
+        <section className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-[var(--color-line)] p-4">
+          <div className="min-w-0">
+            <div className="pixel-font text-lg uppercase leading-none" style={{ color: "var(--bad)" }}>
+              Danger zone
+            </div>
+            <p className="mt-1 text-xs text-[var(--color-faint)]">
+              Wipes this course's cards, lessons, XP, boss history and mocks. Deadlines stay.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              if (!confirmReset) {
+                setConfirmReset(true);
+                window.setTimeout(() => setConfirmReset(false), 4000);
+                return;
+              }
+              resetCourse(courseId);
+              resetCourseGame(courseId);
+              clearSession(courseId);
+              try {
+                localStorage.removeItem(`polito:scroll:${courseId}`);
+                localStorage.removeItem(`polito:mock:${courseId}`);
+              } catch {
+                /* ignore */
+              }
+              setConfirmReset(false);
+            }}
+            className={confirmReset ? "btn !bg-[var(--bad)] !text-white" : "btn btn-ghost !text-[var(--bad)]"}
+          >
+            <Icon name="RotateCcw" size={15} />
+            {confirmReset ? "Tap again — new game" : "Reset course progress"}
+          </button>
         </section>
       </Page>
     </CourseTheme>
@@ -472,13 +510,14 @@ function ActionCard({
   footer: string;
 }) {
   return (
-    <Link to={to} className="card-hover surface group flex flex-col p-5">
-      <span className="grid h-11 w-11 place-items-center rounded-xl text-white" style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}>
+    <Link to={to} className="mc-panel card-hover group relative flex flex-col overflow-hidden p-4 text-white">
+      <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.05]" />
+      <span className="mc-slot relative grid h-11 w-11 place-items-center" style={{ color: "var(--accent)" }}>
         <Icon name={icon} size={22} />
       </span>
-      <h3 className="mt-3 text-lg font-bold">{title}</h3>
-      <p className="mt-1 flex-1 text-sm text-[var(--color-muted)]">{desc}</p>
-      <div className="mt-4 flex items-center justify-between text-sm font-semibold text-[var(--accent)]">
+      <h3 className="pixel-font relative mt-3 text-2xl uppercase leading-none">{title}</h3>
+      <p className="relative mt-1.5 flex-1 text-sm text-white/55">{desc}</p>
+      <div className="pixel-font relative mt-4 flex items-center justify-between text-lg leading-none" style={{ color: "#ffd45e" }}>
         {footer}
         <Icon name="ArrowRight" size={16} className="transition group-hover:translate-x-1" />
       </div>
