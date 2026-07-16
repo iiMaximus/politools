@@ -34,7 +34,8 @@ const COURSE_IDS = [
   "electronic-systems",
 ];
 
-const HIDDEN_FROM_HUB = new Set(["cybersecurity"]);
+// statistics is hidden until its content is finished (still reachable by URL)
+const HIDDEN_FROM_HUB = new Set(["cybersecurity", "statistics"]);
 
 const cache = new Map<string, Course>();
 const pending = new Map<string, Promise<Course | undefined>>();

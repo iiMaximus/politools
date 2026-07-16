@@ -15,18 +15,91 @@ import { isNumeric, type Course, type Question } from "../types";
 import { NotFound } from "./NotFound";
 
 /* ================================================================== *
- *  MOCK EXAM — the timed, auto-graded simulator. One countdown for the
- *  whole paper, no per-question feedback, flag-for-review, a numbered
- *  palette, auto-submit at 0:00. Answers can be changed until submit.
- *  Grading uses the shared 17..31 law (gradeFromScore); results feed
- *  the SRS (every answer recorded) and readiness (logMockExam).
+ *  MOCK EXAM — the timed, auto-graded simulator.
+ *  For the focus courses it replicates the REAL paper (from past
+ *  exams in the course material): question mix, duration, points and
+ *  penalty rules. One countdown, no feedback until submit, flag-for-
+ *  review, auto-submit at 0:00, answers editable until the end, and a
+ *  slot-machine grade reveal at the finish. Results feed the SRS.
  * ================================================================== */
 
-const LENGTHS = [15, 25, 35];
 const SEC_PER_QUESTION = 120;
+const LENGTHS = [15, 25, 35];
+
+/* ------------------------- exam blueprints ------------------------- *
+ * Sources: real papers in course_material —
+ *  MA2: "Appello 1" paper = 7 MCQ + 1 open problem worth 9 pts (open
+ *       problem simulated here as 3 numeric parts, 3 pts each).
+ *  LAG: June/July 2025 papers = 8 MCQ + 1 open exercise, 60 min
+ *       (exercise simulated as 4 hard "exercise part" questions).
+ *  Thermo: quiz sheet rule "correct 1 pt · blank 0 · wrong −0.25" +
+ *       written-test numeric problems (the recurring 2025 set).      */
+
+interface ExamBlueprint {
+  detail: string;
+  durationMin: number;
+  quizCount: number;
+  quizPoints: number;
+  /** subtracted per wrong quiz answer (blanks score 0) */
+  quizPenalty: number;
+  problemCount: number;
+  problemPoints: number;
+  /** prefer numeric questions for the problem section */
+  problemNumeric: boolean;
+  maxPoints: number;
+  note: string;
+}
+
+const BLUEPRINTS: Record<string, ExamBlueprint> = {
+  "math-analysis-2": {
+    detail: "7 quiz + the open problem as 3 numeric parts · 9 pts, like Appello 1",
+    durationMin: 120,
+    quizCount: 7,
+    quizPoints: 3,
+    quizPenalty: 0,
+    problemCount: 3,
+    problemPoints: 3,
+    problemNumeric: true,
+    maxPoints: 30,
+    note: "Mirrors the real paper: 7 single-answer quizzes, then the 9-point open problem (here: numeric parts).",
+  },
+  "linear-algebra": {
+    detail: "8 quiz + 4 exercise parts · 60 min, like the June/July 2025 papers",
+    durationMin: 60,
+    quizCount: 8,
+    quizPoints: 2.5,
+    quizPenalty: 0,
+    problemCount: 4,
+    problemPoints: 2.5,
+    problemNumeric: false, // LAG bank is MCQ — hard cards stand in for the exercise
+    maxPoints: 30,
+    note: "Mirrors the real 60-minute paper: 8 quizzes plus the open exercise (here: 4 hard exercise-style parts).",
+  },
+  thermodynamics: {
+    detail: "10 quiz (wrong = −0.25!) + 4 written-test problems · 90 min",
+    durationMin: 90,
+    quizCount: 10,
+    quizPoints: 1,
+    quizPenalty: 0.25,
+    problemCount: 4,
+    problemPoints: 5,
+    problemNumeric: true,
+    maxPoints: 30,
+    note: "Quiz rules straight from the real sheet: correct 1 pt, blank 0, wrong −0.25. Leave a quiz blank if you'd only guess.",
+  },
+};
+
+interface DeckItem {
+  q: Question;
+  section: "quiz" | "problem";
+  points: number;
+  penalty: number;
+}
 
 interface MockSnapshot {
   ids: string[];
+  sections: ("quiz" | "problem")[];
+  official: boolean;
   answers: Record<string, string>;
   flagged: string[];
   deadline: number;
@@ -60,14 +133,16 @@ function clearSnapshot(courseId: string) {
   }
 }
 
-/** stratified draw: proportional per topic, slightly biased to medium/hard */
-function buildMockDeck(course: Course, count: number): Question[] {
-  // topic focus (course page) narrows the paper to the topics that matter
+function topicFocusPool(course: Course): Question[] {
   const focusT = readGame().settings.focusTopics?.[course.meta.id];
   const focused = focusT?.length
     ? course.practice.filter((q) => q.topic && focusT.includes(q.topic))
     : course.practice;
-  const pool = focused.length >= 10 ? focused : course.practice;
+  return focused.length >= 10 ? focused : course.practice;
+}
+
+/** stratified draw: proportional per topic, slightly biased to medium/hard */
+function stratified(pool: Question[], count: number): Question[] {
   const byTopic = new Map<string, Question[]>();
   for (const q of pool) {
     const key = q.topic ?? "General";
@@ -93,6 +168,49 @@ function buildMockDeck(course: Course, count: number): Question[] {
   return deck;
 }
 
+/** generic (custom-length) paper: uniform 1-pt questions */
+function buildGenericDeck(course: Course, count: number): DeckItem[] {
+  return stratified(topicFocusPool(course), Math.min(count, course.practice.length)).map((q) => ({
+    q,
+    section: "quiz",
+    points: 1,
+    penalty: 0,
+  }));
+}
+
+/** the official paper for this course, per its blueprint */
+function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
+  const pool = topicFocusPool(course);
+  const mcq = pool.filter((q) => !isNumeric(q));
+  const numeric = pool.filter(isNumeric);
+
+  const quiz = stratified(mcq, bp.quizCount).map<DeckItem>((q) => ({
+    q,
+    section: "quiz",
+    points: bp.quizPoints,
+    penalty: bp.quizPenalty,
+  }));
+
+  let problemPool: Question[];
+  if (bp.problemNumeric && numeric.length >= bp.problemCount) {
+    problemPool = shuffle(numeric).slice(0, bp.problemCount);
+  } else {
+    // exercise parts stood in by hard cards not already in the quiz
+    const used = new Set(quiz.map((it) => it.q.id));
+    const hard = mcq.filter((q) => !used.has(q.id));
+    hard.sort((a, b) => (b.difficulty === "hard" ? 1 : 0) - (a.difficulty === "hard" ? 1 : 0));
+    problemPool = shuffle(hard.slice(0, bp.problemCount * 3)).slice(0, bp.problemCount);
+  }
+  const problems = problemPool.map<DeckItem>((q) => ({
+    q,
+    section: "problem",
+    points: bp.problemPoints,
+    penalty: 0,
+  }));
+
+  return [...quiz, ...problems]; // quiz first, then the problem block — like the paper
+}
+
 function isAnswerCorrect(q: Question, value: string | undefined): boolean {
   if (!value) return false;
   return isNumeric(q) ? checkNumeric(value, q) : value === q.correct;
@@ -116,6 +234,8 @@ export function MockExamPage() {
 
 function MockExam({ course, courseId }: { course: Course; courseId: string }) {
   const navigate = useNavigate();
+  const blueprint = BLUEPRINTS[courseId];
+
   const resumable = useMemo(() => {
     const snap = readSnapshot(courseId);
     if (!snap || snap.deadline <= Date.now()) return null;
@@ -124,36 +244,62 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
   }, [course, courseId]);
 
   const [phase, setPhase] = useState<Phase>("setup");
-  const [deck, setDeck] = useState<Question[]>([]);
+  const [official, setOfficial] = useState(false);
+  const [deck, setDeck] = useState<DeckItem[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [flagged, setFlagged] = useState<Set<string>>(new Set());
   const [i, setI] = useState(0);
   const [deadline, setDeadline] = useState(0);
   const [startedAt, setStartedAt] = useState(0);
   const [now, setNow] = useState(Date.now());
+  const [revealed, setRevealed] = useState(false);
   const submittedRef = useRef(false);
 
-  const q = deck[i];
+  const item = deck[i];
+  const q = item?.q;
   const remaining = Math.max(0, deadline - now);
+  const maxPoints = official && blueprint ? blueprint.maxPoints : deck.length;
 
-  function start(count: number, resume?: MockSnapshot) {
+  function start(mode: "official" | number, resume?: MockSnapshot) {
     const byId = new Map(course.practice.map((qq) => [qq.id, qq]));
     if (resume) {
-      setDeck(resume.ids.map((id) => byId.get(id)!));
+      const bp = resume.official ? blueprint : undefined;
+      setDeck(
+        resume.ids.map((id, k) => {
+          const section = resume.sections[k] ?? "quiz";
+          return {
+            q: byId.get(id)!,
+            section,
+            points: bp ? (section === "quiz" ? bp.quizPoints : bp.problemPoints) : 1,
+            penalty: bp && section === "quiz" ? bp.quizPenalty : 0,
+          };
+        })
+      );
+      setOfficial(resume.official);
       setAnswers(resume.answers);
       setFlagged(new Set(resume.flagged));
       setDeadline(resume.deadline);
       setStartedAt(resume.startedAt);
     } else {
-      const fresh = buildMockDeck(course, Math.min(count, course.practice.length));
       const startTs = Date.now();
+      let fresh: DeckItem[];
+      if (mode === "official" && blueprint) {
+        fresh = buildOfficialDeck(course, blueprint);
+        setDeadline(startTs + blueprint.durationMin * 60_000);
+        setOfficial(true);
+      } else {
+        const count = typeof mode === "number" ? Math.min(mode, course.practice.length) : 15;
+        fresh = buildGenericDeck(course, count);
+        setDeadline(startTs + fresh.length * SEC_PER_QUESTION * 1000);
+        setOfficial(false);
+      }
       setDeck(fresh);
       setAnswers({});
       setFlagged(new Set());
       setStartedAt(startTs);
-      setDeadline(startTs + fresh.length * SEC_PER_QUESTION * 1000);
     }
     setI(0);
+    setRevealed(false);
     submittedRef.current = false;
     setPhase("exam");
   }
@@ -169,13 +315,15 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
   useEffect(() => {
     if (phase !== "exam" || !deck.length) return;
     writeSnapshot(courseId, {
-      ids: deck.map((qq) => qq.id),
+      ids: deck.map((it) => it.q.id),
+      sections: deck.map((it) => it.section),
+      official,
       answers,
       flagged: [...flagged],
       deadline,
       startedAt,
     });
-  }, [phase, deck, answers, flagged, deadline, startedAt, courseId]);
+  }, [phase, deck, official, answers, flagged, deadline, startedAt, courseId]);
 
   // auto-submit at 0:00
   useEffect(() => {
@@ -187,37 +335,62 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
     if (phase !== "review") return null;
     const byTopic: Record<string, { correct: number; total: number }> = {};
     let correct = 0;
-    for (const qq of deck) {
-      const topic = qq.topic ?? "General";
+    let points = 0;
+    for (const it of deck) {
+      const topic = it.q.topic ?? "General";
       const t = (byTopic[topic] ??= { correct: 0, total: 0 });
       t.total += 1;
-      if (isAnswerCorrect(qq, answers[qq.id])) {
+      const given = answers[it.q.id];
+      if (isAnswerCorrect(it.q, given)) {
         t.correct += 1;
         correct += 1;
+        points += it.points;
+      } else if (given) {
+        points -= it.penalty; // the real sheet's negative marking
       }
     }
-    const pct = deck.length ? correct / deck.length : 0;
-    return { correct, pct, grade: gradeFromScore(pct * 100), byTopic };
-  }, [phase, deck, answers]);
+    points = Math.max(0, points);
+    const pct = maxPoints ? points / maxPoints : 0;
+    const flawless = correct === deck.length && deck.length > 0;
+    // official papers grade in points out of 30 — exactly like the exam
+    const grade =
+      official && blueprint
+        ? flawless && points >= blueprint.maxPoints
+          ? 31
+          : Math.min(30, Math.round(points))
+        : gradeFromScore(pct * 100);
+    return { correct, points, pct, grade, byTopic };
+  }, [phase, deck, answers, official, blueprint, maxPoints]);
 
   function submit() {
     if (submittedRef.current) return;
     submittedRef.current = true;
     // every question feeds the SRS — unanswered counts as wrong (it's an exam)
-    let correct = 0;
     const byTopic: Record<string, { correct: number; total: number }> = {};
-    for (const qq of deck) {
-      const ok = isAnswerCorrect(qq, answers[qq.id]);
-      recordAnswer(courseId, qq.id, ok);
-      const t = (byTopic[qq.topic ?? "General"] ??= { correct: 0, total: 0 });
+    let correct = 0;
+    let points = 0;
+    for (const it of deck) {
+      const ok = isAnswerCorrect(it.q, answers[it.q.id]);
+      recordAnswer(courseId, it.q.id, ok);
+      const t = (byTopic[it.q.topic ?? "General"] ??= { correct: 0, total: 0 });
       t.total += 1;
       if (ok) {
         t.correct += 1;
         correct += 1;
+        points += it.points;
+      } else if (answers[it.q.id]) {
+        points -= it.penalty;
       }
     }
-    const pct = deck.length ? correct / deck.length : 0;
-    const grade = gradeFromScore(pct * 100);
+    points = Math.max(0, points);
+    const pct = maxPoints ? points / maxPoints : 0;
+    const flawless = correct === deck.length && deck.length > 0;
+    const grade =
+      official && blueprint
+        ? flawless && points >= blueprint.maxPoints
+          ? 31
+          : Math.min(30, Math.round(points))
+        : gradeFromScore(pct * 100);
     logMockExam(courseId, {
       at: Date.now(),
       grade,
@@ -227,12 +400,7 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
       questionCount: deck.length,
     });
     clearSnapshot(courseId);
-    if (grade >= 24) {
-      sfx.victory();
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        fireConfetti({ count: grade >= 28 ? 220 : 120 });
-      }
-    }
+    setRevealed(false);
     setPhase("review");
   }
 
@@ -252,8 +420,8 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight">Exam conditions. No mercy.</h1>
             <p className="mt-2 text-[var(--color-muted)]">
-              One timer for the whole paper, no feedback until the end, auto-graded 18–30L. Wrong and
-              blank answers feed your review queue.
+              One timer, no feedback until the end, auto-graded like the real thing. Wrong and blank
+              answers feed your review queue.
             </p>
 
             {resumable && (
@@ -278,7 +446,44 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
               </button>
             )}
 
-            <div className="mt-6 grid gap-3">
+            {blueprint && (
+              <button
+                onClick={() => start("official")}
+                className="card-hover mt-6 flex items-start gap-3 rounded-2xl border-2 p-4 text-left"
+                style={{ borderColor: "var(--accent)", background: "var(--accent-soft)" }}
+              >
+                <span
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-white"
+                  style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
+                >
+                  <Icon name="FileCheck" size={22} />
+                </span>
+                <span className="min-w-0">
+                  <span className="pixel-font block text-xl uppercase leading-none">
+                    Official format
+                  </span>
+                  <span className="mt-1 block text-sm font-semibold">{blueprint.detail}</span>
+                  <span className="mt-1 block text-xs text-[var(--color-muted)]">{blueprint.note}</span>
+                </span>
+              </button>
+            )}
+
+            {courseId === "thermodynamics" && (
+              <Link
+                to={`/c/${courseId}/exams`}
+                className="mt-3 flex items-center gap-2 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2.5 text-xs font-semibold text-[var(--color-muted)]"
+              >
+                <Icon name="Star" size={14} style={{ color: "#f5b942" }} />
+                The ⭐ written-test problems on the Exams tab are the recurring set — drill them before
+                sitting this.
+                <Icon name="ArrowRight" size={13} className="ml-auto shrink-0" />
+              </Link>
+            )}
+
+            <div className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--color-faint)]">
+              Custom length
+            </div>
+            <div className="mt-2 grid gap-3">
               {LENGTHS.filter((n) => course.practice.length >= Math.min(n, 10)).map((n) => {
                 const count = Math.min(n, course.practice.length);
                 return (
@@ -310,6 +515,17 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
 
   /* ============================ REVIEW ============================ */
   if (phase === "review" && results) {
+    if (!revealed) {
+      return (
+        <GradeReveal
+          grade={results.grade}
+          official={official}
+          points={results.points}
+          maxPoints={maxPoints}
+          onDone={() => setRevealed(true)}
+        />
+      );
+    }
     const weakest = Object.entries(results.byTopic)
       .filter(([, t]) => t.total >= 2)
       .sort((a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total)
@@ -320,7 +536,7 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
           <div className="mx-auto max-w-2xl p-5 pb-16">
             <div className="surface p-6 text-center">
               <div className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-faint)]">
-                {course.meta.short} · mock result
+                {course.meta.short} · {official ? "official format" : "mock"} result
               </div>
               <div
                 className="mt-3 text-6xl font-black"
@@ -329,7 +545,10 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
                 {results.grade >= 31 ? "30 e lode" : results.grade < 18 ? "<18" : results.grade}
               </div>
               <p className="mt-2 text-sm text-[var(--color-muted)]">
-                {results.correct}/{deck.length} correct · {Math.round(results.pct * 100)}%
+                {official
+                  ? `${results.points.toFixed(2).replace(/\.?0+$/, "")}/${maxPoints} points · `
+                  : ""}
+                {results.correct}/{deck.length} correct
               </p>
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 <button onClick={() => setPhase("setup")} className="btn btn-primary">
@@ -344,12 +563,12 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
             {/* per-topic breakdown */}
             <div className="surface mt-4 p-5">
               <div className="mb-3 text-sm font-bold">By topic</div>
-              <div className="grid gap-2">
+              <div className="grid grid-cols-[minmax(0,1fr)] gap-2">
                 {Object.entries(results.byTopic).map(([topic, t]) => {
                   const p = t.correct / t.total;
                   return (
                     <div key={topic} className="flex items-center gap-3 text-sm">
-                      <span className="w-40 shrink-0 truncate sm:w-56">{topic}</span>
+                      <span className="w-36 shrink-0 truncate sm:w-56">{topic}</span>
                       <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-bg)]">
                         <div
                           className="h-full rounded-full"
@@ -382,12 +601,12 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
             </div>
 
             {/* full paper with explanations */}
-            <div className="mt-4 grid gap-3">
-              {deck.map((qq, idx) => {
-                const given = answers[qq.id];
-                const ok = isAnswerCorrect(qq, given);
+            <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-3">
+              {deck.map((it, idx) => {
+                const given = answers[it.q.id];
+                const ok = isAnswerCorrect(it.q, given);
                 return (
-                  <div key={qq.id} className="surface p-4">
+                  <div key={it.q.id} className="surface p-4">
                     <div className="mb-2 flex items-center gap-2 text-xs font-bold">
                       <span
                         className="grid h-6 w-6 place-items-center rounded-full text-[11px] text-white"
@@ -395,10 +614,15 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
                       >
                         {idx + 1}
                       </span>
-                      <span className="text-[var(--color-faint)]">{qq.topic}</span>
+                      {official && (
+                        <span className="rounded-full bg-[var(--color-bg)] px-2 py-0.5 text-[10px] uppercase text-[var(--color-faint)]">
+                          {it.section} · {ok ? `+${it.points}` : given && it.penalty ? `−${it.penalty}` : "0"} pts
+                        </span>
+                      )}
+                      <span className="truncate text-[var(--color-faint)]">{it.q.topic}</span>
                     </div>
                     <div className="prose-lesson mb-2 !text-[0.98rem] font-medium !text-[var(--color-ink)]">
-                      {rt(qq.prompt)}
+                      {rt(it.q.prompt)}
                     </div>
                     <div className="text-sm">
                       <span className="font-semibold" style={{ color: ok ? "var(--good)" : "var(--bad)" }}>
@@ -407,12 +631,12 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
                       {!ok && (
                         <span className="ml-2 font-semibold text-[var(--color-muted)]">
                           → correct:{" "}
-                          {isNumeric(qq) ? `${qq.answer}${qq.unit ? ` ${qq.unit}` : ""}` : qq.correct}
+                          {isNumeric(it.q) ? `${it.q.answer}${it.q.unit ? ` ${it.q.unit}` : ""}` : it.q.correct}
                         </span>
                       )}
                     </div>
                     <div className="prose-lesson mt-2 rounded-xl bg-[var(--color-bg)] p-3 !text-[0.9rem]">
-                      {rt(qq.explanation)}
+                      {rt(it.q.explanation)}
                     </div>
                   </div>
                 );
@@ -425,9 +649,10 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
   }
 
   /* ============================ EXAM ============================ */
-  if (!q) return null;
+  if (!q || !item) return null;
   const numeric = isNumeric(q);
   const chosen = answers[q.id];
+  const problemStart = deck.findIndex((it) => it.section === "problem");
 
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
@@ -441,6 +666,11 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
           >
             <Icon name="DoorOpen" size={14} />
           </button>
+          {official && (
+            <span className="pixel-font hidden text-base uppercase leading-none text-[var(--color-faint)] sm:block">
+              Official format
+            </span>
+          )}
           <span
             className={cn(
               "ml-auto font-mono text-lg font-bold",
@@ -455,22 +685,28 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
         </div>
 
         {/* palette */}
-        <div className="no-scrollbar flex gap-1.5 overflow-x-auto border-b border-[var(--color-line)] px-4 py-2">
-          {deck.map((qq, idx) => (
-            <button
-              key={qq.id}
-              onClick={() => setI(idx)}
-              className={cn(
-                "grid h-8 w-8 shrink-0 place-items-center rounded-lg text-xs font-bold transition",
-                idx === i && "ring-2 ring-[var(--accent)]",
-                answers[qq.id]
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--color-surface)] text-[var(--color-muted)]",
-                flagged.has(qq.id) && "ring-2 ring-[var(--warn)]"
+        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-b border-[var(--color-line)] px-4 py-2">
+          {deck.map((it, idx) => (
+            <span key={it.q.id} className="flex items-center">
+              {official && idx === problemStart && (
+                <span className="pixel-font mx-1.5 shrink-0 text-sm uppercase leading-none text-[var(--color-faint)]">
+                  · problem ·
+                </span>
               )}
-            >
-              {idx + 1}
-            </button>
+              <button
+                onClick={() => setI(idx)}
+                className={cn(
+                  "grid h-8 w-8 shrink-0 place-items-center rounded-lg text-xs font-bold transition",
+                  idx === i && "ring-2 ring-[var(--accent)]",
+                  answers[it.q.id]
+                    ? "bg-[var(--accent)] text-white"
+                    : "bg-[var(--color-surface)] text-[var(--color-muted)]",
+                  flagged.has(it.q.id) && "ring-2 ring-[var(--warn)]"
+                )}
+              >
+                {idx + 1}
+              </button>
+            </span>
           ))}
         </div>
 
@@ -478,8 +714,20 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
         <div className="flex-1 overflow-y-auto px-4 py-5">
           <div className="mx-auto max-w-2xl">
             <div className="mb-3 flex items-center gap-2 text-xs font-bold text-[var(--color-faint)]">
-              Question {i + 1}/{deck.length}
-              <span className="rounded-full bg-[var(--color-surface)] px-2 py-0.5">{q.difficulty}</span>
+              {official ? (
+                <>
+                  {item.section === "quiz" ? "Quiz" : "Problem"} {i + 1}/{deck.length}
+                  <span className="rounded-full bg-[var(--color-surface)] px-2 py-0.5">
+                    {item.points} pt{item.points !== 1 ? "s" : ""}
+                    {item.penalty > 0 && <span style={{ color: "var(--bad)" }}> · wrong −{item.penalty}</span>}
+                  </span>
+                </>
+              ) : (
+                <>
+                  Question {i + 1}/{deck.length}
+                  <span className="rounded-full bg-[var(--color-surface)] px-2 py-0.5">{q.difficulty}</span>
+                </>
+              )}
               <button
                 onClick={() =>
                   setFlagged((prev) => {
@@ -523,11 +771,19 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
                 {q.unit && <span className="font-semibold text-[var(--color-muted)]">{q.unit}</span>}
               </div>
             ) : (
-              <div className="grid gap-2.5">
+              <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5">
                 {q.options.map((o) => (
                   <button
                     key={o.id}
-                    onClick={() => setAnswers((prev) => ({ ...prev, [q.id]: o.id }))}
+                    onClick={() =>
+                      setAnswers((prev) => {
+                        // real papers let you erase: tap the chosen answer to blank it
+                        const next = { ...prev };
+                        if (next[q.id] === o.id) delete next[q.id];
+                        else next[q.id] = o.id;
+                        return next;
+                      })
+                    }
                     className={cn(
                       "flex items-start gap-3 rounded-xl border px-4 py-3 text-left transition",
                       chosen === o.id
@@ -542,6 +798,12 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
                   </button>
                 ))}
               </div>
+            )}
+
+            {official && item.penalty > 0 && !chosen && (
+              <p className="mt-3 text-xs font-semibold text-[var(--color-faint)]">
+                Blank scores 0 — only answer if you're better than a coin flip.
+              </p>
             )}
           </div>
         </div>
@@ -569,5 +831,84 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
         </div>
       </div>
     </CourseTheme>
+  );
+}
+
+/* ------------------------- grade reveal ---------------------------- *
+ * Slot-machine anticipation: numbers roll, drums in your chest, then
+ * the real grade slams in — confetti for a pass, silence for the rest. */
+
+function GradeReveal({
+  grade,
+  official,
+  points,
+  maxPoints,
+  onDone,
+}: {
+  grade: number;
+  official: boolean;
+  points: number;
+  maxPoints: number;
+  onDone: () => void;
+}) {
+  const [shown, setShown] = useState<number>(18);
+  const [landed, setLanded] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(grade);
+      setLanded(true);
+      const t = window.setTimeout(onDone, 900);
+      return () => window.clearTimeout(t);
+    }
+    const start = Date.now();
+    const spin = window.setInterval(() => {
+      const elapsed = Date.now() - start;
+      if (elapsed > 2300) {
+        window.clearInterval(spin);
+        setShown(grade);
+        setLanded(true);
+        if (grade >= 18) {
+          sfx.victory();
+          fireConfetti({ count: grade >= 28 ? 240 : 140, originY: 0.4 });
+        } else {
+          sfx.defeat();
+        }
+        window.setTimeout(onDone, 1600);
+      } else {
+        setShown(15 + Math.floor(Math.random() * 16));
+      }
+    }, 90);
+    return () => {
+      window.clearInterval(spin);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[60] grid place-items-center bg-[#0b0f20]">
+      <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.06]" />
+      <div className="relative text-center">
+        <div className="pixel-font text-2xl uppercase tracking-[0.3em] text-white/50">
+          {landed ? "Your grade" : "Grading…"}
+        </div>
+        <div
+          className="pixel-font mt-4 text-[7rem] leading-none sm:text-[10rem]"
+          style={{
+            color: !landed ? "#ffd45e" : grade >= 18 ? "#7fdc39" : "#ff5555",
+            textShadow: landed ? "0 0 40px currentColor" : "3px 3px 0 #000",
+            transform: landed ? "scale(1.06)" : undefined,
+            transition: "transform 0.25s cubic-bezier(0.2, 1.6, 0.4, 1)",
+          }}
+        >
+          {landed && grade >= 31 ? "30L" : landed && grade < 18 ? "<18" : shown}
+        </div>
+        {landed && official && (
+          <div className="pixel-font mt-3 text-xl text-white/60">
+            {points.toFixed(2).replace(/\.?0+$/, "")}/{maxPoints} points
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

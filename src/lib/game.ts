@@ -185,10 +185,7 @@ function read(): GameState {
         v: 2,
       };
       // renamed achievements keep their unlock timestamps
-      const renames: [string, string][] = [
-        ["sicko-mode", "warp-speed"],
-        ["99-problems", "mob-grinder"],
-      ];
+      const renames: [string, string][] = [["sicko-mode", "warp-speed"]];
       for (const [oldId, newId] of renames) {
         if (value.achievements[oldId] != null) {
           value.achievements = { ...value.achievements, [newId]: value.achievements[oldId] };
@@ -803,7 +800,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "still-alive", title: "Still Alive", desc: "Beat a final boss with exactly one heart left. This was a triumph.", icon: "HeartPulse", check: (s) => allBossRecords(s).some((r) => r.won && r.heartsLeft === 1) },
   { id: "new-game-plus", title: "New Game+", desc: "Rematch a beaten boss and top your previous grade.", icon: "Gamepad2", check: beatOwnGrade },
   { id: "speedrun", title: "Speedrun any%", desc: "Perfect Daily Mix (10+ cards) in under 3 minutes. World-record pace.", icon: "Timer", check: (s) => (s.fastestPerfectMix ?? Infinity) <= 180 },
-  { id: "mob-grinder", title: "Mob Grinder", desc: "Clear 99 due reviews, total. A fully automated XP farm.", icon: "Hammer", check: (s) => s.totals.dueCleared >= 99 },
+  { id: "99-problems", title: "99 Problems", desc: "Clear 99 due reviews, total. A card ain't one.", icon: "ListChecks", check: (s) => s.totals.dueCleared >= 99 },
+  { id: "mob-grinder", title: "Mob Grinder", desc: "Answer 500 questions, total. A fully automated XP farm.", icon: "Hammer", check: (s) => s.totals.answers >= 500 },
   { id: "warp-speed", title: "Warp Speed", desc: "50 correct answers in a single day. Engage.", icon: "Rocket", check: (s) => Object.values(s.activity).some((a) => a.correct >= 50) },
   { id: "touch-grass", title: "Touch Grass", desc: "Return after 3+ days away. The grass was touched. Welcome back.", icon: "Sprout", check: returnedAfterBreak },
   { id: "hollow-knight", title: "Hollow Knight", desc: "Defeat the final boss of 5 different courses.", icon: "Ghost", check: (s) => Object.entries(s.boss).filter(([, rs]) => rs.some((r) => r.won)).length >= 5 },

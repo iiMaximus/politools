@@ -173,7 +173,18 @@ function ProblemCard({
             {problem.difficulty}
           </Pill>
         </div>
-        <div className="mb-3 text-xs text-[var(--color-faint)]">{problem.meta}</div>
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-[var(--color-faint)]">
+          {problem.meta.includes("written-test") && (
+            <span
+              className="flex items-center gap-1 rounded-full px-2 py-0.5 font-bold"
+              style={{ background: "#f5b94226", color: "#c8901a" }}
+              title="Styled after the professor's recurring written-test set — expect this on the real exam"
+            >
+              <Icon name="Star" size={11} /> recurring on real exams
+            </span>
+          )}
+          <span>{problem.meta}</span>
+        </div>
         <div className="prose-lesson !text-[1rem]">{rt(problem.statement)}</div>
 
         {problem.given && (
