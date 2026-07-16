@@ -812,6 +812,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "world-tour", title: "World Tour", desc: "Study in 7 different courses, ever. See the whole map.", icon: "Compass", check: (s) => { const set = new Set<string>(); for (const a of Object.values(s.activity)) for (const id of Object.keys(a.byCourse)) set.add(id); return set.size >= 7; } },
   { id: "l33t", title: "1337", desc: "Reach 1337 total XP. Elite.", icon: "Gamepad2", check: (s) => (s.peakXp ?? 0) >= 1337 },
   { id: "cento-quest", title: "Questmaster 100", desc: "Complete 100 daily quests.", icon: "ScrollText", check: (s) => s.totals.questsDone >= 100 },
+  { id: "konami", title: "The Konami Code", desc: "↑ ↑ ↓ ↓ ← → ← → B A — some knowledge predates the syllabus. (+100 XP)", icon: "Gamepad2", check: (s) => s.unlocks.includes("konami-code") },
 ];
 
 function evaluateAchievements(state: GameState): GameState {
@@ -1034,6 +1035,14 @@ export function buyShopItem(id: string): "ok" | "poor" | "owned" | "nothing" {
   afterMutation(next);
   emit({ type: "purchase", title: item.title, icon: item.icon });
   return "ok";
+}
+
+/** One-shot named flag (easter eggs): lands in `unlocks`, optional XP. */
+export function unlockFlag(id: string, xp = 0): boolean {
+  const state = read();
+  if (state.unlocks.includes(id)) return false;
+  afterMutation({ ...state, unlocks: [...state.unlocks, id], bonusXp: state.bonusXp + xp });
+  return true;
 }
 
 /** Consume a one-shot unlock (e.g. the boss retry heart). */

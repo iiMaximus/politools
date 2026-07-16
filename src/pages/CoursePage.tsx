@@ -10,6 +10,7 @@ import { rtInline } from "../components/RichText";
 import { levelFromXp } from "../lib/adaptive";
 import { useCourseProgress } from "../lib/progress";
 import { updateSettings, useGame } from "../lib/game";
+import { REVIEW_BUFFER_DAYS, coursePlan, planDateLabel } from "../lib/plan";
 import { topicStats, weakestTopics } from "../lib/stats";
 import { summarize } from "../lib/summary";
 import { NotFound } from "./NotFound";
@@ -30,6 +31,7 @@ export function CoursePage() {
 
   const stats = topicStats(course, progress).filter((t) => t.total >= 3);
   const weakest = weakestTopics(stats, 1)[0];
+  const plan = coursePlan(course, progress, game.settings.examDates[courseId] ?? course.meta.examDate);
   const focusTopics = new Set(game.settings.focusTopics?.[courseId] ?? []);
 
   function toggleFocusTopic(topic: string) {
@@ -123,6 +125,85 @@ export function CoursePage() {
             </div>
           </div>
         </section>
+
+        {/* Battle plan — deadlines to finish each part before the exam */}
+        {plan && (
+          <section className="surface mt-4 p-5">
+            <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+              <Kicker>Battle plan</Kicker>
+              <span
+                className="pixel-font text-lg leading-none"
+                style={{ color: plan.onTrack ? "var(--good)" : "var(--bad)" }}
+              >
+                {plan.onTrack ? "ON TRACK" : `${plan.overdueCount} OVERDUE`}
+              </span>
+            </div>
+            <p className="text-xs text-[var(--color-faint)]">
+              Finish each part by its date — the last {REVIEW_BUFFER_DAYS} days before the exam are
+              reserved for mock exams and review.
+            </p>
+            <div className="mt-3 grid gap-1.5">
+              {plan.items.map((it) => (
+                <div
+                  key={it.section.title}
+                  className="flex items-center gap-2.5 rounded-xl border px-3 py-2"
+                  style={{
+                    borderColor: it.current ? "var(--accent-line)" : "var(--color-line)",
+                    background: it.current ? "var(--accent-soft)" : undefined,
+                    opacity: it.done ? 0.65 : 1,
+                  }}
+                >
+                  <span className="pixel-font w-16 shrink-0 text-lg leading-none text-[var(--color-muted)]">
+                    {planDateLabel(it.deadline)}
+                  </span>
+                  <Icon
+                    name={it.done ? "CircleCheck" : it.overdue ? "AlertTriangle" : it.current ? "Play" : "Circle"}
+                    size={16}
+                    className="shrink-0"
+                    style={{
+                      color: it.done
+                        ? "var(--good)"
+                        : it.overdue
+                        ? "var(--bad)"
+                        : it.current
+                        ? "var(--accent)"
+                        : "var(--color-faint)",
+                    }}
+                  />
+                  <span
+                    className="min-w-0 flex-1 truncate text-sm font-semibold"
+                    style={it.done ? { textDecoration: "line-through", color: "var(--color-faint)" } : undefined}
+                  >
+                    {it.section.title}
+                  </span>
+                  {it.overdue && (
+                    <span className="pixel-font shrink-0 text-base leading-none" style={{ color: "var(--bad)" }}>
+                      OVERDUE
+                    </span>
+                  )}
+                  {it.current && !it.overdue && (
+                    <span className="pixel-font shrink-0 text-base leading-none" style={{ color: "var(--accent)" }}>
+                      ← NOW
+                    </span>
+                  )}
+                </div>
+              ))}
+              <Link
+                to={`/c/${courseId}/mock`}
+                className="card-hover flex items-center gap-2.5 rounded-xl border border-dashed border-[var(--color-line)] px-3 py-2"
+              >
+                <span className="pixel-font w-16 shrink-0 text-lg leading-none text-[var(--color-muted)]">
+                  {planDateLabel(plan.reviewStart)}
+                </span>
+                <Icon name="Timer" size={16} className="shrink-0" style={{ color: "var(--warn)" }} />
+                <span className="min-w-0 flex-1 truncate text-sm font-semibold">
+                  Final stretch: mock exams, due reviews & boss rematches
+                </span>
+                <Icon name="ArrowRight" size={14} className="shrink-0 text-[var(--color-faint)]" />
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* Topics heat table */}
         {stats.length > 1 && (

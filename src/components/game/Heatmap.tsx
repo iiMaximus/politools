@@ -58,7 +58,7 @@ export function Heatmap({ state }: { state: GameState }) {
     <svg
       viewBox={`0 0 ${width} ${height}`}
       className="w-full"
-      style={{ maxWidth: width * 1.2 }}
+      style={{ maxWidth: width * 2.6 }}
       role="img"
       aria-label="Study activity heatmap"
     >

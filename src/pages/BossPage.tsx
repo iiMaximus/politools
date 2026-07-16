@@ -160,6 +160,15 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
   const send = (kind: ArenaSignal["kind"]) => setSignal((s) => ({ kind, nonce: s.nonce + 1 }));
 
+  /* Street Fighter round flash when the battle starts */
+  const [roundFlash, setRoundFlash] = useState(false);
+  useEffect(() => {
+    if (phase !== "fight") return;
+    setRoundFlash(true);
+    const t = window.setTimeout(() => setRoundFlash(false), 1500);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
   /* a purchased retry heart (La Birreria) applies to the next fight */
   const heartRef = useRef(false);
   const [bonusHeart, setBonusHeart] = useState(false);
@@ -469,6 +478,18 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
       {/* ======== FIGHT HUD ======== */}
       {phase === "fight" && q && (
         <>
+          {roundFlash && (
+            <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+              <div className="pixel-font text-center" style={{ animation: "roundIn 1.5s ease-out forwards" }}>
+                <div className="text-5xl sm:text-7xl" style={{ color: "#ffd45e", textShadow: "3px 3px 0 #000" }}>
+                  ROUND 1
+                </div>
+                <div className="mt-2 text-6xl sm:text-8xl" style={{ color: "#ff5555", textShadow: "4px 4px 0 #000" }}>
+                  FIGHT!
+                </div>
+              </div>
+            </div>
+          )}
           {/* top HUD */}
           <div className="absolute inset-x-0 top-0 z-10 flex items-start gap-3 p-3 sm:p-4">
             <Link
@@ -738,7 +759,10 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
         </div>
       )}
 
-      <style>{`@keyframes bossDmg { 0% { opacity: 0; transform: translate(-50%, 14px) scale(0.7); } 20% { opacity: 1; transform: translate(-50%, 0) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -46px) scale(1); } }`}</style>
+      <style>{`
+        @keyframes bossDmg { 0% { opacity: 0; transform: translate(-50%, 14px) scale(0.7); } 20% { opacity: 1; transform: translate(-50%, 0) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -46px) scale(1); } }
+        @keyframes roundIn { 0% { opacity: 0; transform: scale(2.4); } 18% { opacity: 1; transform: scale(1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.96); } }
+      `}</style>
     </div>
     </CourseTheme>
   );

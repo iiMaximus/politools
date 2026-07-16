@@ -23,15 +23,19 @@ import {
   rankFromXp,
   readiness,
   reconcileFreezes,
+  daysUntil,
   rustyCount,
   streakInfo,
   streakRepairable,
   syncRank,
+  unlockFlag,
   useGame,
   type GameState,
   type QuestInstance,
 } from "../lib/game";
 import { bossFor } from "../lib/bosses";
+import { coursePlan, planDateLabel } from "../lib/plan";
+import { fireConfetti } from "../lib/confetti";
 import type { Course } from "../types";
 
 const PLANNED = [
@@ -117,6 +121,30 @@ export function HubPage() {
     syncRank(totalXp);
   }, [totalXp]);
 
+  // ↑ ↑ ↓ ↓ ← → ← → B A
+  useEffect(() => {
+    const SEQ = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+    let pos = 0;
+    const onKey = (e: KeyboardEvent) => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      pos = k === SEQ[pos] ? pos + 1 : k === SEQ[0] ? 1 : 0;
+      if (pos === SEQ.length) {
+        pos = 0;
+        if (unlockFlag("konami-code", 100)) fireConfetti({ count: 220, originY: 0.4 });
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const nextExam = focusCourses
+    .map((c) => ({
+      short: c.meta.short,
+      days: daysUntil(game.settings.examDates[c.meta.id] ?? c.meta.examDate),
+    }))
+    .filter((x): x is { short: string; days: number } => x.days !== null && x.days >= 0)
+    .sort((a, b) => a.days - b.days)[0];
+
   return (
     <>
       <TopBar>
@@ -130,7 +158,7 @@ export function HubPage() {
       </TopBar>
       <Page className="pt-6">
         {/* ============ player HUD ============ */}
-        <PlayerHud totalXp={totalXp} game={game} />
+        <PlayerHud totalXp={totalXp} game={game} nextExam={nextExam} />
 
         <section className="mt-4 grid gap-4 lg:grid-cols-5">
           {/* Daily Mix CTA + heatmap — arcade cabinet */}
@@ -162,7 +190,7 @@ export function HubPage() {
               </Link>
             </div>
             {/* the "screen": heatmap keeps its light look inside the cabinet */}
-            <div className="relative mt-4 flex-1 rounded-xl bg-[var(--color-surface)] p-3">
+            <div className="relative mt-4 flex flex-1 items-center justify-center rounded-xl bg-[var(--color-surface)] p-3">
               <Heatmap state={game} />
             </div>
           </div>
@@ -359,6 +387,8 @@ function FocusCard({ course }: { course: Course }) {
   const s = summarize(course, progress);
   const r = readiness(course, progress, game);
 
+  const plan = coursePlan(course, progress, game.settings.examDates[meta.id] ?? meta.examDate);
+
   // Street Fighter health bar: readiness as HP
   const hpColor = r.score >= 70 ? "#7fdc39" : r.score >= 40 ? "#ffd45e" : "#ff5555";
   const gradeColor =
@@ -433,6 +463,25 @@ function FocusCard({ course }: { course: Course }) {
           {r.due > 0 && <span style={{ color: "#ffd45e" }}> · {r.due} due</span>}
           {r.rusty > 0 && <span style={{ color: "#c9986a" }}> · {r.rusty} rusty</span>}
         </div>
+
+        {/* next deadline from the battle plan */}
+        {plan?.next && (
+          <Link
+            to={`/c/${meta.id}`}
+            className="pixel-font relative mt-1.5 block truncate text-base leading-snug"
+          >
+            {plan.overdueCount > 0 ? (
+              <span style={{ color: "#ff5555" }}>
+                ⚠ {plan.overdueCount} deadline{plan.overdueCount > 1 ? "s" : ""} overdue — catch up!
+              </span>
+            ) : (
+              <span className="text-white/55">
+                NEXT: <span style={{ color: "#ffd45e" }}>{plan.next.section.title}</span> by{" "}
+                {planDateLabel(plan.next.deadline)}
+              </span>
+            )}
+          </Link>
+        )}
 
         <div className="relative">
           <BossLine courseId={meta.id} game={game} />
@@ -594,7 +643,15 @@ function CardBody({
 
 /* --------------------------- player HUD ---------------------------- */
 
-function PlayerHud({ totalXp, game }: { totalXp: number; game: GameState }) {
+function PlayerHud({
+  totalXp,
+  game,
+  nextExam,
+}: {
+  totalXp: number;
+  game: GameState;
+  nextExam?: { short: string; days: number };
+}) {
   const rank = rankFromXp(totalXp);
   const streak = streakInfo(game);
   const beers = availableBeers(game);
@@ -637,6 +694,11 @@ function PlayerHud({ totalXp, game }: { totalXp: number; game: GameState }) {
           </div>
           <div className="pixel-font mt-1.5 flex justify-between text-base leading-none text-white/55">
             <span>{totalXp.toLocaleString()} XP</span>
+            {nextExam && (
+              <span style={{ color: nextExam.days <= 14 ? "#ff5555" : "#ffd45e" }}>
+                ⏱ {nextExam.short.toUpperCase()} IN {nextExam.days}D
+              </span>
+            )}
             <span>
               {rank.needed - rank.into} XP → LV {rank.level + 1}
             </span>
