@@ -197,6 +197,17 @@ any uncertainty (especially unverified numbers or claims).
 
 ---
 
+> **MA2 source material (added 2026-07-18):** the real course material lives in
+> `course_material/Math Analysis II/Material(1)/` — 9 lecture decks (`Slides/`), 8 exercise
+> sheets WITH solution sheets (`Exercise sheets*/`), solved exams (`MA2 Exams - Solutions/`)
+> and `Past MA2 Exams/ExamsCollection_MecEng_14-23.pdf`. The real syllabus runs curves →
+> Fourier series (9 decks, NO ODE deck); the app's `math-analysis-2` course must gain a
+> Fourier module and treat ODEs as extra material. A real solved APPELLO paper sits misfiled
+> at `course_material/Algebra/_text/LAG/exams/3.txt`. All new MA2/LAG/thermo questions MUST
+> cite `source:` (sheet/paper + exercise number) and carry tags: `past-exam` (real papers),
+> `tutorial` (exercise sheets), `wt25` (thermo 2025 written-test set) — the official mock
+> exams draw from those tags first.
+
 ## 8. Migrating real course material
 
 When the student provides slides, tutorials and past exams for a course:

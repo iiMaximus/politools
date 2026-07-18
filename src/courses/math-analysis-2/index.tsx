@@ -8,6 +8,7 @@ import * as surfacesFlux from "./modules/surfaces-flux";
 import * as series from "./modules/series";
 import * as odes from "./modules/odes";
 import { numericDrills } from "./numeric";
+import { pastExamProblems, pastExamQuestions } from "./past-exams";
 
 /**
  * The course is assembled from one file per module (modules/*.tsx), each
@@ -43,8 +44,8 @@ const mathAnalysis2: Course = {
     status: "complete",
   },
   lessons: MODULES.flatMap((m) => m.lessons),
-  practice: [...MODULES.flatMap((m) => m.practice), ...numericDrills],
-  exam: MODULES.flatMap((m) => m.exam),
+  practice: [...MODULES.flatMap((m) => m.practice), ...numericDrills, ...pastExamQuestions],
+  exam: [...MODULES.flatMap((m) => m.exam), ...pastExamProblems],
 };
 
 export default mathAnalysis2;

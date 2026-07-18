@@ -488,7 +488,7 @@ function FocusCard({ course }: { course: Course }) {
         </div>
 
         {/* arcade buttons */}
-        <div className="relative mt-3 grid grid-cols-3 gap-2">
+        <div className="relative mt-3 grid grid-cols-4 gap-1.5">
           <Link
             to={`/c/${meta.id}/path`}
             className="pixel-font flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-lg uppercase leading-none text-white transition hover:brightness-110"
@@ -499,6 +499,13 @@ function FocusCard({ course }: { course: Course }) {
             }}
           >
             <Icon name="Map" size={15} /> Path
+          </Link>
+          <Link
+            to={`/c/${meta.id}/scroll`}
+            className="mc-slot pixel-font flex items-center justify-center gap-1.5 px-2 py-2 text-lg uppercase leading-none text-white/85 transition hover:brightness-125"
+            title="Scroll mode — bed-friendly reels studying"
+          >
+            <Icon name="Sparkles" size={15} /> Scroll
           </Link>
           <Link
             to={`/c/${meta.id}/practice`}

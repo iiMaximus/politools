@@ -309,6 +309,44 @@ export function CoursePage() {
           </Link>
         )}
 
+        {/* Drill & test */}
+        <section className="mt-8">
+          <div className="mb-4 flex items-center gap-2">
+            <Icon name="Target" size={20} style={{ color: "var(--accent)" }} />
+            <h2 className="pixel-font text-3xl uppercase leading-none tracking-wide">Drill &amp; test</h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ActionCard
+              to={`/c/${courseId}/boss`}
+              icon="Swords"
+              title="Boss fight"
+              desc="Face the exam as a 3-D boss. Correct answers deal damage; wins are graded 18–30L."
+              footer="Full-screen arena"
+            />
+            <ActionCard
+              to={`/c/${courseId}/scroll`}
+              icon="Sparkles"
+              title="Scroll mode"
+              desc="Short concept cards, formula recall, and quick checks for low-energy studying."
+              footer="Bed-friendly review"
+            />
+            <ActionCard
+              to={`/c/${courseId}/practice`}
+              icon="Dumbbell"
+              title="Practice questions"
+              desc="Adaptive A/B/C/D theory questions with full explanations."
+              footer={`${s.practiceTotal} questions${s.due ? ` · ${s.due} due` : ""}`}
+            />
+            <ActionCard
+              to={`/c/${courseId}/exams`}
+              icon="FileText"
+              title="Exam problems"
+              desc="Real exam-style problems with step-by-step solutions."
+              footer={`${s.examSolved}/${s.examTotal} solved`}
+            />
+          </div>
+        </section>
+
         {/* Lessons (Learn), grouped by lecture */}
         <section className="mt-8">
           <div className="mb-4 flex items-center gap-2">
@@ -356,44 +394,6 @@ export function CoursePage() {
                 </div>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Drill & test */}
-        <section className="mt-8">
-          <div className="mb-4 flex items-center gap-2">
-            <Icon name="Target" size={20} style={{ color: "var(--accent)" }} />
-            <h2 className="pixel-font text-3xl uppercase leading-none tracking-wide">Drill &amp; test</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <ActionCard
-              to={`/c/${courseId}/boss`}
-              icon="Swords"
-              title="Boss fight"
-              desc="Face the exam as a 3-D boss. Correct answers deal damage; wins are graded 18–30L."
-              footer="Full-screen arena"
-            />
-            <ActionCard
-              to={`/c/${courseId}/scroll`}
-              icon="Sparkles"
-              title="Scroll mode"
-              desc="Short concept cards, formula recall, and quick checks for low-energy studying."
-              footer="Bed-friendly review"
-            />
-            <ActionCard
-              to={`/c/${courseId}/practice`}
-              icon="Dumbbell"
-              title="Practice questions"
-              desc="Adaptive A/B/C/D theory questions with full explanations."
-              footer={`${s.practiceTotal} questions${s.due ? ` · ${s.due} due` : ""}`}
-            />
-            <ActionCard
-              to={`/c/${courseId}/exams`}
-              icon="FileText"
-              title="Exam problems"
-              desc="Real exam-style problems with step-by-step solutions."
-              footer={`${s.examSolved}/${s.examTotal} solved`}
-            />
           </div>
         </section>
 

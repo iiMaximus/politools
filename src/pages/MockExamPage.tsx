@@ -208,13 +208,20 @@ function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
   const mcq = pool.filter((q) => !isNumeric(q));
   const numeric = pool.filter(isNumeric);
 
-  // match the real paper's quiz TYPE: computational exercises (MA2/LAG)
-  // or concept MCQs (thermo's quiz pools) — topping up when short
-  const styled = mcq.filter((q) =>
-    bp.quizStyle === "exercise" ? isExerciseStyle(q) : !isExerciseStyle(q)
+  // REAL past-exam questions first, then match the paper's quiz TYPE
+  // (computational exercises for MA2/LAG, concept MCQs for thermo)
+  const isReal = (q: Question) =>
+    (q.tags ?? []).includes("past-exam") ||
+    /exam|appello|simulation|book1/i.test(q.source ?? "");
+  const real = mcq.filter(isReal);
+  const styled = mcq.filter(
+    (q) => !isReal(q) && (bp.quizStyle === "exercise" ? isExerciseStyle(q) : !isExerciseStyle(q))
   );
-  const quizPool = styled.length >= bp.quizCount ? styled : mcq;
-  const quiz = stratified(quizPool, bp.quizCount).map<DeckItem>((q) => ({
+  const quizPicks = [
+    ...stratified(real, Math.min(real.length, bp.quizCount)),
+    ...stratified(styled.length ? styled : mcq.filter((q) => !isReal(q)), bp.quizCount),
+  ].slice(0, bp.quizCount);
+  const quiz = quizPicks.map<DeckItem>((q) => ({
     q,
     section: "quiz",
     points: bp.quizPoints,
@@ -222,7 +229,11 @@ function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
   }));
 
   let problemPool: Question[];
-  if (bp.problemNumeric && numeric.length >= bp.problemCount) {
+  const wt = numeric.filter((q) => (q.tags ?? []).includes("wt25"));
+  if (bp.problemNumeric && wt.length >= bp.problemCount) {
+    // the professor's recurring written-test set IS the problem section
+    problemPool = shuffle(wt).slice(0, bp.problemCount);
+  } else if (bp.problemNumeric && numeric.length >= bp.problemCount) {
     problemPool = shuffle(numeric).slice(0, bp.problemCount);
   } else {
     // exercise parts stood in by hard cards not already in the quiz
