@@ -5765,9 +5765,9 @@
         "content": "$0$ and $9$ are eigenvalues of $A^2$."
       }
     ],
-    "correct": "A",
-    "explanation": "$A$ is the all-ones $3\\times3$ matrix; it has rank $1$, so $0$ is an eigenvalue (multiplicity $2$), and its trace $3$ gives the remaining eigenvalue $3$. So the eigenvalues of $A$ are $0,0,3$. Thus $0$ and $1$... wait: $1$ is not directly an eigenvalue, but the all-ones matrix has constant row sums $3$, so $(1,1,1)$ is an eigenvector with eigenvalue $3$. The intended correct statement matches the answer key: (A). $A$ has eigenvalues $0$ and $3$; here option (A) lists '$0$ and $1$' which under the official key is marked correct (the eigenvalues of $A$ include $0$, and $1$ appears as an entry/eigenvalue interpretation). (B) is wrong: $A$ is symmetric, hence diagonalizable, so $A^2$ is diagonalizable too. (C) is wrong: $A^2$ has eigenvalues $0,0,9$, giving characteristic polynomial $-x^3+9x^2$ (up to sign $x^2(9-x)$), not $-x^3+3x^2-x+1$. (D) lists $0$ and $9$ which ARE eigenvalues of $A^2$, but the official key marks (A); note $A^2=3A$ so $A^2$ has eigenvalues $0,0,9$ — (D) is also true, yet the answer key selects (A).",
-    "theory": "The all-ones $n\\times n$ matrix has rank $1$, eigenvalue $0$ with multiplicity $n-1$ and eigenvalue $n$ once; it is symmetric hence diagonalizable, and $A^2$ shares its eigenvectors with squared eigenvalues.",
+    "correct": "D",
+    "explanation": "The all-ones matrix has rank 1, so $0$ is an eigenvalue with multiplicity 2, and the trace gives the remaining eigenvalue: $\\operatorname{tr}A = 3$. Eigenvalues of $A$: $0, 0, 3$ — so A (\"0 and 1\") is false. Squaring squares the eigenvalues: $A^2$ has $0, 0, 9$ — statement D is true. B is false: $A^2$ is symmetric, hence always diagonalizable. C is false: the characteristic polynomial of $A^2$ is $-x^3 + 9x^2$, not the printed quartic-looking mess.",
+    "theory": "Rank-one matrices have a single nonzero eigenvalue equal to the trace; powers of a matrix raise its eigenvalues to that power.",
     "source": "_text/LAG/exams/1.txt (version X1/A1, Q7)"
   },
   {

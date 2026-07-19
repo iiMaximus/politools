@@ -122,7 +122,7 @@ export const numericDrills: NumericQuestion[] = [
   {
     id: "num-ode-growth",
     type: "numeric",
-    topic: "Ordinary differential equations",
+    topic: "Ordinary differential equations (extra)",
     difficulty: "medium",
     prompt: "Solve $y' = 2y$, $y(0) = 3$, and compute $y(1)$ (two decimals).",
     answer: 22.17,

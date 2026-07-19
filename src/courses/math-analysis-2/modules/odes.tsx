@@ -2,7 +2,8 @@ import type { ExamProblem, Lesson, Question } from "../../../types";
 import { Tex } from "../../../lib/math";
 import { SlopeFieldSim } from "../sims/SlopeFieldSim";
 
-export const MODULE = "Ordinary differential equations";
+// the real course (9 decks, APPELLO papers) does not examine ODEs — kept as extra material
+export const MODULE = "Ordinary differential equations (extra)";
 
 /* ============ Similarity-method guess table for lesson 4 ============ */
 function GuessTable() {

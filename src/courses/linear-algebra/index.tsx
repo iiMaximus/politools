@@ -2,6 +2,9 @@ import type { Course } from "../../types";
 import { loadTopic } from "../../lib/loadTopic";
 import cards from "./linear-algebra-cards.json";
 import examProblems from "./linear-algebra-exam.json";
+import { examJune2025 } from "./exam-june-2025";
+import { examJuly2025 } from "./exam-july-2025";
+import { book1Extra, simulationExercise } from "./book1-extra";
 
 // MATLAB part (first exam part)
 import matlabBasics from "./topics/matlab-basics.json";
@@ -70,8 +73,13 @@ const linearAlgebra: Course = {
     status: "complete",
   },
   lessons: LESSONS,
-  practice: cards as unknown as Course["practice"],
-  exam: examProblems as unknown as Course["exam"],
+  practice: [
+    ...(cards as unknown as Course["practice"]),
+    ...examJune2025,
+    ...examJuly2025,
+    ...book1Extra,
+  ],
+  exam: [...(examProblems as unknown as Course["exam"]), ...simulationExercise],
 };
 
 export default linearAlgebra;

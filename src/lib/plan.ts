@@ -89,7 +89,8 @@ export function coursePlan(
   if (!examIso) return null;
   const examAt = parseIso(examIso);
   if (!examAt || examAt <= now) return null;
-  const sections = courseSections(course);
+  // "(extra)" lectures are off-syllabus — no deadline pressure for them
+  const sections = courseSections(course).filter((s) => !/\(extra\)/.test(s.title));
   if (!sections.length) return null;
 
   // anchor the plan once; re-anchor if the exam date changed

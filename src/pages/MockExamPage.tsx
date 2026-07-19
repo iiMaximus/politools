@@ -204,7 +204,9 @@ function isExerciseStyle(q: Question): boolean {
 
 /** the official paper for this course, per its blueprint */
 function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
-  const pool = topicFocusPool(course);
+  // "(extra)" topics (e.g. MA2 ODEs) are not on the real syllabus — keep them
+  // out of official papers
+  const pool = topicFocusPool(course).filter((q) => !/\(extra\)/.test(q.topic ?? ""));
   const mcq = pool.filter((q) => !isNumeric(q));
   const numeric = pool.filter(isNumeric);
 
