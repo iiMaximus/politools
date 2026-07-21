@@ -357,7 +357,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
-    <div className="fixed inset-0 z-50 overflow-hidden bg-[#070a16] text-white">
+    <div className="boss-shell fixed inset-x-0 top-0 z-50 overflow-hidden bg-[#070a16] text-white">
       {/* the arena IS the page */}
       <div className="absolute inset-0">
         <Suspense fallback={<ArenaLoading />}>
@@ -376,35 +376,37 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
       {/* ======== INTRO ======== */}
       {phase === "intro" && (
-        <div className="absolute inset-0 flex flex-col overflow-y-auto px-4 pb-6 pt-12 sm:pt-16">
+        <div className="boss-intro absolute inset-0 flex min-h-0 flex-col overflow-y-auto px-3 sm:px-4 sm:pb-6 sm:pt-16">
           <div className="pointer-events-none relative shrink-0 text-center">
-            <div className="text-xs font-bold uppercase tracking-[0.35em] text-white/50">
+            <div className="px-4 text-[10px] font-bold uppercase leading-snug tracking-[0.25em] text-white/50 sm:text-xs sm:tracking-[0.35em]">
               {isMini ? `Mini-boss · ${course.meta.short}` : `Final boss · ${course.meta.title}`}
             </div>
             <h1
-              className="mt-2 px-4 text-3xl font-black tracking-tight sm:text-6xl"
+              className="mt-1 px-2 text-[2.15rem] font-black leading-none tracking-tight sm:mt-2 sm:px-4 sm:text-6xl"
               style={{ textShadow: "0 4px 30px rgba(0,0,0,0.8)" }}
             >
               {cfg.name}
             </h1>
-            <div className="mt-1 text-sm font-medium italic text-white/60">{cfg.epithet}</div>
+            <div className="boss-intro-epithet mt-1 text-xs font-medium italic text-white/60 sm:text-sm">{cfg.epithet}</div>
           </div>
 
-          <div className="relative z-10 mx-auto mt-auto w-full max-w-lg space-y-2.5 pt-6">
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-white/80">
-              <RuleChip icon="Swords" text="correct = damage · speed & combos hit harder" />
-              <RuleChip icon="Heart" text={`${cfg.hearts} hearts — miss or timeout costs one`} />
-              <RuleChip icon="Clock" text="the clock fits the question — long ones get more time" />
-              <RuleChip icon="Flame" text="below 30% HP it ENRAGES — less time, bigger hits" />
+          <div className="boss-intro-content relative z-10 mx-auto mt-auto w-full max-w-lg space-y-2 pt-3 sm:space-y-2.5 sm:pt-6">
+            <div className="boss-intro-rules grid grid-cols-2 gap-1.5 text-[10px] font-semibold text-white/80 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-2 sm:text-[11px]">
+              <RuleChip icon="Swords" text="correct = damage · speed & combos hit harder" compact="hit = damage" />
+              <RuleChip icon="Heart" text={`${cfg.hearts} hearts — miss or timeout costs one`} compact={`${cfg.hearts} hearts`} />
+              <RuleChip icon="Clock" text="the clock fits the question — long ones get more time" compact="smart timer" />
+              <RuleChip icon="Flame" text="below 30% HP it ENRAGES — less time, bigger hits" compact="rage below 30%" />
               <RuleChip
                 icon={isMini ? "Ghost" : "Beer"}
                 text={isMini ? "win = path node conquered · +25 XP" : "win = graded 18–30L · +1 beer"}
+                compact={isMini ? "win = +25 XP" : "win = grade + beer"}
+                wide
               />
             </div>
 
             {/* encounter dialog box */}
             <div
-              className="px-4 py-3"
+              className="px-3 py-2.5 sm:px-4 sm:py-3"
               style={{
                 background: PKMN.cream,
                 border: PKMN.frame,
@@ -414,16 +416,16 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                 color: PKMN.ink,
               }}
             >
-              <p className="text-2xl leading-tight sm:text-3xl">
+              <p className="text-xl leading-tight sm:text-3xl">
                 {introTyped}
                 <span className="animate-pulse">▌</span>
               </p>
-              <p className="mt-1.5 text-lg leading-snug opacity-75">{boss.intro}</p>
+              <p className="boss-encounter-intro mt-1 text-base leading-snug opacity-75 sm:mt-1.5 sm:text-lg">{boss.intro}</p>
             </div>
 
             {/* action menu */}
             <div
-              className="grid grid-cols-2 gap-x-6 gap-y-1 px-5 py-3"
+              className="grid grid-cols-2 gap-x-4 gap-y-0.5 px-4 py-2 sm:gap-x-6 sm:gap-y-1 sm:px-5 sm:py-3"
               style={{
                 background: PKMN.cream,
                 border: PKMN.frame,
@@ -435,18 +437,18 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
             >
               <button
                 onClick={() => setPhase("fight")}
-                className="group flex items-center gap-1 text-left text-2xl uppercase leading-tight hover:text-[#c0392b]"
+                className="group flex min-h-10 items-center gap-1 text-left text-xl uppercase leading-none hover:text-[#c0392b] sm:text-2xl sm:leading-tight"
               >
                 <span className="w-4 opacity-0 transition group-hover:opacity-100">▶</span>Fight
               </button>
               <button
                 disabled
                 title="No items. You are an engineer."
-                className="flex cursor-not-allowed items-center gap-1 text-left text-2xl uppercase leading-tight opacity-40"
+                className="flex min-h-10 cursor-not-allowed items-center gap-1 text-left text-xl uppercase leading-none opacity-40 sm:text-2xl sm:leading-tight"
               >
                 <span className="w-4" />Bag
               </button>
-              <div className="flex items-center gap-1 text-2xl uppercase leading-tight opacity-70">
+              <div className="flex min-h-10 items-center gap-1 text-xl uppercase leading-none opacity-70 sm:text-2xl sm:leading-tight">
                 <span className="w-4" />
                 Best{" "}
                 <span className="text-[#b8860b]">
@@ -463,12 +465,12 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               </div>
               <Link
                 to={backTo}
-                className="group flex items-center gap-1 text-2xl uppercase leading-tight hover:text-[#c0392b]"
+                className="group flex min-h-10 items-center gap-1 text-xl uppercase leading-none hover:text-[#c0392b] sm:text-2xl sm:leading-tight"
               >
                 <span className="w-4 opacity-0 transition group-hover:opacity-100">▶</span>Run
               </Link>
             </div>
-            <div className="text-center text-[10px] uppercase tracking-wider text-white/35">
+            <div className="hidden text-center text-[10px] uppercase tracking-wider text-white/35 sm:block">
               press Enter to fight
             </div>
           </div>
@@ -491,16 +493,16 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
             </div>
           )}
           {/* top HUD */}
-          <div className="absolute inset-x-0 top-0 z-10 flex items-start gap-3 p-3 sm:p-4">
+          <div className="boss-top-hud absolute inset-x-0 top-0 z-10 flex items-start gap-2 px-2.5 pb-2 sm:gap-3 sm:p-4">
             <Link
               to={backTo}
-              className="flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white/80 backdrop-blur transition hover:bg-white/20"
+              className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-white/10 px-3 text-xs font-bold text-white/80 backdrop-blur transition hover:bg-white/20"
             >
-              <Icon name="DoorOpen" size={14} /> Flee
+              <Icon name="DoorOpen" size={16} /> <span className="hidden min-[410px]:inline">Flee</span>
             </Link>
             {/* enemy HP box — classic battle frame */}
             <div
-              className="mx-auto w-full max-w-md px-3.5 py-2"
+              className="mx-auto min-w-0 w-full max-w-md px-2.5 py-2 sm:px-3.5"
               style={{
                 background: PKMN.cream,
                 border: PKMN.frame,
@@ -511,8 +513,8 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               }}
             >
               <div className="flex items-baseline justify-between gap-2">
-                <span className="truncate text-xl leading-none">{cfg.name.toUpperCase()}</span>
-                <span className="shrink-0 text-lg leading-none">Lv.30</span>
+                <span className="truncate text-lg leading-none sm:text-xl">{cfg.name.toUpperCase()}</span>
+                <span className="shrink-0 text-base leading-none sm:text-lg">Lv.30</span>
               </div>
               <div className="mt-1.5 flex items-center gap-1.5">
                 <span
@@ -547,7 +549,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                 </span>
               </div>
             </div>
-            <span className="rounded-full bg-white/10 px-2 py-1 font-mono text-[10px] font-bold text-white/70">
+            <span className="shrink-0 rounded-full bg-white/10 px-2 py-1 font-mono text-[10px] font-bold text-white/70">
               {i + 1}/{deck.length}
             </span>
           </div>
@@ -567,11 +569,11 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
             </div>
           )}
           {/* question panel — the battle dialog box */}
-          <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center p-3 sm:p-5">
+          <div className="boss-question-wrap absolute inset-x-0 bottom-0 z-10 flex flex-col items-center px-2.5 pt-2 sm:p-5">
             {/* player status box */}
-            <div className="mb-2 flex w-full max-w-3xl justify-end">
+            <div className="mb-1.5 flex w-full max-w-3xl justify-end sm:mb-2">
               <div
-                className="flex items-center gap-2.5 px-3 py-1.5"
+                className="flex items-center gap-2 px-2.5 py-1.5 sm:gap-2.5 sm:px-3"
                 style={{
                   background: PKMN.cream,
                   border: PKMN.frame,
@@ -581,7 +583,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                   color: PKMN.ink,
                 }}
               >
-                <span className="text-lg leading-none">STUDENT</span>
+                <span className="text-base leading-none sm:text-lg">STUDENT</span>
                 <span className="flex gap-0.5">
                   {Array.from({ length: cfg.hearts + (bonusHeart ? 1 : 0) }, (_, k) => (
                     <Icon
@@ -601,8 +603,8 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
               </div>
             </div>
             <div
-              className="w-full max-w-3xl overflow-hidden rounded-2xl bg-[#0b0f20]/85 shadow-2xl backdrop-blur-xl"
-              style={{ border: "3px solid #e8e8d8" }}
+              className="w-full max-w-3xl overflow-hidden rounded-xl bg-[#0b0f20]/90 shadow-2xl backdrop-blur-xl sm:rounded-2xl"
+              style={{ border: "2px solid #e8e8d8" }}
             >
               {/* timer bar */}
               {picked === null && (
@@ -616,10 +618,10 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                   />
                 </div>
               )}
-              <div className="max-h-[52vh] overflow-y-auto p-3.5 sm:max-h-[46vh] sm:p-5">
+              <div className="boss-question-scroll overflow-y-auto p-3 sm:p-5">
                 {/* battle dialog line */}
                 <div
-                  className="mb-2 text-xl leading-tight text-white sm:text-2xl"
+                  className="mb-1.5 text-lg leading-tight text-white sm:mb-2 sm:text-2xl"
                   style={{ fontFamily: PKMN.font }}
                 >
                   {taunt ? (
@@ -631,7 +633,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                     "What will STUDENT do?"
                   )}
                 </div>
-                <div className="mb-2.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/50">
+                <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/50 sm:mb-2.5">
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5",
@@ -656,11 +658,11 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                   )}
                 </div>
 
-                <div className="mb-4 text-[1.02rem] font-medium leading-relaxed text-white/95 [&_.katex]:text-white">
+                <div className="mb-3 overflow-x-auto text-[0.98rem] font-medium leading-normal text-white/95 [&_.katex]:text-white sm:mb-4 sm:text-[1.02rem] sm:leading-relaxed">
                   {rt(q.prompt)}
                 </div>
 
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid gap-1.5 sm:grid-cols-2 sm:gap-2">
                   {options.map((o, idx) => {
                     const answered = picked !== null;
                     const isCorrect = o.id === q.correct;
@@ -671,7 +673,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                         disabled={answered}
                         onClick={() => answer(o.id)}
                         className={cn(
-                          "flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left text-sm text-white/90 transition [&_.katex]:text-white",
+                          "flex min-h-11 items-start gap-2 rounded-lg border px-2.5 py-2 text-left text-[0.82rem] leading-snug text-white/90 transition sm:gap-2.5 sm:rounded-xl sm:px-3.5 sm:py-2.5 sm:text-sm [&_.katex]:text-white",
                           !answered && "border-white/15 bg-white/5 hover:border-white/40 hover:bg-white/10",
                           show && isCorrect && "border-emerald-400/70 bg-emerald-400/15",
                           show && !isCorrect && o.id === picked && "border-rose-400/70 bg-rose-400/15",
@@ -711,20 +713,20 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
 
       {/* ======== RESULT ======== */}
       {(phase === "victory" || phase === "defeat") && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center overflow-y-auto p-4">
-          <div className="w-full max-w-md rounded-3xl border border-white/15 bg-[#0b0f20]/90 p-8 text-center shadow-2xl backdrop-blur-xl">
+        <div className="boss-result absolute inset-0 z-10 flex items-center justify-center overflow-y-auto px-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[#0b0f20]/90 p-5 text-center shadow-2xl backdrop-blur-xl sm:rounded-3xl sm:p-8">
             <Icon
               name={phase === "victory" ? "Trophy" : "Skull"}
-              size={48}
+              size={44}
               className="mx-auto mb-3"
               style={{ color: phase === "victory" ? "#ffd45e" : "rgba(255,255,255,0.35)" }}
             />
-            <h1 className="text-4xl" style={{ fontFamily: PKMN.font }}>
+            <h1 className="text-3xl leading-tight sm:text-4xl" style={{ fontFamily: PKMN.font }}>
               {phase === "victory" ? `${cfg.name.toUpperCase()} fainted!` : "STUDENT blacked out…"}
             </h1>
             {phase === "victory" ? (
               <>
-                <div className="mt-3 text-6xl font-black text-[#5fe0a8]">
+                <div className="mt-3 text-5xl font-black text-[#5fe0a8] sm:text-6xl">
                   {grade === 31 ? "30 e lode" : grade}
                 </div>
                 <p className="mt-2 text-sm text-white/60">
@@ -741,7 +743,7 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
                 {Math.round(accuracy * 100)}% accuracy — review your mistakes and come back stronger.
               </p>
             )}
-            <div className="mt-6 flex flex-wrap justify-center gap-2">
+            <div className="mt-5 flex flex-wrap justify-center gap-2 sm:mt-6">
               <button onClick={rematch} className="btn btn-primary">
                 <Icon name="Swords" size={16} /> Rematch
               </button>
@@ -760,19 +762,53 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
       )}
 
       <style>{`
+        .boss-shell { height: 100vh; height: 100dvh; overscroll-behavior: none; }
+        .boss-intro { padding-top: max(0.75rem, env(safe-area-inset-top)); padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+        .boss-top-hud { padding-top: max(0.625rem, env(safe-area-inset-top)); }
+        .boss-question-wrap { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+        .boss-question-scroll { max-height: min(50dvh, 29rem); overscroll-behavior: contain; }
+        .boss-result { padding-top: max(1rem, env(safe-area-inset-top)); padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
         @keyframes bossDmg { 0% { opacity: 0; transform: translate(-50%, 14px) scale(0.7); } 20% { opacity: 1; transform: translate(-50%, 0) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -46px) scale(1); } }
         @keyframes roundIn { 0% { opacity: 0; transform: scale(2.4); } 18% { opacity: 1; transform: scale(1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.96); } }
+        @media (max-width: 639px) {
+          .boss-encounter-intro { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+        }
+        @media (max-width: 639px) and (max-height: 680px) {
+          .boss-intro-epithet { display: none; }
+          .boss-intro-rules { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+          .boss-intro-rules > :last-child { grid-column: auto; }
+          .boss-intro-rules span { justify-content: center; padding-inline: 0.35rem; }
+          .boss-intro-rules span span { display: none; }
+          .boss-encounter-intro { -webkit-line-clamp: 2; }
+          .boss-question-scroll { max-height: 54dvh; }
+        }
       `}</style>
     </div>
     </CourseTheme>
   );
 }
 
-function RuleChip({ icon, text }: { icon: string; text: string }) {
+function RuleChip({
+  icon,
+  text,
+  compact,
+  wide,
+}: {
+  icon: string;
+  text: string;
+  compact: string;
+  wide?: boolean;
+}) {
   return (
-    <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 backdrop-blur">
+    <span
+      className={cn(
+        "flex min-h-8 items-center justify-center gap-1 rounded-lg bg-white/10 px-2 py-1 text-center leading-none backdrop-blur sm:min-h-0 sm:gap-1.5 sm:rounded-full sm:px-3 sm:py-1.5 sm:leading-normal",
+        wide && "col-span-2 sm:col-span-1"
+      )}
+    >
       <Icon name={icon} size={13} className="shrink-0 opacity-80" />
-      {text}
+      <span className="sm:hidden">{compact}</span>
+      <span className="hidden sm:inline">{text}</span>
     </span>
   );
 }
