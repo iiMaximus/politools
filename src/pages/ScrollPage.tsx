@@ -80,16 +80,27 @@ function retryItem(q: McqQuestion, lesson: Lesson, n: number): FeedItem {
   return { id: `${q.id}:retry:${n}`, kind: "question", lesson, question: q, retry: true };
 }
 
-/** Rebuild a saved item order against the current base feed; null when the
- *  content changed underneath (→ start fresh). */
+/** Rebuild a saved item order against the current content. Items still in
+ *  the base feed are reused; question/retry/review items that fell out of
+ *  the (re-ranked) base are rebuilt from the course-wide question bank, so
+ *  a drill session survives the SRS due-ranking reshuffling the deck.
+ *  Null only when an item's content is truly gone (→ start fresh). */
 function rebuildView(
   order: string[],
   base: FeedItem[],
-  questionIndex: Map<string, { q: McqQuestion; lesson: Lesson }>
+  questions: Map<string, McqQuestion>,
+  lessonById: Map<string, Lesson>
 ): FeedItem[] | null {
   const baseById = new Map(base.map((it) => [it.id, it] as const));
-  const orderSet = new Set(order);
-  for (const it of base) if (!orderSet.has(it.id)) return null;
+  const fallbackLesson = base.flatMap((it) => ("lesson" in it ? [it.lesson] : []))[0];
+  // owning lesson per question id, read off the order's own question items
+  const lessonForQ = new Map<string, Lesson>();
+  for (const id of order) {
+    const m = id.match(/^(.+):question:(.+)$/);
+    if (!m) continue;
+    const lesson = lessonById.get(m[1]);
+    if (lesson) lessonForQ.set(m[2], lesson);
+  }
   const items: FeedItem[] = [];
   for (const id of order) {
     const b = baseById.get(id);
@@ -97,11 +108,20 @@ function rebuildView(
       items.push(b);
       continue;
     }
+    const qm = id.match(/^(.+):question:(.+)$/);
+    if (qm) {
+      const lesson = lessonById.get(qm[1]);
+      const question = questions.get(qm[2]);
+      if (!lesson || !question) return null;
+      items.push({ id, kind: "question", lesson, question });
+      continue;
+    }
     const m = id.match(/^(.+):(review|retry):(\d+)$/);
     if (!m) return null;
-    const hit = questionIndex.get(m[1]);
-    if (!hit) return null;
-    items.push(m[2] === "review" ? reviewItem(hit.q, hit.lesson, Number(m[3])) : retryItem(hit.q, hit.lesson, Number(m[3])));
+    const q = questions.get(m[1]);
+    const lesson = lessonForQ.get(m[1]) ?? fallbackLesson;
+    if (!q || !lesson) return null;
+    items.push(m[2] === "review" ? reviewItem(q, lesson, Number(m[3])) : retryItem(q, lesson, Number(m[3])));
   }
   return items;
 }
@@ -161,16 +181,27 @@ export function ScrollPage() {
     [course, mode]
   );
 
-  /** every question reachable in this feed, for rebuilding retry items */
+  /** every MCQ in the course (practice + checkpoints) — the rebuild pool
+   *  must be wider than the current feed, or a drill re-rank would orphan
+   *  the saved session's questions and reset the ride to the top */
   const questionIndex = useMemo(() => {
-    const byId = new Map<string, { q: McqQuestion; lesson: Lesson }>();
-    for (const item of feed) {
-      if (item.kind === "question") byId.set(item.question.id, { q: item.question, lesson: item.lesson });
-    }
+    const byId = new Map<string, McqQuestion>();
+    if (!course) return byId;
+    for (const q of course.practice) if (!isNumeric(q)) byId.set(q.id, q);
+    for (const lesson of course.lessons)
+      for (const block of lesson.blocks)
+        if (block.kind === "checkpoint" && !isNumeric(block.question)) byId.set(block.question.id, block.question);
     return byId;
-  }, [feed]);
+  }, [course]);
+
+  const lessonById = useMemo(
+    () => new Map((course?.lessons ?? []).map((l) => [l.id, l] as const)),
+    [course]
+  );
 
   // init or restore the session for this course+mode
+  const pendingScrollTo = useRef<number | null>(null);
+
   useEffect(() => {
     activeRef.current = 0;
     retryCount.current = new Map();
@@ -181,7 +212,7 @@ export function ScrollPage() {
     }
     const saved = readScroll(courseId);
     if (saved && saved.mode === mode && saved.order?.length) {
-      const rebuilt = rebuildView(saved.order, feed, questionIndex);
+      const rebuilt = rebuildView(saved.order, feed, questionIndex, lessonById);
       if (rebuilt) {
         for (const id of saved.order) {
           const m = id.match(/^(.+):retry:(\d+)$/);
@@ -195,11 +226,10 @@ export function ScrollPage() {
           setResumed(idx);
           setActive(idx);
           activeRef.current = idx;
-          requestAnimationFrame(() => {
-            feedRef.current
-              ?.querySelector<HTMLElement>(`[data-feed-index="${idx}"]`)
-              ?.scrollIntoView({ block: "start" });
-          });
+          // the actual scroll happens in the effect below, AFTER React has
+          // committed the restored view — a rAF here can beat the commit and
+          // silently land the reader back on card 0
+          pendingScrollTo.current = idx;
         }
         return;
       }
@@ -209,23 +239,51 @@ export function ScrollPage() {
     setRevealed({});
     setActive(0);
     feedRef.current?.scrollTo({ top: 0 });
-  }, [courseId, mode, feed, questionIndex]);
+  }, [courseId, mode, feed, questionIndex, lessonById]);
+
+  // one-shot: jump to the restored position once the rebuilt view is in the DOM
+  useEffect(() => {
+    const idx = pendingScrollTo.current;
+    if (idx === null || !view.length) return;
+    const node = feedRef.current?.querySelector<HTMLElement>(`[data-feed-index="${idx}"]`);
+    if (node) {
+      node.scrollIntoView({ block: "start" });
+      pendingScrollTo.current = null;
+    }
+  }, [view]);
 
   // persist position + answers (debounced) so the feed resumes next time
+  const pendingSave = useRef<ScrollSave | null>(null);
   useEffect(() => {
     if (!view.length) return;
-    const t = window.setTimeout(() => {
-      writeScroll(courseId, {
-        mode,
-        index: activeRef.current,
-        order: view.map((it) => it.id),
-        answers,
-        revealed,
-        updated: Date.now(),
-      });
-    }, 400);
+    const payload: ScrollSave = {
+      mode,
+      index: activeRef.current,
+      order: view.map((it) => it.id),
+      answers,
+      revealed,
+      updated: Date.now(),
+    };
+    pendingSave.current = payload;
+    const t = window.setTimeout(() => writeScroll(courseId, payload), 400);
     return () => window.clearTimeout(t);
   }, [courseId, mode, view, answers, revealed, active]);
+
+  // the debounce must never eat the newest position: flush it when the page
+  // hides (mobile app switch / tab close) and when this screen unmounts
+  useEffect(() => {
+    const flush = () => {
+      if (pendingSave.current) writeScroll(courseId, pendingSave.current);
+    };
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", flush);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", flush);
+      flush();
+      pendingSave.current = null;
+    };
+  }, [courseId]);
 
   // the resume pill dismisses itself
   useEffect(() => {
@@ -324,6 +382,7 @@ export function ScrollPage() {
 
   function startOver() {
     clearScroll(courseId);
+    pendingSave.current = null;
     retryCount.current = new Map();
     setView(feed);
     setAnswers({});
@@ -577,8 +636,10 @@ function buildFeed(
     }
 
     if (mode !== "formula") {
-      questions.forEach((question, i) => {
-        items.push({ id: `${lesson.id}:question:${i}`, kind: "question", lesson, question });
+      // content-based id (not positional) so a saved session can find the same
+      // question again even after the drill ranking reshuffles the deck
+      questions.forEach((question) => {
+        items.push({ id: `${lesson.id}:question:${question.id}`, kind: "question", lesson, question });
       });
     }
   }
