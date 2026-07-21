@@ -188,13 +188,15 @@ export function MixPage() {
       <>
         <TopBar crumbs={[{ label: "Daily Mix" }]} />
         <Page className="max-w-2xl">
-          <div className="surface p-8 text-center">
-            <Icon name="Shuffle" size={36} className="mx-auto mb-3 text-[var(--accent)]" />
-            <h1 className="text-xl font-bold">No focus courses selected</h1>
-            <p className="mt-1 text-[var(--color-muted)]">
+          <div className="mc-panel arcade-dark p-8 text-center text-white">
+            <span className="mc-slot mx-auto mb-3 grid h-14 w-14 place-items-center text-[var(--accent)]">
+              <Icon name="Shuffle" size={28} />
+            </span>
+            <h1 className="pixel-font text-3xl uppercase leading-none">No focus courses selected</h1>
+            <p className="mt-2 text-white/55">
               Pick your season's courses in the hub settings and the Daily Mix will build itself.
             </p>
-            <Link to="/" className="btn btn-primary mt-4 inline-flex">
+            <Link to="/" className="arcade-button mt-5 px-4">
               Back to hub
             </Link>
           </div>
@@ -209,19 +211,18 @@ export function MixPage() {
       <>
         <TopBar crumbs={[{ label: "Daily Mix" }]} />
         <Page className="max-w-2xl">
-          <div className="surface p-8 text-center">
-            <Icon
-              name={pct >= 80 ? "PartyPopper" : "Flag"}
-              size={40}
-              className="mx-auto mb-3 text-[var(--accent)]"
-            />
+          <div className="mc-panel arcade-dark relative overflow-hidden p-8 text-center text-white">
+            <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.035]" />
+            <span className="mc-slot relative mx-auto mb-3 grid h-14 w-14 place-items-center text-[var(--accent)]">
+              <Icon name={pct >= 80 ? "PartyPopper" : "Flag"} size={28} />
+            </span>
             <h1
-              className="pixel-font text-4xl uppercase leading-none tracking-wide"
-              style={{ color: pct >= 80 ? "var(--good)" : "var(--color-ink)" }}
+              className="pixel-font relative text-4xl uppercase leading-none tracking-wide"
+              style={{ color: pct >= 80 ? "#7fdc39" : "#fff" }}
             >
               {pct >= 80 ? "Stage clear!" : "Mix complete"}
             </h1>
-            <p className="mt-1 text-[var(--color-muted)]">
+            <p className="relative mt-2 text-white/55">
               {correctCount}/{deck.length} correct · {pct}% · best combo ×{bestCombo}
               {bonus > 0 && <> · +{bonus} combo XP</>}
             </p>
@@ -232,10 +233,10 @@ export function MixPage() {
                 return (
                   <div
                     key={id}
-                    className="flex items-center justify-between rounded-xl border border-[var(--color-line)] px-3 py-2 text-sm"
+                    className="mc-slot flex items-center justify-between px-3 py-2 text-sm"
                   >
                     <span className="font-semibold">{course.meta.short}</span>
-                    <span className="font-mono text-xs text-[var(--color-muted)]">
+                    <span className="font-mono text-xs text-white/50">
                       {s.correct}/{s.total}
                     </span>
                   </div>
@@ -243,10 +244,10 @@ export function MixPage() {
               })}
             </div>
             <div className="mt-6 flex flex-wrap justify-center gap-2">
-              <Link to="/" className="btn btn-primary">
+              <Link to="/" className="arcade-button px-4">
                 <Icon name="House" size={16} /> Back to hub
               </Link>
-              <button onClick={anotherMix} className="btn btn-ghost">
+              <button onClick={anotherMix} className="arcade-button arcade-button-secondary px-4">
                 <Icon name="RotateCcw" size={16} /> Another mix
               </button>
             </div>
@@ -268,8 +269,8 @@ export function MixPage() {
       <Page className="max-w-3xl">
         {/* progress + combo strip */}
         <div className="mb-5 flex flex-wrap items-center gap-3">
-          <div className="surface flex items-center gap-2 px-3 py-2 text-sm font-bold">
-            <Icon name="ListChecks" size={15} className="text-[var(--color-faint)]" />
+          <div className="mc-slot arcade-dark pixel-font flex items-center gap-2 px-3 py-2 text-lg leading-none text-white">
+            <Icon name="ListChecks" size={15} className="text-white/45" />
             {i + 1}/{deck.length}
           </div>
           <ComboMeter combo={combo} />
@@ -330,10 +331,10 @@ function ComboMeter({ combo }: { combo: number }) {
   const hot = combo >= COMBO_BONUS_FROM;
   return (
     <div
-      className="flex items-center gap-2 rounded-xl border px-3 py-2"
+      className="mc-slot arcade-dark flex items-center gap-2 px-3 py-2"
       style={{
         borderColor: hot ? "#ff9f43" : "var(--color-line)",
-        background: hot ? "rgba(255,159,67,0.12)" : "var(--color-surface)",
+        background: hot ? "rgba(255,159,67,0.18)" : undefined,
       }}
     >
       <Icon
@@ -341,7 +342,7 @@ function ComboMeter({ combo }: { combo: number }) {
         size={16}
         style={{ color: hot ? "#ff7a1a" : "var(--color-faint)" }}
       />
-      <span className="text-sm font-extrabold" style={{ color: hot ? "#ff7a1a" : "var(--color-muted)" }}>
+      <span className="pixel-font text-xl leading-none" style={{ color: hot ? "#ff9f43" : "rgba(255,255,255,0.65)" }}>
         ×{combo}
       </span>
       {hot && <span className="text-[10px] font-bold uppercase tracking-wide text-[#ff7a1a]">+2 XP/hit</span>}

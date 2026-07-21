@@ -392,6 +392,18 @@ main {
   font-family: "VT323", "JetBrains Mono", monospace;
 }
 
+.arcade-dark {
+  --color-bg: #181818;
+  --color-bg-2: #111111;
+  --color-surface: #303030;
+  --color-surface-2: #252525;
+  --color-line: #4a4a4a;
+  --color-ink: #ffffff;
+  --color-muted: #b8b8b8;
+  --color-faint: #7d7d7d;
+  --prose: #e7e7e7;
+}
+
 /* Minecraft-style beveled panel + item slot — deliberately theme-independent */
 .mc-panel {
   background: #212121;
@@ -406,6 +418,72 @@ main {
   box-shadow: inset 2px 2px 0 #4f4f4f, inset -2px -2px 0 #262626;
 }
 
+.mc-panel-interactive {
+  transition: transform 0.14s ease, filter 0.14s ease, box-shadow 0.14s ease;
+}
+.mc-panel-interactive:hover {
+  filter: brightness(1.08);
+  box-shadow: inset 2px 2px 0 #626262, inset -2px -2px 0 #242424, 0 10px 24px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+}
+.mc-panel-interactive:active {
+  transform: translateY(1px);
+}
+
+.arcade-button {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px solid #000;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.24), inset -1px -1px 0 rgba(0, 0, 0, 0.28), 0 3px 0 #000;
+  color: #fff;
+  cursor: pointer;
+  font-family: "VT323", "JetBrains Mono", monospace;
+  font-size: 1.25rem;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: filter 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
+}
+.arcade-button:hover {
+  filter: brightness(1.1);
+}
+.arcade-button:active {
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.18), inset -1px -1px 0 rgba(0, 0, 0, 0.28), 0 1px 0 #000;
+  transform: translateY(2px);
+}
+.arcade-button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.65);
+  opacity: 0.48;
+}
+
+.arcade-button-secondary {
+  background: linear-gradient(180deg, #444, #303030);
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.arcade-screen {
+  overflow: hidden;
+  border: 2px solid #0b0b0b;
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.arcade-focus-ring:focus-visible {
+  outline: 3px solid #ffff55;
+  outline-offset: 3px;
+}
+
+.retro-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #505050 12%, #505050 88%, transparent);
+}
+
 /* arcade "PRESS START" blink — hard steps, no fade */
 @keyframes arcadeBlink {
   0%, 55% { opacity: 1; }
@@ -418,4 +496,14 @@ main {
 /* CRT scanlines for dark arcade panels */
 .crt-lines {
   background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0 1px, transparent 1px 3px);
+}
+
+@media (max-width: 639px) {
+  .mc-panel {
+    border-radius: 7px;
+  }
+
+  .arcade-screen {
+    border-radius: 0.55rem;
+  }
 }

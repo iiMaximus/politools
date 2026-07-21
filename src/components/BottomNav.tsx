@@ -19,6 +19,13 @@ export function BottomNav() {
     { id: "home", label: "Home", icon: "House", to: "/", active: pathname === "/" },
     { id: "mix", label: "Mix", icon: "Shuffle", to: "/mix", active: pathname === "/mix" },
     { id: "stats", label: "Stats", icon: "Activity", to: "/stats", active: pathname === "/stats" },
+    {
+      id: "leaderboard",
+      label: "Ranks",
+      icon: "Trophy",
+      to: "/leaderboard",
+      active: pathname === "/leaderboard",
+    },
     ...(inCourse
       ? [
           {
@@ -34,7 +41,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--color-line)] bg-[var(--color-surface)]/90 backdrop-blur-xl sm:hidden"
+      className="arcade-dark fixed inset-x-0 bottom-0 z-40 border-t-2 border-black bg-[#212121]/95 shadow-[0_-2px_0_#505050] backdrop-blur-xl sm:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
@@ -44,8 +51,10 @@ export function BottomNav() {
             key={t.id}
             to={t.to}
             className={cn(
-              "flex min-w-[4.5rem] flex-col items-center gap-0.5 py-2 text-[10px] font-bold",
-              t.active ? "text-[var(--accent)]" : "text-[var(--color-faint)]"
+              "arcade-focus-ring pixel-font my-1 flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-sm border-2 border-transparent py-1.5 text-sm uppercase leading-none",
+              t.active
+                ? "border-black bg-[#373737] text-[var(--accent)] shadow-[inset_1px_1px_0_#505050,inset_-1px_-1px_0_#242424]"
+                : "text-white/45"
             )}
           >
             <Icon name={t.icon} size={20} />

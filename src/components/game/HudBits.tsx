@@ -9,9 +9,9 @@ import { rankFromXp, type StreakInfo } from "../../lib/game";
 export function StreakBadge({ streak }: { streak: StreakInfo }) {
   const lit = streak.current > 0 && !streak.atRisk;
   return (
-    <div className="surface flex items-center gap-3 px-4 py-3" title={`Best streak: ${streak.best} days`}>
+    <div className="mc-panel arcade-dark flex items-center gap-3 px-4 py-3 text-white" title={`Best streak: ${streak.best} days`}>
       <span
-        className="grid h-10 w-10 place-items-center rounded-xl"
+        className="mc-slot grid h-10 w-10 place-items-center"
         style={{
           background: lit ? "linear-gradient(180deg,#ff9f43,#ff5e57)" : "var(--color-bg)",
           color: lit ? "#fff" : "var(--color-faint)",
@@ -20,11 +20,11 @@ export function StreakBadge({ streak }: { streak: StreakInfo }) {
         <Icon name="Flame" size={22} />
       </span>
       <div className="leading-tight">
-        <div className="text-xl font-extrabold">
+        <div className="pixel-font text-3xl leading-none">
           {streak.current}
-          <span className="ml-1 text-xs font-semibold text-[var(--color-faint)]">day{streak.current === 1 ? "" : "s"}</span>
+          <span className="ml-1 text-base text-white/45">day{streak.current === 1 ? "" : "s"}</span>
         </div>
-        <div className="text-[10px] uppercase tracking-wider text-[var(--color-faint)]">
+        <div className="pixel-font text-base uppercase leading-none text-white/45">
           {streak.atRisk ? "study today to keep it!" : "streak"}
           {streak.freezeTokens > 0 && (
             <span className="ml-1.5 inline-flex items-center gap-0.5 text-[var(--info)]">
@@ -41,20 +41,20 @@ export function StreakBadge({ streak }: { streak: StreakInfo }) {
 export function RankBadge({ totalXp }: { totalXp: number }) {
   const r = rankFromXp(totalXp);
   return (
-    <div className="surface flex items-center gap-3 px-4 py-3" title={`${r.into}/${r.needed} XP to next level`}>
+    <div className="mc-panel arcade-dark flex items-center gap-3 px-4 py-3 text-white" title={`${r.into}/${r.needed} XP to next level`}>
       <span
-        className="grid h-10 w-10 place-items-center rounded-xl text-white"
+        className="mc-slot grid h-10 w-10 place-items-center text-white"
         style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
       >
         <Icon name="GraduationCap" size={22} />
       </span>
       <div className="min-w-0 leading-tight">
-        <div className="truncate text-sm font-extrabold">
+        <div className="pixel-font truncate text-xl leading-none">
           Lv {r.level} · {r.rank}
         </div>
-        <div className="mt-1 h-1.5 w-24 overflow-hidden rounded-full bg-[var(--color-bg)]">
+        <div className="mt-1.5 h-2 w-24 overflow-hidden rounded-sm border border-black bg-[#111]">
           <div
-            className="h-full rounded-full"
+            className="h-full"
             style={{
               width: `${r.pct}%`,
               background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
@@ -69,15 +69,15 @@ export function RankBadge({ totalXp }: { totalXp: number }) {
 export function BeerCounter({ beers }: { beers: number }) {
   return (
     <div
-      className="surface flex items-center gap-3 px-4 py-3"
+      className="mc-panel arcade-dark flex items-center gap-3 px-4 py-3 text-white"
       title="One beer earned per boss defeated. Redeem responsibly."
     >
-      <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#f5b942] text-[#4a2c00]">
+      <span className="mc-slot grid h-10 w-10 place-items-center bg-[#f5b942] text-[#4a2c00]">
         <Icon name="Beer" size={22} />
       </span>
       <div className="leading-tight">
-        <div className="text-xl font-extrabold">{beers}</div>
-        <div className="text-[10px] uppercase tracking-wider text-[var(--color-faint)]">
+        <div className="pixel-font text-3xl leading-none">{beers}</div>
+        <div className="pixel-font text-base uppercase leading-none text-white/45">
           beer{beers === 1 ? "" : "s"} earned
         </div>
       </div>

@@ -32,14 +32,23 @@ export function GameSettingsModal({
     <div
       className="fixed inset-0 z-[90] grid place-items-center bg-black/45 p-4 backdrop-blur-sm"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Season setup"
     >
       <div
-        className="surface max-h-[85vh] w-full max-w-lg overflow-y-auto p-5 sm:p-6"
+        className="mc-panel arcade-dark relative max-h-[85vh] w-full max-w-lg overflow-y-auto p-5 text-white sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.025]" />
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold">Season setup</h2>
-          <button onClick={onClose} className="btn btn-ghost !min-h-0 !px-2 !py-1.5">
+          <h2 className="pixel-font text-3xl uppercase leading-none">Season setup</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mc-slot arcade-focus-ring grid h-9 w-9 place-items-center text-white/55 hover:text-white"
+            aria-label="Close season setup"
+          >
             <Icon name="X" size={16} />
           </button>
         </div>
@@ -58,7 +67,7 @@ export function GameSettingsModal({
             return (
               <div
                 key={c.meta.id}
-                className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--color-line)] px-3 py-2.5"
+                className="mc-slot flex flex-wrap items-center gap-2 px-3 py-2.5"
               >
                 <span className="min-w-0 flex-1 truncate text-sm font-semibold">{c.meta.title}</span>
                 <button
@@ -69,7 +78,7 @@ export function GameSettingsModal({
                       passedCourses: s.passedCourses.filter((x) => x !== c.meta.id),
                     }))
                   }
-                  className="btn btn-ghost !min-h-0 !px-2.5 !py-1 !text-xs"
+                  className="arcade-button arcade-button-secondary !min-h-0 !px-2.5 !py-1 !text-base"
                   style={
                     focused && !passed
                       ? { background: "var(--accent-soft)", borderColor: "var(--accent-line)", color: "var(--accent)" }
@@ -86,7 +95,7 @@ export function GameSettingsModal({
                       focusCourses: s.focusCourses.filter((x) => x !== c.meta.id),
                     }))
                   }
-                  className="btn btn-ghost !min-h-0 !px-2.5 !py-1 !text-xs"
+                  className="arcade-button arcade-button-secondary !min-h-0 !px-2.5 !py-1 !text-base"
                   style={
                     passed
                       ? { background: "var(--good-bg)", borderColor: "var(--good)", color: "var(--good)" }
@@ -108,7 +117,7 @@ export function GameSettingsModal({
                           examDates: { ...s.examDates, [c.meta.id]: e.target.value },
                         }))
                       }
-                      className="rounded-lg border border-[var(--color-line)] bg-[var(--color-bg)] px-2 py-1 text-xs text-[var(--color-ink)]"
+                      className="mc-slot arcade-focus-ring px-2 py-1 text-xs text-white outline-none"
                     />
                   </label>
                 )}
@@ -117,7 +126,7 @@ export function GameSettingsModal({
           })}
         </div>
 
-        <label className="mb-5 flex items-center justify-between rounded-xl border border-[var(--color-line)] px-3 py-2.5">
+        <label className="mc-slot mb-5 flex items-center justify-between px-3 py-2.5">
           <span className="flex items-center gap-2 text-sm font-semibold">
             <Icon name={local.sound ? "Volume2" : "VolumeX"} size={16} />
             Sound effects
@@ -131,10 +140,10 @@ export function GameSettingsModal({
         </label>
 
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="btn btn-ghost">
+          <button type="button" onClick={onClose} className="arcade-button arcade-button-secondary px-4">
             Cancel
           </button>
-          <button onClick={save} className="btn btn-primary">
+          <button type="button" onClick={save} className="arcade-button px-4">
             <Icon name="Check" size={16} /> Save
           </button>
         </div>

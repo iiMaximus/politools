@@ -36,6 +36,7 @@ import {
 import { bossFor } from "../lib/bosses";
 import { coursePlan, planDateLabel } from "../lib/plan";
 import { fireConfetti } from "../lib/confetti";
+import { useCloud } from "../components/CloudProvider";
 import type { Course } from "../types";
 
 const PLANNED = [
@@ -55,6 +56,7 @@ type HubEntry =
 
 export function HubPage() {
   const game = useGame();
+  const cloud = useCloud();
   const [showSettings, setShowSettings] = useState(false);
   // course chunks stream in progressively; the hub renders as they arrive
   const { courses } = useAllCourses();
@@ -156,9 +158,16 @@ export function HubPage() {
           <Icon name="Settings2" size={16} />
         </button>
       </TopBar>
-      <Page className="pt-6">
+      <Page className="pt-4 sm:pt-6">
         {/* ============ player HUD ============ */}
-        <PlayerHud totalXp={totalXp} game={game} nextExam={nextExam} />
+        <PlayerHud
+          totalXp={totalXp}
+          game={game}
+          nextExam={nextExam}
+          playerName={cloud.profile?.display_name}
+          playerAvatar={cloud.profile?.avatar}
+          onOpenProfile={cloud.configured ? () => cloud.setPickerOpen(true) : undefined}
+        />
 
         <section className="mt-4 grid gap-4 lg:grid-cols-5">
           {/* Daily Mix CTA + heatmap — arcade cabinet */}
@@ -190,8 +199,10 @@ export function HubPage() {
               </Link>
             </div>
             {/* the "screen": heatmap keeps its light look inside the cabinet */}
-            <div className="relative mt-4 flex flex-1 items-center justify-center rounded-xl bg-[var(--color-surface)] p-3">
-              <Heatmap state={game} />
+            <div className="arcade-screen relative mt-4 flex flex-1 items-center overflow-x-auto p-3 no-scrollbar">
+              <div className="min-w-[31rem] flex-1 sm:min-w-0">
+                <Heatmap state={game} />
+              </div>
             </div>
           </div>
 
@@ -488,7 +499,7 @@ function FocusCard({ course }: { course: Course }) {
         </div>
 
         {/* arcade buttons */}
-        <div className="relative mt-3 grid grid-cols-4 gap-1.5">
+        <div className="relative mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-1.5">
           <Link
             to={`/c/${meta.id}/path`}
             className="pixel-font flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-lg uppercase leading-none text-white transition hover:brightness-110"
@@ -654,26 +665,45 @@ function PlayerHud({
   totalXp,
   game,
   nextExam,
+  playerName,
+  playerAvatar,
+  onOpenProfile,
 }: {
   totalXp: number;
   game: GameState;
   nextExam?: { short: string; days: number };
+  playerName?: string;
+  playerAvatar?: string;
+  onOpenProfile?: () => void;
 }) {
   const rank = rankFromXp(totalXp);
   const streak = streakInfo(game);
   const beers = availableBeers(game);
   return (
-    <section className="mc-panel relative overflow-hidden p-4 text-white sm:p-5">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-4">
+    <section className="mc-panel arcade-dark relative overflow-hidden p-4 text-white sm:p-5">
+      <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.035]" />
+      <div className="relative grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 sm:flex sm:gap-x-5 sm:gap-y-4">
         {/* avatar slot */}
-        <div className="mc-slot grid h-16 w-16 shrink-0 place-items-center text-4xl" title="STUDENT">
-          {game.unlocks.includes("avatar-invader") ? "👾" : "🎓"}
-        </div>
+        {onOpenProfile ? (
+          <button
+            type="button"
+            onClick={onOpenProfile}
+            className="mc-slot arcade-focus-ring mc-panel-interactive grid h-14 w-14 shrink-0 place-items-center text-3xl sm:h-16 sm:w-16 sm:text-4xl"
+            title="Open study profile"
+            aria-label="Open study profile"
+          >
+            {playerAvatar ?? (game.unlocks.includes("avatar-invader") ? "👾" : "🎓")}
+          </button>
+        ) : (
+          <div className="mc-slot grid h-14 w-14 shrink-0 place-items-center text-3xl sm:h-16 sm:w-16 sm:text-4xl" title="STUDENT">
+            {game.unlocks.includes("avatar-invader") ? "👾" : "🎓"}
+          </div>
+        )}
 
         {/* name + Minecraft XP bar */}
         <div className="min-w-[12rem] flex-1">
           <div className="pixel-font flex flex-wrap items-baseline gap-x-3 text-2xl leading-none">
-            <span>STUDENT</span>
+            <span className="max-w-full truncate uppercase">{playerName ?? "STUDENT"}</span>
             <span style={{ color: "#ffff55" }}>{rank.rank.toUpperCase()}</span>
           </div>
           <div className="relative mt-4">
@@ -713,7 +743,7 @@ function PlayerHud({
         </div>
 
         {/* hotbar */}
-        <div className="flex shrink-0 gap-1.5">
+        <div className="col-span-2 grid shrink-0 grid-cols-3 gap-2 sm:col-span-1 sm:flex sm:gap-1.5">
           <McStat
             icon="Flame"
             value={streak.current}
@@ -791,9 +821,9 @@ function BeerShop({ game }: { game: GameState }) {
       <div className="mb-5 flex items-end justify-between">
         <div>
           <Kicker>La Birreria</Kicker>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight">Spend your beers</h2>
+          <h2 className="pixel-font mt-1 text-4xl uppercase leading-none tracking-wide">Power-up shop</h2>
         </div>
-        <span className="text-sm font-black" style={{ color: "#e8a412" }}>
+        <span className="pixel-font text-2xl leading-none" style={{ color: "#e8a412" }}>
           🍺 ×{beers}
         </span>
       </div>
@@ -806,15 +836,16 @@ function BeerShop({ game }: { game: GameState }) {
           const useless = item.kind === "repair" && !streakRepairable(game);
           const afford = beers >= item.cost;
           return (
-            <div key={item.id} className="surface flex flex-col p-5">
+            <div key={item.id} className="mc-panel arcade-dark relative flex flex-col overflow-hidden p-5 text-white">
+              <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.03]" />
               <span
-                className="grid h-11 w-11 place-items-center rounded-xl"
-                style={{ background: "#f5b94222", color: "#e8a412" }}
+                className="mc-slot relative grid h-11 w-11 place-items-center"
+                style={{ color: "#ffd45e" }}
               >
                 <Icon name={item.icon} size={22} />
               </span>
-              <h3 className="mt-3 font-bold">{item.title}</h3>
-              <p className="mt-1 flex-1 text-sm text-[var(--color-muted)]">{item.desc}</p>
+              <h3 className="pixel-font relative mt-3 text-2xl uppercase leading-none">{item.title}</h3>
+              <p className="relative mt-2 flex-1 text-sm text-white/55">{item.desc}</p>
               {pending > 0 && (
                 <span className="mt-2 w-fit rounded-full bg-[var(--good-bg)] px-2 py-0.5 text-[11px] font-bold text-[var(--good)]">
                   ×{pending} ready to use
@@ -824,7 +855,7 @@ function BeerShop({ game }: { game: GameState }) {
                 onClick={() => buyShopItem(item.id)}
                 disabled={owned || !afford || useless}
                 title={useless ? "Your streak is intact — nothing to repair" : undefined}
-                className="btn btn-primary mt-4 disabled:opacity-40"
+                className="arcade-button relative mt-4 px-3"
               >
                 {owned ? "Owned ✓" : useless ? "Streak intact" : `Buy · ${item.cost} 🍺`}
               </button>

@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { Icon } from "./Icon";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "../lib/cn";
+import { CloudAccountButton } from "./CloudAccount";
 
 export function Brand({ compact }: { compact?: boolean }) {
   return (
-    <Link to="/" className="group flex shrink-0 items-center gap-2.5">
+    <Link to="/" className="group flex shrink-0 items-center gap-2.5" aria-label="Polito Tools home">
       <span
         className="grid h-9 w-9 place-items-center rounded-xl text-[#06080f]"
         style={{ background: "linear-gradient(180deg, var(--accent), var(--accent-2))" }}
@@ -54,6 +55,7 @@ export function TopBar({
         )}
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {children}
+          <CloudAccountButton />
           <ThemeToggle />
         </div>
       </div>

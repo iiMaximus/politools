@@ -16,14 +16,16 @@ export function CourseNav({ courseId, due }: { courseId: string; due?: number })
   ];
   return (
     // phones: a 4-up grid so every tab is visible (no hidden scroll); ≥sm: the roomy strip
-    <div className="grid grid-cols-4 gap-1 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-1.5 sm:flex sm:gap-1.5">
+    <div className="mc-panel arcade-dark grid grid-cols-4 gap-1 p-1.5 sm:flex sm:gap-1.5">
       {tabs.map((t) => (
         <Link
           key={t.id}
           to={t.to}
           className={cn(
-            "flex items-center justify-center gap-1 whitespace-nowrap rounded-xl px-1 py-2.5 text-xs font-semibold transition sm:shrink-0 sm:justify-start sm:gap-2 sm:px-4 sm:text-sm",
-            t.match ? "text-white" : "text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+            "arcade-focus-ring pixel-font flex items-center justify-center gap-1 whitespace-nowrap rounded-md border-2 border-black px-1 py-2.5 text-base uppercase leading-none transition sm:shrink-0 sm:justify-start sm:gap-2 sm:px-4 sm:text-lg",
+            t.match
+              ? "text-white shadow-[0_2px_0_#000]"
+              : "bg-[#363636] text-white/65 shadow-[inset_1px_1px_0_#4f4f4f,inset_-1px_-1px_0_#262626] hover:text-white"
           )}
           style={t.match ? { background: "linear-gradient(180deg, var(--accent), var(--accent-2))" } : undefined}
         >
@@ -31,7 +33,7 @@ export function CourseNav({ courseId, due }: { courseId: string; due?: number })
           <Icon name={t.icon} size={16} className="hidden sm:block" />
           {t.label}
           {t.id === "practice" && due ? (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--warn-bg)] px-1 text-[11px] font-bold text-[var(--warn)]">
+            <span className="grid h-5 min-w-5 place-items-center rounded-sm bg-[#ffd45e] px-1 font-sans text-[10px] font-black text-[#4a2c00]">
               {due}
             </span>
           ) : null}

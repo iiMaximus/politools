@@ -6,6 +6,7 @@ import "katex/dist/katex.min.css";
 import "./index.css";
 import { App } from "./App";
 import { initTheme } from "./lib/theme";
+import { CloudProvider } from "./components/CloudProvider";
 
 initTheme();
 // offline-first PWA: precaches the app + course chunks, auto-updates silently
@@ -13,8 +14,10 @@ registerSW({ immediate: true });
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <HashRouter>
-      <App />
-    </HashRouter>
+    <CloudProvider>
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </CloudProvider>
   </StrictMode>
 );

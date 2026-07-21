@@ -9,7 +9,7 @@ import { StreakBadge, RankBadge, BeerCounter } from "../components/game/HudBits"
 import { ReadinessDial } from "../components/game/ReadinessDial";
 import { readProgress, useCourseProgress } from "../lib/progress";
 import { aggregate, summarizeFromStorage } from "../lib/summary";
-import { readiness, streakInfo, useGame } from "../lib/game";
+import { availableBeers, readiness, streakInfo, useGame } from "../lib/game";
 import { reviewForecast, topicStats, weakestTopics } from "../lib/stats";
 import type { Course } from "../types";
 
@@ -32,18 +32,29 @@ export function StatsPage() {
   return (
     <>
       <TopBar crumbs={[{ label: "Stats" }]} />
-      <Page className="max-w-4xl">
-        <h1 className="pixel-font mb-4 text-4xl uppercase leading-none tracking-wide">Brain scan</h1>
+      <Page className="max-w-4xl pt-5 sm:pt-8">
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            <Kicker>Player analytics</Kicker>
+            <h1 className="pixel-font mt-1 text-4xl uppercase leading-none tracking-wide">Brain scan</h1>
+          </div>
+          <Link to="/leaderboard" className="arcade-button hidden px-3 sm:inline-flex">
+            <Icon name="Trophy" size={15} /> Ranks
+          </Link>
+        </div>
         <section className="grid gap-3 sm:grid-cols-3">
           <StreakBadge streak={streak} />
           <RankBadge totalXp={totalXp} />
-          <BeerCounter beers={game.beers} />
+          <BeerCounter beers={availableBeers(game)} />
         </section>
 
-        <section className="surface mt-4 p-5">
-          <Kicker>Activity</Kicker>
-          <div className="mt-3">
-            <Heatmap state={game} />
+        <section className="mc-panel arcade-dark relative mt-4 overflow-hidden p-4 text-white sm:p-5">
+          <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.035]" />
+          <Kicker className="relative !text-white/45">Activity log</Kicker>
+          <div className="arcade-screen relative mt-3 overflow-x-auto bg-[var(--color-surface)] p-3 no-scrollbar">
+            <div className="min-w-[31rem] sm:min-w-0">
+              <Heatmap state={game} />
+            </div>
           </div>
         </section>
 

@@ -33,6 +33,19 @@ npm run typecheck  # strict type check only, no emit
 Stack: **Vite + React + TypeScript**, **Tailwind CSS v4**, **KaTeX** (math), **framer-motion**,
 **lucide-react**. `HashRouter` + `base: "./"` so a build also runs from the filesystem.
 
+## Shared profiles and leaderboard
+
+The app can sync its existing local progress through a tiny trusted-group Supabase table. There is
+no email/password flow: each person chooses the same named profile on every device. Profiles have
+editable names and avatar icons, and their aggregate study stats form the leaderboard.
+
+1. Run **supabase/migrations/20260721204500_trusted_profiles.sql** in the project's SQL Editor.
+2. Copy **.env.example** to **.env.local** and add the project's publishable browser key.
+3. For a hosted build, provide the same value as **VITE_SUPABASE_PUBLISHABLE_KEY** at build time.
+
+The publishable key is safe in browser code; never use a secret or service-role key there. Local
+progress remains fully functional when Supabase is unavailable.
+
 ## What's in it
 
 - **Hub** — a dashboard of progress across all subjects (overall %, lessons, mastered cards, exam

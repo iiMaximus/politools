@@ -49,7 +49,7 @@ export function CoursePage() {
   const { meta, lessons } = course;
   const s = summarize(course, progress);
   const { level, into, perLevel } = levelFromXp(progress.xp);
-  const days = daysUntil(meta.examDate);
+  const days = daysUntil(game.settings.examDates[courseId] ?? meta.examDate);
   const firstUnread = lessons.find((l) => !progress.lessons[l.id]?.completed) ?? lessons[0];
 
   // group lessons by lecture (preserving order)
@@ -81,23 +81,26 @@ export function CoursePage() {
 
       <Page>
         {/* Hero */}
-        <section className="surface relative overflow-hidden p-6 sm:p-8">
-          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full blur-3xl" style={{ background: "var(--accent)", opacity: 0.16 }} />
+        <section className="mc-panel arcade-dark relative overflow-hidden p-5 text-white sm:p-7">
+          <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.035]" />
+          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full blur-3xl" style={{ background: "var(--accent)", opacity: 0.22 }} />
           <div className="relative max-w-2xl">
             <div className="flex items-center gap-3">
-              <CourseIconTile icon={meta.icon} soft={usesSoftCourseIcon(meta.id)} />
+              <span className="mc-slot grid h-12 w-12 shrink-0 place-items-center" style={{ color: "var(--accent)" }}>
+                <Icon name={meta.icon} size={24} />
+              </span>
               <div>
-                <Kicker>
+                <Kicker className="!text-white/45">
                   Year {meta.year} · Sem {meta.semester}
                   {meta.credits ? ` · ${meta.credits} CFU` : ""}
                 </Kicker>
-                <h1 className="text-3xl font-extrabold tracking-tight">{meta.title}</h1>
+                <h1 className="pixel-font text-4xl uppercase leading-none tracking-wide">{meta.title}</h1>
               </div>
             </div>
-            <p className="mt-3 text-lg text-[var(--color-muted)]">{meta.description}</p>
+            <p className="mt-3 text-base leading-relaxed text-white/65 sm:text-lg">{meta.description}</p>
             <div className="mt-4 flex flex-wrap gap-1.5">
               {meta.syllabus.map((x) => (
-                <span key={x} className="rounded-lg border border-[var(--color-line)] bg-[var(--color-bg)] px-2.5 py-1 text-xs text-[var(--color-muted)]">
+                <span key={x} className="mc-slot px-2.5 py-1 text-xs text-white/65">
                   {x}
                 </span>
               ))}
@@ -434,32 +437,6 @@ export function CoursePage() {
       </Page>
     </CourseTheme>
   );
-}
-
-function CourseIconTile({ icon, soft }: { icon: string; soft?: boolean }) {
-  if (!soft) {
-    return (
-      <span
-        className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-white"
-        style={{ background: "linear-gradient(180deg,var(--accent),var(--accent-2))" }}
-      >
-        <Icon name={icon} size={24} />
-      </span>
-    );
-  }
-
-  return (
-    <span
-      className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-[var(--accent-line)] bg-[var(--accent-soft)]"
-      style={{ color: "var(--accent)" }}
-    >
-      <Icon name={icon} size={24} />
-    </span>
-  );
-}
-
-function usesSoftCourseIcon(courseId: string): boolean {
-  return courseId === "linear-algebra" || courseId === "fundamentals-electronic-systems" || courseId === "electronic-systems";
 }
 
 function BreakdownRow({
