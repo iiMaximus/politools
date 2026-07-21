@@ -106,7 +106,7 @@ function ImplicationMap() {
       {box(465, 158, 165, 72)}
       <text x={547} y={184} fontSize={12} fontWeight={700} textAnchor="middle" fill="var(--color-ink)">all Dᵥf exist and</text>
       <text x={547} y={201} fontSize={12} fontWeight={700} textAnchor="middle" fill="var(--color-ink)">Dᵥf = ∇f · v</text>
-      <text x={547} y={219} fontSize={10} textAnchor="middle" fill="var(--bad)">converse false: x²y/(x²+y²)</text>
+      <text x={547} y={219} fontSize={9.5} textAnchor="middle" fill="var(--bad)">converse false: x³y/(x⁶+y²)</text>
 
       <line x1={192} y1={125} x2={244} y2={125} stroke="var(--color-muted)" strokeWidth={2} markerEnd="url(#dif-imp-arrow)" />
       <text x={218} y={144} fontSize={10} textAnchor="middle" fill="var(--bad)">not ⇐</text>
@@ -194,11 +194,11 @@ export const lessons: Lesson[] = [
     title: "Partial derivatives",
     lecture: MODULE,
     summary:
-      "Freeze one variable and differentiate in the other — the whole 1-D toolbox comes back, plus Schwarz's theorem for mixed partials.",
-    minutes: 20,
+      "Freeze every variable except one, compute the gradient in R² or R³, and know exactly what coordinate slopes do — and do not — prove.",
+    minutes: 24,
     objectives: [
       "Write the partial derivatives as one-dimensional limits",
-      "Compute partials of any elementary function by freezing the other variable",
+      "Compute partials and gradients in R² and R³ by freezing every other variable",
       "Read a partial derivative as the slope of a slice curve",
       "Use Schwarz's theorem to equate mixed second-order partials — and know when it applies",
     ],
@@ -213,6 +213,20 @@ export const lessons: Lesson[] = [
             and differentiate in the other. That reduces everything to the 1-D calculus you already
             own — the limit of a difference quotient along one coordinate direction.
           </p>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "info",
+        title: "Course map",
+        content: (
+          <>
+            This lesson follows <strong>3_DifferentialCalculus, slides 5–12 and 29–33</strong>.
+            Its computed examples are checked against <strong>Exercise Sheet: Curves &amp;
+            Functions in several variables, Exercise 7</strong>. The later slides introduce
+            higher-order partials after differentiability; they are taught here because Schwarz's
+            theorem is the natural completion of the partial-derivative toolkit.
+          </>
         ),
       },
       {
@@ -252,21 +266,56 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "example",
-        title: "Computing both partials",
+        title: "Tutorial Exercise 7 — quotient rule without losing a sign",
         content: (
           <>
             <p>
-              Let <Tex>{"f(x,y) = x^3 y^2 + y\\,e^x"}</Tex>.
+              For <Tex>{"f(x,y)=\\dfrac{x+y}{x-y}"}</Tex>, the domain excludes the line
+              <Tex>{"x=y"}</Tex>. Freezing <Tex>{"y"}</Tex> and then <Tex>{"x"}</Tex> gives
             </p>
             <p>
-              For <Tex>{"f_x"}</Tex>, the symbol <Tex>{"y"}</Tex> is a constant:{" "}
-              <Tex>{"f_x = 3x^2 y^2 + y\\,e^x"}</Tex>.
+              <Tex>{"f_x=\\dfrac{(x-y)-(x+y)}{(x-y)^2}=\\dfrac{-2y}{(x-y)^2}"}</Tex>,{" "}
+              <Tex>{"f_y=\\dfrac{(x-y)+(x+y)}{(x-y)^2}=\\dfrac{2x}{(x-y)^2}"}</Tex>.
             </p>
             <p>
-              For <Tex>{"f_y"}</Tex>, now <Tex>{"x"}</Tex> is the constant:{" "}
-              <Tex>{"f_y = 2x^3 y + e^x"}</Tex> (the factor <Tex>{"e^x"}</Tex> survives, its
-              coefficient <Tex>{"y"}</Tex> differentiates to 1).
+              Therefore <Tex>{"\\nabla f(1,-1)=(\\tfrac12,\\tfrac12)"}</Tex>: in the first
+              component the formula has a minus sign, but evaluating at <Tex>{"y=-1"}</Tex>
+              produces <Tex>{"-2(-1)/4=1/2"}</Tex>. Keeping the symbolic sign and the sign of the
+              coordinate separate is the safest way to avoid the tutorial's intended trap.
             </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Tutorial Exercise 7 — a gradient in R³",
+        content: (
+          <>
+            <p>
+              Let <Tex>{"f(x,y,z)=x^2(y-z)-\\log x"}</Tex>, so the domain requires
+              <Tex>{"x>0"}</Tex>. There is one partial for each coordinate:
+            </p>
+            <p>
+              <Tex>{"f_x=2x(y-z)-\\dfrac1x,\\quad f_y=x^2,\\quad f_z=-x^2"}</Tex>.
+              At <Tex>{"P=(2,1,-1)"}</Tex>,
+              <Tex>{"\\nabla f(P)=(\\tfrac{15}{2},4,-4)"}</Tex>.
+            </p>
+            <p>
+              Nothing new happens in three variables: freeze two, differentiate in the third, and
+              collect the three answers in order.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "formula",
+        tex: "\\nabla f(P)=\\left(\\frac{\\partial f}{\\partial x_1}(P),\\ldots,\\frac{\\partial f}{\\partial x_n}(P)\\right)",
+        caption: (
+          <>
+            The slides define the gradient in <Tex>{"\\mathbb R^2"}</Tex> and
+            <Tex>{"\\mathbb R^3"}</Tex>; this is the same definition in
+            <Tex>{"\\mathbb R^n"}</Tex>. A scalar field produces a vector field
+            <Tex>{"\\nabla f:D\\to\\mathbb R^n"}</Tex> wherever the partials exist.
           </>
         ),
       },
@@ -464,6 +513,19 @@ export const lessons: Lesson[] = [
         ),
       },
       {
+        kind: "callout",
+        tone: "info",
+        title: "Course map",
+        content: (
+          <>
+            This lesson follows <strong>3_DifferentialCalculus, slides 17–24</strong>, including
+            the professor's geometric tangent-plane interpretation and the
+            <Tex>{"C^1\\Rightarrow"}</Tex> differentiable criterion. The worked tangent planes are
+            from <strong>Curves &amp; Functions, Exercise 8</strong>.
+          </>
+        ),
+      },
+      {
         kind: "definition",
         term: "Differentiable at a point",
         content: (
@@ -578,18 +640,24 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "example",
-        title: "Tangent plane at a point",
+        title: "Tutorial Exercise 8 — prove C¹ before writing the plane",
         content: (
           <>
             <p>
-              <Tex>{"f(x,y) = xy^2"}</Tex> at <Tex>{"(2,1)"}</Tex>. Value: <Tex>{"f(2,1)=2"}</Tex>.
-              Partials: <Tex>{"f_x = y^2 = 1"}</Tex>, <Tex>{"f_y = 2xy = 4"}</Tex>. Both are
-              polynomials, hence continuous — <Tex>{"f\\in C^1"}</Tex>, so the plane is legitimate.
+              Let <Tex>{"f(x,y)=\\log(1+x^2-y^2)"}</Tex> at <Tex>{"P=(1,0)"}</Tex>. Its domain
+              <Tex>{"D=\\{1+x^2-y^2>0\\}"}</Tex> is open and contains <Tex>{"P"}</Tex>. On
+              <Tex>{"D"}</Tex>,
             </p>
             <p>
-              Plane: <Tex>{"z = 2 + 1\\cdot(x-2) + 4\\cdot(y-1)"}</Tex>, i.e.{" "}
-              <Tex>{"z = x + 4y - 4"}</Tex>. Quick check: at <Tex>{"(2,1)"}</Tex> it gives{" "}
-              <Tex>{"2+4-4=2 = f(2,1)"}</Tex>. ✓
+              <Tex>{"f_x=\\dfrac{2x}{1+x^2-y^2},\\qquad f_y=\\dfrac{-2y}{1+x^2-y^2}"}</Tex>
+              are continuous, hence <Tex>{"f\\in C^1(D)"}</Tex> and is differentiable. Now
+              <Tex>{"f(1,0)=\\log2"}</Tex> and <Tex>{"\\nabla f(1,0)=(1,0)"}</Tex>, so
+              <Tex>{"z=\\log2+(x-1)=x+\\log2-1"}</Tex>.
+            </p>
+            <p>
+              The first tutorial case, <Tex>{"f=\\sin x\\cos y"}</Tex> at the origin, works the
+              same way: it is <Tex>{"C^1"}</Tex>, <Tex>{"\\nabla f(0,0)=(1,0)"}</Tex>, and the
+              plane is <Tex>{"z=x"}</Tex>.
             </p>
           </>
         ),
@@ -731,6 +799,18 @@ export const lessons: Lesson[] = [
         ),
       },
       {
+        kind: "callout",
+        tone: "info",
+        title: "Course map",
+        content: (
+          <>
+            This lesson follows <strong>3_DifferentialCalculus, slides 13–16 and 25–28</strong>.
+            The direct-limit examples come from <strong>Curves &amp; Functions, Exercise 9</strong>;
+            the maximum/minimum-direction questions are the exercises on slide 26.
+          </>
+        ),
+      },
+      {
         kind: "definition",
         term: "Directional derivative",
         content: (
@@ -769,11 +849,15 @@ export const lessons: Lesson[] = [
             <strong>1 — Not normalizing.</strong> The formula needs <Tex>{"|v|=1"}</Tex>. For a
             direction like <Tex>{"(3,4)"}</Tex> first divide by its length 5, otherwise your answer
             is 5 times too big. <strong>2 — Using it without differentiability.</strong> For{" "}
-            <Tex>{"g = x^2y/(x^2+y^2)"}</Tex> (value 0 at the origin) every directional derivative
-            exists at <Tex>{"O"}</Tex>, namely <Tex>{"D_v g = \\cos^2\\theta\\sin\\theta"}</Tex>, yet{" "}
-            <Tex>{"\\nabla g(0,0)=(0,0)"}</Tex> gives <Tex>{"\\nabla g \\cdot v = 0"}</Tex>. The
-            mismatch proves <Tex>{"g"}</Tex> is <em>not differentiable</em> — and that (2.6) is a
-            privilege of differentiable functions, not a definition.
+            <Tex>{"g(x,y)=x^3y/(x^6+y^2)"}</Tex>, with value 0 at the origin, every directional
+            derivative exists and is 0: for <Tex>{"v=(a,b)"}</Tex> with <Tex>{"b\\ne0"}</Tex>, the
+            difference quotient is
+            <Tex>{"\\dfrac{t a^3b}{t^4a^6+b^2}\\to0"}</Tex>, and for <Tex>{"b=0"}</Tex> the
+            numerator vanishes. Thus even <Tex>{"D_vg=\\nabla g(O)\\cdot v"}</Tex> for every
+            <Tex>{"v"}</Tex> does <strong>not</strong> prove differentiability: along
+            <Tex>{"y=x^3"}</Tex>, <Tex>{"g=1/2"}</Tex>, so <Tex>{"g"}</Tex> is not even continuous.
+            Formula (2.6) is a consequence of differentiability, never a test in the reverse
+            direction.
           </>
         ),
       },
@@ -828,18 +912,24 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "example",
-        title: "Worked example",
+        title: "Tutorial Exercise 9 — coordinate direction in R³",
         content: (
           <>
             <p>
-              <Tex>{"f(x,y) = 3x + 4y - x^2"}</Tex> at the origin: <Tex>{"\\nabla f = (3-2x,\\,4)"}</Tex>,
-              so <Tex>{"\\nabla f(0,0) = (3,4)"}</Tex> and <Tex>{"|\\nabla f| = 5"}</Tex>.
+              For <Tex>{"f(x,y,z)=x^3y-yz+2"}</Tex>,
+              <Tex>{"\\nabla f=(3x^2y,\\,x^3-z,\\,-y)"}</Tex>. At
+              <Tex>{"P=(1,1,-1)"}</Tex> this is <Tex>{"(3,2,-1)"}</Tex>.
             </p>
             <p>
-              Slope towards the north-east, <Tex>{"v = (\\tfrac{1}{\\sqrt2}, \\tfrac{1}{\\sqrt2})"}</Tex>:{" "}
-              <Tex>{"D_v f = \\tfrac{3}{\\sqrt2} + \\tfrac{4}{\\sqrt2} = \\tfrac{7}{\\sqrt2} \\approx 4.95"}</Tex>{" "}
-              — close to, but below, the maximum 5, which is attained only along{" "}
-              <Tex>{"(\\tfrac35, \\tfrac45)"}</Tex>. Zero slope along <Tex>{"\\pm(\\tfrac45, -\\tfrac35)"}</Tex>.
+              The requested direction <Tex>{"v=(0,1,0)"}</Tex> is already unit, so
+              <Tex>{"D_vf(P)=(3,2,-1)\\cdot(0,1,0)=2"}</Tex>. Because this is the coordinate
+              vector <Tex>{"e_y"}</Tex>, the same answer is simply <Tex>{"f_y(P)=2"}</Tex>.
+            </p>
+            <p>
+              <strong>Source erratum:</strong> the supplied solution sheet prints
+              <Tex>{"f_x=2x^2y"}</Tex> on one line; differentiating <Tex>{"x^3y"}</Tex> gives
+              <Tex>{"3x^2y"}</Tex>. Its next line uses the corrected value 3 in the gradient, so the
+              official final directional derivative 2 remains valid.
             </p>
           </>
         ),
@@ -937,6 +1027,21 @@ export const lessons: Lesson[] = [
             bookkeeping: <strong>one term per route</strong> through which the input can influence
             the output.
           </p>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "info",
+        title: "Bridge theorem",
+        content: (
+          <>
+            The handwritten differential-calculus slides do not isolate the multivariable chain
+            rule as a numbered section. They do state
+            <Tex>{"D_vf(P)=\\nabla f(P)\\cdot v"}</Tex> on slide 25 and then use derivatives of
+            compositions throughout the later curve, surface, and change-of-variable material.
+            This lesson makes that prerequisite explicit and proves the level-curve geometry used
+            elsewhere in the course.
+          </>
         ),
       },
       {

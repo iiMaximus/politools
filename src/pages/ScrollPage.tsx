@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
@@ -30,28 +30,118 @@ interface ScrollSave {
   updated: number;
 }
 
-const SCROLL_KEY = (courseId: string) => `polito:scroll:${courseId}`;
+interface ScrollStore {
+  version: 2;
+  lastMode: ScrollMode;
+  sessions: Partial<Record<ScrollMode, ScrollSave>>;
+}
 
-function readScroll(courseId: string): ScrollSave | null {
+const SCROLL_KEY = (courseId: string) => `polito:scroll:${courseId}`;
+const SCROLL_MODES: ScrollMode[] = ["story", "drill", "formula"];
+
+function isScrollMode(value: unknown): value is ScrollMode {
+  return typeof value === "string" && SCROLL_MODES.includes(value as ScrollMode);
+}
+
+function normalizeScrollSave(value: unknown): ScrollSave | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<ScrollSave>;
+  if (!isScrollMode(candidate.mode) || !Array.isArray(candidate.order)) return null;
+  return {
+    mode: candidate.mode,
+    index:
+      typeof candidate.index === "number" && Number.isFinite(candidate.index)
+        ? Math.max(0, candidate.index)
+        : 0,
+    order: candidate.order.filter((id): id is string => typeof id === "string"),
+    answers:
+      candidate.answers && typeof candidate.answers === "object"
+        ? (candidate.answers as Record<string, string>)
+        : {},
+    revealed:
+      candidate.revealed && typeof candidate.revealed === "object"
+        ? (candidate.revealed as Record<string, boolean>)
+        : {},
+    updated:
+      typeof candidate.updated === "number" && Number.isFinite(candidate.updated) ? candidate.updated : 0,
+  };
+}
+
+function readScrollStore(courseId: string): ScrollStore | null {
   try {
     const raw = localStorage.getItem(SCROLL_KEY(courseId));
-    return raw ? (JSON.parse(raw) as ScrollSave) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+
+    // v1 stored only the last-opened mode. Migrate it lazily so existing
+    // sessions survive while v2 keeps an independent position per mode.
+    const legacy = normalizeScrollSave(parsed);
+    if (legacy) {
+      return { version: 2, lastMode: legacy.mode, sessions: { [legacy.mode]: legacy } };
+    }
+
+    if (!parsed || typeof parsed !== "object") return null;
+    const candidate = parsed as Partial<ScrollStore>;
+    if (candidate.version !== 2 || !candidate.sessions || typeof candidate.sessions !== "object") return null;
+    const sessions: Partial<Record<ScrollMode, ScrollSave>> = {};
+    for (const mode of SCROLL_MODES) {
+      const session = normalizeScrollSave(candidate.sessions[mode]);
+      if (session && session.mode === mode) sessions[mode] = session;
+    }
+    const available = SCROLL_MODES.filter((mode) => sessions[mode]);
+    if (!available.length) return null;
+    const lastMode =
+      isScrollMode(candidate.lastMode) && sessions[candidate.lastMode]
+        ? candidate.lastMode
+        : available.sort((a, b) => (sessions[b]?.updated ?? 0) - (sessions[a]?.updated ?? 0))[0];
+    return { version: 2, lastMode, sessions };
   } catch {
     return null;
   }
 }
 
+function readScroll(courseId: string, mode?: ScrollMode): ScrollSave | null {
+  const store = readScrollStore(courseId);
+  if (!store) return null;
+  return store.sessions[mode ?? store.lastMode] ?? null;
+}
+
 function writeScroll(courseId: string, s: ScrollSave) {
   try {
-    localStorage.setItem(SCROLL_KEY(courseId), JSON.stringify(s));
+    const previous = readScrollStore(courseId);
+    const existing = previous?.sessions[s.mode];
+    // A delayed debounce from an older render must never overwrite a newer
+    // lifecycle/mode-switch flush.
+    if (existing && existing.updated > s.updated) return;
+    const store: ScrollStore = {
+      version: 2,
+      lastMode: s.mode,
+      sessions: { ...(previous?.sessions ?? {}), [s.mode]: s },
+    };
+    localStorage.setItem(SCROLL_KEY(courseId), JSON.stringify(store));
   } catch {
     /* storage full / unavailable */
   }
 }
 
-function clearScroll(courseId: string) {
+function clearScroll(courseId: string, mode?: ScrollMode) {
   try {
-    localStorage.removeItem(SCROLL_KEY(courseId));
+    if (!mode) {
+      localStorage.removeItem(SCROLL_KEY(courseId));
+      return;
+    }
+    const store = readScrollStore(courseId);
+    if (!store) return;
+    delete store.sessions[mode];
+    const remaining = SCROLL_MODES.filter((candidate) => store.sessions[candidate]);
+    if (!remaining.length) {
+      localStorage.removeItem(SCROLL_KEY(courseId));
+      return;
+    }
+    store.lastMode = remaining.sort(
+      (a, b) => (store.sessions[b]?.updated ?? 0) - (store.sessions[a]?.updated ?? 0)
+    )[0];
+    localStorage.setItem(SCROLL_KEY(courseId), JSON.stringify(store));
   } catch {
     /* ignore */
   }
@@ -87,10 +177,11 @@ function retryItem(q: McqQuestion, lesson: Lesson, n: number): FeedItem {
  *  Null only when an item's content is truly gone (→ start fresh). */
 function rebuildView(
   order: string[],
+  savedIndex: number,
   base: FeedItem[],
   questions: Map<string, McqQuestion>,
   lessonById: Map<string, Lesson>
-): FeedItem[] | null {
+): { items: FeedItem[]; index: number } | null {
   const baseById = new Map(base.map((it) => [it.id, it] as const));
   const fallbackLesson = base.flatMap((it) => ("lesson" in it ? [it.lesson] : []))[0];
   // owning lesson per question id, read off the order's own question items
@@ -102,28 +193,41 @@ function rebuildView(
     if (lesson) lessonForQ.set(m[2], lesson);
   }
   const items: FeedItem[] = [];
-  for (const id of order) {
+  const keptPositions: { source: number; target: number }[] = [];
+  for (const [source, id] of order.entries()) {
+    let item: FeedItem | undefined;
     const b = baseById.get(id);
     if (b) {
-      items.push(b);
-      continue;
+      item = b;
+    } else {
+      const qm = id.match(/^(.+):question:(.+)$/);
+      if (qm) {
+        const lesson = lessonById.get(qm[1]);
+        const question = questions.get(qm[2]);
+        if (lesson && question) item = { id, kind: "question", lesson, question };
+      } else {
+        const m = id.match(/^(.+):(review|retry):(\d+)$/);
+        if (m) {
+          const q = questions.get(m[1]);
+          const lesson = lessonForQ.get(m[1]) ?? fallbackLesson;
+          if (q && lesson) {
+            item = m[2] === "review" ? reviewItem(q, lesson, Number(m[3])) : retryItem(q, lesson, Number(m[3]));
+          }
+        }
+      }
     }
-    const qm = id.match(/^(.+):question:(.+)$/);
-    if (qm) {
-      const lesson = lessonById.get(qm[1]);
-      const question = questions.get(qm[2]);
-      if (!lesson || !question) return null;
-      items.push({ id, kind: "question", lesson, question });
-      continue;
-    }
-    const m = id.match(/^(.+):(review|retry):(\d+)$/);
-    if (!m) return null;
-    const q = questions.get(m[1]);
-    const lesson = lessonForQ.get(m[1]) ?? fallbackLesson;
-    if (!q || !lesson) return null;
-    items.push(m[2] === "review" ? reviewItem(q, lesson, Number(m[3])) : retryItem(q, lesson, Number(m[3])));
+    // Content evolves between releases. Drop only the missing card instead
+    // of resetting the entire ride to page 1.
+    if (!item) continue;
+    keptPositions.push({ source, target: items.length });
+    items.push(item);
   }
-  return items;
+  if (!items.length) return null;
+  const wanted = Math.max(0, Math.min(savedIndex, order.length - 1));
+  const nearest = keptPositions.reduce((best, candidate) =>
+    Math.abs(candidate.source - wanted) < Math.abs(best.source - wanted) ? candidate : best
+  );
+  return { items, index: nearest.target };
 }
 
 type FeedItem =
@@ -169,9 +273,36 @@ export function ScrollPage() {
   const [mode, setMode] = useState<ScrollMode>(() => readScroll(courseId)?.mode ?? "story");
   // the rendered feed = base feed + injected remediation cards
   const [view, setView] = useState<FeedItem[]>([]);
+  const [viewOwner, setViewOwner] = useState("");
   const [resumed, setResumed] = useState<number | null>(null);
   const activeRef = useRef(0);
   const retryCount = useRef(new Map<string, number>());
+  const pendingSave = useRef<ScrollSave | null>(null);
+  const saveTimer = useRef<number | null>(null);
+  const previousCourseId = useRef(courseId);
+
+  /** Read the snapped card directly from the scroll container. This is the
+   *  source of truth when someone swipes and immediately leaves: an
+   *  IntersectionObserver/state update may not have run before unmount. */
+  function visibleFeedIndex() {
+    const root = feedRef.current;
+    if (!root || root.clientHeight <= 0) return activeRef.current;
+    const last = Math.max(0, root.querySelectorAll("[data-feed-index]").length - 1);
+    return Math.max(0, Math.min(Math.round(root.scrollTop / root.clientHeight), last));
+  }
+
+  function syncActiveFromScroll() {
+    const index = visibleFeedIndex();
+    if (index === activeRef.current) return;
+    activeRef.current = index;
+    setActive(index);
+  }
+
+  useEffect(() => {
+    if (previousCourseId.current === courseId) return;
+    previousCourseId.current = courseId;
+    setMode(readScroll(courseId)?.mode ?? "story");
+  }, [courseId]);
 
   const feed = useMemo(
     () => (course ? buildFeed(course.lessons, course.practice, mode, readProgress(courseId).cards) : []),
@@ -203,59 +334,72 @@ export function ScrollPage() {
   const pendingScrollTo = useRef<number | null>(null);
 
   useEffect(() => {
+    const owner = `${courseId}:${mode}`;
+    pendingSave.current = null;
     activeRef.current = 0;
     retryCount.current = new Map();
     setResumed(null);
     if (!feed.length) {
       setView([]);
+      setViewOwner(owner);
       return;
     }
-    const saved = readScroll(courseId);
-    if (saved && saved.mode === mode && saved.order?.length) {
-      const rebuilt = rebuildView(saved.order, feed, questionIndex, lessonById);
+    const saved = readScroll(courseId, mode);
+    if (saved?.order.length) {
+      const rebuilt = rebuildView(saved.order, saved.index, feed, questionIndex, lessonById);
       if (rebuilt) {
         for (const id of saved.order) {
           const m = id.match(/^(.+):retry:(\d+)$/);
           if (m) retryCount.current.set(m[1], Math.max(retryCount.current.get(m[1]) ?? 0, Number(m[2])));
         }
-        setView(rebuilt);
+        setView(rebuilt.items);
+        setViewOwner(owner);
         setAnswers(saved.answers ?? {});
         setRevealed(saved.revealed ?? {});
-        const idx = Math.max(0, Math.min(saved.index ?? 0, rebuilt.length - 1));
-        if (idx > 0) {
-          setResumed(idx);
-          setActive(idx);
-          activeRef.current = idx;
-          // the actual scroll happens in the effect below, AFTER React has
-          // committed the restored view — a rAF here can beat the commit and
-          // silently land the reader back on card 0
-          pendingScrollTo.current = idx;
-        }
+        const idx = rebuilt.index;
+        if (idx > 0) setResumed(idx);
+        setActive(idx);
+        activeRef.current = idx;
+        pendingScrollTo.current = idx;
         return;
       }
     }
     setView(feed);
+    setViewOwner(owner);
     setAnswers({});
     setRevealed({});
     setActive(0);
-    feedRef.current?.scrollTo({ top: 0 });
+    activeRef.current = 0;
+    pendingScrollTo.current = 0;
   }, [courseId, mode, feed, questionIndex, lessonById]);
 
-  // one-shot: jump to the restored position once the rebuilt view is in the DOM
-  useEffect(() => {
+  // One-shot: move the SCROLL CONTAINER itself after the rebuilt view has
+  // committed. `scrollIntoView` could leave the fixed inner feed at top=0,
+  // which looked exactly like a failed restore even while the counter said 4.
+  useLayoutEffect(() => {
+    if (viewOwner !== `${courseId}:${mode}`) return;
     const idx = pendingScrollTo.current;
     if (idx === null || !view.length) return;
-    const node = feedRef.current?.querySelector<HTMLElement>(`[data-feed-index="${idx}"]`);
-    if (node) {
-      node.scrollIntoView({ block: "start" });
-      pendingScrollTo.current = null;
-    }
-  }, [view]);
+    const root = feedRef.current;
+    const node = root?.querySelector<HTMLElement>(`[data-feed-index="${idx}"]`);
+    if (!root || !node) return;
+    const previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    root.scrollTop = node.offsetTop;
+    pendingScrollTo.current = null;
+    const frame = window.requestAnimationFrame(() => {
+      root.style.scrollBehavior = previousBehavior;
+      syncActiveFromScroll();
+    });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      root.style.scrollBehavior = previousBehavior;
+    };
+  }, [courseId, mode, view, viewOwner]);
 
   // persist position + answers (debounced) so the feed resumes next time
-  const pendingSave = useRef<ScrollSave | null>(null);
   useEffect(() => {
-    if (!view.length) return;
+    if (!view.length || viewOwner !== `${courseId}:${mode}`) return;
     const payload: ScrollSave = {
       mode,
       index: activeRef.current,
@@ -265,21 +409,46 @@ export function ScrollPage() {
       updated: Date.now(),
     };
     pendingSave.current = payload;
-    const t = window.setTimeout(() => writeScroll(courseId, payload), 400);
-    return () => window.clearTimeout(t);
-  }, [courseId, mode, view, answers, revealed, active]);
+    const timer = window.setTimeout(() => {
+      if (pendingSave.current === payload) writeScroll(courseId, payload);
+      if (saveTimer.current === timer) saveTimer.current = null;
+    }, 400);
+    saveTimer.current = timer;
+    return () => {
+      window.clearTimeout(timer);
+      if (saveTimer.current === timer) saveTimer.current = null;
+    };
+  }, [courseId, mode, view, viewOwner, answers, revealed, active]);
+
+  function flushPendingScroll() {
+    if (!pendingSave.current) return;
+    if (saveTimer.current !== null) {
+      window.clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+    const payload: ScrollSave = {
+      ...pendingSave.current,
+      // Measure the actual snapped page now. This closes the swipe → Back
+      // race even when React/IntersectionObserver still thinks card 1 is active.
+      index: visibleFeedIndex(),
+      updated: Date.now(),
+    };
+    pendingSave.current = payload;
+    writeScroll(courseId, payload);
+  }
 
   // the debounce must never eat the newest position: flush it when the page
   // hides (mobile app switch / tab close) and when this screen unmounts
   useEffect(() => {
-    const flush = () => {
-      if (pendingSave.current) writeScroll(courseId, pendingSave.current);
+    const flush = () => flushPendingScroll();
+    const flushWhenHidden = () => {
+      if (document.visibilityState === "hidden") flushPendingScroll();
     };
     window.addEventListener("pagehide", flush);
-    document.addEventListener("visibilitychange", flush);
+    document.addEventListener("visibilitychange", flushWhenHidden);
     return () => {
       window.removeEventListener("pagehide", flush);
-      document.removeEventListener("visibilitychange", flush);
+      document.removeEventListener("visibilitychange", flushWhenHidden);
       flush();
       pendingSave.current = null;
     };
@@ -307,26 +476,6 @@ export function ScrollPage() {
     }
     setFormulaMarks(marks);
   }, [courseId, feed]);
-
-  useEffect(() => {
-    const root = feedRef.current;
-    if (!root || !view.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const best = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!best) return;
-        const idx = Number((best.target as HTMLElement).dataset.feedIndex ?? 0);
-        activeRef.current = idx;
-        setActive(idx);
-      },
-      { root, threshold: [0.55, 0.7, 0.85] }
-    );
-    const nodes = Array.from(root.querySelectorAll<HTMLElement>("[data-feed-index]"));
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, [view.length, mode]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -381,7 +530,7 @@ export function ScrollPage() {
   }
 
   function startOver() {
-    clearScroll(courseId);
+    clearScroll(courseId, mode);
     pendingSave.current = null;
     retryCount.current = new Map();
     setView(feed);
@@ -391,6 +540,14 @@ export function ScrollPage() {
     setActive(0);
     activeRef.current = 0;
     feedRef.current?.scrollTo({ top: 0 });
+  }
+
+  function changeMode(next: ScrollMode) {
+    if (next === mode) return;
+    // Changing mode does not unmount this page, so explicitly preserve the
+    // old mode before its debounced save is cancelled by the feed rebuild.
+    flushPendingScroll();
+    setMode(next);
   }
 
   function markFormula(itemId: string, mark: FormulaMark) {
@@ -435,9 +592,9 @@ export function ScrollPage() {
             <Icon name="ChevronLeft" size={20} />
           </Link>
           <div className="pointer-events-auto flex min-w-0 items-center gap-1 rounded-full border border-white/10 bg-black/20 p-1 backdrop-blur-xl">
-            <ModeButton active={mode === "story"} icon="Sparkles" label="Story" onClick={() => setMode("story")} />
-            <ModeButton active={mode === "drill"} icon="CircleHelp" label="Drill" onClick={() => setMode("drill")} />
-            <ModeButton active={mode === "formula"} icon="Sigma" label="Formula" onClick={() => setMode("formula")} />
+            <ModeButton active={mode === "story"} icon="Sparkles" label="Story" onClick={() => changeMode("story")} />
+            <ModeButton active={mode === "drill"} icon="CircleHelp" label="Drill" onClick={() => changeMode("drill")} />
+            <ModeButton active={mode === "formula"} icon="Sigma" label="Formula" onClick={() => changeMode("formula")} />
           </div>
           <div className="pointer-events-none min-w-10 text-right font-mono text-[11px] font-semibold text-white/45">
             {view.length ? active + 1 : 0}/{view.length}
@@ -446,6 +603,7 @@ export function ScrollPage() {
         <section
           ref={feedRef}
           onClick={handleFeedClick}
+          onScroll={syncActiveFromScroll}
           className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-auto overscroll-contain scroll-smooth no-scrollbar"
           aria-label="Microlearning scroll feed"
         >

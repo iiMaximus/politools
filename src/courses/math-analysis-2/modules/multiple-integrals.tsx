@@ -131,143 +131,195 @@ function TriangleCentroidFigure() {
 
 export const lessons: Lesson[] = [
   /* ============================================================== *
-   * LESSON 1 — Double integrals, Fubini, normal regions, swapping
+   * LESSON 1 — Double integrals, normal domains, reduction formulas
+   *  (deck: 4_MultipleIntegrals pp. 1–17)
    * ============================================================== */
   {
     id: "double-integrals-fubini",
-    title: "Double integrals, Fubini & swapping the order",
+    title: "Double integrals & normal domains",
     lecture: MODULE,
     summary:
-      "A double integral is a signed volume, computed one strip at a time — and the exam's favorite move is making you re-slice the region the other way.",
-    minutes: 25,
+      "A double integral is a volume built from parallelepipeds — and the professor's main strategy is to reduce it to 2 standard integrals over x-normal or y-normal domains.",
+    minutes: 28,
     objectives: [
-      "Interpret ∫∫ f dA as a signed volume and compute it on rectangles with Fubini",
-      "Recognize normal (simple) regions and read integration limits off a sketch",
-      "Write both iterated orders for the same region",
-      "Swap the order of integration to unlock otherwise impossible integrals",
+      "State the professor's definition of ∬_D f dxdy via squares of edge 1/n and parallelepipeds",
+      "Use the four properties: linearity, additivity, monotonicity, area",
+      "Recognize x-normal and y-normal domains and apply the reduction theorems",
+      "Split regions with additivity and swap the integration order when one order is impossible",
     ],
     blocks: [
       {
         kind: "prose",
         content: (
           <p>
-            In one variable, <Tex>{"\\int_a^b f\\,dx"}</Tex> is a signed <em>area</em>: slice the interval
-            into tiny pieces, multiply each width by a height, add up. In two variables we do exactly the
-            same over a plane region <Tex>{"D"}</Tex>: chop <Tex>{"D"}</Tex> into tiny cells of area{" "}
-            <Tex>{"\\Delta A"}</Tex>, multiply each by the height of the surface{" "}
-            <Tex>{"z = f(x,y)"}</Tex> above it, and add. The result is a signed <em>volume</em>. The whole
-            chapter is then one engineering problem: how to organize that sum into two ordinary integrals
-            you can actually compute.
+            In one variable, <Tex>{"\\int_a^b f"}</Tex> computes the <strong>area</strong> between the
+            x-axis and the graph of <Tex>{"f"}</Tex>, obtained by approximation via areas of rectangles.
+            For <Tex>{"f: D\\subseteq\\mathbb{R}^2\\to\\mathbb{R}"}</Tex> we want the{" "}
+            <strong>volume</strong> between the xy-plane and the graph of <Tex>{"f"}</Tex> — and the idea
+            is the same: approximate this volume using <strong>parallelepipeds</strong>. The whole chapter
+            is then one engineering problem: how to turn that limit into integrals you can actually
+            compute.
           </p>
         ),
       },
       {
         kind: "definition",
-        term: "Double integral",
+        term: "Double integral (the professor's construction)",
         content: (
           <>
-            For <Tex>{"f"}</Tex> defined on a bounded region <Tex>{"D\\subset\\mathbb{R}^2"}</Tex>,
-            partition <Tex>{"D"}</Tex> into small cells, pick a sample point in each, and form the Riemann
-            sum of <Tex>{"f(\\text{sample})\\cdot\\Delta A"}</Tex>. If the sums converge to one number as
-            the cells shrink (guaranteed for continuous <Tex>{"f"}</Tex> on a reasonable region), that
-            number is <Tex>{"\\iint_D f(x,y)\\,dA"}</Tex>.
+            Let <Tex>{"D\\subseteq\\mathbb{R}^2"}</Tex> be open and bounded and{" "}
+            <Tex>{"f:D\\to\\mathbb{R}"}</Tex>. Pave the plane with squares{" "}
+            <Tex>{"Q_{ij}^n"}</Tex> of edge <Tex>{"\\tfrac1n"}</Tex> (so{" "}
+            <Tex>{"\\text{Area}(Q_{ij}^n)=\\tfrac1{n^2}"}</Tex>), let <Tex>{"q_{ij}^n"}</Tex> be the{" "}
+            <strong>barycenter</strong> of <Tex>{"Q_{ij}^n"}</Tex>, and over each square raise the
+            parallelepiped <Tex>{"P_{ij}^n"}</Tex> of volume{" "}
+            <Tex>{"\\tfrac1{n^2}\\,f(q_{ij}^n)"}</Tex>. If the limit of the total volume exists in{" "}
+            <Tex>{"\\mathbb{R}"}</Tex>, it is the <strong>double integral of f over D</strong>.
           </>
         ),
       },
       {
         kind: "formula",
-        tex: "\\iint_D f(x,y)\\,dA \\;=\\; \\lim_{\\text{cells}\\to 0}\\ \\sum_{i,j} f(x_i^*,\\,y_j^*)\\,\\Delta A_{ij}",
+        tex: "\\iint_D f(x,y)\\,dx\\,dy \\;=\\; \\lim_{n\\to\\infty}\\ \\frac{1}{n^2}\\sum_{i,j} f\\big(q_{ij}^n\\big)",
         tag: "4.1",
         caption: (
           <>
-            Volume of a column = height <Tex>{"f"}</Tex> × base area <Tex>{"\\Delta A"}</Tex>; the
-            integral adds them all.
+            Volume of one parallelepiped = base <Tex>{"\\tfrac1{n^2}"}</Tex> × height{" "}
+            <Tex>{"f(q_{ij}^n)"}</Tex>; sum over <Tex>{"ij"}</Tex> and let the grid shrink. If{" "}
+            <Tex>{"D"}</Tex> is “good enough” and <Tex>{"f\\in C(\\bar D)"}</Tex>, the limit exists.
+            Briefly we write <Tex>{"\\iint_D f"}</Tex>.
           </>
         ),
       },
       {
         kind: "callout",
         tone: "key",
-        title: "Signed volume — and two integrals you get for free",
+        title: "Properties of double integrals (the theorem you use constantly)",
         content: (
           <>
-            Where <Tex>{"f"}</Tex> is positive the integral counts volume above the xy-plane as positive;
-            where <Tex>{"f"}</Tex> is negative it counts as negative — exactly like signed area in 1D. Two
-            instant consequences: <Tex>{"\\iint_D 1\\,dA = \\text{Area}(D)"}</Tex>, and if{" "}
-            <Tex>{"f\\ge 0"}</Tex>, <Tex>{"\\iint_D f\\,dA"}</Tex> is the volume of the solid under the
-            surface <Tex>{"z=f(x,y)"}</Tex> over <Tex>{"D"}</Tex>.
+            For <Tex>{"f,g\\in C(\\bar D)"}</Tex>: <strong>Linearity</strong> —{" "}
+            <Tex>{"\\iint_D (af+bg) = a\\iint_D f + b\\iint_D g"}</Tex>. <strong>Additivity</strong> — if{" "}
+            <Tex>{"D=D_1\\cup D_2"}</Tex> with <Tex>{"\\text{Area}(D_1\\cap D_2)=0"}</Tex> (they overlap
+            at most on a curve), then <Tex>{"\\iint_D f = \\iint_{D_1} f + \\iint_{D_2} f"}</Tex>.{" "}
+            <strong>Monotonicity</strong> — <Tex>{"f\\ge 0"}</Tex> in <Tex>{"D"}</Tex> implies{" "}
+            <Tex>{"\\iint_D f\\ge 0"}</Tex>. <strong>Area</strong> —{" "}
+            <Tex>{"\\iint_D 1 = \\text{Area}(D)"}</Tex>. In particular for <Tex>{"f\\ge0"}</Tex> the
+            integral is the volume under the graph; where <Tex>{"f<0"}</Tex> it counts negatively, like
+            signed area in 1D.
           </>
         ),
       },
-      { kind: "heading", text: "Fubini on rectangles" },
+      { kind: "heading", text: "The main strategy: normal domains" },
       {
         kind: "prose",
         content: (
           <p>
-            On a rectangle <Tex>{"[a,b]\\times[c,d]"}</Tex>, Fubini's theorem turns the double integral
-            into an <strong>iterated</strong> one: integrate in one variable while treating the other as a
-            frozen constant, then integrate the result. Both orders work and give the same number.
+            The definition is not how you compute. The professor's <strong>main strategy</strong>: reduce
+            a double integral to <strong>2 standard integrals</strong>. That works on domains whose
+            description is “one free variable in an interval, the other trapped between two graphs” — the{" "}
+            <em>normal domains</em>.
           </p>
         ),
       },
       {
-        kind: "formula",
-        tex: "\\iint_{[a,b]\\times[c,d]} f\\,dA \\;=\\; \\int_a^b\\!\\!\\left(\\int_c^d f(x,y)\\,dy\\right)\\!dx \\;=\\; \\int_c^d\\!\\!\\left(\\int_a^b f(x,y)\\,dx\\right)\\!dy",
-        tag: "4.2",
-        caption: <>Fubini on a rectangle (f continuous): compute inside-out, either order.</>,
-      },
-      {
-        kind: "example",
-        title: "Worked example — a rectangle, both orders",
+        kind: "definition",
+        term: "x-normal domain",
         content: (
           <>
-            <p>
-              Compute <Tex>{"\\iint_R (x+y)\\,dA"}</Tex> on <Tex>{"R=[0,1]\\times[0,2]"}</Tex>.
-            </p>
-            <p>
-              <strong>dy first:</strong>{" "}
-              <Tex>{"\\int_0^1\\!\\int_0^2 (x+y)\\,dy\\,dx = \\int_0^1\\Big[xy+\\tfrac{y^2}{2}\\Big]_0^2 dx = \\int_0^1 (2x+2)\\,dx = 1+2 = 3"}</Tex>.
-            </p>
-            <p>
-              <strong>dx first:</strong>{" "}
-              <Tex>{"\\int_0^2\\!\\int_0^1 (x+y)\\,dx\\,dy = \\int_0^2\\Big[\\tfrac{x^2}{2}+xy\\Big]_0^1 dy = \\int_0^2\\big(\\tfrac12+y\\big)dy = 1+2 = 3"}</Tex>.
-            </p>
-            <p>Same answer, as Fubini promises. On rectangles the order is pure convenience.</p>
+            <Tex>{"D\\subseteq\\mathbb{R}^2"}</Tex> is <strong>x-normal</strong> if{" "}
+            <Tex>{"D=\\{(x,y):\\ a\\le x\\le b\\ \\text{and}\\ \\alpha(x)\\le y\\le\\beta(x)\\}"}</Tex>{" "}
+            for some functions <Tex>{"\\alpha,\\beta:[a,b]\\to\\mathbb{R}"}</Tex>. Graphically:{" "}
+            <Tex>{"D"}</Tex> is x-normal <Tex>{"\\iff"}</Tex> <strong>every vertical line intersects D in
+            a single segment</strong> (possibly empty). Rectangles <Tex>{"[a,b]\\times[c,d]"}</Tex> are
+            x-normal (<Tex>{"\\alpha(x)=c"}</Tex>, <Tex>{"\\beta(x)=d"}</Tex>); annuli like{" "}
+            <Tex>{"1\\le\\sqrt{x^2+y^2}\\le 2"}</Tex> are <strong>not</strong> x-normal.
           </>
         ),
       },
-      { kind: "heading", text: "Normal (simple) regions" },
+      {
+        kind: "formula",
+        tex: "\\iint_D f \\;=\\; \\int_a^b\\!\\left(\\int_{\\alpha(x)}^{\\beta(x)} f(x,y)\\,dy\\right)\\!dx \\qquad\\text{for } D \\text{ x-normal},\\ f\\in C(\\bar D)",
+        tag: "4.2",
+        caption: (
+          <>
+            Double integrals for x-normal domains. <strong>Step 1:</strong> fix{" "}
+            <Tex>{"x\\in(a,b)"}</Tex> and integrate in <Tex>{"y\\in(\\alpha(x),\\beta(x))"}</Tex>.{" "}
+            <strong>Step 2:</strong> integrate the result in <Tex>{"x\\in(a,b)"}</Tex>.
+          </>
+        ),
+      },
       {
         kind: "definition",
-        term: "Normal region",
+        term: "y-normal domain",
         content: (
           <>
-            <Tex>{"D"}</Tex> is <strong>normal with respect to the x-axis</strong> (also called{" "}
-            <em>y-simple</em>, or type I) if every vertical line meets it in one segment:{" "}
-            <Tex>{"D=\\{a\\le x\\le b,\\ g_1(x)\\le y\\le g_2(x)\\}"}</Tex>. It is{" "}
-            <strong>normal with respect to the y-axis</strong> (<em>x-simple</em>, type II) if every
-            horizontal line does: <Tex>{"D=\\{c\\le y\\le d,\\ h_1(y)\\le x\\le h_2(y)\\}"}</Tex>. Many
-            regions are both — then you may choose the order.
+            Symmetrically, <Tex>{"D"}</Tex> is <strong>y-normal</strong> if{" "}
+            <Tex>{"D=\\{(x,y):\\ c\\le y\\le d\\ \\text{and}\\ \\gamma(y)\\le x\\le\\delta(y)\\}"}</Tex>{" "}
+            for some <Tex>{"\\gamma,\\delta:[c,d]\\to\\mathbb{R}"}</Tex> — every <em>horizontal</em> line
+            meets <Tex>{"D"}</Tex> in a single segment, and{" "}
+            <Tex>{"\\iint_D f = \\int_c^d\\big(\\int_{\\gamma(y)}^{\\delta(y)} f(x,y)\\,dx\\big)dy"}</Tex>.
+            (Equivalently: <Tex>{"D"}</Tex> is y-normal <Tex>{"\\iff"}</Tex> its 90° rotation is
+            x-normal.) Many domains are both — then you choose the order.
           </>
         ),
-      },
-      {
-        kind: "formula",
-        tex: "\\iint_D f\\,dA \\;=\\; \\int_a^b\\!\\!\\int_{g_1(x)}^{g_2(x)} f(x,y)\\,dy\\,dx \\qquad\\text{for } D=\\{a\\le x\\le b,\\ g_1(x)\\le y\\le g_2(x)\\}",
-        tag: "4.3",
-        caption: <>Vertical strips: the inner y-limits are the curves; the outer x-limits are numbers.</>,
       },
       {
         kind: "callout",
         tone: "info",
-        title: "The naming varies — the picture never does",
+        title: "Other books, other names — the exam uses these",
         content: (
           <>
-            Different books say type I / type II, x-simple / y-simple, or “normal with respect to an
-            axis”. Ignore the label and remember the geometry: <strong>vertical strip ⇒ integrate dy
-            first</strong>, <strong>horizontal strip ⇒ integrate dx first</strong>. Two hard rules: the{" "}
-            <em>inner</em> limits may depend on the outer variable; the <em>outer</em> limits must be
-            plain numbers. An outer limit containing <Tex>{"x"}</Tex> or <Tex>{"y"}</Tex> is always wrong.
+            Textbooks also say type I / type II or y-simple / x-simple; the professor says{" "}
+            <strong>x-normal / y-normal</strong>, and so should you. Two hard rules survive every naming:
+            the <em>inner</em> limits may depend on the outer variable; the <em>outer</em> limits must be
+            plain numbers. An outer limit containing <Tex>{"x"}</Tex> or <Tex>{"y"}</Tex> is always
+            wrong.
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Warm-up — a rectangle, both orders",
+        content: (
+          <>
+            <p>
+              Compute <Tex>{"\\iint_R (x+y)\\,dx\\,dy"}</Tex> on <Tex>{"R=[0,1]\\times[0,2]"}</Tex>.
+              Rectangles are x-normal and y-normal, so both reductions apply.
+            </p>
+            <p>
+              <strong>As x-normal</strong> (inner dy):{" "}
+              <Tex>{"\\int_0^1\\!\\int_0^2 (x+y)\\,dy\\,dx = \\int_0^1\\Big[xy+\\tfrac{y^2}{2}\\Big]_0^2 dx = \\int_0^1 (2x+2)\\,dx = 1+2 = 3"}</Tex>.
+            </p>
+            <p>
+              <strong>As y-normal</strong> (inner dx):{" "}
+              <Tex>{"\\int_0^2\\!\\int_0^1 (x+y)\\,dx\\,dy = \\int_0^2\\Big[\\tfrac{x^2}{2}+xy\\Big]_0^1 dy = \\int_0^2\\big(\\tfrac12+y\\big)dy = 1+2 = 3"}</Tex>.
+            </p>
+            <p>Same number, as the two reduction theorems guarantee.</p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — the triangle, ∬ x²y = 1/60 both ways",
+        content: (
+          <>
+            <p>
+              Let <Tex>{"D"}</Tex> be the triangle with vertices <Tex>{"(0,0)"}</Tex>,{" "}
+              <Tex>{"(1,0)"}</Tex>, <Tex>{"(0,1)"}</Tex> (hypotenuse <Tex>{"x+y=1"}</Tex>). Show{" "}
+              <Tex>{"\\iint_D x^2y\\,dx\\,dy=\\tfrac1{60}"}</Tex>.
+            </p>
+            <p>
+              <strong>x-normal</strong> (<Tex>{"0\\le x\\le1,\\ 0\\le y\\le 1-x"}</Tex>):{" "}
+              <Tex>{"\\int_0^1 x^2\\Big[\\tfrac{y^2}{2}\\Big]_0^{1-x} dx = \\tfrac12\\int_0^1 x^2(1-x)^2\\,dx = \\tfrac12\\Big(\\tfrac13-\\tfrac24+\\tfrac15\\Big) = \\tfrac12\\cdot\\tfrac1{30} = \\tfrac1{60}"}</Tex>.
+            </p>
+            <p>
+              <strong>y-normal</strong> (<Tex>{"0\\le y\\le1,\\ 0\\le x\\le 1-y"}</Tex>):{" "}
+              <Tex>{"\\int_0^1 y\\Big[\\tfrac{x^3}{3}\\Big]_0^{1-y} dy = \\tfrac13\\int_0^1 y(1-y)^3\\,dy = \\tfrac13\\cdot\\tfrac1{20} = \\tfrac1{60}"}</Tex>.
+            </p>
+            <p>
+              Both descriptions are legal because every vertical <em>and</em> every horizontal line cuts
+              the triangle in one segment.
+            </p>
           </>
         ),
       },
@@ -285,21 +337,21 @@ export const lessons: Lesson[] = [
             ),
           },
           {
-            label: "Choose the strip direction",
+            label: "Test the normal direction",
             content: (
               <>
-                Vertical strip = dy first, horizontal = dx first. Pick the direction in which the strip
-                enters through <em>one</em> curve and exits through <em>one</em> curve; otherwise you must
-                split the region.
+                Does every <em>vertical</em> line meet <Tex>{"D"}</Tex> in a single segment? Then{" "}
+                <Tex>{"D"}</Tex> is x-normal: inner dy. Every <em>horizontal</em> line? y-normal: inner
+                dx. Neither? Split <Tex>{"D"}</Tex> with additivity.
               </>
             ),
           },
           {
-            label: "Slide the strip for the inner limits",
+            label: "Slide the segment for the inner limits",
             content: (
               <>
-                The curve where the strip enters is the inner lower limit, where it exits is the inner
-                upper limit — written as functions of the outer variable.
+                The curve where the segment enters is <Tex>{"\\alpha"}</Tex> (inner lower limit), where it
+                exits is <Tex>{"\\beta"}</Tex> — functions of the outer variable.
               </>
             ),
           },
@@ -307,8 +359,8 @@ export const lessons: Lesson[] = [
             label: "Extreme positions for the outer limits",
             content: (
               <>
-                The first and last positions of the strip give the outer limits — constants. Sanity-check:
-                outer limits contain no variables.
+                The first and last positions of the segment give the outer limits — constants.
+                Sanity-check: outer limits contain no variables.
               </>
             ),
           },
@@ -322,7 +374,7 @@ export const lessons: Lesson[] = [
           <>
             Slide the slice and toggle the order. The entry (orange) and exit (green) curves are the
             inner limits; the slice's first and last positions are the outer limits. Note how{" "}
-            <Tex>{"y=x^2"}</Tex> must be rewritten as <Tex>{"x=\\sqrt{y}"}</Tex> when the strip turns
+            <Tex>{"y=x^2"}</Tex> must be rewritten as <Tex>{"x=\\sqrt{y}"}</Tex> when the segment turns
             horizontal.
           </>
         ),
@@ -335,21 +387,94 @@ export const lessons: Lesson[] = [
             <p>
               Let <Tex>{"D"}</Tex> be the region between <Tex>{"y=x^2"}</Tex> and <Tex>{"y=2x"}</Tex>{" "}
               (they intersect at <Tex>{"x=0"}</Tex> and <Tex>{"x=2"}</Tex>). Compute{" "}
-              <Tex>{"\\iint_D x\\,dA"}</Tex>.
+              <Tex>{"\\iint_D x\\,dx\\,dy"}</Tex>.
             </p>
             <p>
-              <strong>Vertical strips</strong> (<Tex>{"x^2\\le y\\le 2x"}</Tex>,{" "}
+              <strong>As x-normal</strong> (<Tex>{"x^2\\le y\\le 2x"}</Tex>,{" "}
               <Tex>{"0\\le x\\le 2"}</Tex>):{" "}
               <Tex>{"\\int_0^2 x\\,(2x-x^2)\\,dx = \\int_0^2 (2x^2 - x^3)\\,dx = \\tfrac{16}{3}-4 = \\tfrac43"}</Tex>.
             </p>
             <p>
-              <strong>Horizontal strips</strong> (<Tex>{"\\tfrac{y}{2}\\le x\\le\\sqrt{y}"}</Tex>,{" "}
+              <strong>As y-normal</strong> (<Tex>{"\\tfrac{y}{2}\\le x\\le\\sqrt{y}"}</Tex>,{" "}
               <Tex>{"0\\le y\\le 4"}</Tex>):{" "}
               <Tex>{"\\int_0^4\\Big[\\tfrac{x^2}{2}\\Big]_{y/2}^{\\sqrt{y}} dy = \\int_0^4\\Big(\\tfrac{y}{2}-\\tfrac{y^2}{8}\\Big)dy = 4-\\tfrac{8}{3} = \\tfrac43"}</Tex>.
             </p>
             <p>
-              Both orders give <Tex>{"\\tfrac43"}</Tex> — but notice how every limit changed. Swapping is
-              a <em>re-description of the region</em>, never a shuffle of symbols.
+              Both orders give <Tex>{"\\tfrac43"}</Tex> — but notice how every limit changed. Changing the
+              order is a <em>re-description of the region</em>, never a shuffle of symbols.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — symmetry kills half the work",
+        content: (
+          <>
+            <p>
+              (Slides, Ex 1) Compute <Tex>{"\\iint_D (3y+e^x)\\,dx\\,dy"}</Tex> where <Tex>{"D"}</Tex> is
+              enclosed by <Tex>{"y=x^2-1"}</Tex> and <Tex>{"y=1-x^2"}</Tex>. The parabolas meet at{" "}
+              <Tex>{"x=\\pm1"}</Tex>, and <Tex>{"D"}</Tex> is x-normal with{" "}
+              <Tex>{"\\alpha(x)=x^2-1,\\ \\beta(x)=1-x^2"}</Tex>.
+            </p>
+            <p>
+              Key observation: <Tex>{"\\beta=-\\alpha"}</Tex>, so the inner integral of the odd part{" "}
+              <Tex>{"3y"}</Tex> vanishes: <Tex>{"\\big[\\tfrac{3y^2}{2}\\big]_{-(1-x^2)}^{1-x^2}=0"}</Tex>.
+              Only <Tex>{"e^x"}</Tex> survives, picking up the segment length:
+            </p>
+            <p>
+              <Tex>{"\\iint_D (3y+e^x)\\,dx\\,dy = \\int_{-1}^1 e^x\\,2(1-x^2)\\,dx = 2\\Big[-e^x(x-1)^2\\Big]_{-1}^{1} = 2\\cdot\\tfrac{4}{e} = \\tfrac{8}{e}"}</Tex>,
+            </p>
+            <p>
+              using integration by parts twice (<Tex>{"\\int e^x(1-x^2)dx = -e^x(x-1)^2"}</Tex> — check by
+              differentiating). Matches the slide's answer <Tex>{"8/e"}</Tex>. Odd integrand + symmetric
+              inner limits = instant zero: scan for this before grinding.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "tip",
+        title: "Area as a double integral",
+        content: (
+          <>
+            (Slides, Ex 2) The area property turns region measuring into a reduction exercise:{" "}
+            <Tex>{"D=\\{0\\le x\\le 2,\\ e^{-x}\\le y\\le 2-\\tfrac{x^2}{4}\\}"}</Tex> has{" "}
+            <Tex>{"\\text{Area}(D)=\\int_0^2\\big(2-\\tfrac{x^2}{4}-e^{-x}\\big)dx = \\big[2x-\\tfrac{x^3}{12}+e^{-x}\\big]_0^2 = \\tfrac73+e^{-2}"}</Tex>.
+            Upper curve minus lower curve, integrated — the 1D area-between-curves formula is just{" "}
+            <Tex>{"\\iint_D 1"}</Tex> reduced.
+          </>
+        ),
+      },
+      { kind: "heading", text: "Additivity in action: splitting the region" },
+      {
+        kind: "example",
+        title: "Deck example — split at the kink (Sol: 272/27)",
+        content: (
+          <>
+            <p>
+              (Slides, Ex 4) Compute <Tex>{"\\iint_D (1+x)\\,dx\\,dy"}</Tex> where{" "}
+              <Tex>{"D=\\{y\\ge|x|,\\ y\\le\\tfrac{x}{2}+2\\}"}</Tex>. The lower boundary{" "}
+              <Tex>{"y=|x|"}</Tex> has a kink at <Tex>{"x=0"}</Tex>, so use <strong>additivity</strong>:
+              split there. The line meets <Tex>{"y=-x"}</Tex> at <Tex>{"x=-\\tfrac43"}</Tex> and{" "}
+              <Tex>{"y=x"}</Tex> at <Tex>{"x=4"}</Tex>.
+            </p>
+            <p>
+              <Tex>{"D_1"}</Tex> (<Tex>{"-\\tfrac43\\le x\\le 0"}</Tex>,{" "}
+              <Tex>{"-x\\le y\\le \\tfrac{x}{2}+2"}</Tex>):{" "}
+              <Tex>{"\\int_{-4/3}^{0}(1+x)\\big(\\tfrac{3x}{2}+2\\big)dx = \\tfrac{20}{27}"}</Tex>.
+            </p>
+            <p>
+              <Tex>{"D_2"}</Tex> (<Tex>{"0\\le x\\le 4"}</Tex>,{" "}
+              <Tex>{"x\\le y\\le \\tfrac{x}{2}+2"}</Tex>):{" "}
+              <Tex>{"\\int_0^4 (1+x)\\big(2-\\tfrac{x}{2}\\big)dx = \\tfrac{28}{3} = \\tfrac{252}{27}"}</Tex>.
+            </p>
+            <p>
+              Total: <Tex>{"\\tfrac{20}{27}+\\tfrac{252}{27} = \\tfrac{272}{27}"}</Tex> — the slide's
+              answer. The two pieces overlap only on a segment (area 0), so additivity applies. The same
+              trick handles the square <Tex>{"|x|+|y|\\le1"}</Tex>:{" "}
+              <Tex>{"\\iint e^{x+y}\\,dx\\,dy = e-\\tfrac1e"}</Tex> (Slides, Ex 6).
             </p>
           </>
         ),
@@ -359,12 +484,11 @@ export const lessons: Lesson[] = [
         kind: "prose",
         content: (
           <p>
-            Why would you ever swap? Two reasons. Sometimes one direction needs the region split in two
-            while the other doesn't. And sometimes — the classic exam setup — the inner antiderivative{" "}
-            <em>does not exist in elementary terms</em> in the given order, but the swapped order makes it
-            trivial. Integrands like <Tex>{"e^{x^2}"}</Tex>, <Tex>{"e^{-y^2}"}</Tex>,{" "}
-            <Tex>{"\\sin(y^2)"}</Tex> or <Tex>{"\\tfrac{\\sin x}{x}"}</Tex> are the tell: you{" "}
-            <strong>must</strong> swap.
+            Why would you ever re-describe a both-ways-normal domain? Because sometimes the inner
+            antiderivative <em>does not exist in elementary terms</em> in the given order, and the other
+            order makes it trivial. Integrands like <Tex>{"e^{x^2}"}</Tex>, <Tex>{"e^{-y^2}"}</Tex>,{" "}
+            <Tex>{"\\sin(y^2)"}</Tex> — or the deck's <Tex>{"e^{-5y^2+8y}"}</Tex> with its hint
+            “integrate in x first!” — are the tell: you <strong>must</strong> swap.
           </p>
         ),
       },
@@ -391,10 +515,10 @@ export const lessons: Lesson[] = [
             ),
           },
           {
-            label: "Re-slice the other way",
+            label: "Re-describe it as normal the other way",
             content: (
               <>
-                Horizontal strips: for each <Tex>{"y\\in[0,1]"}</Tex>, <Tex>{"x"}</Tex> runs from{" "}
+                As y-normal: for each <Tex>{"y\\in[0,1]"}</Tex>, <Tex>{"x"}</Tex> runs from{" "}
                 <Tex>{"0"}</Tex> to <Tex>{"y"}</Tex>.
               </>
             ),
@@ -421,9 +545,9 @@ export const lessons: Lesson[] = [
               written, the problem is stuck.
             </p>
             <p>
-              The region is <Tex>{"0\\le x\\le y\\le 1"}</Tex>. Swapping to horizontal strips:{" "}
+              The region is <Tex>{"0\\le x\\le y\\le 1"}</Tex>. Re-describing it as y-normal:{" "}
               <Tex>{"I=\\int_0^1\\!\\int_0^y e^{y^2}\\,dx\\,dy"}</Tex>. The inner integrand is constant in{" "}
-              <Tex>{"x"}</Tex>, so it just picks up the strip length <Tex>{"y"}</Tex>:
+              <Tex>{"x"}</Tex>, so it just picks up the segment length <Tex>{"y"}</Tex>:
             </p>
             <p>
               <Tex>{"I=\\int_0^1 y\\,e^{y^2}\\,dy = \\Big[\\tfrac12 e^{y^2}\\Big]_0^1 = \\tfrac{e-1}{2}"}</Tex>.
@@ -436,6 +560,34 @@ export const lessons: Lesson[] = [
         ),
       },
       {
+        kind: "example",
+        title: "Deck example — “integrate in x first!” (Sol: e^{16/5} − e³)",
+        content: (
+          <>
+            <p>
+              (Slides, Ex 5) Compute <Tex>{"\\iint_D e^{-5y^2+8y}\\,dx\\,dy"}</Tex> where{" "}
+              <Tex>{"D=\\{8\\le x\\le 10,\\ \\tfrac{x}{10}\\le y\\le 1\\}"}</Tex>. As written (x-normal,
+              inner dy) it is impossible: <Tex>{"e^{-5y^2+8y}"}</Tex> has no elementary antiderivative in{" "}
+              <Tex>{"y"}</Tex>.
+            </p>
+            <p>
+              Re-describe as y-normal: <Tex>{"y\\ge\\tfrac{x}{10}"}</Tex> means{" "}
+              <Tex>{"x\\le 10y"}</Tex>, so <Tex>{"\\tfrac45\\le y\\le 1"}</Tex> and{" "}
+              <Tex>{"8\\le x\\le 10y"}</Tex>. The inner dx integral picks up the segment length{" "}
+              <Tex>{"10y-8"}</Tex>:
+            </p>
+            <p>
+              <Tex>{"\\iint_D = \\int_{4/5}^{1} (10y-8)\\,e^{-5y^2+8y}\\,dy = \\Big[-e^{-5y^2+8y}\\Big]_{4/5}^{1} = e^{16/5}-e^{3}"}</Tex>,
+            </p>
+            <p>
+              because <Tex>{"\\tfrac{d}{dy}(-5y^2+8y) = -(10y-8)"}</Tex> — the swap manufactures the
+              exact derivative of the exponent. Slide answer confirmed:{" "}
+              <Tex>{"e^{16/5}-e^3\\approx 4.44"}</Tex>.
+            </p>
+          </>
+        ),
+      },
+      {
         kind: "callout",
         tone: "trap",
         title: "You cannot swap by shuffling symbols",
@@ -443,8 +595,8 @@ export const lessons: Lesson[] = [
           <>
             Writing <Tex>{"\\int_0^1\\!\\int_x^1 dy\\,dx = \\int_x^1\\!\\int_0^1 dx\\,dy"}</Tex> is
             instantly wrong: the outer limits now contain <Tex>{"x"}</Tex>, which is meaningless. The only
-            legal route is limits → inequalities → sketch → re-slice. Examiners specifically choose
-            regions where the blind swap gives a different (wrong) region.
+            legal route is limits → inequalities → sketch → re-describe as normal the other way. Examiners
+            specifically choose regions where the blind swap gives a different (wrong) region.
           </>
         ),
       },
@@ -468,15 +620,47 @@ export const lessons: Lesson[] = [
           correct: "C",
           explanation: (
             <>
-              The region is <Tex>{"0\\le y\\le x\\le 2"}</Tex> — the triangle below <Tex>{"y=x"}</Tex>. A
-              horizontal strip at height <Tex>{"y"}</Tex> runs from the line <Tex>{"x=y"}</Tex> to{" "}
-              <Tex>{"x=2"}</Tex>, and <Tex>{"y"}</Tex> spans <Tex>{"[0,2]"}</Tex> — that is C. A is the
-              blind symbol swap (it describes the <em>other</em> triangle); B has an outer limit
-              containing <Tex>{"x"}</Tex>, which is meaningless; D has the inner limits reversed, which
-              flips the sign.
+              The region is <Tex>{"0\\le y\\le x\\le 2"}</Tex> — the triangle below <Tex>{"y=x"}</Tex>.
+              Described as y-normal, at height <Tex>{"y"}</Tex> the segment runs from the line{" "}
+              <Tex>{"x=y"}</Tex> to <Tex>{"x=2"}</Tex>, and <Tex>{"y"}</Tex> spans <Tex>{"[0,2]"}</Tex> —
+              that is C. A is the blind symbol swap (it describes the <em>other</em> triangle); B has an
+              outer limit containing <Tex>{"x"}</Tex>, which is meaningless; D has the inner limits
+              reversed, which flips the sign.
             </>
           ),
-          theory: <>Swap = inequalities → sketch → re-slice. Outer limits must be constants.</>,
+          theory: <>Swap = inequalities → sketch → re-describe as normal the other way. Outer limits must be constants.</>,
+        },
+      },
+      {
+        kind: "checkpoint",
+        question: {
+          id: "ma2-int-cp5",
+          difficulty: "easy",
+          source: "Slides 4_MultipleIntegrals — normal domains",
+          prompt: <>Which of these domains is NOT x-normal?</>,
+          options: [
+            { id: "A", content: <>The disk <Tex>{"x^2+y^2\\le 1"}</Tex></> },
+            { id: "B", content: <>The annulus <Tex>{"1\\le x^2+y^2\\le 4"}</Tex></> },
+            { id: "C", content: <>The rectangle <Tex>{"[0,1]\\times[2,3]"}</Tex></> },
+            { id: "D", content: <>The region between <Tex>{"y=x^2"}</Tex> and <Tex>{"y=2x"}</Tex></> },
+          ],
+          correct: "B",
+          explanation: (
+            <>
+              The vertical line <Tex>{"x=0"}</Tex> cuts the annulus in <em>two</em> segments (
+              <Tex>{"1\\le y\\le 2"}</Tex> and <Tex>{"-2\\le y\\le -1"}</Tex>), violating the
+              single-segment criterion — the deck's standard non-example, answer B. The disk (A) gives one
+              segment <Tex>{"-\\sqrt{1-x^2}\\le y\\le\\sqrt{1-x^2}"}</Tex>; the rectangle (C) has{" "}
+              <Tex>{"\\alpha=2,\\ \\beta=3"}</Tex>; the parabola–line region (D) is{" "}
+              <Tex>{"x^2\\le y\\le 2x"}</Tex> — all single segments, all x-normal.
+            </>
+          ),
+          theory: (
+            <>
+              x-normal ⟺ every vertical line meets D in a single segment (possibly empty). Non-normal
+              regions are handled by additivity — or by a change of variables.
+            </>
+          ),
         },
       },
       {
@@ -484,8 +668,8 @@ export const lessons: Lesson[] = [
         content: (
           <p>
             You can now integrate over any region you can sketch — as long as its boundaries are graphs of
-            functions. Next: regions made of circles and angles, where Cartesian strips become ugly and{" "}
-            <strong>polar coordinates</strong> take over.
+            functions. Annuli and disks resist: for them the fix is not additivity but a{" "}
+            <strong>change of variables</strong>, the deck's next chapter and our next lesson.
           </p>
         ),
       },
@@ -493,79 +677,102 @@ export const lessons: Lesson[] = [
   },
 
   /* ============================================================== *
-   * LESSON 2 — Polar coordinates
+   * LESSON 2 — Change of variables: polar, translated, elliptic
+   *  (deck: 4_MultipleIntegrals pp. 18–25)
    * ============================================================== */
   {
     id: "double-integrals-polar",
-    title: "Double integrals in polar coordinates",
+    title: "Change of variables: polar, translated & elliptic coordinates",
     lecture: MODULE,
     summary:
-      "Disks, annuli and anything with x²+y² in it beg for polar coordinates — just never forget the Jacobian r.",
-    minutes: 20,
+      "One theorem — ∬f dxdy = ∬ f(Φ)·|det DΦ| dudv — and three workhorse maps: polar (Jacobian r), translated polar (r), elliptic (abr). Plus the Gaussian integral.",
+    minutes: 26,
     objectives: [
-      "Decide from the region and the integrand when polar coordinates pay off",
-      "Explain geometrically where the Jacobian factor r comes from",
-      "Convert and evaluate double integrals over disks, annuli and sectors",
-      "Reproduce the Gaussian trick: ∫∫ e^(−x²−y²) dA = π",
+      "State the change-of-variables theorem and what makes Φ an admissible change of variables",
+      "Compute Jacobians: polar r, translated polar r, elliptic abr",
+      "Convert and evaluate integrals over disks, annuli, off-center disks and ellipses",
+      "Reproduce the deck's proof that ∫ℝ e^(−t²) dt = √π",
     ],
     blocks: [
       {
         kind: "prose",
         content: (
           <p>
-            Integrate over the quarter disk <Tex>{"x^2+y^2\\le 4"}</Tex>, <Tex>{"x,y\\ge0"}</Tex> with
-            Cartesian strips and you get limits like <Tex>{"0\\le y\\le\\sqrt{4-x^2}"}</Tex> — square
-            roots that poison every later step. The same region in polar coordinates is a plain
-            rectangle: <Tex>{"0\\le r\\le 2"}</Tex>, <Tex>{"0\\le\\theta\\le\\tfrac{\\pi}{2}"}</Tex>.
-            Whenever the <em>region</em> is built from circles and rays, or the <em>integrand</em>{" "}
-            contains <Tex>{"x^2+y^2"}</Tex>, switch coordinates.
+            Integrate over the quarter disk <Tex>{"x^2+y^2\\le 1"}</Tex>, <Tex>{"x,y>0"}</Tex> with
+            Cartesian segments and you get limits like <Tex>{"0\\le y\\le\\sqrt{1-x^2}"}</Tex> — square
+            roots that poison every later step. Recall the 1D substitution rule:{" "}
+            <Tex>{"\\int_a^b f(x)\\,dx = \\int_{a'}^{b'} f(\\varphi(t))\\,\\varphi'(t)\\,dt"}</Tex> with{" "}
+            <Tex>{"x=\\varphi(t)"}</Tex> bijective and <Tex>{"C^1"}</Tex>. The deck's question: how do we
+            change variables in <em>double</em> integrals? Answer: with a map{" "}
+            <Tex>{"\\Phi: D'\\to D"}</Tex>, <Tex>{"(u,v)\\mapsto(x,y)"}</Tex>, whose local area
+            stretch replaces <Tex>{"\\varphi'"}</Tex>.
           </p>
         ),
       },
       {
         kind: "definition",
-        term: "Polar coordinates",
+        term: "Admissible change of variables",
         content: (
           <>
-            <Tex>{"x=r\\cos\\theta,\\quad y=r\\sin\\theta"}</Tex> with <Tex>{"r\\ge 0"}</Tex> the distance
-            from the origin and <Tex>{"\\theta"}</Tex> the angle from the positive x-axis. Key identity:{" "}
-            <Tex>{"x^2+y^2=r^2"}</Tex> (note: <Tex>{"r^2"}</Tex>, not <Tex>{"r"}</Tex>).
+            <Tex>{"\\Phi: D'\\to D"}</Tex> is an <strong>admissible change of variables</strong> if: (1){" "}
+            <Tex>{"\\Phi"}</Tex> is a bijection; (2) <Tex>{"\\Phi"}</Tex> is <Tex>{"C^1"}</Tex>; (3){" "}
+            <Tex>{"\\det D\\Phi\\ne 0"}</Tex> in <Tex>{"D'"}</Tex>. Here <Tex>{"D\\Phi"}</Tex> is the{" "}
+            <strong>Jacobian matrix</strong> of <Tex>{"\\Phi"}</Tex>, and <Tex>{"\\det D\\Phi"}</Tex> is
+            called the <strong>Jacobian</strong> of <Tex>{"\\Phi"}</Tex>.
           </>
         ),
       },
-      { kind: "heading", text: "Where the extra r comes from" },
+      {
+        kind: "formula",
+        tex: "\\iint_D f(x,y)\\,dx\\,dy \\;=\\; \\iint_{D'} f\\big(\\Phi(u,v)\\big)\\,\\big|\\det D\\Phi(u,v)\\big|\\,du\\,dv",
+        tag: "5.1",
+        caption: (
+          <>
+            Change of variables in double integrals (<Tex>{"f\\in C(\\bar D)"}</Tex>,{" "}
+            <Tex>{"\\Phi"}</Tex> admissible). <Tex>{"|\\det D\\Phi|"}</Tex> is the local area
+            magnification — the 2D analogue of <Tex>{"\\varphi'(t)"}</Tex>, with an absolute value
+            because areas are positive.
+          </>
+        ),
+      },
+      { kind: "heading", text: "Polar coordinates" },
+      {
+        kind: "definition",
+        term: "Polar coordinates",
+        content: (
+          <>
+            <Tex>{"\\Phi(r,\\theta):\\ x=r\\cos\\theta,\\quad y=r\\sin\\theta"}</Tex>, where{" "}
+            <Tex>{"r"}</Tex> is the distance from the origin and <Tex>{"\\theta"}</Tex> the angle between{" "}
+            <Tex>{"\\vec{OP}"}</Tex> and the positive x-axis. Key identity:{" "}
+            <Tex>{"x^2+y^2=r^2"}</Tex> (note: <Tex>{"r^2"}</Tex>, not <Tex>{"r"}</Tex>). The deck's
+            showcase: the quarter disk <Tex>{"\\{x,y>0,\\ x^2+y^2<1\\}"}</Tex> is the image of the{" "}
+            <strong>rectangle</strong> <Tex>{"D'=\\{0<r<1,\\ 0<\\theta<\\tfrac{\\pi}{2}\\}"}</Tex> —
+            curved regions become normal ones.
+          </>
+        ),
+      },
+      {
+        kind: "formula",
+        tex: "D\\Phi = \\begin{pmatrix}\\cos\\theta & -r\\sin\\theta\\\\[2pt] \\sin\\theta & r\\cos\\theta\\end{pmatrix},\\qquad \\det D\\Phi = r\\cos^2\\theta + r\\sin^2\\theta = r",
+        tag: "5.2",
+        caption: (
+          <>
+            The Jacobian of polar coordinates is <Tex>{"r"}</Tex>, so{" "}
+            <Tex>{"\\iint_D f\\,dx\\,dy = \\iint_{D'} f(r\\cos\\theta,\\,r\\sin\\theta)\\;r\\,dr\\,d\\theta"}</Tex>.
+          </>
+        ),
+      },
       {
         kind: "figure",
         render: () => <PolarCellFigure />,
         caption: (
           <>
-            A “polar rectangle” with sides <Tex>{"\\Delta r"}</Tex> (radial) and{" "}
-            <Tex>{"r\\,\\Delta\\theta"}</Tex> (an arc). Its area is{" "}
+            Geometric meaning: a “polar rectangle” with sides <Tex>{"\\Delta r"}</Tex> (radial) and{" "}
+            <Tex>{"r\\,\\Delta\\theta"}</Tex> (an arc) has area{" "}
             <Tex>{"\\Delta A \\approx r\\,\\Delta r\\,\\Delta\\theta"}</Tex> — cells far from the origin
-            are genuinely bigger.
+            are genuinely bigger, and <Tex>{"\\det D\\Phi=r"}</Tex> records exactly that.
           </>
         ),
-      },
-      {
-        kind: "prose",
-        content: (
-          <p>
-            Cut the plane along circles and rays. A cell between radii <Tex>{"r"}</Tex> and{" "}
-            <Tex>{"r+\\Delta r"}</Tex>, angles <Tex>{"\\theta"}</Tex> and{" "}
-            <Tex>{"\\theta+\\Delta\\theta"}</Tex>, is nearly a rectangle with sides{" "}
-            <Tex>{"\\Delta r"}</Tex> and <Tex>{"r\\Delta\\theta"}</Tex> (arc length = radius × angle). So{" "}
-            <Tex>{"\\Delta A\\approx r\\,\\Delta r\\,\\Delta\\theta"}</Tex>: the same{" "}
-            <Tex>{"\\Delta\\theta"}</Tex> sweeps a bigger patch at larger radius. The factor{" "}
-            <Tex>{"r"}</Tex> is the <strong>Jacobian</strong> of the change of variables — the local area
-            magnification.
-          </p>
-        ),
-      },
-      {
-        kind: "formula",
-        tex: "\\iint_D f(x,y)\\,dA \\;=\\; \\int_{\\alpha}^{\\beta}\\!\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f(r\\cos\\theta,\\ r\\sin\\theta)\\;r\\,dr\\,d\\theta",
-        tag: "5.1",
-        caption: <>Substitute, then multiply by the Jacobian: <Tex>{"dA = r\\,dr\\,d\\theta"}</Tex>.</>,
       },
       {
         kind: "callout",
@@ -573,9 +780,9 @@ export const lessons: Lesson[] = [
         title: "The forgotten r — the single most common lost mark",
         content: (
           <>
-            Writing <Tex>{"dA = dr\\,d\\theta"}</Tex> silently replaces every cell by a unit-magnification
-            one and ruins the value (the disk of radius <Tex>{"R"}</Tex> would get “area”{" "}
-            <Tex>{"2\\pi R"}</Tex> instead of <Tex>{"\\pi R^2"}</Tex>). Second favorite:{" "}
+            Writing <Tex>{"dx\\,dy = dr\\,d\\theta"}</Tex> silently replaces every cell by a
+            unit-magnification one and ruins the value (the disk of radius <Tex>{"R"}</Tex> would get
+            “area” <Tex>{"2\\pi R"}</Tex> instead of <Tex>{"\\pi R^2"}</Tex>). Second favorite:{" "}
             <Tex>{"\\sqrt{x^2+y^2} = r"}</Tex> but <Tex>{"x^2+y^2=r^2"}</Tex> — don't mix them up.
           </>
         ),
@@ -586,8 +793,9 @@ export const lessons: Lesson[] = [
         content: (
           <>
             <p>
-              Area of <Tex>{"D=\\{1\\le x^2+y^2\\le 4\\}"}</Tex>: in polar it is the rectangle{" "}
-              <Tex>{"1\\le r\\le 2"}</Tex>, <Tex>{"0\\le\\theta\\le 2\\pi"}</Tex>.
+              Area of <Tex>{"D=\\{1\\le x^2+y^2\\le 4\\}"}</Tex> — the region that defeated normal
+              domains in Lesson 1. In polar it is the rectangle <Tex>{"1\\le r\\le 2"}</Tex>,{" "}
+              <Tex>{"0\\le\\theta\\le 2\\pi"}</Tex>:
             </p>
             <p>
               <Tex>{"\\text{Area}=\\int_0^{2\\pi}\\!\\!\\int_1^2 r\\,dr\\,d\\theta = 2\\pi\\Big[\\tfrac{r^2}{2}\\Big]_1^2 = 2\\pi\\cdot\\tfrac32 = 3\\pi"}</Tex>,
@@ -599,26 +807,50 @@ export const lessons: Lesson[] = [
           </>
         ),
       },
-      { kind: "heading", text: "The Gaussian integral — polar's party trick" },
+      {
+        kind: "example",
+        title: "Deck examples — quarter disk and half disk",
+        content: (
+          <>
+            <p>
+              (Slides) <Tex>{"\\iint_D x\\,dx\\,dy"}</Tex> on the quarter disk{" "}
+              <Tex>{"\\{x,y\\ge0,\\ x^2+y^2\\le1\\}"}</Tex>: with <Tex>{"x=r\\cos\\theta"}</Tex> and
+              constant limits everything separates —{" "}
+              <Tex>{"\\Big(\\int_0^{\\pi/2}\\cos\\theta\\,d\\theta\\Big)\\Big(\\int_0^1 r\\cdot r\\,dr\\Big) = 1\\cdot\\tfrac13 = \\tfrac13"}</Tex>.
+            </p>
+            <p>
+              (Slides) <Tex>{"\\iint_D e^{-(x^2+y^2)}\\,dx\\,dy"}</Tex> on the half disk{" "}
+              <Tex>{"\\{x\\ge0,\\ x^2+y^2\\le4\\}"}</Tex>: here{" "}
+              <Tex>{"\\theta\\in[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}]"}</Tex> (width <Tex>{"\\pi"}</Tex>)
+              and{" "}
+              <Tex>{"\\int_0^2 e^{-r^2} r\\,dr = \\big[-\\tfrac12 e^{-r^2}\\big]_0^2 = \\tfrac{1-e^{-4}}{2}"}</Tex>,
+              so the integral is <Tex>{"\\tfrac{1-e^{-4}}{2}\\,\\pi"}</Tex> — the slide's answer. The
+              Jacobian <Tex>{"r"}</Tex> is exactly what the substitution <Tex>{"u=r^2"}</Tex> needs.
+            </p>
+          </>
+        ),
+      },
+      { kind: "heading", text: "The Gaussian integral — the deck's showcase" },
       {
         kind: "prose",
         content: (
           <p>
-            The function <Tex>{"e^{-x^2}"}</Tex> has no elementary antiderivative, so{" "}
-            <Tex>{"\\int_{-\\infty}^{\\infty}e^{-x^2}dx"}</Tex> looks hopeless in 1D. The famous trick:
-            square it, turn the product into a double integral over the whole plane, and go polar — the
-            Jacobian <Tex>{"r"}</Tex> is precisely the factor that makes the substitution{" "}
-            <Tex>{"u=r^2"}</Tex> work.
+            The deck poses it as an exercise: show that{" "}
+            <Tex>{"\\int_{\\mathbb{R}} e^{-t^2}\\,dt = \\sqrt{\\pi}"}</Tex>, with the hint: compute{" "}
+            <Tex>{"\\iint_{\\mathbb{R}^2} e^{-(x^2+y^2)}\\,dx\\,dy"}</Tex> and use polar coordinates.{" "}
+            <Tex>{"e^{-t^2}"}</Tex> has no elementary antiderivative, so 1D methods are hopeless — but
+            squaring the integral turns it into a double integral over the plane, where the Jacobian{" "}
+            <Tex>{"r"}</Tex> makes <Tex>{"u=r^2"}</Tex> work.
           </p>
         ),
       },
       {
         kind: "example",
-        title: "Worked example — ∫∫ e^(−x²−y²) dA over the plane",
+        title: "Worked example — ∬ e^(−x²−y²) dxdy over the plane",
         content: (
           <>
             <p>
-              <Tex>{"\\iint_{\\mathbb{R}^2} e^{-x^2-y^2}\\,dA = \\int_0^{2\\pi}\\!\\!\\int_0^{\\infty} e^{-r^2}\\,r\\,dr\\,d\\theta"}</Tex>.
+              <Tex>{"\\iint_{\\mathbb{R}^2} e^{-x^2-y^2}\\,dx\\,dy = \\int_0^{2\\pi}\\!\\!\\int_0^{\\infty} e^{-r^2}\\,r\\,dr\\,d\\theta"}</Tex>.
             </p>
             <p>
               Inner integral with <Tex>{"u=r^2,\\ du=2r\\,dr"}</Tex>:{" "}
@@ -635,8 +867,8 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "formula",
-        tex: "\\iint_{\\mathbb{R}^2} e^{-x^2-y^2}\\,dA = \\pi \\qquad\\Longrightarrow\\qquad \\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx = \\sqrt{\\pi}",
-        tag: "5.2",
+        tex: "\\iint_{\\mathbb{R}^2} e^{-x^2-y^2}\\,dx\\,dy = \\pi \\qquad\\Longrightarrow\\qquad \\int_{\\mathbb{R}} e^{-t^2}\\,dt = \\sqrt{\\pi}",
+        tag: "5.3",
         caption: (
           <>
             Impossible in 1D, two lines in polar. Know this derivation cold — it is a favorite oral-exam
@@ -644,31 +876,60 @@ export const lessons: Lesson[] = [
           </>
         ),
       },
-      { kind: "heading", text: "When r depends on θ" },
+      { kind: "heading", text: "Translated polar coordinates" },
       {
-        kind: "prose",
+        kind: "definition",
+        term: "Translated polar coordinates",
         content: (
-          <p>
-            Not every circle is centered at the origin. Take <Tex>{"x^2+y^2=2x"}</Tex>: substitute{" "}
-            <Tex>{"x^2+y^2=r^2"}</Tex> and <Tex>{"x=r\\cos\\theta"}</Tex> to get{" "}
-            <Tex>{"r^2=2r\\cos\\theta"}</Tex>, i.e. <Tex>{"r=2\\cos\\theta"}</Tex> for{" "}
-            <Tex>{"\\theta\\in[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}]"}</Tex> (this is the circle of radius 1
-            centered at <Tex>{"(1,0)"}</Tex>). A ray from the origin now exits the region at a{" "}
-            <Tex>{"\\theta"}</Tex>-dependent radius: the inner <Tex>{"r"}</Tex>-limits become functions of{" "}
-            <Tex>{"\\theta"}</Tex>, exactly like the curved inner limits of Lesson 1.
-          </p>
+          <>
+            Polar coordinates <strong>centered at</strong> <Tex>{"(x_0,y_0)"}</Tex>:{" "}
+            <Tex>{"x = x_0 + r\\cos\\theta,\\quad y = y_0 + r\\sin\\theta"}</Tex>. The translation adds
+            constants, which differentiate to nothing: <Tex>{"\\det D\\Phi(r,\\theta) = r"}</Tex>, exactly
+            as before, and{" "}
+            <Tex>{"\\iint_D f\\,dx\\,dy = \\iint_{D'} f(x_0+r\\cos\\theta,\\ y_0+r\\sin\\theta)\\;r\\,dr\\,d\\theta"}</Tex>.
+            Reach for them when the disk is <em>not</em> centered at the origin.
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — off-center half disk (Sol: 18)",
+        content: (
+          <>
+            <p>
+              (Slides) Compute <Tex>{"\\iint_D y\\,dx\\,dy"}</Tex> where{" "}
+              <Tex>{"D=\\{y\\ge0,\\ (x-3)^2+y^2\\le 9\\}"}</Tex> — the upper half of the disk of radius 3
+              centered at <Tex>{"(3,0)"}</Tex>.
+            </p>
+            <p>
+              Translated polar at <Tex>{"(3,0)"}</Tex>: <Tex>{"x=3+r\\cos\\theta"}</Tex>,{" "}
+              <Tex>{"y=r\\sin\\theta"}</Tex>, with <Tex>{"0\\le r\\le 3"}</Tex>,{" "}
+              <Tex>{"0\\le\\theta\\le\\pi"}</Tex> (upper half). The integrand <Tex>{"y"}</Tex> becomes{" "}
+              <Tex>{"r\\sin\\theta"}</Tex>, and with the Jacobian:
+            </p>
+            <p>
+              <Tex>{"\\iint_D y\\,dx\\,dy = \\Big(\\int_0^3 r^2\\,dr\\Big)\\Big(\\int_0^{\\pi}\\sin\\theta\\,d\\theta\\Big) = 9\\cdot 2 = 18"}</Tex>.
+            </p>
+            <p>
+              Same-region alternative: from the origin, the boundary circle is{" "}
+              <Tex>{"r=6\\cos\\theta"}</Tex> (substitute <Tex>{"x^2+y^2=r^2"}</Tex> into{" "}
+              <Tex>{"x^2+y^2=6x"}</Tex>) — doable, but the limits turn θ-dependent. Translating the center
+              first keeps them constant. Choose the map that makes <Tex>{"D'"}</Tex> a rectangle.
+            </p>
+          </>
         ),
       },
       {
         kind: "steps",
-        title: "Polar setup method",
+        title: "Change-of-variables setup method",
         steps: [
           {
-            label: "Spot the polar signal",
+            label: "Spot the signal",
             content: (
               <>
-                Circles, annuli, sectors in the region — or <Tex>{"x^2+y^2"}</Tex> in the integrand.
-                Either one is enough.
+                Circles/annuli/sectors or <Tex>{"x^2+y^2"}</Tex> ⇒ polar. Circle centered at{" "}
+                <Tex>{"(x_0,y_0)"}</Tex> ⇒ translated polar. Ellipse ⇒ elliptic. The goal is always:
+                make <Tex>{"D'"}</Tex> a rectangle in the new variables.
               </>
             ),
           },
@@ -676,32 +937,103 @@ export const lessons: Lesson[] = [
             label: "Find the θ-window",
             content: (
               <>
-                Which angles does the region span? Full disk: <Tex>{"[0,2\\pi]"}</Tex>; first quadrant:{" "}
-                <Tex>{"[0,\\tfrac{\\pi}{2}]"}</Tex>; circle <Tex>{"r=2\\cos\\theta"}</Tex>:{" "}
-                <Tex>{"[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}]"}</Tex>.
+                Which angles does the region span? Full disk: <Tex>{"[0,2\\pi]"}</Tex>; upper half:{" "}
+                <Tex>{"[0,\\pi]"}</Tex>; right half: <Tex>{"[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}]"}</Tex>;
+                first quadrant: <Tex>{"[0,\\tfrac{\\pi}{2}]"}</Tex>.
               </>
             ),
           },
           {
-            label: "Shoot a ray for the r-limits",
+            label: "Find the r-limits",
             content: (
               <>
-                For each <Tex>{"\\theta"}</Tex>, the ray enters the region at{" "}
-                <Tex>{"r_1(\\theta)"}</Tex> and exits at <Tex>{"r_2(\\theta)"}</Tex> — the polar analogue
-                of the sliding strip.
+                For each <Tex>{"\\theta"}</Tex>, the ray from the (possibly translated) center enters at{" "}
+                <Tex>{"r_1(\\theta)"}</Tex> and exits at <Tex>{"r_2(\\theta)"}</Tex> — constants if the
+                center is chosen well.
               </>
             ),
           },
           {
-            label: "Substitute and add the Jacobian",
+            label: "Substitute and pay the Jacobian",
             content: (
               <>
-                Replace <Tex>{"x,y"}</Tex> by <Tex>{"r\\cos\\theta,\\ r\\sin\\theta"}</Tex> and write{" "}
-                <Tex>{"dA=r\\,dr\\,d\\theta"}</Tex>. Then integrate inside-out.
+                Replace <Tex>{"x,y"}</Tex> by the map, multiply by{" "}
+                <Tex>{"|\\det D\\Phi|"}</Tex> (<Tex>{"r"}</Tex> for polar/translated,{" "}
+                <Tex>{"abr"}</Tex> for elliptic), then integrate inside-out.
               </>
             ),
           },
         ],
+      },
+      { kind: "heading", text: "Elliptic coordinates" },
+      {
+        kind: "definition",
+        term: "Translated elliptic coordinates",
+        content: (
+          <>
+            For <Tex>{"a,b>0"}</Tex>:{" "}
+            <Tex>{"x = x_0 + a\\,r\\cos\\theta,\\quad y = y_0 + b\\,r\\sin\\theta"}</Tex>. Check:{" "}
+            <Tex>{"\\tfrac{(x-x_0)^2}{a^2}+\\tfrac{(y-y_0)^2}{b^2} = r^2"}</Tex>, so{" "}
+            <Tex>{"r=1"}</Tex> traces the ellipse with semi-axes <Tex>{"a,b"}</Tex> centered at{" "}
+            <Tex>{"(x_0,y_0)"}</Tex>, and the full ellipse interior is the rectangle{" "}
+            <Tex>{"0\\le r\\le 1,\\ 0\\le\\theta\\le 2\\pi"}</Tex>. The Jacobian picks up both axis
+            scalings: <Tex>{"\\det D\\Phi = ab\\,r"}</Tex>.
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — half of the ellipsoid's volume (Sol: 2πab/3)",
+        content: (
+          <>
+            <p>
+              (Slides) Compute{" "}
+              <Tex>{"\\iint_D \\sqrt{1-\\tfrac{x^2}{a^2}-\\tfrac{y^2}{b^2}}\\;dx\\,dy"}</Tex> where{" "}
+              <Tex>{"D=\\{\\tfrac{x^2}{a^2}+\\tfrac{y^2}{b^2}\\le 1\\}"}</Tex>. Elliptic coordinates turn
+              the integrand into <Tex>{"\\sqrt{1-r^2}"}</Tex> over the rectangle{" "}
+              <Tex>{"[0,1]\\times[0,2\\pi]"}</Tex>:
+            </p>
+            <p>
+              <Tex>{"\\int_0^{2\\pi}\\!\\!\\int_0^1 \\sqrt{1-r^2}\\;ab\\,r\\,dr\\,d\\theta = 2\\pi ab\\Big[-\\tfrac13(1-r^2)^{3/2}\\Big]_0^1 = \\tfrac{2\\pi}{3}ab"}</Tex>.
+            </p>
+            <p>
+              Sanity check: this is the volume of the upper half of the ellipsoid with semi-axes{" "}
+              <Tex>{"a,b,1"}</Tex>, and indeed{" "}
+              <Tex>{"\\tfrac12\\cdot\\tfrac43\\pi ab\\cdot 1 = \\tfrac{2\\pi}{3}ab"}</Tex>.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — translated elliptic (Sol: 32 + 15π)",
+        content: (
+          <>
+            <p>
+              (Slides) Compute <Tex>{"\\iint_D y^2\\,dx\\,dy"}</Tex> where{" "}
+              <Tex>{"D=\\{4(x-3)^2+9(y-2)^2\\le 36,\\ y\\ge 2\\}"}</Tex>. Divide by 36:{" "}
+              <Tex>{"\\tfrac{(x-3)^2}{9}+\\tfrac{(y-2)^2}{4}\\le 1"}</Tex> — ellipse centered at{" "}
+              <Tex>{"(3,2)"}</Tex> with <Tex>{"a=3,\\ b=2"}</Tex>; keep the upper half.
+            </p>
+            <p>
+              Map: <Tex>{"x=3+3r\\cos\\theta,\\ y=2+2r\\sin\\theta"}</Tex>, Jacobian{" "}
+              <Tex>{"abr=6r"}</Tex>, window <Tex>{"0\\le r\\le1,\\ 0\\le\\theta\\le\\pi"}</Tex> (
+              <Tex>{"y\\ge2\\iff\\sin\\theta\\ge0"}</Tex>). Expand{" "}
+              <Tex>{"y^2=(2+2r\\sin\\theta)^2 = 4+8r\\sin\\theta+4r^2\\sin^2\\theta"}</Tex>:
+            </p>
+            <p>
+              <Tex>{"6\\Big[4\\cdot\\pi\\cdot\\tfrac12 \\;+\\; 8\\cdot 2\\cdot\\tfrac13 \\;+\\; 4\\cdot\\tfrac{\\pi}{2}\\cdot\\tfrac14\\Big] = 12\\pi + 32 + 3\\pi = 32+15\\pi"}</Tex>,
+            </p>
+            <p>
+              using <Tex>{"\\int_0^1 r\\,dr=\\tfrac12"}</Tex>, <Tex>{"\\int_0^1 r^2 dr=\\tfrac13"}</Tex>,{" "}
+              <Tex>{"\\int_0^1 r^3 dr=\\tfrac14"}</Tex>,{" "}
+              <Tex>{"\\int_0^{\\pi}\\sin\\theta\\,d\\theta=2"}</Tex>,{" "}
+              <Tex>{"\\int_0^{\\pi}\\sin^2\\theta\\,d\\theta=\\tfrac{\\pi}{2}"}</Tex>. Slide answer{" "}
+              <Tex>{"32+15\\pi"}</Tex> confirmed. Don't forget: the <em>constant</em> term of the expanded
+              integrand also gets multiplied by the Jacobian.
+            </p>
+          </>
+        ),
       },
       {
         kind: "callout",
@@ -709,10 +1041,11 @@ export const lessons: Lesson[] = [
         title: "Separate whenever the limits are constants",
         content: (
           <>
-            Over a disk, annulus or sector the limits are constants, so{" "}
+            Over a disk, annulus, sector or ellipse the new limits are constants, so{" "}
             <Tex>{"\\iint g(r)\\,h(\\theta)\\,r\\,dr\\,d\\theta"}</Tex> splits into{" "}
             <Tex>{"\\big(\\int g(r)\\,r\\,dr\\big)\\big(\\int h(\\theta)\\,d\\theta\\big)"}</Tex> — two
-            independent 1-D integrals. Massive time-saver on the exam.
+            independent 1D integrals. Every deck example above was computed this way. Massive time-saver
+            on the exam.
           </>
         ),
       },
@@ -723,7 +1056,7 @@ export const lessons: Lesson[] = [
           difficulty: "medium",
           prompt: (
             <>
-              Evaluate <Tex>{"\\iint_D \\sqrt{x^2+y^2}\\,dA"}</Tex> where{" "}
+              Evaluate <Tex>{"\\iint_D \\sqrt{x^2+y^2}\\,dx\\,dy"}</Tex> where{" "}
               <Tex>{"D=\\{x^2+y^2\\le 9\\}"}</Tex>.
             </>
           ),
@@ -745,16 +1078,50 @@ export const lessons: Lesson[] = [
               <Tex>{"x^2+y^2"}</Tex>.
             </>
           ),
-          theory: <>Convert the integrand AND add the Jacobian: integrand × r, then integrate inside-out.</>,
+          theory: <>Convert the integrand AND multiply by |det DΦ| = r, then integrate inside-out.</>,
+        },
+      },
+      {
+        kind: "checkpoint",
+        question: {
+          id: "ma2-int-cp6",
+          difficulty: "medium",
+          source: "Slides 4_MultipleIntegrals — elliptic coordinates",
+          prompt: (
+            <>
+              With the elliptic change of variables <Tex>{"x=2r\\cos\\theta,\\ y=3r\\sin\\theta"}</Tex>,
+              the integral <Tex>{"\\iint_D f(x,y)\\,dx\\,dy"}</Tex> becomes{" "}
+              <Tex>{"\\iint_{D'} f(2r\\cos\\theta,\\,3r\\sin\\theta)\\cdot J\\;dr\\,d\\theta"}</Tex> with{" "}
+              <Tex>{"J="}</Tex>
+            </>
+          ),
+          options: [
+            { id: "A", content: <Tex>{"r"}</Tex> },
+            { id: "B", content: <Tex>{"6r^2"}</Tex> },
+            { id: "C", content: <Tex>{"5r"}</Tex> },
+            { id: "D", content: <Tex>{"6r"}</Tex> },
+          ],
+          correct: "D",
+          explanation: (
+            <>
+              <Tex>{"D\\Phi=\\begin{pmatrix}2\\cos\\theta & -2r\\sin\\theta\\\\ 3\\sin\\theta & 3r\\cos\\theta\\end{pmatrix}"}</Tex>,
+              so{" "}
+              <Tex>{"\\det D\\Phi = 6r\\cos^2\\theta+6r\\sin^2\\theta = 6r"}</Tex> — answer D, the general
+              pattern <Tex>{"abr"}</Tex> with <Tex>{"a=2,\\ b=3"}</Tex>. A forgets the axis scalings
+              entirely (plain polar); B has the wrong power of <Tex>{"r"}</Tex> (that would scale like a
+              volume); C adds <Tex>{"a+b"}</Tex> instead of multiplying <Tex>{"ab"}</Tex>.
+            </>
+          ),
+          theory: <>Elliptic coordinates x = a·r·cosθ, y = b·r·sinθ have Jacobian abr; translated versions keep it.</>,
         },
       },
       {
         kind: "prose",
         content: (
           <p>
-            Polar coordinates are the 2-D warm-up for what comes next: in three dimensions the same idea
-            splits into <strong>cylindrical</strong> coordinates (polar + z) and{" "}
-            <strong>spherical</strong> coordinates — each with its own Jacobian.
+            One theorem, three maps, one habit: convert the region, convert the integrand, pay the
+            Jacobian. In three dimensions the same theorem hands us <strong>cylindrical</strong> and{" "}
+            <strong>spherical</strong> coordinates — next lesson.
           </p>
         ),
       },
@@ -762,31 +1129,33 @@ export const lessons: Lesson[] = [
   },
 
   /* ============================================================== *
-   * LESSON 3 — Triple integrals, cylindrical & spherical
+   * LESSON 3 — Triple integrals: segments, layers, cylindrical, spherical
+   *  (deck: 4_MultipleIntegrals pp. 26–40)
    * ============================================================== */
   {
     id: "triple-integrals",
-    title: "Triple integrals: cylindrical & spherical coordinates",
+    title: "Triple integrals: segments, layers, cylindrical & spherical",
     lecture: MODULE,
     summary:
-      "Set up triple integrals by columns or slices, then let the solid's symmetry pick the coordinate system — and its Jacobian.",
-    minutes: 25,
+      "Two reduction routes — vertical segments (xy-normal domains) and layers — plus the 3D changes of variables: cylindrical (Jacobian r) and spherical (r² sin φ).",
+    minutes: 30,
     objectives: [
-      "Set up iterated triple integrals by columns (dz first) and by slices (dz last)",
-      "Choose Cartesian, cylindrical or spherical coordinates from the solid's symmetry",
-      "Use the Jacobians r (cylindrical) and ρ² sin φ (spherical) correctly",
-      "Compute volumes of cones, spheres and paraboloid caps",
+      "Define ∫_Ω f over a solid Ω ⊂ ℝ³ and use Vol(Ω) = ∫_Ω 1 dxdydz",
+      "Reduce triple integrals by vertical segments (xy-normal domains) and by layers",
+      "Apply cylindrical coordinates (Jacobian r) and spherical coordinates (Jacobian r² sin φ)",
+      "Compute the deck's volumes and integrals over balls, cones and paraboloids",
     ],
     blocks: [
       {
         kind: "prose",
         content: (
           <p>
-            A triple integral <Tex>{"\\iiint_E f\\,dV"}</Tex> adds the values of <Tex>{"f"}</Tex> over
-            tiny boxes filling a solid <Tex>{"E"}</Tex>. With <Tex>{"f=1"}</Tex> it measures{" "}
-            <strong>volume</strong>; with <Tex>{"f=\\delta"}</Tex> (a density) it measures{" "}
-            <strong>mass</strong>. Nothing conceptually new — the work is all in describing the solid, and
-            the payoff of a good description is enormous.
+            A double integral of <Tex>{"1"}</Tex> measures area. The deck's next question: given a{" "}
+            <strong>solid</strong> <Tex>{"\\Omega\\subset\\mathbb{R}^3"}</Tex>, can we compute its
+            volume? Yes: <Tex>{"\\text{Vol}(\\Omega) = \\iiint_{\\Omega} 1\\,dx\\,dy\\,dz"}</Tex> — a{" "}
+            <strong>triple integral</strong>. The construction copies the 2D one with
+            higher-dimensional parallelepipeds, and we often write <Tex>{"\\int_\\Omega f"}</Tex> for{" "}
+            <Tex>{"\\iiint_\\Omega f(x,y,z)\\,dx\\,dy\\,dz"}</Tex>.
           </p>
         ),
       },
@@ -795,72 +1164,125 @@ export const lessons: Lesson[] = [
         term: "Triple integral",
         content: (
           <>
-            Partition the solid <Tex>{"E\\subset\\mathbb{R}^3"}</Tex> into cells of volume{" "}
-            <Tex>{"\\Delta V"}</Tex>, sum <Tex>{"f(\\text{sample})\\,\\Delta V"}</Tex>, and take the
-            limit: <Tex>{"\\iiint_E f(x,y,z)\\,dV"}</Tex>. Fubini again reduces it to three nested 1-D
-            integrals, in any order that describes <Tex>{"E"}</Tex> correctly.
+            For <Tex>{"\\Omega\\subset\\mathbb{R}^3"}</Tex> open, bounded with{" "}
+            <Tex>{"\\text{Vol}(\\Omega)>0"}</Tex> and <Tex>{"f:\\Omega\\to\\mathbb{R}"}</Tex>,{" "}
+            <Tex>{"\\iiint_\\Omega f\\,dx\\,dy\\,dz"}</Tex> is defined by approximation with
+            parallelepipeds, exactly like the 2D case. All the properties carry over:{" "}
+            <strong>linearity</strong>, <strong>additivity</strong> (when{" "}
+            <Tex>{"\\text{Vol}(\\Omega_1\\cap\\Omega_2)=0"}</Tex>), <strong>monotonicity</strong>, and{" "}
+            <Tex>{"\\int_\\Omega 1 = \\text{Vol}(\\Omega)"}</Tex>.
           </>
         ),
       },
-      { kind: "heading", text: "Columns vs slices" },
+      { kind: "heading", text: "Route 1 — integration on vertical segments" },
+      {
+        kind: "definition",
+        term: "xy-normal domain",
+        content: (
+          <>
+            The deck's idea: reduce a triple integral to <strong>1 standard + 1 double</strong> integral.{" "}
+            <Tex>{"\\Omega\\subset\\mathbb{R}^3"}</Tex> is <strong>xy-normal</strong> if{" "}
+            <Tex>{"\\Omega=\\{(x,y,z):\\ (x,y)\\in D\\ \\text{and}\\ \\alpha(x,y)\\le z\\le\\beta(x,y)\\}"}</Tex>{" "}
+            for some <Tex>{"D\\subset\\mathbb{R}^2"}</Tex> and <Tex>{"\\alpha,\\beta:D\\to\\mathbb{R}"}</Tex>{" "}
+            — a bottom surface and a top surface over a plane region. Parallelepipeds{" "}
+            <Tex>{"[a_1,b_1]\\times[a_2,b_2]\\times[a_3,b_3]"}</Tex> are xy-normal; the spherical shell{" "}
+            <Tex>{"1\\le x^2+y^2+z^2\\le 4"}</Tex> (a “higher-dimensional annulus”) is <strong>not</strong>.
+            Analogous definitions: xz-normal and yz-normal domains.
+          </>
+        ),
+      },
       {
         kind: "formula",
-        tex: "\\iiint_E f\\,dV \\;=\\; \\iint_D\\!\\left(\\int_{z_1(x,y)}^{z_2(x,y)} f\\,dz\\right)dA",
+        tex: "\\iiint_\\Omega f \\;=\\; \\iint_D\\!\\left(\\int_{\\alpha(x,y)}^{\\beta(x,y)} f(x,y,z)\\,dz\\right)dx\\,dy",
         tag: "6.1",
         caption: (
           <>
-            <strong>Columns</strong> (dz first): <Tex>{"D"}</Tex> is the <em>shadow</em> of{" "}
-            <Tex>{"E"}</Tex> on the xy-plane; each column runs from the bottom surface{" "}
-            <Tex>{"z_1"}</Tex> to the top surface <Tex>{"z_2"}</Tex>.
+            Triple integrals for xy-normal domains — <strong>integration on vertical segments</strong>.{" "}
+            <Tex>{"D"}</Tex> is the <em>shadow</em> (projection) of <Tex>{"\\Omega"}</Tex> on the
+            xy-plane; each segment runs from the bottom surface <Tex>{"\\alpha"}</Tex> to the top surface{" "}
+            <Tex>{"\\beta"}</Tex>.
           </>
         ),
       },
+      { kind: "heading", text: "Route 2 — integration by layers" },
       {
         kind: "formula",
-        tex: "V \\;=\\; \\int_{z_{\\min}}^{z_{\\max}} A(z)\\,dz",
+        tex: "\\iiint_\\Omega f \\;=\\; \\int_c^d\\!\\left(\\iint_{D_z} f(x,y,z)\\,dx\\,dy\\right)dz \\qquad \\Omega=\\{c\\le z\\le d,\\ (x,y)\\in D_z\\}",
         tag: "6.2",
         caption: (
           <>
-            <strong>Slices</strong> (dz last): if every horizontal cross-section has a known area{" "}
-            <Tex>{"A(z)"}</Tex>, stack the slices. Best when cross-sections are disks or other standard
-            shapes.
+            <strong>Integration by layers</strong>: <Tex>{"D_{\\bar z}"}</Tex> is the projection of the
+            slice <Tex>{"\\Omega\\cap\\{z=\\bar z\\}"}</Tex> on the xy-plane. Step 1: fix{" "}
+            <Tex>{"z"}</Tex> and integrate in <Tex>{"(x,y)"}</Tex>. Step 2: integrate in{" "}
+            <Tex>{"z"}</Tex>. For <Tex>{"f=1"}</Tex> it becomes{" "}
+            <Tex>{"V=\\int_c^d \\text{Area}(D_z)\\,dz"}</Tex> — stack the slice areas.
           </>
         ),
       },
       {
         kind: "example",
-        title: "Worked example — the sphere, by slices",
+        title: "Deck example — ∫ z² over the unit ball, both routes (Sol: 4π/15)",
         content: (
           <>
             <p>
-              The ball <Tex>{"x^2+y^2+z^2\\le R^2"}</Tex> cut at height <Tex>{"z"}</Tex> gives the disk{" "}
-              <Tex>{"x^2+y^2\\le R^2-z^2"}</Tex>, of area <Tex>{"A(z)=\\pi(R^2-z^2)"}</Tex>. Stack:
+              (Slides) <Tex>{"\\Omega=\\{x^2+y^2+z^2\\le1\\}"}</Tex>, compute{" "}
+              <Tex>{"\\int_\\Omega z^2\\,dx\\,dy\\,dz"}</Tex> by segments and by layers.
             </p>
             <p>
-              <Tex>{"V=\\int_{-R}^{R}\\pi(R^2-z^2)\\,dz = \\pi\\Big[R^2z-\\tfrac{z^3}{3}\\Big]_{-R}^{R} = \\pi\\Big(\\tfrac{2R^3}{3}+\\tfrac{2R^3}{3}\\Big)=\\tfrac43\\pi R^3"}</Tex>.
+              <strong>By layers</strong> (the slick way): the slice at height <Tex>{"z"}</Tex> is the disk{" "}
+              <Tex>{"D_z=\\{x^2+y^2\\le 1-z^2\\}"}</Tex> of area <Tex>{"\\pi(1-z^2)"}</Tex>, and{" "}
+              <Tex>{"z^2"}</Tex> is constant on it:{" "}
+              <Tex>{"\\int_{-1}^{1} z^2\\,\\pi(1-z^2)\\,dz = \\pi\\Big[\\tfrac{z^3}{3}-\\tfrac{z^5}{5}\\Big]_{-1}^{1} = \\pi\\Big(\\tfrac23-\\tfrac25\\Big) = \\tfrac{4\\pi}{15}"}</Tex>.
             </p>
-            <p>The school formula, derived in two lines — because the cross-sections were disks.</p>
+            <p>
+              <strong>By vertical segments</strong>: shadow <Tex>{"D=\\{x^2+y^2\\le1\\}"}</Tex>, segment{" "}
+              <Tex>{"|z|\\le\\sqrt{1-x^2-y^2}"}</Tex>, inner{" "}
+              <Tex>{"\\int z^2 dz = \\tfrac23(1-x^2-y^2)^{3/2}"}</Tex>; then polar on the shadow:{" "}
+              <Tex>{"\\tfrac23\\cdot 2\\pi\\int_0^1 (1-r^2)^{3/2} r\\,dr = \\tfrac{4\\pi}{3}\\cdot\\tfrac15 = \\tfrac{4\\pi}{15}"}</Tex>.
+            </p>
+            <p>
+              Same value, very different effort. When the integrand depends only on <Tex>{"z"}</Tex> and
+              slices are disks, <strong>layers win</strong>.
+            </p>
           </>
         ),
       },
-      { kind: "heading", text: "Cylindrical coordinates" },
+      {
+        kind: "example",
+        title: "Worked example — the sphere's volume by layers",
+        content: (
+          <>
+            <p>
+              The ball <Tex>{"x^2+y^2+z^2\\le R^2"}</Tex> sliced at height <Tex>{"z"}</Tex> gives the disk{" "}
+              <Tex>{"x^2+y^2\\le R^2-z^2"}</Tex> of area <Tex>{"\\pi(R^2-z^2)"}</Tex>. Stack the layers:
+            </p>
+            <p>
+              <Tex>{"V=\\int_{-R}^{R}\\pi(R^2-z^2)\\,dz = \\pi\\Big[R^2z-\\tfrac{z^3}{3}\\Big]_{-R}^{R} = \\tfrac43\\pi R^3"}</Tex>.
+            </p>
+            <p>The school formula, derived in two lines — because the slices were disks.</p>
+          </>
+        ),
+      },
+      { kind: "heading", text: "Change of variables in 3D — cylindrical coordinates" },
       {
         kind: "prose",
         content: (
           <p>
-            <strong>Cylindrical</strong> coordinates are polar coordinates in the xy-plane with{" "}
-            <Tex>{"z"}</Tex> kept as is: <Tex>{"x=r\\cos\\theta"}</Tex>, <Tex>{"y=r\\sin\\theta"}</Tex>,{" "}
-            <Tex>{"z=z"}</Tex>. The volume cell is the polar cell times a height <Tex>{"dz"}</Tex>, so
-            the Jacobian is the same <Tex>{"r"}</Tex> as in 2D. Use them whenever the solid is symmetric
-            about the z-axis: cylinders, cones, paraboloids.
+            The change-of-variables theorem is identical in 3D: for an admissible{" "}
+            <Tex>{"\\Phi:\\Omega'\\to\\Omega"}</Tex>,{" "}
+            <Tex>{"\\int_\\Omega f\\,dx\\,dy\\,dz = \\int_{\\Omega'} f(\\Phi(u,v,w))\\,|\\det D\\Phi|\\,du\\,dv\\,dw"}</Tex>.{" "}
+            <strong>Cylindrical coordinates</strong> are polar in the xy-plane with <Tex>{"z"}</Tex> kept:{" "}
+            <Tex>{"x=r\\cos\\theta,\\ y=r\\sin\\theta,\\ z=z"}</Tex>. For each fixed{" "}
+            <Tex>{"r>0"}</Tex> the map traces a cylinder with axis the z-axis — hence the name. Use them
+            whenever the solid is symmetric about the z-axis: cylinders, cones, paraboloids.
           </p>
         ),
       },
       {
         kind: "formula",
-        tex: "dV = r\\,dz\\,dr\\,d\\theta",
+        tex: "\\det D\\Phi(r,\\theta,z) = r \\qquad\\Rightarrow\\qquad \\int_\\Omega f\\,dx\\,dy\\,dz = \\int_{\\Omega'} f(r\\cos\\theta,\\,r\\sin\\theta,\\,z)\\;r\\,dr\\,d\\theta\\,dz",
         tag: "6.3",
-        caption: <>Cylindrical volume element — polar's <Tex>{"r"}</Tex> survives unchanged.</>,
+        caption: <>Cylindrical coordinates — polar's Jacobian <Tex>{"r"}</Tex> survives unchanged.</>,
       },
       {
         kind: "example",
@@ -870,14 +1292,44 @@ export const lessons: Lesson[] = [
             <p>
               Volume of the solid under <Tex>{"z=4-x^2-y^2"}</Tex> and above <Tex>{"z=0"}</Tex>. The
               surface meets the plane where <Tex>{"x^2+y^2=4"}</Tex>, so the shadow is the disk{" "}
-              <Tex>{"r\\le 2"}</Tex> and the paraboloid reads <Tex>{"z=4-r^2"}</Tex>:
+              <Tex>{"r\\le 2"}</Tex> and the paraboloid reads <Tex>{"z=4-r^2"}</Tex>. Vertical segments +
+              cylindrical:
             </p>
             <p>
               <Tex>{"V=\\int_0^{2\\pi}\\!\\!\\int_0^2 (4-r^2)\\,r\\,dr\\,d\\theta = 2\\pi\\Big[2r^2-\\tfrac{r^4}{4}\\Big]_0^2 = 2\\pi(8-4) = 8\\pi"}</Tex>.
             </p>
             <p>
-              Column height <Tex>{"(z_{\\text{top}}-z_{\\text{bottom}})"}</Tex> over a polar shadow — the
-              standard pattern for every “under the surface” volume.
+              Segment height <Tex>{"(\\beta-\\alpha)"}</Tex> over a polar shadow — the standard pattern
+              for every “under the surface” volume.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — ∫ y²z between two cones (Sol: π/10)",
+        content: (
+          <>
+            <p>
+              (Slides) Compute <Tex>{"\\int_\\Omega y^2 z"}</Tex> where{" "}
+              <Tex>{"\\Omega=\\{\\sqrt{x^2+y^2}\\le z\\le 2-\\sqrt{x^2+y^2}\\}"}</Tex> — between an
+              upward cone and a downward cone. The surfaces meet where <Tex>{"r=2-r"}</Tex>, i.e.{" "}
+              <Tex>{"r=1"}</Tex>: the shadow is <Tex>{"r\\le1"}</Tex>.
+            </p>
+            <p>
+              Cylindrical, with <Tex>{"y^2=r^2\\sin^2\\theta"}</Tex> and the segment{" "}
+              <Tex>{"r\\le z\\le 2-r"}</Tex>:{" "}
+              <Tex>{"\\int_r^{2-r} z\\,dz = \\tfrac{(2-r)^2-r^2}{2} = 2-2r"}</Tex>, so
+            </p>
+            <p>
+              <Tex>{"\\int_\\Omega y^2z = \\Big(\\int_0^{2\\pi}\\sin^2\\theta\\,d\\theta\\Big)\\int_0^1 r^3(2-2r)\\,dr = \\pi\\Big(\\tfrac12-\\tfrac25\\Big) = \\tfrac{\\pi}{10}"}</Tex>.
+            </p>
+            <p>
+              (One <Tex>{"r"}</Tex> is the Jacobian, <Tex>{"r^2"}</Tex> comes from{" "}
+              <Tex>{"y^2"}</Tex> — track them separately.) Slide answer <Tex>{"\\pi/10"}</Tex> confirmed.
+              The deck also defines <em>translated</em> cylindrical coordinates (center{" "}
+              <Tex>{"(x_0,y_0,z_0)"}</Tex>) and cylindrical coordinates about the y-axis — same game,
+              swapped components.
             </p>
           </>
         ),
@@ -901,27 +1353,27 @@ export const lessons: Lesson[] = [
       { kind: "heading", text: "Spherical coordinates" },
       {
         kind: "definition",
-        term: "Spherical coordinates (ρ, φ, θ)",
+        term: "Spherical coordinates (r, θ, φ)",
         content: (
           <>
-            <Tex>{"\\rho\\ge 0"}</Tex> is the distance from the origin,{" "}
-            <Tex>{"\\varphi\\in[0,\\pi]"}</Tex> the angle measured <em>down from the positive z-axis</em>{" "}
-            (colatitude), and <Tex>{"\\theta"}</Tex> the same horizontal angle as always:{" "}
-            <Tex>{"x=\\rho\\sin\\varphi\\cos\\theta,\\ y=\\rho\\sin\\varphi\\sin\\theta,\\ z=\\rho\\cos\\varphi"}</Tex>.
-            A sphere is <Tex>{"\\rho=\\text{const}"}</Tex>; a cone through the origin is{" "}
+            <Tex>{"x=r\\sin\\varphi\\cos\\theta,\\quad y=r\\sin\\varphi\\sin\\theta,\\quad z=r\\cos\\varphi"}</Tex>,
+            with <Tex>{"r>0"}</Tex> the distance from the origin,{" "}
+            <Tex>{"\\theta\\in[0,2\\pi)"}</Tex> the usual horizontal angle, and{" "}
+            <Tex>{"\\varphi\\in[0,\\pi]"}</Tex> the angle measured <em>down from the positive z-axis</em>.
+            A sphere is <Tex>{"r=\\text{const}"}</Tex>; a cone through the origin is{" "}
             <Tex>{"\\varphi=\\text{const}"}</Tex>.
           </>
         ),
       },
       {
         kind: "formula",
-        tex: "dV = \\rho^2\\sin\\varphi\\;d\\rho\\,d\\varphi\\,d\\theta",
+        tex: "\\big|\\det D\\Phi(r,\\theta,\\varphi)\\big| = r^2\\sin\\varphi \\qquad\\Rightarrow\\qquad \\int_\\Omega f = \\int_{\\Omega'} f(r\\sin\\varphi\\cos\\theta,\\ r\\sin\\varphi\\sin\\theta,\\ r\\cos\\varphi)\\;r^2\\sin\\varphi\\;dr\\,d\\theta\\,d\\varphi",
         tag: "6.4",
         caption: (
           <>
-            The spherical cell is a near-box with sides <Tex>{"d\\rho"}</Tex>,{" "}
-            <Tex>{"\\rho\\,d\\varphi"}</Tex> and <Tex>{"\\rho\\sin\\varphi\\,d\\theta"}</Tex> — multiply
-            them to get the Jacobian.
+            The spherical cell is a near-box with sides <Tex>{"dr"}</Tex>,{" "}
+            <Tex>{"r\\,d\\varphi"}</Tex> and <Tex>{"r\\sin\\varphi\\,d\\theta"}</Tex> — multiply them to
+            get the Jacobian.
           </>
         ),
       },
@@ -931,10 +1383,12 @@ export const lessons: Lesson[] = [
         title: "Convention check",
         content: (
           <>
-            Some textbooks swap the letters <Tex>{"\\varphi"}</Tex> and <Tex>{"\\theta"}</Tex>. What never
-            changes: the angle from the z-axis lives in <Tex>{"[0,\\pi]"}</Tex>, the horizontal angle in{" "}
-            <Tex>{"[0,2\\pi]"}</Tex>, and the <Tex>{"\\sin"}</Tex> in the Jacobian is of the{" "}
-            <em>z-axis angle</em>. State your convention on the exam and stay consistent.
+            The professor writes the spherical radius as <Tex>{"r"}</Tex>; many textbooks use{" "}
+            <Tex>{"\\rho"}</Tex> and some swap the letters <Tex>{"\\varphi"}</Tex> and{" "}
+            <Tex>{"\\theta"}</Tex>. What never changes: the angle from the z-axis lives in{" "}
+            <Tex>{"[0,\\pi]"}</Tex>, the horizontal angle in <Tex>{"[0,2\\pi]"}</Tex>, and the{" "}
+            <Tex>{"\\sin"}</Tex> in the Jacobian is of the <em>z-axis angle</em>. State your convention on
+            the exam and stay consistent.
           </>
         ),
       },
@@ -944,15 +1398,69 @@ export const lessons: Lesson[] = [
         content: (
           <>
             <p>
-              The ball <Tex>{"\\rho\\le R"}</Tex> has constant limits in all three variables, so
+              The ball of radius <Tex>{"R"}</Tex> has constant limits in all three variables, so
               everything separates:
             </p>
             <p>
-              <Tex>{"V=\\int_0^{2\\pi}\\!\\!\\int_0^{\\pi}\\!\\!\\int_0^R \\rho^2\\sin\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta = 2\\pi\\cdot\\Big[-\\cos\\varphi\\Big]_0^{\\pi}\\cdot\\tfrac{R^3}{3} = 2\\pi\\cdot 2\\cdot\\tfrac{R^3}{3} = \\tfrac43\\pi R^3"}</Tex>.
+              <Tex>{"V=\\int_0^{2\\pi}\\!\\!\\int_0^{\\pi}\\!\\!\\int_0^R r^2\\sin\\varphi\\,dr\\,d\\varphi\\,d\\theta = 2\\pi\\cdot\\Big[-\\cos\\varphi\\Big]_0^{\\pi}\\cdot\\tfrac{R^3}{3} = 2\\pi\\cdot 2\\cdot\\tfrac{R^3}{3} = \\tfrac43\\pi R^3"}</Tex>.
             </p>
             <p>
               Note <Tex>{"\\int_0^{\\pi}\\sin\\varphi\\,d\\varphi = 2"}</Tex> — memorize this little
               value, it appears in nearly every spherical computation.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck examples — half-ball and cone (Sol: 2π/15 and π/4)",
+        content: (
+          <>
+            <p>
+              (Slides) <Tex>{"\\int_\\Omega z^2"}</Tex> on the half-ball{" "}
+              <Tex>{"\\{z\\ge0,\\ x^2+y^2+z^2\\le1\\}"}</Tex>. <strong>Spherical</strong> (
+              <Tex>{"\\varphi\\le\\tfrac{\\pi}{2}"}</Tex>):{" "}
+              <Tex>{"2\\pi\\int_0^{\\pi/2}\\cos^2\\varphi\\sin\\varphi\\,d\\varphi\\int_0^1 r^4\\,dr = 2\\pi\\cdot\\tfrac13\\cdot\\tfrac15 = \\tfrac{2\\pi}{15}"}</Tex>{" "}
+              (with <Tex>{"z^2=r^2\\cos^2\\varphi"}</Tex>). <strong>Cylindrical</strong>:{" "}
+              <Tex>{"2\\pi\\int_0^1 r\\,\\tfrac{(1-r^2)^{3/2}}{3}\\,dr = \\tfrac{2\\pi}{3}\\cdot\\tfrac15 = \\tfrac{2\\pi}{15}"}</Tex>.
+              Same answer — half of the full ball's <Tex>{"\\tfrac{4\\pi}{15}"}</Tex>, as symmetry
+              demands.
+            </p>
+            <p>
+              (Slides) <Tex>{"\\int_\\Omega z"}</Tex> on the cone{" "}
+              <Tex>{"\\{\\sqrt{x^2+y^2}\\le z\\le 1\\}"}</Tex>, three ways. <strong>Layers</strong>: the
+              slice at height <Tex>{"z"}</Tex> is the disk <Tex>{"r\\le z"}</Tex>, so{" "}
+              <Tex>{"\\int_0^1 z\\cdot\\pi z^2\\,dz = \\tfrac{\\pi}{4}"}</Tex>.{" "}
+              <strong>Vertical segments / cylindrical</strong>:{" "}
+              <Tex>{"2\\pi\\int_0^1 r\\,\\tfrac{1-r^2}{2}\\,dr = \\pi\\big(\\tfrac12-\\tfrac14\\big) = \\tfrac{\\pi}{4}"}</Tex>.
+              Layers needed one line — always ask which route fits before computing.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — a ball octant with the θ-window doing the work",
+        content: (
+          <>
+            <p>
+              (Slides) Compute <Tex>{"\\int_\\Omega (3x+4y)\\,dx\\,dy\\,dz"}</Tex> on the first-octant
+              piece of the unit ball, <Tex>{"\\{x^2+y^2+z^2\\le1,\\ x,y,z\\ge0\\}"}</Tex>. Spherical:{" "}
+              <Tex>{"r\\in[0,1],\\ \\varphi\\in[0,\\tfrac{\\pi}{2}],\\ \\theta\\in[0,\\tfrac{\\pi}{2}]"}</Tex>,
+              and <Tex>{"3x+4y = r\\sin\\varphi\\,(3\\cos\\theta+4\\sin\\theta)"}</Tex>. Everything
+              separates:
+            </p>
+            <p>
+              <Tex>{"\\int_0^1 r^3 dr\\cdot\\int_0^{\\pi/2}\\sin^2\\varphi\\,d\\varphi\\cdot\\int_0^{\\pi/2}(3\\cos\\theta+4\\sin\\theta)\\,d\\theta = \\tfrac14\\cdot\\tfrac{\\pi}{4}\\cdot\\big[3\\sin\\theta-4\\cos\\theta\\big]_0^{\\pi/2} = \\tfrac14\\cdot\\tfrac{\\pi}{4}\\cdot 7 = \\tfrac{7\\pi}{16}"}</Tex>.
+            </p>
+            <p>
+              This matches the slide's stated answer <Tex>{"\\tfrac{7\\pi}{16}"}</Tex>. <strong>Heads
+              up:</strong> the slide's region is printed with “<Tex>{"x\\le 0"}</Tex>”; with that region
+              the θ-window is <Tex>{"[\\tfrac{\\pi}{2},\\pi]"}</Tex>, the angular factor becomes{" "}
+              <Tex>{"\\big[3\\sin\\theta-4\\cos\\theta\\big]_{\\pi/2}^{\\pi} = 4-3 = 1"}</Tex>, and the
+              value is <Tex>{"\\tfrac{\\pi}{16}"}</Tex> — so the printed answer belongs to{" "}
+              <Tex>{"x\\ge0"}</Tex>. Whole exercise, either way, lives in the θ-window: get it from the
+              sign constraints on <Tex>{"x"}</Tex> and <Tex>{"y"}</Tex>, never by default.
             </p>
           </>
         ),
@@ -971,9 +1479,9 @@ export const lessons: Lesson[] = [
             label: "Look at the boundary surfaces",
             content: (
               <>
-                Planes and boxes ⇒ Cartesian. Cylinders <Tex>{"x^2+y^2=a^2"}</Tex>, cones{" "}
-                <Tex>{"z=k\\sqrt{x^2+y^2}"}</Tex>, paraboloids ⇒ cylindrical. Spheres centered at the
-                origin ⇒ spherical.
+                Planes and boxes ⇒ Cartesian (vertical segments or layers directly). Cylinders{" "}
+                <Tex>{"x^2+y^2=a^2"}</Tex>, cones <Tex>{"z=k\\sqrt{x^2+y^2}"}</Tex>, paraboloids ⇒
+                cylindrical. Spheres centered at the origin ⇒ spherical.
               </>
             ),
           },
@@ -982,7 +1490,7 @@ export const lessons: Lesson[] = [
             content: (
               <>
                 Cylindrical: sphere <Tex>{"z^2=R^2-r^2"}</Tex>, cone <Tex>{"z=kr"}</Tex>, paraboloid{" "}
-                <Tex>{"z=a-r^2"}</Tex>. Spherical: sphere <Tex>{"\\rho=R"}</Tex>, cone{" "}
+                <Tex>{"z=a-r^2"}</Tex>. Spherical: sphere <Tex>{"r=R"}</Tex>, cone{" "}
                 <Tex>{"\\varphi=\\text{const}"}</Tex>.
               </>
             ),
@@ -997,11 +1505,11 @@ export const lessons: Lesson[] = [
             ),
           },
           {
-            label: "Add the Jacobian and integrate inside-out",
+            label: "Pay the Jacobian and integrate inside-out",
             content: (
               <>
-                <Tex>{"r"}</Tex> for cylindrical, <Tex>{"\\rho^2\\sin\\varphi"}</Tex> for spherical. If
-                all limits are constants, separate the three integrals.
+                <Tex>{"r"}</Tex> for cylindrical, <Tex>{"r^2\\sin\\varphi"}</Tex> for spherical. If all
+                limits are constants, separate the three integrals.
               </>
             ),
           },
@@ -1028,7 +1536,7 @@ export const lessons: Lesson[] = [
           explanation: (
             <>
               In cylindrical: the cone is <Tex>{"z=r"}</Tex>, so the shadow is <Tex>{"r\\le 2"}</Tex> and
-              columns run from <Tex>{"z=r"}</Tex> to <Tex>{"z=2"}</Tex>:{" "}
+              vertical segments run from <Tex>{"z=r"}</Tex> to <Tex>{"z=2"}</Tex>:{" "}
               <Tex>{"V=\\int_0^{2\\pi}\\!\\int_0^2 (2-r)\\,r\\,dr\\,d\\theta = 2\\pi\\big(4-\\tfrac83\\big) = \\tfrac{8\\pi}{3}"}</Tex>{" "}
               — answer D (it is a cone of radius 2 and height 2, and{" "}
               <Tex>{"\\tfrac13\\pi R^2 h = \\tfrac{8\\pi}{3}"}</Tex> checks). A (<Tex>{"4\\pi"}</Tex>)
@@ -1037,7 +1545,40 @@ export const lessons: Lesson[] = [
               <Tex>{"8\\pi"}</Tex>) is the full cylinder with the cone never subtracted.
             </>
           ),
-          theory: <>Column height = top surface − bottom surface, times the Jacobian r, over the shadow.</>,
+          theory: <>Segment height = top surface − bottom surface, times the Jacobian r, over the shadow.</>,
+        },
+      },
+      {
+        kind: "checkpoint",
+        question: {
+          id: "ma2-int-cp7",
+          difficulty: "medium",
+          source: "Slides 4_MultipleIntegrals — integration by layers",
+          prompt: (
+            <>
+              Using integration by layers, <Tex>{"\\int_\\Omega z\\,dx\\,dy\\,dz"}</Tex> over the cone{" "}
+              <Tex>{"\\Omega=\\{\\sqrt{x^2+y^2}\\le z\\le 1\\}"}</Tex> reduces to which single integral?
+            </>
+          ),
+          options: [
+            { id: "A", content: <Tex>{"\\int_0^1 \\pi z^3\\,dz"}</Tex> },
+            { id: "B", content: <Tex>{"\\int_0^1 \\pi z^2\\,dz"}</Tex> },
+            { id: "C", content: <Tex>{"\\int_0^1 2\\pi z^3\\,dz"}</Tex> },
+            { id: "D", content: <Tex>{"\\int_0^1 \\pi z^4\\,dz"}</Tex> },
+          ],
+          correct: "A",
+          explanation: (
+            <>
+              The slice at height <Tex>{"z"}</Tex> is <Tex>{"D_z=\\{x^2+y^2\\le z^2\\}"}</Tex>, a disk of
+              area <Tex>{"\\pi z^2"}</Tex>; the integrand <Tex>{"z"}</Tex> is constant on it, so{" "}
+              <Tex>{"\\iint_{D_z} z\\,dx\\,dy = z\\cdot\\pi z^2 = \\pi z^3"}</Tex> — answer A, giving{" "}
+              <Tex>{"\\tfrac{\\pi}{4}"}</Tex> total. B is the volume computation (integrand 1), dropping
+              the factor <Tex>{"z"}</Tex>; C doubles for no reason (the <Tex>{"2\\pi"}</Tex> of polar is
+              already inside <Tex>{"\\pi z^2"}</Tex>); D multiplies by <Tex>{"z^2"}</Tex> instead of{" "}
+              <Tex>{"z"}</Tex>.
+            </>
+          ),
+          theory: <>Layers: fix z, integrate over the slice D_z (constant-in-z factors come out), then integrate in z.</>,
         },
       },
       {
@@ -1046,7 +1587,7 @@ export const lessons: Lesson[] = [
         title: "Jacobian traps in 3D",
         content: (
           <>
-            Writing <Tex>{"dV=\\rho^2\\,d\\rho\\,d\\varphi\\,d\\theta"}</Tex> (missing{" "}
+            Writing <Tex>{"r^2\\,dr\\,d\\theta\\,d\\varphi"}</Tex> (missing{" "}
             <Tex>{"\\sin\\varphi"}</Tex>), or <Tex>{"\\sin\\theta"}</Tex> instead of{" "}
             <Tex>{"\\sin\\varphi"}</Tex>, or letting <Tex>{"\\varphi"}</Tex> run to <Tex>{"2\\pi"}</Tex> —
             each silently destroys the computation. Remember: the upper half-space is{" "}
@@ -1060,7 +1601,7 @@ export const lessons: Lesson[] = [
         content: (
           <p>
             You now own volumes. The last lesson of the module turns the same integrals into the physical
-            quantities the exam asks about: <strong>mass, centroids and centers of mass</strong>.
+            quantities the deck closes with: <strong>mass and the baricenter</strong>.
           </p>
         ),
       },
@@ -1068,19 +1609,20 @@ export const lessons: Lesson[] = [
   },
 
   /* ============================================================== *
-   * LESSON 4 — Applications: area, volume, mass, centroid
+   * LESSON 4 — Applications: volume, mass, baricenter
+   *  (deck: 4_MultipleIntegrals pp. 41–43)
    * ============================================================== */
   {
     id: "integral-applications",
-    title: "Applications: area, volume, mass & centroids",
+    title: "Applications: volume, mass & the baricenter",
     lecture: MODULE,
     summary:
-      "The same integral with a different integrand: 1 gives area or volume, δ gives mass, x·δ gives the moment that locates the center of mass.",
+      "The deck's closing chapter: integrate 1 for volume, a density f for mass, and x·f/m for the baricenter (center of mass) — of plates and solids.",
     minutes: 18,
     objectives: [
       "Compute areas and volumes as integrals of the constant 1",
-      "Compute the mass of a plate or solid with variable density",
-      "Locate centroids and centers of mass via moments",
+      "Compute the mass of a plate or solid with density f",
+      "Locate the baricenter (center of mass) G = (x̄, ȳ, z̄)",
       "Exploit symmetry to skip integrals entirely",
     ],
     blocks: [
@@ -1089,34 +1631,44 @@ export const lessons: Lesson[] = [
         content: (
           <p>
             Every application in this module is the same machine with a different integrand. Integrate{" "}
-            <Tex>{"1"}</Tex> and you measure the region itself (area in 2D, volume in 3D). Integrate a
-            density <Tex>{"\\delta"}</Tex> and you get mass. Integrate <Tex>{"x\\,\\delta"}</Tex> and you
-            get a <em>moment</em> — the mass-weighted position sum that locates the center of mass.
+            <Tex>{"1"}</Tex> and you measure the region itself (area in 2D, volume in 3D). Integrate a{" "}
+            <strong>density</strong> <Tex>{"f:\\Omega\\to(0,\\infty)"}</Tex> — mass per unit volume, the
+            deck's Formula 1 wheel with its dense hub — and you get <strong>mass</strong>. Weight the
+            position by the density and you get the <strong>baricenter</strong>, the point where the solid
+            balances.
           </p>
         ),
       },
       {
         kind: "formula",
-        tex: "\\text{Area}(D)=\\iint_D 1\\,dA,\\qquad V(E)=\\iiint_E 1\\,dV,\\qquad m=\\iint_D \\delta(x,y)\\,dA",
+        tex: "\\text{Vol}(\\Omega)=\\iiint_\\Omega 1\\,dx\\,dy\\,dz,\\qquad m(\\Omega)=\\iiint_\\Omega f(x,y,z)\\,dx\\,dy\\,dz",
         tag: "7.1",
-        caption: <>The dictionary: integrand 1 measures the region, integrand δ weighs it.</>,
+        caption: (
+          <>
+            Volume and mass of a solid with density <Tex>{"f"}</Tex>. RMK: if <Tex>{"f=1"}</Tex>, then{" "}
+            <Tex>{"\\text{Vol}(\\Omega)=m(\\Omega)"}</Tex>. (Many books write the density as{" "}
+            <Tex>{"\\delta"}</Tex> or <Tex>{"\\mu"}</Tex> — the professor uses <Tex>{"f"}</Tex>.)
+          </>
+        ),
       },
       {
         kind: "definition",
-        term: "Center of mass / centroid",
+        term: "Baricenter (center of mass)",
         content: (
           <>
-            For a plate <Tex>{"D"}</Tex> with density <Tex>{"\\delta(x,y)"}</Tex> and mass{" "}
-            <Tex>{"m"}</Tex>: <Tex>{"\\bar x = \\tfrac{1}{m}\\iint_D x\\,\\delta\\,dA"}</Tex>,{" "}
-            <Tex>{"\\bar y = \\tfrac{1}{m}\\iint_D y\\,\\delta\\,dA"}</Tex>. With constant density the{" "}
-            <Tex>{"\\delta"}</Tex> cancels and the point <Tex>{"(\\bar x,\\bar y)"}</Tex> — now called the{" "}
-            <strong>centroid</strong> — is purely geometric: moments divided by area.
+            The <strong>center of mass</strong> <Tex>{"G=(\\bar x,\\bar y,\\bar z)"}</Tex> of a solid{" "}
+            <Tex>{"\\Omega"}</Tex> with density <Tex>{"f"}</Tex> is given by{" "}
+            <Tex>{"\\bar x = \\tfrac{1}{m(\\Omega)}\\int_\\Omega x\\,f(x,y,z)\\,dx\\,dy\\,dz"}</Tex>, and
+            analogously for <Tex>{"\\bar y,\\ \\bar z"}</Tex> — mass-weighted average position. Analogous
+            definitions with double integrals if the body is a plate <Tex>{"D\\subset\\mathbb{R}^2"}</Tex>.
+            With constant density the <Tex>{"f"}</Tex> cancels and <Tex>{"G"}</Tex> (then often called the{" "}
+            <em>centroid</em>) is purely geometric: integrals of <Tex>{"x,y"}</Tex> divided by the area.
           </>
         ),
       },
       {
         kind: "formula",
-        tex: "\\bar x = \\frac{1}{m}\\iint_D x\\,\\delta\\,dA,\\qquad \\bar y = \\frac{1}{m}\\iint_D y\\,\\delta\\,dA",
+        tex: "\\bar x = \\frac{1}{m}\\iint_D x\\,f\\,dx\\,dy,\\qquad \\bar y = \\frac{1}{m}\\iint_D y\\,f\\,dx\\,dy \\qquad\\text{(plate } D\\subset\\mathbb{R}^2\\text{)}",
         tag: "7.2",
         caption: <>Moment over mass — each coordinate separately.</>,
       },
@@ -1126,14 +1678,74 @@ export const lessons: Lesson[] = [
         title: "Symmetry first — integrate second",
         content: (
           <>
-            If the region <em>and</em> the density are symmetric about a line, the center of mass lies on
-            that line — no integral needed for that coordinate. The centroid of a disk, square or annulus
-            is its center, instantly. Always harvest symmetry before computing; it can halve the exam
-            problem.
+            If the region <em>and</em> the density are symmetric about a line, the baricenter lies on that
+            line — no integral needed for that coordinate. The baricenter of a disk, square or annulus
+            with constant density is its center, instantly. Always harvest symmetry before computing; it
+            can halve the exam problem.
           </>
         ),
       },
-      { kind: "heading", text: "Worked example — centroid of a triangle" },
+      {
+        kind: "example",
+        title: "Deck example — mass and baricenter of a parabolic plate",
+        content: (
+          <>
+            <p>
+              (Slides) Let <Tex>{"D=\\{x,y\\ge0,\\ x\\le 1-y^2\\}"}</Tex> be a plate with density{" "}
+              <Tex>{"f(x,y)=y"}</Tex>. Compute the mass and the baricenter. <Tex>{"D"}</Tex> is y-normal:{" "}
+              <Tex>{"0\\le y\\le 1"}</Tex>, <Tex>{"0\\le x\\le 1-y^2"}</Tex>.
+            </p>
+            <p>
+              <strong>Mass:</strong>{" "}
+              <Tex>{"m(D)=\\int_0^1\\!\\!\\int_0^{1-y^2} y\\,dx\\,dy = \\int_0^1 y(1-y^2)\\,dy = \\tfrac12-\\tfrac14 = \\tfrac14"}</Tex>.
+            </p>
+            <p>
+              <strong>x̄:</strong>{" "}
+              <Tex>{"\\bar x = 4\\int_0^1 y\\Big[\\tfrac{x^2}{2}\\Big]_0^{1-y^2} dy = 2\\int_0^1 y(1-y^2)^2\\,dy = 2\\cdot\\tfrac16 = \\tfrac13"}</Tex>{" "}
+              (substitute <Tex>{"u=1-y^2"}</Tex>).
+            </p>
+            <p>
+              <strong>ȳ:</strong>{" "}
+              <Tex>{"\\bar y = 4\\int_0^1\\!\\!\\int_0^{1-y^2} y^2\\,dx\\,dy = 4\\int_0^1 y^2(1-y^2)\\,dy = 4\\Big(\\tfrac13-\\tfrac15\\Big) = \\tfrac{8}{15}"}</Tex>.
+            </p>
+            <p>
+              Baricenter <Tex>{"G=(\\tfrac13,\\tfrac{8}{15})"}</Tex> — the slide's answer. Sanity check:{" "}
+              <Tex>{"\\bar y=\\tfrac{8}{15}>\\tfrac12\\cdot\\tfrac34"}</Tex>-ish because the density{" "}
+              <Tex>{"f=y"}</Tex> drags mass upward; both coordinates land inside the plate.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Deck example — half disk with constant density (Sol: (8/3π, 0))",
+        content: (
+          <>
+            <p>
+              (Slides) <Tex>{"D=\\{x\\ge0,\\ -\\sqrt{4-x^2}\\le y\\le\\sqrt{4-x^2}\\}"}</Tex> — the right
+              half of the disk of radius 2 — with <em>constant</em> density{" "}
+              <Tex>{"f(x,y)=k>0"}</Tex>. Compute the baricenter.
+            </p>
+            <p>
+              <strong>Symmetry:</strong> region and density are symmetric in <Tex>{"y\\mapsto-y"}</Tex>,
+              so <Tex>{"\\bar y=0"}</Tex> — for free. <strong>Mass:</strong>{" "}
+              <Tex>{"m=k\\cdot\\text{Area} = k\\cdot\\tfrac{\\pi\\cdot 2^2}{2} = 2\\pi k"}</Tex>.
+            </p>
+            <p>
+              <strong>x̄ in polar</strong> (<Tex>{"\\theta\\in[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}]"}</Tex>,{" "}
+              <Tex>{"r\\in[0,2]"}</Tex>):{" "}
+              <Tex>{"\\bar x = \\tfrac{1}{2\\pi k}\\,k\\int_{-\\pi/2}^{\\pi/2}\\!\\!\\int_0^2 r\\cos\\theta\\cdot r\\,dr\\,d\\theta = \\tfrac{1}{2\\pi}\\cdot\\tfrac83\\cdot 2 = \\tfrac{8}{3\\pi}"}</Tex>.
+            </p>
+            <p>
+              Baricenter <Tex>{"\\big(\\tfrac{8}{3\\pi},\\,0\\big)\\approx(0.85,\\,0)"}</Tex> — the
+              slide's answer. Note <Tex>{"k"}</Tex> cancelled: for constant density the baricenter is pure
+              geometry (the general half-disk rule <Tex>{"\\tfrac{4R}{3\\pi}"}</Tex> with{" "}
+              <Tex>{"R=2"}</Tex>).
+            </p>
+          </>
+        ),
+      },
+      { kind: "heading", text: "Centroid of a triangle — integral vs geometry" },
       {
         kind: "example",
         title: "Centroid of the triangle (0,0), (2,0), (2,2)",
@@ -1141,8 +1753,8 @@ export const lessons: Lesson[] = [
           <>
             <p>
               The triangle is <Tex>{"0\\le y\\le x,\\ 0\\le x\\le 2"}</Tex> (the sim's third preset), with
-              area <Tex>{"A=\\tfrac12\\cdot 2\\cdot 2 = 2"}</Tex>. Uniform density, so centroid = moments
-              / area.
+              area <Tex>{"A=\\tfrac12\\cdot 2\\cdot 2 = 2"}</Tex>. Constant density, so the baricenter is
+              geometric.
             </p>
             <p>
               <Tex>{"\\bar x = \\tfrac12\\int_0^2\\!\\!\\int_0^x x\\,dy\\,dx = \\tfrac12\\int_0^2 x^2\\,dx = \\tfrac12\\cdot\\tfrac83 = \\tfrac43"}</Tex>
@@ -1171,20 +1783,20 @@ export const lessons: Lesson[] = [
       { kind: "heading", text: "Variable density" },
       {
         kind: "example",
-        title: "Mass of a quarter disk with density δ = x² + y²",
+        title: "Mass of a quarter disk with density f = x² + y²",
         content: (
           <>
             <p>
               Quarter disk <Tex>{"x^2+y^2\\le 4"}</Tex>, <Tex>{"x,y\\ge 0"}</Tex>, density growing with
-              the distance squared. Polar is mandatory: <Tex>{"\\delta = r^2"}</Tex>, region{" "}
+              the distance squared. Polar is mandatory: <Tex>{"f = r^2"}</Tex>, region{" "}
               <Tex>{"0\\le r\\le 2,\\ 0\\le\\theta\\le\\tfrac{\\pi}{2}"}</Tex>.
             </p>
             <p>
               <Tex>{"m=\\int_0^{\\pi/2}\\!\\!\\int_0^2 r^2\\cdot r\\,dr\\,d\\theta = \\tfrac{\\pi}{2}\\Big[\\tfrac{r^4}{4}\\Big]_0^2 = \\tfrac{\\pi}{2}\\cdot 4 = 2\\pi"}</Tex>.
             </p>
             <p>
-              Because the plate is heavier far from the origin, its center of mass sits farther out than
-              the geometric centroid — density drags mass toward where <Tex>{"\\delta"}</Tex> is large.
+              Because the plate is heavier far from the origin, its baricenter sits farther out than the
+              geometric centroid — density drags mass toward where <Tex>{"f"}</Tex> is large.
             </p>
           </>
         ),
@@ -1197,8 +1809,8 @@ export const lessons: Lesson[] = [
             label: "Identify the measure",
             content: (
               <>
-                Area/volume ⇒ integrand 1. Mass ⇒ integrand <Tex>{"\\delta"}</Tex>. Center of mass ⇒
-                moments <Tex>{"x\\delta,\\ y\\delta"}</Tex>.
+                Area/volume ⇒ integrand 1. Mass ⇒ integrand <Tex>{"f"}</Tex> (the density). Baricenter ⇒
+                integrands <Tex>{"x\\,f,\\ y\\,f,\\ z\\,f"}</Tex>, each divided by <Tex>{"m"}</Tex>.
               </>
             ),
           },
@@ -1207,16 +1819,16 @@ export const lessons: Lesson[] = [
             content: (
               <>
                 Circular pieces ⇒ polar/cylindrical/spherical with the right Jacobian; straight-edged
-                pieces ⇒ Cartesian.
+                pieces ⇒ Cartesian normal domains.
               </>
             ),
           },
           {
-            label: "Compute the total, then the moments",
+            label: "Compute the mass, then the moments",
             content: (
               <>
-                First <Tex>{"m"}</Tex> (or area), then <Tex>{"\\iint x\\,\\delta\\,dA"}</Tex> and{" "}
-                <Tex>{"\\iint y\\,\\delta\\,dA"}</Tex>; divide each by <Tex>{"m"}</Tex>.
+                First <Tex>{"m"}</Tex> (or the area), then <Tex>{"\\iint x\\,f"}</Tex> and{" "}
+                <Tex>{"\\iint y\\,f"}</Tex>; divide each by <Tex>{"m"}</Tex>.
               </>
             ),
           },
@@ -1224,7 +1836,7 @@ export const lessons: Lesson[] = [
             label: "Sanity-check the point",
             content: (
               <>
-                The center of mass must lie inside the convex hull of the region, on any symmetry line,
+                The baricenter must lie inside the convex hull of the region, on any symmetry line,
                 shifted toward the heavy side.
               </>
             ),
@@ -1238,26 +1850,28 @@ export const lessons: Lesson[] = [
           difficulty: "easy",
           prompt: (
             <>
-              For a plate <Tex>{"D"}</Tex> with density <Tex>{"\\delta(x,y)"}</Tex> and mass{" "}
-              <Tex>{"m"}</Tex>, the coordinate <Tex>{"\\bar x"}</Tex> of the center of mass is:
+              For a plate <Tex>{"D"}</Tex> with density <Tex>{"f(x,y)"}</Tex> and mass{" "}
+              <Tex>{"m"}</Tex>, the coordinate <Tex>{"\\bar x"}</Tex> of the baricenter is:
             </>
           ),
           options: [
-            { id: "A", content: <Tex>{"\\dfrac{1}{\\text{Area}(D)}\\displaystyle\\iint_D x\\,dA"}</Tex> },
-            { id: "B", content: <Tex>{"\\dfrac{1}{m}\\displaystyle\\iint_D x\\,\\delta(x,y)\\,dA"}</Tex> },
-            { id: "C", content: <Tex>{"\\dfrac{1}{m}\\displaystyle\\iint_D \\delta(x,y)\\,dA"}</Tex> },
-            { id: "D", content: <Tex>{"\\displaystyle\\iint_D x\\,\\delta(x,y)\\,dA"}</Tex> },
+            { id: "A", content: <Tex>{"\\dfrac{1}{\\text{Area}(D)}\\displaystyle\\iint_D x\\,dx\\,dy"}</Tex> },
+            { id: "B", content: <Tex>{"\\dfrac{1}{m}\\displaystyle\\iint_D x\\,f(x,y)\\,dx\\,dy"}</Tex> },
+            { id: "C", content: <Tex>{"\\dfrac{1}{m}\\displaystyle\\iint_D f(x,y)\\,dx\\,dy"}</Tex> },
+            { id: "D", content: <Tex>{"\\displaystyle\\iint_D x\\,f(x,y)\\,dx\\,dy"}</Tex> },
           ],
           correct: "B",
           explanation: (
             <>
-              The center of mass is the mass-weighted average of <Tex>{"x"}</Tex>: moment divided by mass
-              — answer B. A is the <em>centroid</em>, correct only when <Tex>{"\\delta"}</Tex> is
-              constant; C equals <Tex>{"m/m=1"}</Tex>, not a coordinate at all; D is the bare moment,
-              which still has to be divided by <Tex>{"m"}</Tex>.
+              The baricenter is the mass-weighted average of <Tex>{"x"}</Tex>: moment divided by mass —
+              answer B, the professor's formula{" "}
+              <Tex>{"\\bar x = \\tfrac{1}{m(\\Omega)}\\int_\\Omega x\\,f"}</Tex>. A is the{" "}
+              <em>centroid</em>, correct only when <Tex>{"f"}</Tex> is constant; C equals{" "}
+              <Tex>{"m/m=1"}</Tex>, not a coordinate at all; D is the bare moment, which still has to be
+              divided by <Tex>{"m"}</Tex>.
             </>
           ),
-          theory: <>Center of mass = moment / mass; the centroid is the special case δ = const.</>,
+          theory: <>Baricenter = moment / mass; the centroid is the special case f = const.</>,
         },
       },
       {
@@ -1266,10 +1880,11 @@ export const lessons: Lesson[] = [
         title: "Free answers worth memorizing",
         content: (
           <>
-            Triangle: centroid = average of the three vertices. Quarter disk of radius{" "}
-            <Tex>{"R"}</Tex>: centroid at <Tex>{"\\big(\\tfrac{4R}{3\\pi},\\tfrac{4R}{3\\pi}\\big)"}</Tex>{" "}
-            (for the first-quadrant quarter). These make superb sanity checks — and occasionally the whole
-            answer.
+            Triangle: baricenter = average of the three vertices. Half disk of radius <Tex>{"R"}</Tex>:{" "}
+            <Tex>{"\\tfrac{4R}{3\\pi}"}</Tex> from the center along the symmetry axis (the deck's{" "}
+            <Tex>{"\\tfrac{8}{3\\pi}"}</Tex> for <Tex>{"R=2"}</Tex>). Quarter disk of radius{" "}
+            <Tex>{"R"}</Tex>: <Tex>{"\\big(\\tfrac{4R}{3\\pi},\\tfrac{4R}{3\\pi}\\big)"}</Tex>. These make
+            superb sanity checks — and occasionally the whole answer.
           </>
         ),
       },
@@ -1277,10 +1892,11 @@ export const lessons: Lesson[] = [
         kind: "prose",
         content: (
           <p>
-            That closes the integration module: you can describe a region, slice it in the smartest
-            coordinates, and turn the integral into geometry or physics. Next these skills feed into{" "}
-            <strong>line integrals and vector fields</strong>, where Green's theorem converts circulation
-            into exactly the double integrals you now master.
+            That closes the integration module: you can describe a region or solid, reduce over normal
+            domains or layers, change variables with the right Jacobian, and turn the integral into
+            geometry or physics. Next these skills feed into <strong>line integrals and vector
+            fields</strong>, where Green's theorem converts circulation into exactly the double integrals
+            you now master.
           </p>
         ),
       },

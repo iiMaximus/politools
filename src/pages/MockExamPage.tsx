@@ -202,11 +202,19 @@ function isExerciseStyle(q: Question): boolean {
   return computey || numericOptions;
 }
 
+function examGroup(q: Question): string | undefined {
+  return q.tags?.find((tag) => tag.startsWith("exam-group:"));
+}
+
 /** the official paper for this course, per its blueprint */
 function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
+  // A focus-topic setting is useful for drills, but an official simulation
+  // must still sample the whole syllabus or it no longer mirrors the paper.
   // "(extra)" topics (e.g. MA2 ODEs) are not on the real syllabus — keep them
   // out of official papers
-  const pool = topicFocusPool(course).filter((q) => !/\(extra\)/.test(q.topic ?? ""));
+  const pool = course.practice.filter(
+    (q) => !/\(extra\)/.test(q.topic ?? "") && !(q.tags ?? []).includes("supplement")
+  );
   const mcq = pool.filter((q) => !isNumeric(q));
   const numeric = pool.filter(isNumeric);
 
@@ -231,8 +239,20 @@ function buildOfficialDeck(course: Course, bp: ExamBlueprint): DeckItem[] {
   }));
 
   let problemPool: Question[];
+  const groupedProblems = new Map<string, Question[]>();
+  for (const q of numeric) {
+    const group = examGroup(q);
+    if (!group) continue;
+    const items = groupedProblems.get(group) ?? [];
+    items.push(q);
+    groupedProblems.set(group, items);
+  }
+  const completeGroups = [...groupedProblems.values()].filter((items) => items.length >= bp.problemCount);
   const wt = numeric.filter((q) => (q.tags ?? []).includes("wt25"));
-  if (bp.problemNumeric && wt.length >= bp.problemCount) {
+  if (bp.problemNumeric && completeGroups.length) {
+    // Keep the open problem coherent: all parts come from one real paper.
+    problemPool = shuffle(completeGroups)[0].slice(0, bp.problemCount);
+  } else if (bp.problemNumeric && wt.length >= bp.problemCount) {
     // the professor's recurring written-test set IS the problem section
     problemPool = shuffle(wt).slice(0, bp.problemCount);
   } else if (bp.problemNumeric && numeric.length >= bp.problemCount) {

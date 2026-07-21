@@ -9,6 +9,8 @@ import * as series from "./modules/series";
 import * as fourier from "./modules/fourier";
 import * as odes from "./modules/odes";
 import { numericDrills } from "./numeric";
+import { examOpenParts2026, examProblems2026, examQuestions2026 } from "./exams-2026";
+import { archiveExamProblems, archiveExamQuestions } from "./exams-archive";
 import { pastExamProblems, pastExamQuestions } from "./past-exams";
 import { tutorialQuestions as tutCurves } from "./tutorials/curves-functions";
 import { tutorialQuestions as tutDouble } from "./tutorials/double-integrals";
@@ -71,8 +73,16 @@ const mathAnalysis2: Course = {
     ...numericDrills,
     ...tutorialSheets,
     ...pastExamQuestions,
+    ...examQuestions2026,
+    ...examOpenParts2026,
+    ...archiveExamQuestions,
   ],
-  exam: [...MODULES.flatMap((m) => m.exam), ...pastExamProblems],
+  exam: [
+    ...MODULES.flatMap((m) => m.exam),
+    ...pastExamProblems,
+    ...examProblems2026,
+    ...archiveExamProblems,
+  ],
 };
 
 export default mathAnalysis2;

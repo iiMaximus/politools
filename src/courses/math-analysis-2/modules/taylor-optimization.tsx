@@ -40,6 +40,64 @@ function ClassifyTable() {
   );
 }
 
+/* ========== Eigen-axes picture for the eigenvalue lesson ==========
+ * q(x,y) = 3x² + 2xy + 3y² has matrix A = [[3,1],[1,3]] with eigenpairs
+ * λ₁ = 4, v₁ = (1,1)/√2 and λ₂ = 2, v₂ = (−1,1)/√2. In the rotated
+ * coordinates (X, Y) along v₁, v₂ the form reads 4X² + 2Y², so its level
+ * sets are ellipses with semi-axes √(c/4) and √(c/2) along the diagonals. */
+function EigenAxesFigure() {
+  const FW = 340;
+  const R2 = 2.2; // math window [-R2, R2]²
+  const px = (x: number) => ((x + R2) / (2 * R2)) * FW;
+  const py = (y: number) => ((R2 - y) / (2 * R2)) * FW;
+  const u = FW / (2 * R2); // pixels per math unit
+  const levels = [1, 2.5, 4.5]; // q = c
+  return (
+    <svg
+      viewBox={`0 0 ${FW} ${FW}`}
+      className="mx-auto w-full max-w-sm rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)]"
+      role="img"
+      aria-label="Elliptic level sets of a positive definite quadratic form, aligned with its two eigenvector axes"
+    >
+      {/* standard axes, faint */}
+      <line x1={px(-R2)} y1={py(0)} x2={px(R2)} y2={py(0)} stroke="var(--color-line)" strokeWidth={1} />
+      <line x1={px(0)} y1={py(-R2)} x2={px(0)} y2={py(R2)} stroke="var(--color-line)" strokeWidth={1} />
+      {/* eigenvector axes along the diagonals */}
+      <line x1={px(-1.9)} y1={py(-1.9)} x2={px(1.9)} y2={py(1.9)} stroke="var(--good)" strokeWidth={1.6} />
+      <line x1={px(1.9)} y1={py(-1.9)} x2={px(-1.9)} y2={py(1.9)} stroke="var(--info)" strokeWidth={1.6} />
+      {/* level ellipses of q, drawn in the rotated (X, Y) frame:
+          rotate(-45) sends the screen x-axis onto the v₁ = (1,1) direction */}
+      <g transform={`rotate(-45 ${px(0)} ${py(0)})`}>
+        {levels.map((c) => (
+          <ellipse
+            key={c}
+            cx={px(0)}
+            cy={py(0)}
+            rx={Math.sqrt(c / 4) * u}
+            ry={Math.sqrt(c / 2) * u}
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth={1.8}
+          />
+        ))}
+      </g>
+      {/* labels */}
+      <text x={px(1.28)} y={py(1.6)} fontSize={11} fontWeight={700} fill="var(--good)">
+        X ∥ v₁, λ₁ = 4
+      </text>
+      <text x={px(-2.08)} y={py(1.6)} fontSize={11} fontWeight={700} fill="var(--info)">
+        Y ∥ v₂, λ₂ = 2
+      </text>
+      <text x={px(-2.08)} y={py(-1.86)} fontSize={10.5} fill="var(--color-muted)">
+        q = 3x² + 2xy + 3y² = 4X² + 2Y²
+      </text>
+      <text x={px(0.42)} y={py(-0.1)} fontSize={10} fill="var(--accent)">
+        q = c
+      </text>
+    </svg>
+  );
+}
+
 /* ========== Tangency picture for the Lagrange lesson ==========
  * f(x,y) = x + y on the circle x² + y² = 2. The level lines x + y = c
  * slide across the plane; the extreme ones (c = ±2) are exactly TANGENT
@@ -53,7 +111,12 @@ function LagrangeFigure() {
   const r = (Math.SQRT2 / (2 * R2)) * FW; // circle radius √2 in pixels
   const levels = [-3, -2, -1, 0, 1, 2, 3];
   return (
-    <svg viewBox={`0 0 ${FW} ${FW}`} className="mx-auto w-full max-w-sm rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)]">
+    <svg
+      viewBox={`0 0 ${FW} ${FW}`}
+      className="mx-auto w-full max-w-sm rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)]"
+      role="img"
+      aria-label="Level lines of x plus y tangent to the circle x squared plus y squared equals two at the constrained extrema"
+    >
       {/* level lines x + y = c (the tangent ones, c = ±2, highlighted) */}
       {levels.map((cv) => (
         <line
@@ -110,7 +173,7 @@ export const lessons: Lesson[] = [
     lecture: MODULE,
     summary:
       "Near any point a C² function is a plane plus a quadratic bowl/dome/saddle — and a 2×2 matrix decides which one.",
-    minutes: 24,
+    minutes: 28,
     objectives: [
       "Write the second-order Taylor expansion of f(x, y) around a point",
       "Build the Hessian matrix and justify its symmetry (Schwarz)",
@@ -129,6 +192,20 @@ export const lessons: Lesson[] = [
             can bend up in one direction and down in another at the same point. Making that precise is
             the whole engine behind classifying maxima, minima and saddles.
           </p>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "info",
+        title: "Where this lesson comes from",
+        content: (
+          <>
+            This is the teach-through of <strong>Differential Calculus, slides 33–41</strong>, then
+            the Hessian/eigenvalue argument on slides 55–59. The worked Taylor calculation below is
+            the professor's <strong>Taylor &amp; Critical Points tutorial, Exercise 1</strong>. The
+            notation <Tex>{"o(\\lVert P-P_0\\rVert^2)"}</Tex> and the phrase "Taylor polynomial of
+            order 2" are kept exactly because they are the course's exam language.
+          </>
         ),
       },
       {
@@ -171,23 +248,27 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "example",
-        title: "Worked example — Taylor polynomial of e^x·cos y at the origin",
+        title: "Tutorial Exercise 1 — Taylor polynomial of e^(xy)·cos y",
         content: (
           <>
             <p>
-              Take <Tex>{"f(x,y)=e^x\\cos y"}</Tex> at <Tex>{"(0,0)"}</Tex>. Compute:{" "}
-              <Tex>{"f(0,0)=1"}</Tex>, <Tex>{"f_x = e^x\\cos y = 1"}</Tex>,{" "}
-              <Tex>{"f_y = -e^x\\sin y = 0"}</Tex>, <Tex>{"f_{xx} = 1"}</Tex>,{" "}
-              <Tex>{"f_{xy} = 0"}</Tex>, <Tex>{"f_{yy} = -1"}</Tex>.
+              Take <Tex>{"f(x,y)=e^{xy}\\cos y"}</Tex> at <Tex>{"P=(0,0)"}</Tex>. The first
+              derivatives are <Tex>{"f_x=e^{xy}y\\cos y"}</Tex> and{" "}
+              <Tex>{"f_y=e^{xy}(x\\cos y-\\sin y)"}</Tex>, so{" "}
+              <Tex>{"f(0,0)=1"}</Tex> and <Tex>{"\\nabla f(0,0)=(0,0)"}</Tex>.
             </p>
             <p>
-              So <Tex>{"T_2(x,y) = 1 + x + \\tfrac12 x^2 - \\tfrac12 y^2"}</Tex>.
+              At the origin, <Tex>{"f_{xx}=0"}</Tex>, <Tex>{"f_{xy}=f_{yx}=1"}</Tex> and{" "}
+              <Tex>{"f_{yy}=-1"}</Tex>. Therefore
+              <Tex>{"H_f(0,0)=\\begin{pmatrix}0&1\\\\1&-1\\end{pmatrix}"}</Tex> and
+              <Tex>{"T_2(x,y)=1+\\tfrac12(2xy-y^2)=1+xy-\\tfrac12y^2"}</Tex>.
             </p>
             <p>
-              Sanity check by multiplying the 1-D series:{" "}
-              <Tex>{"\\big(1+x+\\tfrac{x^2}{2}\\big)\\big(1-\\tfrac{y^2}{2}\\big) = 1 + x + \\tfrac{x^2}{2} - \\tfrac{y^2}{2} + \\dots"}</Tex>{" "}
-              — same result, and the cross term <Tex>{"-\\tfrac{xy^2}{2}"}</Tex> is third order, so it
-              rightly does not appear in <Tex>{"T_2"}</Tex>.
+              Fast independent check: <Tex>{"e^{xy}=1+xy+O(\\lVert(x,y)\\rVert^4)"}</Tex> and{" "}
+              <Tex>{"\\cos y=1-\\tfrac12y^2+O(y^4)"}</Tex>. Multiplying and retaining total degree
+              at most two gives the same polynomial. The mixed coefficient is{" "}
+              <Tex>{"f_{xy}(0,0)"}</Tex>, not <Tex>{"\\tfrac12f_{xy}(0,0)"}</Tex>: the outer
+              <Tex>{"\\tfrac12"}</Tex> cancels the two equal mixed terms.
             </p>
           </>
         ),
@@ -229,6 +310,18 @@ export const lessons: Lesson[] = [
             Both <Tex>{"\\lambda_i > 0"}</Tex>: positive definite (bowl). Both negative: negative
             definite (dome). Opposite signs: indefinite (saddle). One eigenvalue zero: degenerate — a
             valley or ridge, flat along the corresponding eigenvector.
+          </>
+        ),
+      },
+      {
+        kind: "figure",
+        render: () => <EigenAxesFigure />,
+        caption: (
+          <>
+            The slide deck's diagonalization idea made visible. For{" "}
+            <Tex>{"q(x,y)=3x^2+2xy+3y^2"}</Tex>, the eigenvectors rotate the coordinates by 45° and
+            the form becomes <Tex>{"4X^2+2Y^2"}</Tex>. The mixed term disappears, while the positive
+            eigenvalues make every non-zero displacement increase the form.
           </>
         ),
       },
@@ -389,10 +482,11 @@ export const lessons: Lesson[] = [
     lecture: MODULE,
     summary:
       "Find where the tangent plane is horizontal, then let det H and f_xx sort the candidates into minima, maxima and saddles.",
-    minutes: 22,
+    minutes: 32,
     objectives: [
       "Find all critical points by solving ∇f = 0",
       "Classify each one with the Hessian test (det H, f_xx)",
+      "Extend the Hessian test to Rⁿ by reading all eigenvalue signs",
       "Handle the degenerate case det H = 0 by studying the sign of f directly",
       "Distinguish local statements from global ones",
     ],
@@ -410,6 +504,20 @@ export const lessons: Lesson[] = [
         ),
       },
       {
+        kind: "callout",
+        tone: "info",
+        title: "Core course coverage",
+        content: (
+          <>
+            This lesson follows <strong>Differential Calculus, slides 44–60</strong> and the complete
+            <strong>Taylor &amp; Critical Points tutorial, Exercises 2–3</strong>. The slides first
+            give the determinant test in <Tex>{"\\mathbb R^2"}</Tex>, then derive it by rotating onto
+            Hessian eigenvectors and state the <Tex>{"\\mathbb R^n"}</Tex> version. The tutorial is
+            where the algebra becomes exam-level.
+          </>
+        ),
+      },
+      {
         kind: "definition",
         term: "Critical (stationary) point",
         content: (
@@ -418,6 +526,22 @@ export const lessons: Lesson[] = [
             <Tex>{"\\nabla f(P_0) = (0,0)"}</Tex>, i.e. <Tex>{"f_x(P_0)=0"}</Tex> <em>and</em>{" "}
             <Tex>{"f_y(P_0)=0"}</Tex> simultaneously. Local maxima and minima of <Tex>{"f"}</Tex> at
             interior points can occur <strong>only</strong> at critical points.
+          </>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "trap",
+        title: "Fermat needs differentiability and an interior point",
+        content: (
+          <>
+            <Tex>{"\\nabla f(P_0)=0"}</Tex> is a <em>necessary</em> condition only when{" "}
+            <Tex>{"f"}</Tex> is differentiable and <Tex>{"P_0"}</Tex> is interior to the domain. The
+            slide deck deliberately shows <Tex>{"f(x,y)=\\sqrt{x^2+y^2}"}</Tex>: the origin is its
+            global minimum, but <Tex>{"f"}</Tex> is not differentiable there, so the point is not a
+            critical point under the course definition. Boundary extrema also escape the free
+            gradient equation. And the converse is false: <Tex>{"f(x,y)=xy"}</Tex> has a critical
+            point at the origin, but it is a saddle.
           </>
         ),
       },
@@ -483,31 +607,77 @@ export const lessons: Lesson[] = [
         caption:
           "The whole test in one table. Note the two ways it can end without an extremum verdict: det H < 0 is a definitive saddle, det H = 0 is silence.",
       },
+      { kind: "heading", text: "The same test in Rⁿ: read the eigenvalues" },
+      {
+        kind: "prose",
+        content: (
+          <p>
+            In more than two variables there is no single <Tex>{"f_{xx}"}</Tex> that can finish the
+            classification. The professor's version is spectral: because a <Tex>{"C^2"}</Tex>
+            Hessian is real symmetric, it has an orthonormal eigenbasis and real eigenvalues. In
+            those rotated coordinates the quadratic part is simply a signed sum of squares.
+          </p>
+        ),
+      },
+      {
+        kind: "formula",
+        tex: "f(P_0+h)-f(P_0)=\\tfrac12\\sum_{j=1}^{n}\\lambda_j X_j^2+o(\\lVert h\\rVert^2)",
+        tag: "3.3n",
+        caption: (
+          <>
+            All <Tex>{"\\lambda_j>0"}</Tex> ⇒ local minimum; all{" "}
+            <Tex>{"\\lambda_j<0"}</Tex> ⇒ local maximum; at least one positive and one negative
+            ⇒ saddle. If at least one eigenvalue is zero and the rest do not already have
+            opposite signs, the second-order test gives no information.
+          </>
+        ),
+      },
       {
         kind: "example",
-        title: "Worked example — f(x,y) = x³ − 3x + y²",
+        title: "Slide 60 — a three-variable classification",
         content: (
           <>
             <p>
-              <strong>Critical points.</strong>{" "}
-              <Tex>{"\\nabla f = (3x^2 - 3,\\; 2y) = (0,0)"}</Tex> gives <Tex>{"x = \\pm 1"}</Tex>,{" "}
-              <Tex>{"y = 0"}</Tex>: two points, <Tex>{"(1,0)"}</Tex> and <Tex>{"(-1,0)"}</Tex>.
+              For <Tex>{"f(x,y,z)=x^2+y^2+z^2-2x-2z-5"}</Tex>,{" "}
+              <Tex>{"\\nabla f=(2x-2,2y,2z-2)"}</Tex>, so the only critical point is{" "}
+              <Tex>{"P_0=(1,0,1)"}</Tex>.
             </p>
             <p>
-              <strong>Hessian.</strong>{" "}
-              <Tex>{"H = \\begin{pmatrix} 6x & 0 \\\\ 0 & 2 \\end{pmatrix}"}</Tex>.
+              <Tex>{"H_f=2I_3"}</Tex> has eigenvalues <Tex>{"2,2,2"}</Tex>, all positive: a strict
+              local minimum. Completing squares gives the stronger statement{" "}
+              <Tex>{"f=(x-1)^2+y^2+(z-1)^2-7"}</Tex>, so this is the unique global minimum and the
+              minimum value is <Tex>{"-7"}</Tex>.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Tutorial Exercise 2(c) — factor before you solve",
+        content: (
+          <>
+            <p>
+              Let <Tex>{"f(x,y)=(x+2)y e^{y-x}"}</Tex>. Its gradient factors as{" "}
+              <Tex>{"\\nabla f=e^{y-x}\\big(-y(x+1),(x+2)(y+1)\\big)"}</Tex>. Since the exponential
+              never vanishes, solve <Tex>{"y(x+1)=0"}</Tex> and{" "}
+              <Tex>{"(x+2)(y+1)=0"}</Tex> by cases. The branch <Tex>{"y=0"}</Tex> forces{" "}
+              <Tex>{"x=-2"}</Tex>; the branch <Tex>{"x=-1"}</Tex> forces <Tex>{"y=-1"}</Tex>.
+              Thus <Tex>{"P_1=(-2,0)"}</Tex> and <Tex>{"P_2=(-1,-1)"}</Tex> are the complete list.
             </p>
             <p>
-              At <Tex>{"(1,0)"}</Tex>: <Tex>{"\\det H = 12 > 0"}</Tex>, <Tex>{"f_{xx} = 6 > 0"}</Tex>{" "}
-              ⇒ <strong>local minimum</strong>, value <Tex>{"f(1,0) = 1 - 3 = -2"}</Tex>.
+              The Hessian entries simplify to <Tex>{"f_{xx}=e^{y-x}xy"}</Tex>,{" "}
+              <Tex>{"f_{xy}=-e^{y-x}(x+1)(y+1)"}</Tex> and{" "}
+              <Tex>{"f_{yy}=e^{y-x}(x+2)(y+2)"}</Tex>.
             </p>
             <p>
-              At <Tex>{"(-1,0)"}</Tex>: <Tex>{"\\det H = -12 < 0"}</Tex> ⇒ <strong>saddle</strong>.
+              At <Tex>{"P_1"}</Tex>, <Tex>{"f_{xx}=f_{yy}=0"}</Tex> and{" "}
+              <Tex>{"f_{xy}=e^2"}</Tex>, hence <Tex>{"\\det H=-e^4<0"}</Tex>: saddle. At{" "}
+              <Tex>{"P_2"}</Tex>, <Tex>{"H=I_2"}</Tex>: local minimum, with{" "}
+              <Tex>{"f(-1,-1)=-1"}</Tex>.
             </p>
             <p>
-              Is the minimum global? No: <Tex>{"f(x,0) = x^3 - 3x \\to -\\infty"}</Tex> as{" "}
-              <Tex>{"x \\to -\\infty"}</Tex>. The Hessian test only ever speaks about a small
-              neighborhood.
+              The two habits being tested are: divide out only factors known never to be zero, and
+              classify each critical point separately. One function can produce different types.
             </p>
           </>
         ),
@@ -560,23 +730,89 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "example",
-        title: "Worked example — same Hessian, opposite fates",
+        title: "Slides 51–52 — the same zero Hessian, three different fates",
         content: (
           <>
             <p>
-              Both <Tex>{"f_1 = x^2 + y^4"}</Tex> and <Tex>{"f_2 = x^2 + y^3"}</Tex> have the single
-              critical point <Tex>{"(0,0)"}</Tex> and the same Hessian there:{" "}
-              <Tex>{"H = \\begin{pmatrix} 2 & 0 \\\\ 0 & 0 \\end{pmatrix}"}</Tex>,{" "}
-              <Tex>{"\\det H = 0"}</Tex>. The test cannot separate them — but a direct look can.
+              The professor compares <Tex>{"f_1=x^4+y^4"}</Tex>, <Tex>{"f_2=-f_1"}</Tex> and{" "}
+              <Tex>{"f_3=x^4-y^4"}</Tex>. The origin is critical for all three, and each Hessian is
+              the zero matrix there: <Tex>{"\\det H(0,0)=0"}</Tex>. The second-order test sees no
+              difference at all.
             </p>
             <p>
-              <Tex>{"f_1(x,y) = x^2 + y^4 > 0 = f_1(0,0)"}</Tex> for every{" "}
-              <Tex>{"(x,y) \\ne (0,0)"}</Tex>: a <strong>strict global minimum</strong>.
+              Direct signs do: <Tex>{"f_1>0"}</Tex> off the origin, so the origin is a strict global
+              minimum; <Tex>{"f_2<0"}</Tex> off the origin, so it is a strict global maximum. For{" "}
+              <Tex>{"f_3"}</Tex>, <Tex>{"f_3(t,0)=t^4>0"}</Tex> while{" "}
+              <Tex>{"f_3(0,t)=-t^4<0"}</Tex>: saddle.
             </p>
             <p>
-              <Tex>{"f_2"}</Tex> along the <Tex>{"y"}</Tex>-axis is <Tex>{"y^3"}</Tex>, which is
-              positive for <Tex>{"y > 0"}</Tex> and negative for <Tex>{"y < 0"}</Tex> arbitrarily
-              close to the origin: <strong>neither a minimum nor a maximum</strong>.
+              That is exactly what "the method gives no information" means: zero determinant is not
+              a classification. Higher-order terms, invisible to the Hessian, decide.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Tutorial Exercise 3(a) — a whole line of global minima",
+        content: (
+          <>
+            <p>
+              For <Tex>{"f(x,y)=\\tfrac12+100(x-y)^2"}</Tex>, the gradient vanishes at every point
+              of <Tex>{"C=\\{(x,y):x=y\\}"}</Tex>. Its Hessian is{" "}
+              <Tex>{"\\begin{pmatrix}200&-200\\\\-200&200\\end{pmatrix}"}</Tex>, with determinant
+              zero and eigenvalues <Tex>{"400"}</Tex> and <Tex>{"0"}</Tex>. Again, the Hessian test
+              is formally inconclusive.
+            </p>
+            <p>
+              But the definition settles everything: <Tex>{"f=\\tfrac12"}</Tex> on <Tex>{"C"}</Tex>
+              and <Tex>{"f>\\tfrac12"}</Tex> off <Tex>{"C"}</Tex>. Every point of the line is a
+              non-strict <strong>global minimum</strong>. A zero eigenvalue can represent a flat
+              valley; it does not automatically mean saddle.
+            </p>
+          </>
+        ),
+      },
+      {
+        kind: "heading",
+        text: "Monotone compositions: simplify before differentiating",
+      },
+      {
+        kind: "definition",
+        term: "Strictly increasing outer function",
+        content: (
+          <>
+            If <Tex>{"f=\\varphi\\circ g"}</Tex> and <Tex>{"\\varphi"}</Tex> is strictly increasing,
+            then <Tex>{"g(P)\\le g(Q)\\iff f(P)\\le f(Q)"}</Tex>. Therefore <Tex>{"f"}</Tex> and{" "}
+            <Tex>{"g"}</Tex> have exactly the same local/global minimum and maximum <em>points</em>
+            (their values are transformed by <Tex>{"\\varphi"}</Tex>). The tutorial uses this with
+            <Tex>{"\\varphi=\\sinh"}</Tex>.
+          </>
+        ),
+      },
+      {
+        kind: "example",
+        title: "Tutorial Exercise 3(b) — six points, and an official typo corrected",
+        content: (
+          <>
+            <p>
+              Put <Tex>{"g=x^4+y^3-4x^2-3y^2"}</Tex> and <Tex>{"f=\\sinh(g)"}</Tex>. Since{" "}
+              <Tex>{"\\sinh"}</Tex> is strictly increasing, classify <Tex>{"g"}</Tex>. The separated
+              gradient equations <Tex>{"4x(x^2-2)=0"}</Tex>, <Tex>{"3y(y-2)=0"}</Tex> give six
+              points: <Tex>{"(0,0),(0,2),(\\pm\\sqrt2,0),(\\pm\\sqrt2,2)"}</Tex>.
+            </p>
+            <p>
+              <Tex>{"H_g=\\operatorname{diag}(12x^2-8,6y-6)"}</Tex>. Thus <Tex>{"(0,0)"}</Tex> has
+              two negative eigenvalues (local maximum); <Tex>{"(\\pm\\sqrt2,2)"}</Tex> have two
+              positive eigenvalues (local minima); and the remaining three points have opposite
+              signs (saddles). The classification transfers unchanged to <Tex>{"f"}</Tex>.
+            </p>
+            <p>
+              <strong>Source correction:</strong> the official solution's last sentence calls
+              <Tex>{"(\\pm\\sqrt2,2)"}</Tex> local maxima, but one line earlier it correctly computes
+              <Tex>{"g_{xx}>0"}</Tex> there; together with <Tex>{"\\det H_g>0"}</Tex>, that proves
+              they are <strong>local minima</strong>. The site uses the mathematically consistent
+              result.
             </p>
           </>
         ),
@@ -644,10 +880,10 @@ export const lessons: Lesson[] = [
    * ================================================================ */
   {
     id: "global-extrema-compact",
-    title: "Global extrema on compact sets",
+    title: "Supplement: global extrema on compact sets",
     lecture: MODULE,
     summary:
-      "Weierstrass guarantees the max and min exist — your job reduces to building a complete candidate list: interior critical points, boundary, corners.",
+      "Optional extension beyond the supplied 2025–26 Taylor deck: Weierstrass, interior candidates, boundaries and corners.",
     minutes: 20,
     objectives: [
       "State the Weierstrass theorem and verify its hypotheses",
@@ -666,6 +902,20 @@ export const lessons: Lesson[] = [
             the problem into a finite bookkeeping exercise: list every point that could possibly be
             extreme, evaluate <Tex>{"f"}</Tex> there, and pick the biggest and smallest numbers.
           </p>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "warn",
+        title: "Scope note — useful, but not in the supplied core material",
+        content: (
+          <>
+            The professor's 2025–26 Differential Calculus deck and Taylor/Critical Points tutorial
+            cover <strong>free critical points on open domains</strong>; they do not state this compact
+            region algorithm. It is retained as a clearly marked supplement because boundary/global
+            reasoning appears elsewhere in multivariable work. Prioritize the first two lessons for
+            this source set.
+          </>
         ),
       },
       {
@@ -880,10 +1130,10 @@ export const lessons: Lesson[] = [
    * ================================================================ */
   {
     id: "lagrange-multipliers",
-    title: "Constrained optimization: Lagrange multipliers",
+    title: "Supplement: constrained optimization with Lagrange multipliers",
     lecture: MODULE,
     summary:
-      "At a constrained extremum the level curve of f kisses the constraint: ∇f = λ∇g. One system, all candidates.",
+      "Optional extension beyond the supplied deck: at a regular constrained extremum, the level curve of f is tangent to the constraint.",
     minutes: 21,
     objectives: [
       "Set up and solve the Lagrange system for one constraint",
@@ -903,6 +1153,20 @@ export const lessons: Lesson[] = [
             increasing in one of the two walking directions, so you would not be at the top. That
             tangency, written with gradients, is the entire method of Lagrange.
           </p>
+        ),
+      },
+      {
+        kind: "callout",
+        tone: "warn",
+        title: "Scope note — supplemental technique",
+        content: (
+          <>
+            Lagrange multipliers do not appear in the nine supplied MA2 slide decks, the 2025–26
+            Taylor/Critical Points tutorial, or its solution sheet. This inherited lesson is kept for
+            broader engineering-math usefulness, but it is not presented as professor-sourced core
+            material. The source-backed optimization content is the free Hessian classification in
+            the first two lessons.
+          </>
         ),
       },
       {
@@ -1175,6 +1439,7 @@ export const practice: Question[] = [
   {
     id: "ma2-opt-q3",
     topic: MODULE,
+    tags: ["supplement"],
     difficulty: "easy",
     prompt: <>The Weierstrass theorem guarantees that <Tex>{"f"}</Tex> attains a global maximum and minimum whenever:</>,
     options: [
@@ -1223,6 +1488,7 @@ export const practice: Question[] = [
   {
     id: "ma2-opt-q5",
     topic: MODULE,
+    tags: ["supplement"],
     difficulty: "easy",
     prompt: <>Geometrically, the Lagrange condition <Tex>{"\\nabla f = \\lambda \\nabla g"}</Tex> at a constrained extremum on the curve <Tex>{"g=0"}</Tex> says that:</>,
     options: [
@@ -1390,6 +1656,7 @@ export const practice: Question[] = [
   {
     id: "ma2-opt-q12",
     topic: MODULE,
+    tags: ["supplement"],
     difficulty: "medium",
     prompt: <>The maximum of <Tex>{"f(x,y) = x + 2y"}</Tex> on the circle <Tex>{"x^2 + y^2 = 5"}</Tex> is:</>,
     options: [
@@ -1415,6 +1682,7 @@ export const practice: Question[] = [
   {
     id: "ma2-opt-q13",
     topic: MODULE,
+    tags: ["supplement"],
     difficulty: "hard",
     prompt: <>On the closed disk <Tex>{"x^2 + y^2 \\le 1"}</Tex>, the global maximum of <Tex>{"f(x,y) = x^2 - y^2"}</Tex> is:</>,
     options: [
@@ -1498,6 +1766,7 @@ export const practice: Question[] = [
   {
     id: "ma2-opt-q16",
     topic: MODULE,
+    tags: ["supplement"],
     difficulty: "hard",
     prompt: <>Minimize <Tex>{"f(x,y) = x^2 + y^2"}</Tex> subject to <Tex>{"xy = 1"}</Tex>. The result is:</>,
     options: [
@@ -1551,6 +1820,7 @@ export const practice: Question[] = [
   {
     id: "ma2-opt-q18",
     topic: MODULE,
+    tags: ["supplement"],
     difficulty: "medium",
     prompt: (
       <>
@@ -1667,7 +1937,7 @@ export const exam: ExamProblem[] = [
   {
     id: "ma2-opt-e2",
     title: "Global extrema on a triangle",
-    meta: "Optimization · ~12 pts",
+    meta: "Supplement · global optimization · ~12 pts",
     difficulty: "hard",
     topic: MODULE,
     statement: (
@@ -1765,7 +2035,7 @@ export const exam: ExamProblem[] = [
   {
     id: "ma2-opt-e3",
     title: "Lagrange multipliers on the unit circle",
-    meta: "Constrained optimization · ~10 pts",
+    meta: "Supplement · constrained optimization · ~10 pts",
     difficulty: "medium",
     topic: MODULE,
     statement: (
