@@ -371,10 +371,12 @@ export const lessons: Lesson[] = [
               <strong>Sphere</strong>, slides' order <Tex>{"(\\theta,\\varphi)"}</Tex>: the determinant
               gives{" "}
               <Tex>{"\\mathbf{N}(\\theta,\\varphi) = -R^2(\\sin^2\\varphi\\cos\\theta,\\ \\sin^2\\varphi\\sin\\theta,\\ \\sin\\varphi\\cos\\varphi) = -R\\sin\\varphi\\;\\mathbf{r}(\\theta,\\varphi)"}</Tex>,
-              so <Tex>{"\\|\\mathbf{N}\\| = R^2\\sin\\varphi"}</Tex>: regular for{" "}
-              <Tex>{"\\varphi \\in (0,\\pi)"}</Tex>. The slides give the global parameter range with
-              the pole values included; for a <em>local regular chart</em>, restrict to the open
-              interval and cover each pole with another chart.
+              so <Tex>{"\\|\\mathbf{N}\\| = R^2\\sin\\varphi"}</Tex>: regular away from the poles.
+              The slides' global spherical coordinates include the poles and a longitude seam, so
+              they are not one injective regular chart. A genuine <em>local regular chart</em> uses
+              an open rectangle such as <Tex>{"(-\\pi,\\pi)\\times(0,\\pi)"}</Tex>; overlapping charts
+              cover the omitted seam and poles. The global range remains valid for area integration
+              because those omitted sets have measure zero.
             </p>
           </>
         ),
@@ -750,12 +752,14 @@ export const lessons: Lesson[] = [
         content: (
           <>
             The slide's handwritten result is <Tex>{"\\pi\\sqrt{2}/8"}</Tex>. It cannot be right for
-            the stated paraboloid patch: the direct substitution above gives a different value, and
-            the tilt factor is at most{" "}
-            <Tex>{"\\sqrt{1+4\\cdot\\tfrac14} = \\sqrt{2}"}</Tex>, so{" "}
-            <Tex>{"A \\le \\sqrt{2}\\times\\text{(shadow area)} = \\sqrt{2}\\,\\pi/4 \\approx 1.11"}</Tex>.
-            The correct value is <Tex>{"\\tfrac{\\pi}{6}(2\\sqrt{2}-1)"}</Tex>. Bounding an area by (max
-            tilt) × (shadow) takes ten seconds and catches this whole class of slips.
+            the stated paraboloid patch. Since the tilt factor satisfies{" "}
+            <Tex>{"1 \\le \\sqrt{1+4r^2} \\le \\sqrt{2}"}</Tex>, the area must obey{" "}
+            <Tex>{"\\pi/4 \\le A \\le \\pi\\sqrt{2}/4"}</Tex>. But{" "}
+            <Tex>{"\\pi\\sqrt{2}/8 \\approx 0.555 < \\pi/4 \\approx 0.785"}</Tex>, so the slide's
+            value is impossible. The direct substitution gives the correct value{" "}
+            <Tex>{"\\tfrac{\\pi}{6}(2\\sqrt{2}-1) \\approx 0.96"}</Tex>. Bounding an area between
+            (min tilt) × (shadow) and (max tilt) × (shadow) takes ten seconds and catches this whole
+            class of slips.
           </>
         ),
       },
