@@ -1,7 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const SUPABASE_PROJECT_URL = "https://feksqmbbnsyxhxnoeizr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "").trim();
+// Supabase publishable keys are designed to ship in browser clients. Keep the
+// env override for alternate deployments, while making the production site
+// work without a Render-only environment-variable handoff.
+const SUPABASE_PUBLISHABLE_KEY = (
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  "sb_publishable_7-6DnidCKE7ibwqFldL68A_OX1ex8XB"
+).trim();
 
 export const cloudConfigured = SUPABASE_PUBLISHABLE_KEY.length > 20;
 let clientPromise: Promise<SupabaseClient> | null = null;
