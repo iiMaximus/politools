@@ -1,6 +1,7 @@
 import type { Course, Question } from "../types";
 import type { CourseProgress } from "./progress";
 import { effectiveDue } from "./srs";
+import { questionIsMastered, questionMastery } from "./adaptive";
 
 /* ================================================================== *
  *  WEAK-TOPIC ANALYTICS — pure math over practice banks + progress.
@@ -40,6 +41,7 @@ export function topicStats(course: Course, progress: CourseProgress): TopicStat[
     let attempts = 0;
     let correct = 0;
     let mastered = 0;
+    let masteryCredit = 0;
     let due = 0;
     let intervalSum = 0;
     let intervalN = 0;
@@ -49,7 +51,9 @@ export function topicStats(course: Course, progress: CourseProgress): TopicStat[
       attempted += 1;
       attempts += card.attempts;
       correct += card.correct;
-      if (card.mastered) mastered += 1;
+      const evidence = questionMastery(q, card, now);
+      masteryCredit += evidence;
+      if (questionIsMastered(q, card, now)) mastered += 1;
       if (effectiveDue(card, now) <= now) due += 1;
       if (card.intervalDays != null) {
         intervalSum += card.intervalDays;
@@ -57,7 +61,7 @@ export function topicStats(course: Course, progress: CourseProgress): TopicStat[
       }
     }
     const accuracy = attempts > 0 ? correct / attempts : null;
-    const masteryRatio = qs.length ? mastered / qs.length : 0;
+    const masteryRatio = qs.length ? masteryCredit / qs.length : 0;
     const dueRatio = qs.length ? due / qs.length : 0;
     // untouched topics score weak too — an exam doesn't skip them
     const weakness =

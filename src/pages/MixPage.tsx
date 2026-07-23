@@ -6,29 +6,54 @@ import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
 import { Pill } from "../components/ui";
 import { QuestionCard } from "./PracticePage";
-import { buildSession, isDue, shuffle } from "../lib/adaptive";
-import { readProgress, recordAnswer } from "../lib/progress";
+import {
+  buildSession,
+  isDue,
+  questionIsMastered,
+  questionIsReached,
+  questionMastery,
+  reachedTopics,
+  shuffle,
+} from "../lib/adaptive";
+import { mistakeIsOpen, readProgress, recordAnswer } from "../lib/progress";
 import { addBonusXp, consumeUnlock, logMixSession, readGame, useGame } from "../lib/game";
 import { sfx } from "../lib/sound";
 import { fireConfetti } from "../lib/confetti";
 import { isNumeric, type Course, type McqQuestion } from "../types";
 
 /* ================================================================== *
- *  DAILY MIX — the one-button session. Interleaves due reviews,
- *  rusty cards and fresh material across all focus courses into a
- *  ~20-card deck with a combo meter and bonus XP for hot streaks.
+ *  DAILY MIX — retrieval across reached material. Due cards, open
+ *  mistakes and weak learned topics lead; unseen topics are excluded
+ *  unless the learner explicitly enables Discovery.
  * ================================================================== */
 
 const DECK_SIZE = 20;
 const COMBO_BONUS_FROM = 3;
+const DISCOVERY_KEY = "polito:mix:discovery";
 
 interface Entry {
   course: Course;
   q: McqQuestion;
-  kind: "due" | "rusty" | "fresh";
+  kind: "due" | "rusty" | "mistake" | "weak" | "review" | "learned" | "discovery";
 }
 
-async function buildMixDeck(): Promise<Entry[]> {
+function readDiscovery(): boolean {
+  try {
+    return localStorage.getItem(DISCOVERY_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeDiscovery(enabled: boolean) {
+  try {
+    localStorage.setItem(DISCOVERY_KEY, enabled ? "1" : "0");
+  } catch {
+    /* private mode / unavailable */
+  }
+}
+
+export async function buildMixDeck(discovery = false): Promise<Entry[]> {
   const game = readGame();
   const focus = game.settings.focusCourses.filter((id) => !game.settings.passedCourses.includes(id));
   const courses = await loadCourses(focus); // only the focus chunks
@@ -36,22 +61,51 @@ async function buildMixDeck(): Promise<Entry[]> {
 
   const perCourse: Entry[][] = courses.map((course) => {
     const progress = readProgress(course.meta.id);
+    const reached = reachedTopics(course, progress);
+    const dueMistakes: Entry[] = [];
     const due: Entry[] = [];
     const rusty: Entry[] = [];
-    const fresh: Entry[] = [];
+    const mistakes: Entry[] = [];
+    const weak: Entry[] = [];
+    const review: Entry[] = [];
+    const learned: Entry[] = [];
+    const discoveries: Entry[] = [];
     const mcq = course.practice.filter((qq): qq is McqQuestion => !isNumeric(qq));
     // topic focus (set on the course page) narrows the mix to what matters
     const focusT = game.settings.focusTopics?.[course.meta.id];
-    const pool = focusT?.length ? mcq.filter((qq) => qq.topic && focusT.includes(qq.topic)) : mcq;
+    const focused = focusT?.length ? mcq.filter((qq) => qq.topic && focusT.includes(qq.topic)) : mcq;
+    // Default Mix is retrieval, not roulette: never jump ahead of lessons/attempted topics.
+    const pool = discovery
+      ? focused
+      : focused.filter((q) => questionIsReached(q, course, progress, reached));
     for (const q of buildSession(pool, progress) as McqQuestion[]) {
       const card = progress.cards[q.id];
-      // SRS: overdue unmastered = review, overdue mastered = polish the rust
+      const mistake = mistakeIsOpen(card);
       if (isDue(card)) {
-        if (card?.mastered) rusty.push({ course, q, kind: "rusty" });
+        if (mistake) dueMistakes.push({ course, q, kind: "mistake" });
+        else if (questionIsMastered(q, card)) rusty.push({ course, q, kind: "rusty" });
         else due.push({ course, q, kind: "due" });
-      } else fresh.push({ course, q, kind: "fresh" });
+      } else if (mistake) {
+        mistakes.push({ course, q, kind: "mistake" });
+      } else if (!card || card.attempts === 0) {
+        if (questionIsReached(q, course, progress, reached)) learned.push({ course, q, kind: "learned" });
+        else discoveries.push({ course, q, kind: "discovery" });
+      } else if (questionMastery(q, card) < 0.75) {
+        weak.push({ course, q, kind: "weak" });
+      } else {
+        review.push({ course, q, kind: "review" });
+      }
     }
-    return [...shuffle(due), ...shuffle(rusty), ...fresh];
+    return [
+      ...shuffle(dueMistakes),
+      ...shuffle(due),
+      ...shuffle(rusty),
+      ...shuffle(mistakes),
+      ...shuffle(weak),
+      ...shuffle(review),
+      ...shuffle(learned),
+      ...shuffle(discoveries),
+    ];
   });
 
   // round-robin so no course hogs the mix
@@ -68,7 +122,7 @@ async function buildMixDeck(): Promise<Entry[]> {
 }
 
 export function MixPage() {
-  useGame(); // re-render on game-state changes (quests completing, etc.)
+  const gameState = useGame(); // re-render on game-state changes (quests completing, etc.)
   const [deck, setDeck] = useState<Entry[] | null>(null); // null = chunks loading
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
@@ -76,9 +130,14 @@ export function MixPage() {
   const [combo, setCombo] = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
   const [bonus, setBonus] = useState(0);
+  const [discovery, setDiscovery] = useState(readDiscovery);
   const [byCourse, setByCourse] = useState<Record<string, { correct: number; total: number }>>({});
   const loggedRef = useRef(false);
   const startedRef = useRef(Date.now());
+  const questionStartedRef = useRef(Date.now());
+  const activeFocusCount = gameState.settings.focusCourses.filter(
+    (id) => !gameState.settings.passedCourses.includes(id)
+  ).length;
 
   // a purchased Double-XP Mix (La Birreria) applies to this session
   const doubleRef = useRef(false);
@@ -92,22 +151,25 @@ export function MixPage() {
   // build the deck once the focus course chunks are in
   useEffect(() => {
     let on = true;
-    void buildMixDeck().then((d) => {
+    void buildMixDeck(discovery).then((d) => {
       if (on) {
         setDeck(d);
         startedRef.current = Date.now();
+        questionStartedRef.current = Date.now();
       }
     });
     return () => {
       on = false;
     };
-  }, []);
+  }, [discovery]);
 
   const done = !!deck && deck.length > 0 && i >= deck.length;
   const entry = deck?.[i];
 
   const dueInDeck = useMemo(() => deck?.filter((e) => e.kind === "due").length ?? 0, [deck]);
   const rustyInDeck = useMemo(() => deck?.filter((e) => e.kind === "rusty").length ?? 0, [deck]);
+  const mistakesInDeck = useMemo(() => deck?.filter((e) => e.kind === "mistake").length ?? 0, [deck]);
+  const discoveryInDeck = useMemo(() => deck?.filter((e) => e.kind === "discovery").length ?? 0, [deck]);
 
   // Log the session exactly once at the end (feeds quests/achievements).
   useEffect(() => {
@@ -132,17 +194,39 @@ export function MixPage() {
     setBestCombo(0);
     setBonus(0);
     setByCourse({});
-    void buildMixDeck().then((d) => {
+    void buildMixDeck(discovery).then((d) => {
       setDeck(d);
       startedRef.current = Date.now();
+      questionStartedRef.current = Date.now();
     });
+  }
+
+  function toggleDiscovery() {
+    const next = !discovery;
+    writeDiscovery(next);
+    loggedRef.current = false;
+    setDeck(null);
+    setI(0);
+    setPicked(null);
+    setCorrectCount(0);
+    setCombo(0);
+    setBestCombo(0);
+    setBonus(0);
+    setByCourse({});
+    setDiscovery(next);
   }
 
   function answer(optionId: string) {
     if (picked || !entry) return;
     setPicked(optionId);
     const correct = optionId === entry.q.correct;
-    recordAnswer(entry.course.meta.id, entry.q.id, correct);
+    recordAnswer(entry.course.meta.id, entry.q.id, correct, {
+      difficulty: entry.q.difficulty,
+      selectedAnswer: optionId,
+      correctAnswer: entry.q.correct,
+      responseMs: Date.now() - questionStartedRef.current,
+      mode: "daily-mix",
+    });
     setByCourse((prev) => {
       const s = prev[entry.course.meta.id] ?? { correct: 0, total: 0 };
       return {
@@ -184,6 +268,7 @@ export function MixPage() {
   }
 
   if (!deck.length) {
+    const noFocus = activeFocusCount === 0;
     return (
       <>
         <TopBar crumbs={[{ label: "Daily Mix" }]} />
@@ -192,13 +277,24 @@ export function MixPage() {
             <span className="mc-slot mx-auto mb-3 grid h-14 w-14 place-items-center text-[var(--accent)]">
               <Icon name="Shuffle" size={28} />
             </span>
-            <h1 className="pixel-font text-3xl uppercase leading-none">No focus courses selected</h1>
+            <h1 className="pixel-font text-3xl uppercase leading-none">
+              {noFocus ? "No focus courses selected" : "Nothing reached yet"}
+            </h1>
             <p className="mt-2 text-white/55">
-              Pick your season's courses in the hub settings and the Daily Mix will build itself.
+              {noFocus
+                ? "Pick your season's courses in the hub settings and the Daily Mix will build itself."
+                : "Daily Mix now stays inside lessons and topics you have reached. Finish a lesson, answer a practice card, or explicitly enable Discovery."}
             </p>
-            <Link to="/" className="arcade-button mt-5 px-4">
-              Back to hub
-            </Link>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              <Link to="/" className="arcade-button px-4">
+                Back to hub
+              </Link>
+              {!noFocus && (
+                <button onClick={toggleDiscovery} className="arcade-button arcade-button-secondary px-4">
+                  <Icon name="Sparkles" size={16} /> Include discovery cards
+                </button>
+              )}
+            </div>
           </div>
         </Page>
       </>
@@ -267,56 +363,75 @@ export function MixPage() {
         </Link>
       </TopBar>
       <Page className="max-w-3xl">
-        {/* progress + combo strip */}
-        <div className="mb-5 flex flex-wrap items-center gap-3">
-          <div className="mc-slot arcade-dark pixel-font flex items-center gap-2 px-3 py-2 text-lg leading-none text-white">
-            <Icon name="ListChecks" size={15} className="text-white/45" />
-            {i + 1}/{deck.length}
+        <section className="mc-panel arcade-dark relative mb-5 overflow-hidden p-3 text-white sm:p-4">
+          <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.035]" />
+          {/* progress + combo strip */}
+          <div className="relative flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <div className="mc-slot pixel-font flex items-center gap-2 px-3 py-2 text-lg leading-none">
+              <Icon name="ListChecks" size={15} className="text-white/45" />
+              {i + 1}/{deck.length}
+            </div>
+            <ComboMeter combo={combo} />
+            {doubleXp && (
+              <span className="pixel-font rounded-lg bg-[#f5b942] px-2 py-1 text-base leading-none text-[#4a2c00]">
+                2× XP
+              </span>
+            )}
+            <div className="flex w-full flex-wrap items-center gap-2 text-xs text-white/50 sm:ml-auto sm:w-auto sm:justify-end">
+              {dueInDeck > 0 && <Pill tone="warn">{dueInDeck} due</Pill>}
+              {rustyInDeck > 0 && <Pill tone="neutral">{rustyInDeck} rusty</Pill>}
+              {mistakesInDeck > 0 && <Pill tone="warn">{mistakesInDeck} mistakes</Pill>}
+              {discoveryInDeck > 0 && <Pill tone="accent">{discoveryInDeck} discovery</Pill>}
+              <button
+                type="button"
+                onClick={toggleDiscovery}
+                className="mc-slot arcade-focus-ring pixel-font px-2.5 py-1.5 text-base uppercase leading-none text-white/70 transition hover:text-white"
+                title="Discovery is the only mode allowed to introduce topics you have not reached"
+              >
+                Discovery {discovery ? "on" : "off"}
+              </button>
+            </div>
           </div>
-          <ComboMeter combo={combo} />
-          {doubleXp && (
-            <span className="pixel-font rounded-lg bg-[#f5b942] px-2 py-1 text-base leading-none text-[#4a2c00]">
-              2× XP
-            </span>
-          )}
-          <div className="ml-auto flex items-center gap-2 text-xs text-[var(--color-faint)]">
-            {dueInDeck > 0 && <Pill tone="warn">{dueInDeck} due</Pill>}
-            {rustyInDeck > 0 && <Pill tone="neutral">{rustyInDeck} rusty</Pill>}
+
+          {/* deck progress bar */}
+          <div className="relative my-3 h-2 w-full overflow-hidden rounded-sm border border-black bg-[#111]">
+            <div
+              className="h-full"
+              style={{
+                width: `${(i / deck.length) * 100}%`,
+                background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
+                transition: "width 0.3s ease",
+              }}
+            />
           </div>
-        </div>
 
-        {/* deck progress bar */}
-        <div className="mb-5 h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-bg)]">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: `${(i / deck.length) * 100}%`,
-              background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
-              transition: "width 0.3s ease",
-            }}
-          />
-        </div>
-
-        <div className="mb-3 flex items-center gap-2">
-          <Pill tone="accent">
-            <Icon name={entry.course.meta.icon} size={12} /> {entry.course.meta.short}
-          </Pill>
-          {entry.kind === "due" && <Pill tone="warn">review</Pill>}
-          {entry.kind === "rusty" && (
-            <Pill tone="neutral">
-              <Icon name="Sparkles" size={12} /> polish the rust
+          <div className="relative flex flex-wrap items-center gap-2">
+            <Pill tone="accent">
+              <Icon name={entry.course.meta.icon} size={12} /> {entry.course.meta.short}
             </Pill>
-          )}
-        </div>
+            {entry.kind === "due" && <Pill tone="warn">review</Pill>}
+            {entry.kind === "mistake" && <Pill tone="warn">mistake retry</Pill>}
+            {entry.kind === "weak" && <Pill tone="warn">weak recall</Pill>}
+            {entry.kind === "learned" && <Pill tone="neutral">reached topic</Pill>}
+            {entry.kind === "discovery" && <Pill tone="accent">discovery</Pill>}
+            {entry.kind === "rusty" && (
+              <Pill tone="neutral">
+                <Icon name="Sparkles" size={12} /> polish the rust
+              </Pill>
+            )}
+          </div>
+        </section>
 
         <QuestionCard
           key={entry.q.id}
           q={entry.q}
           picked={picked}
+          retro
           onPick={answer}
           onNext={() => {
             setPicked(null);
             setI((n) => n + 1);
+            questionStartedRef.current = Date.now();
           }}
         />
         <p className="mt-3 text-center text-xs text-[var(--color-faint)]">

@@ -7,6 +7,7 @@ import { CourseNav } from "../components/CourseNav";
 import { Icon } from "../components/Icon";
 import { Kicker, Meter, Pill } from "../components/ui";
 import { ProgressRing } from "../components/ProgressRing";
+import { StudyLadder } from "../components/StudyLadder";
 import { rtInline } from "../components/RichText";
 import { levelFromXp } from "../lib/adaptive";
 import { resetCourse, useCourseProgress } from "../lib/progress";
@@ -15,6 +16,7 @@ import { resetCourseGame, updateSettings, useGame } from "../lib/game";
 import { REVIEW_BUFFER_DAYS, coursePlan, planDateLabel } from "../lib/plan";
 import { topicStats, weakestTopics } from "../lib/stats";
 import { summarize } from "../lib/summary";
+import { studyLadder } from "../lib/study-ladder";
 import { NotFound } from "./NotFound";
 
 function daysUntil(iso?: string): number | null {
@@ -51,6 +53,7 @@ export function CoursePage() {
   const { level, into, perLevel } = levelFromXp(progress.xp);
   const days = daysUntil(game.settings.examDates[courseId] ?? meta.examDate);
   const firstUnread = lessons.find((l) => !progress.lessons[l.id]?.completed) ?? lessons[0];
+  const ladder = studyLadder(course, progress, game);
 
   // group lessons by lecture (preserving order)
   const lectureGroups: { lecture: string; items: typeof lessons }[] = [];
@@ -131,6 +134,8 @@ export function CoursePage() {
             </div>
           </div>
         </section>
+
+        {ladder && <StudyLadder ladder={ladder} />}
 
         {/* Battle plan — deadlines to finish each part before the exam */}
         {plan && (

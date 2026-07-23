@@ -55,6 +55,10 @@ export function TopBar({
         )}
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {children}
+          <Link to="/search" className="btn btn-ghost !h-10 !px-3" aria-label="Search all study content">
+            <Icon name="Compass" size={17} />
+            <span className="hidden lg:inline">Search</span>
+          </Link>
           <CloudAccountButton />
           <ThemeToggle />
         </div>

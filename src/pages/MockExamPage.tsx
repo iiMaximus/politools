@@ -434,7 +434,12 @@ function MockExam({ course, courseId }: { course: Course; courseId: string }) {
     let points = 0;
     for (const it of deck) {
       const ok = isAnswerCorrect(it.q, answers[it.q.id]);
-      recordAnswer(courseId, it.q.id, ok);
+      recordAnswer(courseId, it.q.id, ok, {
+        difficulty: it.q.difficulty,
+        selectedAnswer: answers[it.q.id] ?? "blank",
+        correctAnswer: isNumeric(it.q) ? String(it.q.answer) : it.q.correct,
+        mode: "mock-exam",
+      });
       const t = (byTopic[it.q.topic ?? "General"] ??= { correct: 0, total: 0 });
       t.total += 1;
       if (ok) {

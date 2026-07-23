@@ -40,8 +40,11 @@ no email/password flow: each person chooses the same named profile on every devi
 editable names and avatar icons, and their aggregate study stats form the leaderboard.
 
 1. Run **supabase/migrations/20260721204500_trusted_profiles.sql** in the project's SQL Editor.
-2. Copy **.env.example** to **.env.local** and add the project's publishable browser key.
-3. For a hosted build, provide the same value as **VITE_SUPABASE_PUBLISHABLE_KEY** at build time.
+2. Optionally run **supabase/migrations/20260722090000_weekly_leaderboard.sql** for server-side
+   weekly counters. The four-person board also derives the current week from synced activity when
+   these additive columns are not installed, so profile loading and weekly ranks never depend on it.
+3. Copy **.env.example** to **.env.local** and add the project's publishable browser key.
+4. For a hosted build, provide the same value as **VITE_SUPABASE_PUBLISHABLE_KEY** at build time.
 
 The publishable key is safe in browser code; never use a secret or service-role key there. Local
 progress remains fully functional when Supabase is unavailable.
@@ -93,8 +96,16 @@ The hub is mission control: study streak with freeze tokens, GitHub-style activi
 account rank (Matricola → Rettore), daily quests, and a beer counter. Each focus course shows a
 **readiness dial** (projected 18–30L grade) and an exam countdown. Ways to study:
 
-- **Daily Mix** (`/mix`) — one button, ~20 cards interleaved across your focus courses (due
-  reviews first, then rusty cards, then new), with a combo meter and bonus XP.
+- **Daily Mix** (`/mix`) — one button, ~20 cards interleaved only from lessons/topics you have
+  reached (mistakes and due/weak recall first). Unseen topics appear only when Discovery is enabled.
+- **Mistake Lab** (`/mistakes`) — a persistent misconception inbox with wrong-answer history,
+  theory review, retries, and spaced-recall recovery.
+- **Exam radar** (`/readiness`) — evidence-based grade ranges, confidence, marks-at-risk topics,
+  and the next three highest-value actions.
+- **Weekly ranks** (`/leaderboard`) — a Monday-to-Sunday XP/activity/mastery race for the small
+  trusted study group, with lifetime totals kept as secondary context.
+- **Search, source map and content QA** (`/search`, `/sources`, `/content-qa`) — find any concept or
+  formula, inspect official-material coverage, and audit structural content quality.
 - **Skill path** (`/c/<id>/path`) — a Duolingo-style road: lesson → checkpoint → … → boss.
 - **Boss fights** (`/c/<id>/boss`) — the exam as a procedural three.js boss (Lord Entropy, the
   Limit Wraith, Σ-Prime…). Correct answers deal damage (speed/combo bonuses, crits), misses cost

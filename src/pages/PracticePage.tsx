@@ -243,7 +243,12 @@ function PracticeRunner({
       setHotStreak(0);
       sfx.wrong();
     }
-    recordAnswer(courseId, q.id, correct);
+    recordAnswer(courseId, q.id, correct, {
+      difficulty: q.difficulty,
+      selectedAnswer: value,
+      correctAnswer: isNumeric(q) ? String(q.answer) : q.correct,
+      mode: checkpoint ? "checkpoint" : dueOnly ? "review" : "practice",
+    });
     setNextReview(nextReviewLabel(readProgress(courseId).cards[q.id]?.due));
   }
 
@@ -369,6 +374,7 @@ export function QuestionCard({
   nextReview,
   onPick,
   onNext,
+  retro = false,
 }: {
   q: Question;
   picked: string | null;
@@ -376,6 +382,8 @@ export function QuestionCard({
   nextReview?: string | null;
   onPick: (id: string) => void;
   onNext: () => void;
+  /** Arcade cabinet treatment for Mix/Mistake Lab while keeping course practice paper-like. */
+  retro?: boolean;
 }) {
   // Shuffle option display order, but keep the original letters in feedback.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -412,16 +420,17 @@ export function QuestionCard({
   }, [answered, options, q, onPick, onNext]);
 
   return (
-    <div className="surface p-5 sm:p-6">
-      <div className="mb-3 flex items-center gap-2">
+    <div className={cn(retro ? "mc-panel arcade-dark relative overflow-hidden text-white" : "surface", "p-5 sm:p-6")}>
+      {retro && <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.035]" />}
+      <div className="relative mb-3 flex items-center gap-2">
         <Pill tone="neutral">{q.difficulty}</Pill>
         {q.topic && <Pill tone="accent">{q.topic}</Pill>}
       </div>
 
-      <div className="prose-lesson mb-5 !text-[1.08rem] font-medium !text-[var(--color-ink)]">{rt(q.prompt)}</div>
+      <div className={cn("prose-lesson relative mb-5 !text-[1.08rem] font-medium", retro ? "!text-white" : "!text-[var(--color-ink)]")}>{rt(q.prompt)}</div>
 
       {q.visual?.type === "image" && (
-        <figure className="mb-5 rounded-xl border border-[var(--color-line)] bg-white p-3">
+        <figure className={cn("relative mb-5 rounded-xl border p-3", retro ? "border-black bg-[#f7f5df] text-[#111]" : "border-[var(--color-line)] bg-white")}>
           <img
             src={q.visual.src}
             alt={q.visual.alt}
@@ -437,9 +446,9 @@ export function QuestionCard({
       )}
 
       {isNumeric(q) ? (
-        <NumericAnswer q={q} picked={picked} onSubmit={onPick} />
+        <NumericAnswer q={q} picked={picked} onSubmit={onPick} retro={retro} />
       ) : (
-      <div className="grid gap-2.5">
+      <div className="relative grid gap-2.5">
         {options.map((o) => {
           const isCorrect = o.id === q.correct;
           const show = answered && (o.id === picked || isCorrect);
@@ -450,10 +459,12 @@ export function QuestionCard({
               onClick={() => onPick(o.id)}
               className={cn(
                 "flex items-start gap-3 rounded-xl border px-4 py-3 text-left transition",
-                !answered && "border-[var(--color-line)] hover:border-[var(--accent-line)] hover:bg-[var(--color-surface-2)]",
+                !answered && (retro
+                  ? "mc-slot border-black bg-[#2b2b2b] text-white hover:brightness-125"
+                  : "border-[var(--color-line)] hover:border-[var(--accent-line)] hover:bg-[var(--color-surface-2)]"),
                 show && isCorrect && "border-emerald-500/50 bg-emerald-500/10",
                 show && !isCorrect && o.id === picked && "border-rose-500/50 bg-rose-500/10",
-                answered && !show && "border-[var(--color-line)] opacity-45"
+                answered && !show && (retro ? "border-black bg-[#242424] opacity-45" : "border-[var(--color-line)] opacity-45")
               )}
             >
               <span
@@ -463,7 +474,7 @@ export function QuestionCard({
                     ? "bg-emerald-500 text-[#06080f]"
                     : show && !isCorrect && o.id === picked
                     ? "bg-rose-500 text-[#06080f]"
-                    : "bg-[var(--color-bg)] text-[var(--color-faint)]"
+                    : retro ? "bg-[#111] text-white/55" : "bg-[var(--color-bg)] text-[var(--color-faint)]"
                 )}
               >
                 {o.id}
@@ -476,7 +487,7 @@ export function QuestionCard({
       )}
 
       {answered && (
-        <div className="mt-5 space-y-4">
+        <div className="relative mt-5 space-y-4">
           <div
             className={cn(
               "flex items-center gap-2 rounded-xl px-4 py-3 font-bold",
@@ -500,17 +511,17 @@ export function QuestionCard({
             )}
           </div>
 
-          <div className="rounded-xl bg-[var(--color-bg)] p-4">
+          <div className={cn("rounded-xl p-4", retro ? "mc-slot" : "bg-[var(--color-bg)]")}>
             <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Why</div>
-            <div className="prose-lesson !text-[0.96rem]">{rt(q.explanation)}</div>
+            <div className={cn("prose-lesson !text-[0.96rem]", retro && "!text-white/75")}>{rt(q.explanation)}</div>
           </div>
 
           {q.theory && (
-            <div className="rounded-xl bg-[var(--color-bg)] p-4">
+            <div className={cn("rounded-xl p-4", retro ? "mc-slot" : "bg-[var(--color-bg)]")}>
               <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
                 Relevant theory
               </div>
-              <div className="prose-lesson !text-[0.96rem]">{rt(q.theory)}</div>
+              <div className={cn("prose-lesson !text-[0.96rem]", retro && "!text-white/75")}>{rt(q.theory)}</div>
             </div>
           )}
 
@@ -529,10 +540,12 @@ function NumericAnswer({
   q,
   picked,
   onSubmit,
+  retro = false,
 }: {
   q: NumericQuestion;
   picked: string | null;
   onSubmit: (value: string) => void;
+  retro?: boolean;
 }) {
   const [value, setValue] = useState("");
   const answered = picked !== null;
@@ -552,7 +565,10 @@ function NumericAnswer({
         disabled={answered}
         onChange={(e) => setValue(e.target.value)}
         placeholder={q.placeholder ?? "your result"}
-        className="w-44 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-3.5 py-2.5 font-mono outline-none focus:border-[var(--accent)] disabled:opacity-60"
+        className={cn(
+          "w-44 rounded-xl border px-3.5 py-2.5 font-mono outline-none focus:border-[var(--accent)] disabled:opacity-60",
+          retro ? "border-black bg-[#242424] text-white" : "border-[var(--color-line)] bg-[var(--color-bg)]"
+        )}
       />
       {q.unit && <span className="font-semibold text-[var(--color-muted)]">{q.unit}</span>}
       {!answered && (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Course, Question } from "../types";
 import type { CardState, CourseProgress } from "./progress";
+import { MASTERY_THRESHOLD, masteryScore } from "./mastery";
 
 /* ================================================================== *
  *  GAME CORE
@@ -439,13 +440,14 @@ export function readiness(course: Course, progress: CourseProgress, state: GameS
   let rusty = 0;
   for (const q of qs) {
     const card = progress.cards[q.id];
-    if (card?.mastered) {
-      const r = rustLevel(card);
-      if (r > 0) rusty += 1;
-      masteryCredit += RUST_CREDIT[r];
-    } else if (card && card.wrong > 0) {
-      due += 1;
-    }
+    if (!card || card.attempts === 0) continue;
+    const evidence = masteryScore(card, q.difficulty);
+    const r = rustLevel(card);
+    if (evidence >= MASTERY_THRESHOLD && r > 0) rusty += 1;
+    // The richer score already includes recent accuracy, spacing and recency;
+    // rust credit remains as a small extra guard for legacy cards.
+    masteryCredit += evidence * RUST_CREDIT[r];
+    if ((card.due ?? Number.POSITIVE_INFINITY) <= Date.now()) due += 1;
   }
   const mastery = total ? masteryCredit / total : 0;
   const lessons = course.lessons.length

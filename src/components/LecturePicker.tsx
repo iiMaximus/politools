@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Icon } from "./Icon";
 import { Meter } from "./ui";
-import { isDue } from "../lib/adaptive";
+import { isDue, questionIsMastered } from "../lib/adaptive";
 import type { CourseProgress } from "../lib/progress";
 import type { Course } from "../types";
 
@@ -27,7 +27,7 @@ function group(course: Course, progress: CourseProgress): ModuleGroup[] {
     const row =
       byTopic.get(topic) || { topic, module: q.module || "Lectures", total: 0, mastered: 0, due: 0 };
     row.total++;
-    if (progress.cards[q.id]?.mastered) row.mastered++;
+    if (questionIsMastered(q, progress.cards[q.id])) row.mastered++;
     if (isDue(progress.cards[q.id])) row.due++;
     if (q.module) row.module = q.module;
     byTopic.set(topic, row);

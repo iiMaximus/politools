@@ -22,6 +22,10 @@ export interface StudyProfile {
   id: string;
   display_name: string;
   avatar: string;
+  week_started_on: string;
+  weekly_xp: number;
+  weekly_activity: number;
+  weekly_mastery: number;
   total_xp: number;
   current_streak: number;
   best_streak: number;
@@ -52,6 +56,85 @@ export const PROFILE_ICONS = ["🎓", "🚀", "⚙️", "🔥", "🧠", "🏆", 
 const CLOUD_META_PREFIX = "polito:cloud:";
 export const PROFILE_ID_KEY = CLOUD_META_PREFIX + "profile-id";
 const SYNC_HASH_KEY = CLOUD_META_PREFIX + "hash";
+const LAST_SYNCED_AT_KEY = CLOUD_META_PREFIX + "last-synced-at";
+const DEVICE_LABEL_KEY = CLOUD_META_PREFIX + "device-label";
+
+const STUDY_PROFILE_COLUMNS =
+  "id,display_name,avatar,week_started_on,weekly_xp,weekly_activity,weekly_mastery,total_xp,current_streak,best_streak,answers,mastered_cards,lessons_completed,client_updated_at,created_at,updated_at";
+const LEGACY_PROFILE_COLUMNS =
+  "id,display_name,avatar,total_xp,current_streak,best_streak,answers,mastered_cards,lessons_completed,client_updated_at,created_at,updated_at";
+
+const WARSAW_TIME_ZONE = "Europe/Warsaw";
+
+function datePartsInWarsaw(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: WARSAW_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+  }).formatToParts(date);
+  const value = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return {
+    year: Number(value("year")),
+    month: Number(value("month")),
+    day: Number(value("day")),
+    weekday: value("weekday"),
+  };
+}
+
+function warsawDateKey(date = new Date()) {
+  const { year, month, day } = datePartsInWarsaw(date);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+export function currentWeekStartKey(date = new Date()) {
+  const { year, month, day, weekday } = datePartsInWarsaw(date);
+  const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
+  const monday = new Date(Date.UTC(year, month - 1, day));
+  monday.setUTCDate(monday.getUTCDate() - (weekdayIndex === 0 ? 6 : weekdayIndex - 1));
+  return [
+    monday.getUTCFullYear(),
+    String(monday.getUTCMonth() + 1).padStart(2, "0"),
+    String(monday.getUTCDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+function normalizeStudyProfile(
+  profile: StudyProfile,
+  weekKey = currentWeekStartKey(),
+  snapshot?: CloudSnapshot
+) {
+  const hasWeeklyColumns =
+    typeof profile.weekly_xp === "number" &&
+    typeof profile.weekly_activity === "number" &&
+    typeof profile.weekly_mastery === "number";
+  if (hasWeeklyColumns && profile.week_started_on === weekKey) return profile;
+  const fallback = snapshot ? calculateWeeklyStats(snapshot) : {
+    weekly_xp: 0,
+    weekly_activity: 0,
+    weekly_mastery: 0,
+  };
+  return {
+    ...profile,
+    week_started_on: weekKey,
+    ...fallback,
+  };
+}
+
+export function sortStudyProfiles(profiles: StudyProfile[], weekKey = currentWeekStartKey()) {
+  return profiles
+    .map((profile) => normalizeStudyProfile(profile, weekKey))
+    .sort(
+      (left, right) =>
+        right.weekly_xp - left.weekly_xp ||
+        right.weekly_activity - left.weekly_activity ||
+        right.weekly_mastery - left.weekly_mastery ||
+        right.total_xp - left.total_xp ||
+        left.display_name.localeCompare(right.display_name)
+    );
+}
 
 function isSyncedKey(key: string) {
   return (
@@ -156,6 +239,62 @@ export function readSyncHash() {
   }
 }
 
+export function readLastSyncedAt() {
+  try {
+    const value = Number(localStorage.getItem(LAST_SYNCED_AT_KEY));
+    return Number.isFinite(value) && value > 0 ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeLastSyncedAt(value: number) {
+  try {
+    localStorage.setItem(LAST_SYNCED_AT_KEY, String(value));
+  } catch {
+    /* ignore */
+  }
+}
+
+function browserName(userAgent: string) {
+  if (/Edg\//.test(userAgent)) return "Edge";
+  if (/CriOS|Chrome\//.test(userAgent)) return "Chrome";
+  if (/FxiOS|Firefox\//.test(userAgent)) return "Firefox";
+  if (/Safari\//.test(userAgent)) return "Safari";
+  return "Browser";
+}
+
+export function readDeviceLabel() {
+  try {
+    const saved = localStorage.getItem(DEVICE_LABEL_KEY)?.trim();
+    if (saved) return saved;
+  } catch {
+    /* storage unavailable */
+  }
+
+  const userAgent = typeof navigator === "undefined" ? "" : navigator.userAgent;
+  const device = /iPhone/.test(userAgent)
+    ? "iPhone"
+    : /iPad/.test(userAgent)
+      ? "iPad"
+      : /Android/.test(userAgent)
+        ? "Android"
+        : /Macintosh|Mac OS X/.test(userAgent)
+          ? "Mac"
+          : /Windows/.test(userAgent)
+            ? "Windows PC"
+            : /Linux/.test(userAgent)
+              ? "Linux device"
+              : "This device";
+  const label = device + " · " + browserName(userAgent);
+  try {
+    localStorage.setItem(DEVICE_LABEL_KEY, label);
+  } catch {
+    /* storage unavailable */
+  }
+  return label;
+}
+
 function parseRecord(raw: string | undefined): Record<string, unknown> | null {
   if (!raw) return null;
   try {
@@ -204,7 +343,9 @@ function mergeProgress(localRaw: string, cloudRaw: string): string {
       attempts: Math.max(asNumber(left.attempts), asNumber(right.attempts)),
       correct: Math.max(asNumber(left.correct), asNumber(right.correct)),
       wrong: Math.max(asNumber(left.wrong), asNumber(right.wrong)),
-      mastered: Boolean(left.mastered || right.mastered),
+      // A newer failed retrieval must be allowed to demote stale mastery from
+      // another device; the latest evidence wins this state flag.
+      mastered: Boolean(latest.mastered),
       lastSeen: Math.max(asNumber(left.lastSeen), asNumber(right.lastSeen)),
     };
   }
@@ -539,6 +680,51 @@ export function calculateLeaderboardStats(snapshot: CloudSnapshot): LeaderboardS
   };
 }
 
+/** Client fallback for the small trusted crew. It keeps the weekly board live
+ * even before the additive SQL migration is installed; once columns exist,
+ * the server-maintained counters remain authoritative. */
+export function calculateWeeklyStats(snapshot: CloudSnapshot, now = new Date()) {
+  const weekKey = currentWeekStartKey(now);
+  const todayKey = warsawDateKey(now);
+  const game = parseRecord(snapshot.stores["polito:game:v1"]) ?? {};
+  const activity = asObject(game.activity);
+  let weeklyXp = 0;
+  let weeklyActivity = 0;
+  for (const [day, raw] of Object.entries(activity)) {
+    if (day < weekKey || day > todayKey) continue;
+    const value = asObject(raw);
+    weeklyXp += asNumber(value.xp);
+    weeklyActivity += asNumber(value.answers) + asNumber(value.lessons);
+  }
+
+  const [year, month, day] = weekKey.split("-").map(Number);
+  const weekAt = new Date(year, month - 1, day).getTime();
+  let weeklyMastery = 0;
+  for (const [key, raw] of Object.entries(snapshot.stores)) {
+    if (!key.startsWith("polito:progress:")) continue;
+    const progress = parseRecord(raw);
+    if (!progress) continue;
+    for (const card of Object.values(asObject(progress.cards))) {
+      const state = asObject(card);
+      // Older snapshots predate masteredAt, so lastSeen remains a one-time
+      // compatibility fallback until the card next records evidence.
+      const masteredAt = asNumber(state.masteredAt) || asNumber(state.lastSeen);
+      if (state.mastered && masteredAt >= weekAt) weeklyMastery += 1;
+    }
+  }
+  return {
+    weekly_xp: safeInteger(weeklyXp),
+    weekly_activity: safeInteger(weeklyActivity),
+    weekly_mastery: safeInteger(weeklyMastery),
+  };
+}
+
+function profileFromRow(value: unknown): StudyProfile {
+  const row = asObject(value);
+  const snapshot = normalizeSnapshot(row.progress);
+  return normalizeStudyProfile(row as unknown as StudyProfile, currentWeekStartKey(), snapshot);
+}
+
 async function requireClient() {
   if (!cloudConfigured) throw new Error("Cloud sync is not configured yet.");
   if (!clientPromise) {
@@ -555,14 +741,18 @@ export async function listStudyProfiles(): Promise<StudyProfile[]> {
   const client = await requireClient();
   const { data, error } = await client
     .from("study_profiles")
-    .select(
-      "id,display_name,avatar,total_xp,current_streak,best_streak,answers,mastered_cards,lessons_completed,client_updated_at,created_at,updated_at"
-    )
-    .order("total_xp", { ascending: false })
-    .order("current_streak", { ascending: false })
+    .select(STUDY_PROFILE_COLUMNS)
     .order("updated_at", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as StudyProfile[];
+  if (!error) return sortStudyProfiles((data ?? []).map(profileFromRow));
+
+  // Four users make this temporary compatibility read cheap. It also means a
+  // deploy never breaks profiles while the additive weekly migration is pending.
+  const fallback = await client
+    .from("study_profiles")
+    .select(`${LEGACY_PROFILE_COLUMNS},progress`)
+    .order("updated_at", { ascending: true });
+  if (fallback.error) throw error;
+  return sortStudyProfiles((fallback.data ?? []).map(profileFromRow));
 }
 
 export async function getStudyProfile(profileId: string): Promise<FullStudyProfile | null> {
@@ -574,7 +764,10 @@ export async function getStudyProfile(profileId: string): Promise<FullStudyProfi
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  return { ...data, progress: normalizeSnapshot(data.progress) } as FullStudyProfile;
+  return {
+    ...profileFromRow(data),
+    progress: normalizeSnapshot(data.progress),
+  } as FullStudyProfile;
 }
 
 export async function createStudyProfile(
@@ -587,22 +780,46 @@ export async function createStudyProfile(
   if (name.length < 2 || name.length > 24) {
     throw new Error("Name must be between 2 and 24 characters.");
   }
-  const { data, error } = await client
+  const avatarValue = PROFILE_ICONS.includes(avatar as (typeof PROFILE_ICONS)[number])
+    ? avatar
+    : "🎓";
+  const baseInsert = {
+    display_name: name,
+    avatar: avatarValue,
+    progress: snapshot,
+    client_updated_at: snapshot.generatedAt,
+    ...calculateLeaderboardStats(snapshot),
+  };
+  const primary = await client
     .from("study_profiles")
     .insert({
-      display_name: name,
-      avatar: PROFILE_ICONS.includes(avatar as (typeof PROFILE_ICONS)[number]) ? avatar : "🎓",
-      progress: snapshot,
-      client_updated_at: snapshot.generatedAt,
-      ...calculateLeaderboardStats(snapshot),
+      ...baseInsert,
+      week_started_on: currentWeekStartKey(),
+      ...calculateWeeklyStats(snapshot),
     })
     .select("*")
     .single();
-  if (error) {
-    if (error.code === "23505") throw new Error("That name already exists. Choose it from the list.");
-    throw error;
+  let resultData: unknown = primary.data;
+  let resultError = primary.error;
+  if (resultError) {
+    const fallback = await client
+      .from("study_profiles")
+      .insert(baseInsert)
+      .select("*")
+      .single();
+    resultData = fallback.data;
+    resultError = fallback.error;
   }
-  return { ...data, progress: normalizeSnapshot(data.progress) } as FullStudyProfile;
+  if (resultError) {
+    if (resultError.code === "23505") {
+      throw new Error("That name already exists. Choose it from the list.");
+    }
+    throw resultError;
+  }
+  return {
+    ...profileFromRow(resultData),
+    progress: normalizeSnapshot(asObject(resultData).progress),
+  } as FullStudyProfile;
 }
 
 export async function saveStudyProfile(
@@ -610,7 +827,7 @@ export async function saveStudyProfile(
   snapshot: CloudSnapshot
 ): Promise<StudyProfile> {
   const client = await requireClient();
-  const { data, error } = await client
+  const primary = await client
     .from("study_profiles")
     .update({
       progress: snapshot,
@@ -618,12 +835,26 @@ export async function saveStudyProfile(
       ...calculateLeaderboardStats(snapshot),
     })
     .eq("id", profileId)
-    .select(
-      "id,display_name,avatar,total_xp,current_streak,best_streak,answers,mastered_cards,lessons_completed,client_updated_at,created_at,updated_at"
-    )
+    .select(STUDY_PROFILE_COLUMNS)
     .single();
-  if (error) throw error;
-  return data as StudyProfile;
+  let resultData: unknown = primary.data;
+  let resultError = primary.error;
+  if (resultError) {
+    const fallback = await client
+      .from("study_profiles")
+      .update({
+        progress: snapshot,
+        client_updated_at: snapshot.generatedAt,
+        ...calculateLeaderboardStats(snapshot),
+      })
+      .eq("id", profileId)
+      .select(`${LEGACY_PROFILE_COLUMNS},progress`)
+      .single();
+    resultData = fallback.data;
+    resultError = fallback.error;
+  }
+  if (resultError) throw resultError;
+  return profileFromRow(resultData);
 }
 
 export async function updateStudyProfile(
@@ -636,17 +867,30 @@ export async function updateStudyProfile(
   if (name.length < 2 || name.length > 24) {
     throw new Error("Name must be between 2 and 24 characters.");
   }
-  const { data, error } = await client
+  const primary = await client
     .from("study_profiles")
     .update({
       display_name: name,
       avatar: PROFILE_ICONS.includes(avatar as (typeof PROFILE_ICONS)[number]) ? avatar : "🎓",
     })
     .eq("id", profileId)
-    .select(
-      "id,display_name,avatar,total_xp,current_streak,best_streak,answers,mastered_cards,lessons_completed,client_updated_at,created_at,updated_at"
-    )
+    .select(STUDY_PROFILE_COLUMNS)
     .single();
-  if (error) throw error;
-  return data as StudyProfile;
+  let resultData: unknown = primary.data;
+  let resultError = primary.error;
+  if (resultError) {
+    const fallback = await client
+      .from("study_profiles")
+      .update({
+        display_name: name,
+        avatar: PROFILE_ICONS.includes(avatar as (typeof PROFILE_ICONS)[number]) ? avatar : "🎓",
+      })
+      .eq("id", profileId)
+      .select(`${LEGACY_PROFILE_COLUMNS},progress`)
+      .single();
+    resultData = fallback.data;
+    resultError = fallback.error;
+  }
+  if (resultError) throw resultError;
+  return profileFromRow(resultData);
 }

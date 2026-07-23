@@ -509,7 +509,12 @@ export function ScrollPage() {
     if (answers[item.id]) return;
     setAnswers((prev) => ({ ...prev, [item.id]: optionId }));
     const correct = optionId === item.question.correct;
-    recordAnswer(courseId, item.question.id, correct);
+    recordAnswer(courseId, item.question.id, correct, {
+      difficulty: item.question.difficulty,
+      selectedAnswer: optionId,
+      correctAnswer: item.question.correct,
+      mode: "scroll",
+    });
     if (!correct) queueRemediation(item.question, item.lesson);
   }
 

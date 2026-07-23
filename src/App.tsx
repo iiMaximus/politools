@@ -16,6 +16,11 @@ import { GameToasts } from "./components/game/Toasts";
 import { BottomNav } from "./components/BottomNav";
 import { CloudProfileModal } from "./components/CloudAccount";
 import { LeaderboardPage } from "./pages/LeaderboardPage";
+import { ReadinessPage } from "./pages/ReadinessPage";
+import { SearchPage } from "./pages/SearchPage";
+import { SourceCoveragePage } from "./pages/SourceCoveragePage";
+import { ContentQaPage } from "./pages/ContentQaPage";
+import { MistakeLabPage } from "./pages/MistakeLabPage";
 
 // Boss fights pull in three.js — keep it out of the main bundle.
 const BossPage = lazy(() => import("./pages/BossPage"));
@@ -29,6 +34,12 @@ export function App() {
         <Route path="/" element={<HubPage />} />
         <Route path="/mix" element={<MixPage />} />
         <Route path="/stats" element={<StatsPage />} />
+        <Route path="/readiness" element={<ReadinessPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/sources" element={<SourceCoveragePage />} />
+        <Route path="/content-qa" element={<ContentQaPage />} />
+        <Route path="/mistakes" element={<MistakeLabPage />} />
+        <Route path="/mistakes/:courseId" element={<MistakeLabPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/g/:groupId" element={<CourseGroupPage />} />
         <Route path="/c/:courseId" element={<CoursePage />} />

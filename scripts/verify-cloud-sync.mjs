@@ -51,6 +51,7 @@ const local = {
           wrong: 0,
           streak: 2,
           mastered: true,
+          masteredAt: new Date(2026, 6, 21, 12).getTime(),
           lastSeen: 20,
         },
       },
@@ -118,6 +119,73 @@ check(
   cloud.snapshotHash({ ...merged, generatedAt: 1 }) ===
     cloud.snapshotHash({ ...merged, generatedAt: 999 })
 );
+
+check(
+  "week starts on Monday",
+  cloud.currentWeekStartKey(new Date(2026, 6, 22, 12)) === "2026-07-20"
+);
+check(
+  "Sunday belongs to the preceding Monday",
+  cloud.currentWeekStartKey(new Date(2026, 6, 19, 12)) === "2026-07-13"
+);
+check(
+  "Warsaw Monday boundary is stable on a device in another timezone",
+  cloud.currentWeekStartKey(new Date("2026-07-19T22:30:00Z")) === "2026-07-20"
+);
+check(
+  "Warsaw late Sunday stays in the preceding week",
+  cloud.currentWeekStartKey(new Date("2026-07-19T21:30:00Z")) === "2026-07-13"
+);
+const fallbackWeek = cloud.calculateWeeklyStats(local, new Date(2026, 6, 22, 12));
+check("snapshot fallback totals this week's XP", fallbackWeek.weekly_xp === 50);
+check("snapshot fallback totals this week's study actions", fallbackWeek.weekly_activity === 5);
+check("snapshot fallback counts mastery transitions from this week", fallbackWeek.weekly_mastery === 1);
+const oldMastery = structuredClone(local);
+oldMastery.stores["polito:progress:ma2"] = progress(120, {
+  q1: {
+    attempts: 3,
+    correct: 3,
+    wrong: 0,
+    streak: 3,
+    mastered: true,
+    masteredAt: new Date(2026, 6, 12, 12).getTime(),
+    lastSeen: new Date(2026, 6, 21, 12).getTime(),
+  },
+});
+check(
+  "reviewing an old mastery does not create a weekly mastery gain",
+  cloud.calculateWeeklyStats(oldMastery, new Date(2026, 6, 22, 12)).weekly_mastery === 0
+);
+
+const profile = (id, name, week, weeklyXp, weeklyActivity, weeklyMastery, totalXp) => ({
+  id,
+  display_name: name,
+  avatar: "🎓",
+  week_started_on: week,
+  weekly_xp: weeklyXp,
+  weekly_activity: weeklyActivity,
+  weekly_mastery: weeklyMastery,
+  total_xp: totalXp,
+  current_streak: 0,
+  best_streak: 0,
+  answers: 0,
+  mastered_cards: 0,
+  lessons_completed: 0,
+  client_updated_at: 0,
+  created_at: "2026-07-01T00:00:00Z",
+  updated_at: "2026-07-01T00:00:00Z",
+});
+const weekly = cloud.sortStudyProfiles(
+  [
+    profile("a", "Ada", "2026-07-20", 80, 9, 1, 900),
+    profile("b", "Bo", "2026-07-20", 80, 12, 0, 500),
+    profile("c", "Cy", "2026-07-13", 999, 99, 99, 2000),
+  ],
+  "2026-07-20"
+);
+check("weekly board uses activity as an XP tiebreak", weekly[0].id === "b");
+check("stale weekly totals reset to zero", weekly.find((item) => item.id === "c").weekly_xp === 0);
+check("weekly scores rank before lifetime XP", weekly[2].id === "c");
 
 rmSync(tmp, { force: true });
 

@@ -1,5 +1,11 @@
 import type { Course } from "../types";
-import { dueCount, levelFromXp, masteredCount } from "./adaptive";
+import {
+  dueCount,
+  levelFromXp,
+  masteredCount,
+  masteryAverage,
+  openMistakeCount,
+} from "./adaptive";
 import { readProgress, type CourseProgress } from "./progress";
 
 export interface CourseSummary {
@@ -7,8 +13,11 @@ export interface CourseSummary {
   lessonsDone: number;
   lessonsTotal: number;
   mastered: number;
+  /** 0..1 fractional mastery from current retrieval evidence. */
+  masteryPct: number;
   practiceTotal: number;
   due: number;
+  mistakes: number;
   examSolved: number;
   examTotal: number;
   xp: number;
@@ -23,18 +32,22 @@ export function summarize(course: Course, progress: CourseProgress): CourseSumma
   const lessonsDone = course.lessons.filter((l) => progress.lessons[l.id]?.completed).length;
   const practiceTotal = course.practice.length;
   const mastered = masteredCount(course.practice, progress);
+  const masteryPct = masteryAverage(course.practice, progress);
   const due = dueCount(course.practice, progress);
+  const mistakes = openMistakeCount(course.practice, progress);
   const examTotal = course.exam.length;
   const examSolved = course.exam.filter((e) => progress.exams[e.id]?.solved).length;
   const denom = lessonsTotal + practiceTotal + examTotal;
-  const done = lessonsDone + mastered + examSolved;
+  const done = lessonsDone + masteryPct * practiceTotal + examSolved;
   return {
     id: course.meta.id,
     lessonsDone,
     lessonsTotal,
     mastered,
+    masteryPct,
     practiceTotal,
     due,
+    mistakes,
     examSolved,
     examTotal,
     xp: progress.xp,
@@ -53,10 +66,12 @@ export interface OverallSummary {
   lessonsDone: number;
   lessonsTotal: number;
   mastered: number;
+  masteryPct: number;
   practiceTotal: number;
   examSolved: number;
   examTotal: number;
   due: number;
+  mistakes: number;
   xp: number;
   pct: number;
   coursesStarted: number;
@@ -69,18 +84,21 @@ export function aggregate(summaries: CourseSummary[]): OverallSummary {
   const examTotal = sum((s) => s.examTotal);
   const lessonsDone = sum((s) => s.lessonsDone);
   const mastered = sum((s) => s.mastered);
+  const masteryCredit = sum((s) => s.masteryPct * s.practiceTotal);
   const examSolved = sum((s) => s.examSolved);
   const denom = lessonsTotal + practiceTotal + examTotal;
   return {
     lessonsDone,
     lessonsTotal,
     mastered,
+    masteryPct: practiceTotal ? masteryCredit / practiceTotal : 0,
     practiceTotal,
     examSolved,
     examTotal,
     due: sum((s) => s.due),
+    mistakes: sum((s) => s.mistakes),
     xp: sum((s) => s.xp),
-    pct: denom ? (lessonsDone + mastered + examSolved) / denom : 0,
+    pct: denom ? (lessonsDone + masteryCredit + examSolved) / denom : 0,
     coursesStarted: summaries.filter((s) => s.started).length,
   };
 }

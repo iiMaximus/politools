@@ -38,9 +38,14 @@ export function StatsPage() {
             <Kicker>Player analytics</Kicker>
             <h1 className="pixel-font mt-1 text-4xl uppercase leading-none tracking-wide">Brain scan</h1>
           </div>
-          <Link to="/leaderboard" className="arcade-button hidden px-3 sm:inline-flex">
-            <Icon name="Trophy" size={15} /> Ranks
-          </Link>
+          <div className="hidden items-center gap-2 sm:flex">
+            <Link to="/readiness" className="arcade-button px-3">
+              <Icon name="Target" size={15} /> Exam radar
+            </Link>
+            <Link to="/leaderboard" className="arcade-button px-3">
+              <Icon name="Trophy" size={15} /> Ranks
+            </Link>
+          </div>
         </div>
         <section className="grid gap-3 sm:grid-cols-3">
           <StreakBadge streak={streak} />

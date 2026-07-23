@@ -5,7 +5,7 @@ import { COURSE_GROUPS, getCourseGroupCourses, type CourseGroup } from "../cours
 import { TopBar, Page } from "../components/Layout";
 import { CourseTheme } from "../components/CourseTheme";
 import { Icon } from "../components/Icon";
-import { Kicker, Meter } from "../components/ui";
+import { Kicker } from "../components/ui";
 import { Heatmap } from "../components/game/Heatmap";
 import { QuestBoard } from "../components/game/QuestBoard";
 import { GameSettingsModal } from "../components/game/GameSettings";
@@ -223,6 +223,16 @@ export function HubPage() {
           </div>
         </section>
 
+        {/* ============ study intelligence ============ */}
+        <section className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6" aria-label="Study tools">
+          <HubTool to="/mistakes" icon="RotateCcw" label="Mistake lab" sub="repair errors" />
+          <HubTool to="/readiness" icon="Target" label="Exam radar" sub="grade forecast" />
+          <HubTool to="/leaderboard" icon="Trophy" label="Weekly ranks" sub="4-player race" />
+          <HubTool to="/search" icon="Compass" label="Search" sub="find anything" />
+          <HubTool to="/sources" icon="MapPinned" label="Source map" sub="coverage proof" />
+          <HubTool to="/content-qa" icon="ShieldCheck" label="Content QA" sub="quality audit" />
+        </section>
+
         {/* ============ this season ============ */}
         <section className="mt-10">
           <div className="mb-5 flex items-end justify-between">
@@ -386,6 +396,23 @@ export function HubPage() {
         />
       )}
     </>
+  );
+}
+
+function HubTool({ to, icon, label, sub }: { to: string; icon: string; label: string; sub: string }) {
+  return (
+    <Link
+      to={to}
+      className="mc-panel arcade-dark card-hover flex min-w-0 items-center gap-2 p-2.5 text-white"
+    >
+      <span className="mc-slot grid h-8 w-8 shrink-0 place-items-center text-[var(--accent)]">
+        <Icon name={icon} size={15} />
+      </span>
+      <span className="min-w-0">
+        <span className="pixel-font block truncate text-base uppercase leading-none">{label}</span>
+        <span className="block truncate text-[10px] text-white/40">{sub}</span>
+      </span>
+    </Link>
   );
 }
 
@@ -563,7 +590,8 @@ function CourseCard({ course }: { course: Course }) {
   const s = summarize(course, progress);
   return (
     <CourseTheme accent={meta.accent} accent2={meta.accent2}>
-      <Link to={`/c/${meta.id}`} className="card-hover surface group flex h-full flex-col p-5">
+      <Link to={`/c/${meta.id}`} className="mc-panel arcade-dark card-hover group relative flex h-full flex-col overflow-hidden p-5 text-white">
+        <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.05]" />
         <CardBody
           icon={meta.icon}
           title={meta.title}
@@ -586,8 +614,10 @@ function GroupCard({ group, courses }: { group: CourseGroup; courses: Course[] }
     lessonsDone: overall.lessonsDone,
     lessonsTotal: overall.lessonsTotal,
     mastered: overall.mastered,
+    masteryPct: overall.masteryPct,
     practiceTotal: overall.practiceTotal,
     due: overall.due,
+    mistakes: overall.mistakes,
     examSolved: overall.examSolved,
     examTotal: overall.examTotal,
     xp: overall.xp,
@@ -597,7 +627,8 @@ function GroupCard({ group, courses }: { group: CourseGroup; courses: Course[] }
   };
   return (
     <CourseTheme accent={group.accent} accent2={group.accent2}>
-      <Link to={`/g/${group.id}`} className="card-hover surface group flex h-full flex-col p-5">
+      <Link to={`/g/${group.id}`} className="mc-panel arcade-dark card-hover group relative flex h-full flex-col overflow-hidden p-5 text-white">
+        <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.05]" />
         <CardBody
           icon={group.icon}
           title={group.title}
@@ -627,34 +658,40 @@ function CardBody({
   cta: string;
 }) {
   return (
-    <>
+    <div className="relative flex h-full flex-col">
       <div className="flex items-start justify-between">
         <span
-          className="grid h-11 w-11 place-items-center rounded-2xl border border-[var(--accent-line)] bg-[var(--accent-soft)]"
+          className="mc-slot grid h-11 w-11 place-items-center"
           style={{ color: "var(--accent)" }}
         >
           <Icon name={icon} size={22} />
         </span>
         <div className="text-right">
-          <div className="text-lg font-bold leading-none" style={{ color: "var(--accent)" }}>
+          <div className="pixel-font text-3xl leading-none" style={{ color: "var(--accent)" }}>
             {Math.round(s.pct * 100)}%
           </div>
-          <div className="text-[10px] uppercase tracking-wider text-[var(--color-faint)]">complete</div>
+          <div className="pixel-font text-sm uppercase leading-none text-white/40">complete</div>
         </div>
       </div>
-      <h3 className="mt-3 text-base font-bold tracking-tight">{title}</h3>
-      <p className="mt-1 flex-1 text-sm text-[var(--color-muted)]">{tagline}</p>
-      <div className="mt-3">
-        <Meter value={s.pct} />
+      <h3 className="pixel-font mt-3 text-2xl uppercase leading-none tracking-wide">{title}</h3>
+      <p className="mt-2 flex-1 text-sm text-white/55">{tagline}</p>
+      <div className="mt-4 h-3 overflow-hidden rounded-sm border-2 border-black bg-[#3a0d0d] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+        <div
+          className="h-full transition-all duration-500"
+          style={{
+            width: `${Math.max(s.pct > 0 ? 2 : 0, s.pct * 100)}%`,
+            background: "linear-gradient(180deg,var(--accent),var(--accent-2))",
+          }}
+        />
       </div>
-      <div className="mt-3 flex items-center justify-between text-xs text-[var(--color-faint)]">
-        <span>{footer}</span>
-        <span className="flex items-center gap-1 font-semibold text-[var(--accent)]">
-          {cta}
+      <div className="pixel-font mt-3 flex items-center justify-between gap-3 text-base leading-none text-white/45">
+        <span className="truncate">{footer}</span>
+        <span className="flex shrink-0 items-center gap-1" style={{ color: "#ffff55" }}>
+          {cta.toUpperCase()}
           <Icon name="ArrowRight" size={14} className="transition group-hover:translate-x-0.5" />
         </span>
       </div>
-    </>
+    </div>
   );
 }
 

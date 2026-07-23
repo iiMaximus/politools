@@ -16,11 +16,15 @@ import {
   getStudyProfile,
   listStudyProfiles,
   mergeSnapshots,
+  readDeviceLabel,
+  readLastSyncedAt,
   readSelectedProfileId,
   readSyncHash,
   saveStudyProfile,
   snapshotHash,
+  sortStudyProfiles,
   updateStudyProfile,
+  writeLastSyncedAt,
   writeSyncMeta,
   type StudyProfile,
 } from "../lib/cloud-sync";
@@ -30,6 +34,8 @@ export type CloudStatus =
   | "local"
   | "loading"
   | "syncing"
+  | "pending"
+  | "offline"
   | "synced"
   | "error";
 
@@ -40,6 +46,10 @@ interface CloudContextValue {
   profiles: StudyProfile[];
   status: CloudStatus;
   error: string | null;
+  lastSyncedAt: number | null;
+  pendingChanges: boolean;
+  online: boolean;
+  deviceLabel: string;
   pickerOpen: boolean;
   setPickerOpen: (open: boolean) => void;
   refreshProfiles: () => Promise<void>;
@@ -47,6 +57,7 @@ interface CloudContextValue {
   addProfile: (displayName: string, avatar: string) => Promise<void>;
   editProfile: (displayName: string, avatar: string) => Promise<void>;
   syncNow: (force?: boolean) => Promise<void>;
+  clearError: () => void;
 }
 
 const CloudContext = createContext<CloudContextValue | null>(null);
@@ -61,8 +72,15 @@ export function CloudProvider({ children }: { children: ReactNode }) {
   const [profiles, setProfiles] = useState<StudyProfile[]>([]);
   const [status, setStatus] = useState<CloudStatus>(cloudConfigured ? "loading" : "disabled");
   const [error, setError] = useState<string | null>(null);
+  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(readLastSyncedAt());
+  const [pendingChanges, setPendingChanges] = useState(false);
+  const [online, setOnline] = useState(() =>
+    typeof navigator === "undefined" ? true : navigator.onLine
+  );
   const [pickerOpen, setPickerOpen] = useState(false);
+  const deviceLabel = useMemo(readDeviceLabel, []);
   const profileRef = useRef<StudyProfile | null>(null);
+  const onlineRef = useRef(online);
   const lastHashRef = useRef<string | null>(readSyncHash());
   const uploadRef = useRef<Promise<void> | null>(null);
   const pullRef = useRef<Promise<void> | null>(null);
@@ -72,17 +90,30 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     profileRef.current = profile;
   }, [profile]);
 
+  const markSynced = useCallback((at = Date.now()) => {
+    setLastSyncedAt(at);
+    writeLastSyncedAt(at);
+    setPendingChanges(false);
+    setError(null);
+  }, []);
+
   const refreshProfiles = useCallback(async () => {
     if (!cloudConfigured) return;
     try {
       const next = await listStudyProfiles();
       setProfiles(next);
       setError(null);
+      setStatus((current) => {
+        if (!onlineRef.current) return profileRef.current ? "offline" : "local";
+        if (current === "loading" || current === "syncing") return current;
+        if (!profileRef.current) return "local";
+        return pendingChanges ? "pending" : "synced";
+      });
     } catch (cause) {
       setError(message(cause));
-      setStatus("error");
+      setStatus(onlineRef.current ? "error" : "offline");
     }
-  }, []);
+  }, [pendingChanges]);
 
   const upload = useCallback(async (force = false) => {
     const selected = profileRef.current;
@@ -91,30 +122,37 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     const task = (async () => {
       const snapshot = collectLocalSnapshot();
       const hash = snapshotHash(snapshot);
-      if (!force && hash === lastHashRef.current) return;
+      const changed = hash !== lastHashRef.current;
+      setPendingChanges(changed);
+      if (!force && !changed) {
+        if (onlineRef.current) setStatus("synced");
+        return;
+      }
+      if (!onlineRef.current) {
+        setStatus("offline");
+        return;
+      }
       setStatus("syncing");
+      setError(null);
       try {
         const next = await saveStudyProfile(selected.id, snapshot);
         lastHashRef.current = hash;
         remoteUpdatedAtRef.current = Date.parse(next.updated_at) || Date.now();
         writeSyncMeta(selected.id, hash);
+        markSynced();
         setProfile(next);
         setProfiles((current) => {
           const found = current.some((item) => item.id === next.id);
           const merged = found
             ? current.map((item) => (item.id === next.id ? next : item))
             : [...current, next];
-          return merged.sort(
-            (left, right) =>
-              right.total_xp - left.total_xp ||
-              right.current_streak - left.current_streak
-          );
+          return sortStudyProfiles(merged);
         });
         setStatus("synced");
-        setError(null);
       } catch (cause) {
+        setPendingChanges(true);
         setError(message(cause));
-        setStatus("error");
+        setStatus(onlineRef.current ? "error" : "offline");
       }
     })();
     uploadRef.current = task;
@@ -123,7 +161,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     } finally {
       uploadRef.current = null;
     }
-  }, []);
+  }, [markSynced]);
 
   useEffect(() => {
     if (!cloudConfigured) return;
@@ -160,6 +198,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
         applyLocalSnapshot(next);
         writeSyncMeta(remote.id, nextHash);
         lastHashRef.current = nextHash;
+        markSynced();
         const summary: StudyProfile = remote;
         remoteUpdatedAtRef.current = Date.parse(remote.updated_at) || 0;
         setProfile(summary);
@@ -172,7 +211,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       } catch (cause) {
         if (cancelled) return;
         setError(message(cause));
-        setStatus("error");
+        setStatus(onlineRef.current ? "error" : "offline");
         setReady(true);
       }
     };
@@ -180,18 +219,26 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [upload]);
+  }, [markSynced, upload]);
 
   const pullLatest = useCallback(async () => {
     const selected = profileRef.current;
     if (!cloudConfigured || !selected || pullRef.current) return pullRef.current ?? undefined;
+    if (!onlineRef.current) {
+      setStatus("offline");
+      return;
+    }
     const task = (async () => {
       try {
         if (uploadRef.current) await uploadRef.current;
         const remote = await getStudyProfile(selected.id);
         if (!remote) return;
         const remoteUpdated = Date.parse(remote.updated_at) || 0;
-        if (remoteUpdated <= remoteUpdatedAtRef.current) return;
+        if (remoteUpdated <= remoteUpdatedAtRef.current) {
+          markSynced();
+          setStatus("synced");
+          return;
+        }
         const local = collectLocalSnapshot();
         const localHash = snapshotHash(local);
         const next =
@@ -207,10 +254,11 @@ export function CloudProvider({ children }: { children: ReactNode }) {
           const saved = await saveStudyProfile(remote.id, next);
           remoteUpdatedAtRef.current = Date.parse(saved.updated_at) || Date.now();
         }
+        markSynced();
         window.location.reload();
       } catch (cause) {
         setError(message(cause));
-        setStatus("error");
+        setStatus(onlineRef.current ? "error" : "offline");
       }
     })();
     pullRef.current = task;
@@ -219,7 +267,47 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     } finally {
       pullRef.current = null;
     }
-  }, []);
+  }, [markSynced]);
+
+  useEffect(() => {
+    if (!cloudConfigured) return;
+    const updateConnection = () => {
+      const next = navigator.onLine;
+      onlineRef.current = next;
+      setOnline(next);
+      if (!next && profileRef.current) {
+        setStatus("offline");
+        return;
+      }
+      if (next) {
+        setError(null);
+        void upload(false);
+        void pullLatest();
+      }
+    };
+    window.addEventListener("online", updateConnection);
+    window.addEventListener("offline", updateConnection);
+    return () => {
+      window.removeEventListener("online", updateConnection);
+      window.removeEventListener("offline", updateConnection);
+    };
+  }, [pullLatest, upload]);
+
+  useEffect(() => {
+    if (!cloudConfigured || !profile || !ready) return;
+    const inspect = () => {
+      const changed = snapshotHash(collectLocalSnapshot()) !== lastHashRef.current;
+      setPendingChanges(changed);
+      setStatus((current) => {
+        if (!onlineRef.current) return "offline";
+        if (current === "loading" || current === "syncing" || current === "error") return current;
+        return changed ? "pending" : "synced";
+      });
+    };
+    inspect();
+    const timer = window.setInterval(inspect, 1000);
+    return () => window.clearInterval(timer);
+  }, [profile, ready]);
 
   useEffect(() => {
     if (!cloudConfigured || !profile || !ready) return;
@@ -269,13 +357,14 @@ export function CloudProvider({ children }: { children: ReactNode }) {
         if (!previousId && hash !== snapshotHash(remote.progress)) {
           await saveStudyProfile(remote.id, next);
         }
+        markSynced();
         window.location.reload();
       } catch (cause) {
         setError(message(cause));
-        setStatus("error");
+        setStatus(onlineRef.current ? "error" : "offline");
       }
     },
-    [upload]
+    [markSynced, upload]
   );
 
   const addProfile = useCallback(async (displayName: string, avatar: string) => {
@@ -292,13 +381,14 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       const hash = snapshotHash(snapshot);
       writeSyncMeta(created.id, hash);
       lastHashRef.current = hash;
+      markSynced();
       window.location.reload();
     } catch (cause) {
       setError(message(cause));
-      setStatus("error");
+      setStatus(onlineRef.current ? "error" : "offline");
       throw cause;
     }
-  }, [upload]);
+  }, [markSynced, upload]);
 
   const editProfile = useCallback(async (displayName: string, avatar: string) => {
     const selected = profileRef.current;
@@ -308,15 +398,24 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       const next = await updateStudyProfile(selected.id, displayName, avatar);
       setProfile(next);
       setProfiles((current) =>
-        current.map((item) => (item.id === next.id ? next : item))
+        sortStudyProfiles(current.map((item) => (item.id === next.id ? next : item)))
       );
+      markSynced();
       setStatus("synced");
     } catch (cause) {
       setError(message(cause));
-      setStatus("error");
+      setStatus(onlineRef.current ? "error" : "offline");
       throw cause;
     }
-  }, []);
+  }, [markSynced]);
+
+  const clearError = useCallback(() => {
+    setError(null);
+    if (!cloudConfigured) setStatus("disabled");
+    else if (!onlineRef.current && profileRef.current) setStatus("offline");
+    else if (!profileRef.current) setStatus("local");
+    else setStatus(pendingChanges ? "pending" : "synced");
+  }, [pendingChanges]);
 
   const value = useMemo<CloudContextValue>(
     () => ({
@@ -326,6 +425,10 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       profiles,
       status,
       error,
+      lastSyncedAt,
+      pendingChanges,
+      online,
+      deviceLabel,
       pickerOpen,
       setPickerOpen,
       refreshProfiles,
@@ -333,6 +436,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       addProfile,
       editProfile,
       syncNow: upload,
+      clearError,
     }),
     [
       ready,
@@ -340,12 +444,17 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       profiles,
       status,
       error,
+      lastSyncedAt,
+      pendingChanges,
+      online,
+      deviceLabel,
       pickerOpen,
       refreshProfiles,
       chooseProfile,
       addProfile,
       editProfile,
       upload,
+      clearError,
     ]
   );
 

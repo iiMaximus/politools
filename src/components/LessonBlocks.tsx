@@ -140,7 +140,12 @@ function InlineNumericCheck({ question, courseId }: { question: NumericQuestion;
   function submit() {
     if (checked || !value.trim()) return;
     setChecked(true);
-    if (courseId) recordAnswer(courseId, question.id, checkNumeric(value, question));
+    if (courseId) recordAnswer(courseId, question.id, checkNumeric(value, question), {
+      difficulty: question.difficulty,
+      selectedAnswer: value,
+      correctAnswer: String(question.answer),
+      mode: "lesson-checkpoint",
+    });
   }
 
   return (
@@ -194,7 +199,12 @@ function InlineMcqCheck({ question, courseId }: { question: McqQuestion; courseI
     if (answered) return;
     setPicked(optionId);
     // checkpoints count: XP, streak and SRS credit like any practice answer
-    if (courseId) recordAnswer(courseId, question.id, optionId === question.correct);
+    if (courseId) recordAnswer(courseId, question.id, optionId === question.correct, {
+      difficulty: question.difficulty,
+      selectedAnswer: optionId,
+      correctAnswer: question.correct,
+      mode: "lesson-checkpoint",
+    });
   }
   return (
     <div className="my-6 rounded-2xl border border-[var(--accent-line)] bg-[var(--color-surface)] p-4">

@@ -1,5 +1,6 @@
 import type { Course, Lesson } from "../types";
 import type { CourseProgress } from "./progress";
+import { questionIsMastered } from "./adaptive";
 
 /* ================================================================== *
  *  PATH MODEL — shared by the skill path and mini-boss fights.
@@ -70,7 +71,7 @@ export function topicMastery(
     ? course.practice.filter((q) => q.topic && topics.includes(q.topic))
     : course.practice;
   return {
-    mastered: pool.filter((q) => progress.cards[q.id]?.mastered).length,
+    mastered: pool.filter((q) => questionIsMastered(q, progress.cards[q.id])).length,
     total: pool.length,
   };
 }

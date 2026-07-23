@@ -253,7 +253,12 @@ function BossFight({ courseId, miniSection }: { courseId: string; miniSection: s
     setPicked(optionId ?? "⏱");
     setAsked((n) => n + 1);
     const isCorrect = optionId === q.correct;
-    recordAnswer(courseId, q.id, isCorrect);
+    recordAnswer(courseId, q.id, isCorrect, {
+      difficulty: q.difficulty,
+      selectedAnswer: optionId ?? "timeout",
+      correctAnswer: q.correct,
+      mode: isMini ? "mini-boss" : "boss",
+    });
 
     if (isCorrect) {
       const newCombo = combo + 1;

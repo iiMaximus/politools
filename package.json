@@ -13,8 +13,9 @@
     "verify:labs": "node scripts/verify-labs.mjs",
     "verify:srs": "node scripts/verify-srs.mjs",
     "verify:grade": "node scripts/verify-grade.mjs",
+    "verify:adaptive": "node scripts/verify-adaptive.mjs",
     "verify:cloud": "node scripts/verify-cloud-sync.mjs",
-    "verify": "node scripts/verify-excel-engine.mjs && node scripts/verify-labs.mjs && node scripts/verify-srs.mjs && node scripts/verify-grade.mjs && node scripts/verify-cloud-sync.mjs"
+    "verify": "node scripts/verify-excel-engine.mjs && node scripts/verify-labs.mjs && node scripts/verify-srs.mjs && node scripts/verify-grade.mjs && node scripts/verify-adaptive.mjs && node scripts/verify-cloud-sync.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.8",
