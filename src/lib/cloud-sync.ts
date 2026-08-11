@@ -549,6 +549,11 @@ function mergePlan(localRaw: string, cloudRaw: string): string {
   if (!local) return cloudRaw;
   if (!cloud) return localRaw;
   if (local.examIso !== cloud.examIso) return localRaw;
+  const localRevision = asNumber(local.revision) || 1;
+  const cloudRevision = asNumber(cloud.revision) || 1;
+  if (localRevision !== cloudRevision) {
+    return localRevision > cloudRevision ? localRaw : cloudRaw;
+  }
   return asNumber(local.start) <= asNumber(cloud.start) ? localRaw : cloudRaw;
 }
 

@@ -38,16 +38,16 @@ export function TopBar({
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:gap-4 sm:px-6">
         <Brand />
         {crumbs && crumbs.length > 0 && (
-          <nav className="hidden items-center gap-1.5 text-sm text-[var(--color-faint)] md:flex">
+          <nav className="hidden min-w-0 max-w-[25rem] items-center gap-1.5 overflow-hidden whitespace-nowrap text-sm text-[var(--color-faint)] md:flex">
             {crumbs.map((c, i) => (
-              <span key={i} className="flex items-center gap-1.5">
+              <span key={i} className="flex min-w-0 items-center gap-1.5">
                 <Icon name="ChevronRight" size={14} className="opacity-50" />
                 {c.to ? (
-                  <Link to={c.to} className="transition hover:text-[var(--color-ink)]">
+                  <Link to={c.to} className="shrink-0 transition hover:text-[var(--color-ink)]">
                     {c.label}
                   </Link>
                 ) : (
-                  <span className="text-[var(--color-muted)]">{c.label}</span>
+                  <span className="max-w-44 truncate text-[var(--color-muted)]" title={c.label}>{c.label}</span>
                 )}
               </span>
             ))}

@@ -20,10 +20,10 @@ const CALLOUTS = {
 function Callout({ tone, title, content }: { tone: keyof typeof CALLOUTS; title?: string; content: React.ReactNode }) {
   const c = CALLOUTS[tone];
   return (
-    <div className="my-5 flex gap-3 rounded-xl border p-4" style={{ background: c.bg, borderColor: c.border }}>
+    <div className="my-5 flex gap-3 rounded-lg border-2 p-4" style={{ background: c.bg, borderColor: c.border }}>
       <Icon name={c.icon} size={20} style={{ color: c.color }} className="mt-0.5 shrink-0" />
       <div className="prose-lesson !text-[0.98rem]">
-        <div className="mb-1 font-bold" style={{ color: c.color }}>
+        <div className="pixel-font mb-1 text-xl uppercase leading-none" style={{ color: c.color }}>
           {title ?? c.label}
         </div>
         <div>{rt(content)}</div>
@@ -35,7 +35,10 @@ function Callout({ tone, title, content }: { tone: keyof typeof CALLOUTS; title?
 /* ----------------------------- Formula ---------------------------- */
 function Formula({ tex, caption, tag }: { tex: string; caption?: React.ReactNode; tag?: string }) {
   return (
-    <figure className="my-6 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-5">
+    <figure className="my-6 rounded-lg border-2 border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-5 shadow-[0_3px_0_var(--color-line)]">
+      <div className="pixel-font mb-3 text-center text-lg uppercase leading-none text-[var(--accent)]">
+        Formula pickup
+      </div>
       <div className="flex items-center justify-center gap-3">
         <div className="min-w-0 flex-1 text-center">
           <TexBlock>{tex}</TexBlock>
@@ -50,8 +53,8 @@ function Formula({ tex, caption, tag }: { tex: string; caption?: React.ReactNode
 /* --------------------------- Definition --------------------------- */
 function Definition({ term, content }: { term: string; content: React.ReactNode }) {
   return (
-    <div className="my-5 rounded-xl border-l-4 bg-[var(--color-surface)] p-4" style={{ borderColor: "var(--accent)" }}>
-      <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Definition</div>
+    <div className="my-5 rounded-lg border-2 bg-[var(--color-surface)] p-4" style={{ borderColor: "var(--accent)" }}>
+      <div className="pixel-font mb-1 text-xl uppercase leading-none text-[var(--accent)]">Codex entry</div>
       <div className="prose-lesson">
         <strong className="text-[var(--color-ink)]">{term}</strong> <span>— {rt(content)}</span>
       </div>
@@ -62,11 +65,11 @@ function Definition({ term, content }: { term: string; content: React.ReactNode 
 /* --------------------------- Sim frame ---------------------------- */
 function SimFrame({ title, render, caption }: { title: string; render: () => React.ReactNode; caption?: React.ReactNode }) {
   return (
-    <figure className="my-6 overflow-hidden rounded-2xl border border-[var(--accent-line)] surface">
+    <figure className="my-6 overflow-hidden rounded-lg border-2 border-[var(--accent-line)] surface">
       <div className="flex items-center gap-2 border-b border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-2.5">
         <Icon name="MousePointerClick" size={15} style={{ color: "var(--accent)" }} />
-        <span className="text-sm font-semibold">{title}</span>
-        <span className="ml-auto text-[10px] uppercase tracking-wider text-[var(--color-faint)]">Interactive</span>
+        <span className="pixel-font text-xl uppercase leading-none">{title}</span>
+        <span className="pixel-font ml-auto text-lg uppercase leading-none text-[var(--color-faint)]">Interactive terminal</span>
       </div>
       <div className="p-4">{render()}</div>
       {caption && (
@@ -81,7 +84,7 @@ function SimFrame({ title, render, caption }: { title: string; render: () => Rea
 /* ----------------------------- Figure ----------------------------- */
 function Figure({ render, caption }: { render: () => React.ReactNode; caption?: React.ReactNode }) {
   return (
-    <figure className="my-6 rounded-2xl border border-[var(--color-line)] bg-[var(--color-bg)] p-4">
+    <figure className="my-6 rounded-lg border-2 border-[var(--color-line)] bg-[var(--color-bg)] p-4">
       <div className="grid place-items-center">{render()}</div>
       {caption && <figcaption className="mt-3 text-center text-sm text-[var(--color-muted)]">{caption}</figcaption>}
     </figure>
@@ -91,10 +94,10 @@ function Figure({ render, caption }: { render: () => React.ReactNode; caption?: 
 /* ----------------------------- Example ---------------------------- */
 function Example({ title, content }: { title?: string; content: React.ReactNode }) {
   return (
-    <div className="my-6 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)]">
+    <div className="my-6 rounded-lg border-2 border-[var(--color-line)] bg-[var(--color-surface)]">
       <div className="flex items-center gap-2 border-b border-[var(--color-line)] px-4 py-2.5">
         <Icon name="PencilRuler" size={16} style={{ color: "var(--accent)" }} />
-        <span className="text-sm font-bold">{title ?? "Worked example"}</span>
+        <span className="pixel-font text-xl uppercase leading-none">{title ?? "Worked example"}</span>
       </div>
       <div className="prose-lesson p-4">{rt(content)}</div>
     </div>
@@ -105,12 +108,12 @@ function Example({ title, content }: { title?: string; content: React.ReactNode 
 function Steps({ title, steps }: { title?: string; steps: { label?: string; content: React.ReactNode }[] }) {
   return (
     <div className="my-6">
-      {title && <div className="mb-3 text-sm font-bold text-[var(--color-ink)]">{title}</div>}
+      {title && <div className="pixel-font mb-3 text-xl uppercase leading-none text-[var(--color-ink)]">{title}</div>}
       <ol className="space-y-3">
         {steps.map((s, i) => (
           <li key={i} className="flex gap-3">
             <span
-              className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full text-sm font-bold text-[#06080f]"
+              className="mc-slot pixel-font mt-0.5 grid h-8 w-8 shrink-0 place-items-center text-xl leading-none text-white"
               style={{ background: "linear-gradient(180deg, var(--accent), var(--accent-2))" }}
             >
               {i + 1}
@@ -149,10 +152,10 @@ function InlineNumericCheck({ question, courseId }: { question: NumericQuestion;
   }
 
   return (
-    <div className="my-6 rounded-2xl border border-[var(--accent-line)] bg-[var(--color-surface)] p-4">
+    <div className="mc-panel arcade-dark my-6 p-4 text-white">
       <div className="mb-3 flex items-center gap-2">
         <Icon name="CircleHelp" size={16} style={{ color: "var(--accent)" }} />
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Quick check</span>
+        <span className="pixel-font text-xl uppercase leading-none text-[var(--accent)]">Checkpoint battle</span>
       </div>
       <div className="prose-lesson mb-3 font-medium !text-[1rem] !text-[var(--color-ink)]">{rt(question.prompt)}</div>
       <form
@@ -169,17 +172,17 @@ function InlineNumericCheck({ question, courseId }: { question: NumericQuestion;
           disabled={checked}
           onChange={(e) => setValue(e.target.value)}
           placeholder={question.placeholder ?? "your result"}
-          className="w-40 rounded-xl border border-[var(--color-line)] bg-[var(--color-bg)] px-3 py-2 font-mono text-sm outline-none focus:border-[var(--accent)]"
+          className="mc-slot w-40 px-3 py-2 font-mono text-sm text-white outline-none focus:border-[var(--accent)]"
         />
         {question.unit && <span className="text-sm font-semibold text-[var(--color-muted)]">{question.unit}</span>}
         {!checked && (
-          <button type="submit" className="btn btn-primary !py-2 !text-sm">
+          <button type="submit" className="arcade-button px-3">
             Check
           </button>
         )}
       </form>
       {checked && (
-        <div className="prose-lesson mt-3 rounded-xl bg-[var(--color-bg)] p-3 !text-[0.92rem]">
+        <div className="prose-lesson mc-slot mt-3 p-3 !text-[0.92rem]">
           <span className="font-semibold" style={{ color: correct ? "var(--good)" : "var(--bad)" }}>
             {correct ? "Correct. " : `Expected ${question.answer}${question.unit ? ` ${question.unit}` : ""}. `}
           </span>
@@ -207,10 +210,10 @@ function InlineMcqCheck({ question, courseId }: { question: McqQuestion; courseI
     });
   }
   return (
-    <div className="my-6 rounded-2xl border border-[var(--accent-line)] bg-[var(--color-surface)] p-4">
+    <div className="mc-panel arcade-dark my-6 p-4 text-white">
       <div className="mb-3 flex items-center gap-2">
         <Icon name="CircleHelp" size={16} style={{ color: "var(--accent)" }} />
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Quick check</span>
+        <span className="pixel-font text-xl uppercase leading-none text-[var(--accent)]">Checkpoint battle</span>
       </div>
       <div className="prose-lesson mb-3 font-medium !text-[1rem] !text-[var(--color-ink)]">{rt(question.prompt)}</div>
       <div className="grid gap-2">
@@ -224,10 +227,10 @@ function InlineMcqCheck({ question, courseId }: { question: McqQuestion; courseI
               onClick={() => pick(o.id)}
               className={cn(
                 "flex items-start gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition",
-                !answered && "border-[var(--color-line)] hover:border-[var(--accent-line)]",
+                !answered && "border-white/15 bg-white/5 hover:border-[var(--accent-line)] hover:bg-white/10",
                 show && isCorrect && "border-emerald-500/50 bg-emerald-500/10",
                 show && !isCorrect && o.id === picked && "border-rose-500/50 bg-rose-500/10",
-                answered && !show && "border-[var(--color-line)] opacity-50"
+                answered && !show && "border-white/10 opacity-50"
               )}
             >
               <span className="font-mono text-xs text-[var(--color-faint)]">{o.id}</span>
@@ -239,7 +242,7 @@ function InlineMcqCheck({ question, courseId }: { question: McqQuestion; courseI
         })}
       </div>
       {answered && (
-        <div className="prose-lesson mt-3 rounded-xl bg-[var(--color-bg)] p-3 !text-[0.92rem]">
+        <div className="prose-lesson mc-slot mt-3 p-3 !text-[0.92rem]">
           <span className="font-semibold" style={{ color: "var(--accent)" }}>
             Why:{" "}
           </span>
@@ -257,9 +260,12 @@ export function Block({ block, courseId }: { block: LessonBlock; courseId?: stri
       return <div className="prose-lesson">{rt(block.content)}</div>;
     case "heading":
       return (
-        <h3 id={block.id} className="mt-10 mb-3 scroll-mt-24 text-xl font-bold tracking-tight">
-          {rtInline(block.text)}
-        </h3>
+        <div id={block.id} className="mt-10 mb-3 scroll-mt-24 border-b-2 border-[var(--color-line)] pb-2">
+          <div className="pixel-font text-base uppercase tracking-[0.2em] text-[var(--accent)]">Checkpoint</div>
+          <h3 className="pixel-font mt-1 text-3xl uppercase leading-none tracking-wide">
+            {rtInline(block.text)}
+          </h3>
+        </div>
       );
     case "definition":
       return <Definition term={block.term} content={block.content} />;

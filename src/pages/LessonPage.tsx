@@ -4,7 +4,6 @@ import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
 import { TopBar, Page, PageLoader } from "../components/Layout";
 import { Icon } from "../components/Icon";
-import { Kicker, Pill } from "../components/ui";
 import { Block } from "../components/LessonBlocks";
 import { rt, rtInline } from "../components/RichText";
 import { markLesson, useCourseProgress } from "../lib/progress";
@@ -175,53 +174,66 @@ export function LessonPage() {
         <div className={cn("grid gap-8", !focusMode && "lg:grid-cols-[1fr_220px]")}>
           <article className="min-w-0 max-w-[70ch]">
             {!focusMode && (
-              <>
-                <Kicker>Lesson {idx + 1}</Kicker>
-                <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{rtInline(lesson.title)}</h1>
-                <p className="mt-2 text-lg text-[var(--color-muted)]">{rtInline(lesson.summary)}</p>
-
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <Pill tone="neutral">
-                    <Icon name="Clock" size={13} /> {lesson.minutes} min
-                  </Pill>
-                  {completed && (
-                    <Pill tone="good">
-                      <Icon name="Check" size={13} /> Completed
-                    </Pill>
-                  )}
-                </div>
-
-                {/* objectives */}
-                <div className="surface mt-6 p-5">
-                  <div className="mb-2 flex items-center gap-2 text-sm font-bold">
-                    <Icon name="Target" size={16} style={{ color: "var(--accent)" }} />
-                    By the end you can
+              <section className="mc-panel arcade-dark relative overflow-hidden p-5 text-white sm:p-6">
+                <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.045]" />
+                <div className="relative">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="pixel-font text-base uppercase tracking-[0.25em] text-white/45">
+                      Stage {String(idx + 1).padStart(2, "0")}/{String(course.lessons.length).padStart(2, "0")}
+                    </span>
+                    <span className="mc-slot pixel-font inline-flex items-center gap-1.5 px-2.5 py-1.5 text-lg uppercase leading-none text-white/75">
+                      <Icon name="Clock" size={13} /> {lesson.minutes} min
+                    </span>
                   </div>
-                  <ul className="grid gap-1.5">
-                    {lesson.objectives.map((o, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-muted)]">
-                        <Icon name="Check" size={15} className="mt-0.5 shrink-0 text-[var(--accent)]" />
-                        <span>{rtInline(o)}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <h1 className="pixel-font mt-3 text-4xl uppercase leading-[0.9] tracking-wide sm:text-5xl">
+                    {rtInline(lesson.title)}
+                  </h1>
+                  <p className="mt-3 text-base leading-relaxed text-white/60">{rtInline(lesson.summary)}</p>
+
+                  <div className="retro-divider my-5" />
+                  <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
+                    <div>
+                      <div className="pixel-font mb-2 flex items-center gap-2 text-xl uppercase leading-none text-[#ffd45e]">
+                        <Icon name="Target" size={16} /> Mission objectives
+                      </div>
+                      <ul className="grid gap-2">
+                        {lesson.objectives.map((objective, objectiveIndex) => (
+                          <li key={objectiveIndex} className="flex items-start gap-2 text-sm text-white/65">
+                            <span className="pixel-font mt-0.5 text-lg leading-none text-[#7fdc39]">▸</span>
+                            <span>{rtInline(objective)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="mc-slot flex min-w-32 flex-row items-center gap-3 px-3 py-2 sm:flex-col sm:justify-center sm:text-center">
+                      <Icon name={completed ? "CheckCheck" : "ScrollText"} size={22} style={{ color: completed ? "#7fdc39" : "#ffd45e" }} />
+                      <div>
+                        <div className="pixel-font text-lg uppercase leading-none text-white">
+                          {completed ? "Stage clear" : "Possible drop"}
+                        </div>
+                        <div className="mt-1 text-[10px] text-white/40">
+                          {completed ? "Field note secured" : "+1 field note"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </>
+              </section>
             )}
 
             {/* collapsible TOC for phones (the sidebar only exists on lg+) */}
             {!focusMode && toc.length > 1 && (
-              <details className="mt-5 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 lg:hidden">
-                <summary className="cursor-pointer select-none text-sm font-bold text-[var(--color-muted)]">
-                  On this page · {toc.length} sections
+              <details className="mc-panel arcade-dark mt-4 px-4 py-3 text-white lg:hidden">
+                <summary className="pixel-font cursor-pointer select-none text-xl uppercase leading-none text-white/70">
+                  Stage map · {toc.length} checkpoints
                 </summary>
-                <nav className="mt-2 space-y-0.5 border-l border-[var(--color-line)]">
+                <nav className="mt-3 space-y-1 border-l border-white/15">
                   {toc.map((t) => (
                     <button
                       key={t.id}
                       type="button"
                       onClick={() => scrollToSection(t.id)}
-                      className="block w-full py-1 pl-3 text-left text-sm text-[var(--color-muted)]"
+                      className="block w-full py-1 pl-3 text-left text-sm text-white/55"
                     >
                       {rtInline(t.text)}
                     </button>
@@ -233,7 +245,7 @@ export function LessonPage() {
             {facts[0] && !focusMode && <FunFactCard fact={facts[0]} />}
 
             {/* body */}
-            <div className={focusMode ? "mt-0" : "mt-8"}>
+            <div className={cn("lesson-paper", focusMode ? "mt-0" : "mt-5")}>
               {lesson.blocks.map((b, i) => (
                 <Fragment key={i}>
                   <Block
@@ -247,23 +259,36 @@ export function LessonPage() {
 
             {/* footer */}
             {!focusMode && (
-              <div className="mt-12 flex flex-col gap-3 border-t border-[var(--color-line)] pt-6 sm:flex-row sm:items-center">
-                <button
-                  onClick={() => markLesson(courseId, lesson.id, !completed)}
-                  className={completed ? "btn btn-ghost" : "btn btn-primary"}
-                >
-                  <Icon name={completed ? "RotateCcw" : "CheckCheck"} size={16} />
-                  {completed ? "Mark as not done" : "Mark lesson complete"}
-                </button>
-                {next ? (
-                  <Link to={`/c/${courseId}/learn/${next.id}`} className="btn btn-ghost sm:ml-auto">
-                    Next: {next.title} <Icon name="ArrowRight" size={16} />
-                  </Link>
-                ) : (
-                  <Link to={`/c/${courseId}/practice`} className="btn btn-ghost sm:ml-auto">
-                    Practice this course <Icon name="ArrowRight" size={16} />
-                  </Link>
-                )}
+              <div className="mc-panel arcade-dark relative mt-6 overflow-hidden p-4 text-white sm:p-5">
+                <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.04]" />
+                <div className="relative">
+                  <div className="min-w-0 flex-1">
+                    <div className="pixel-font text-base uppercase tracking-[0.22em] text-white/40">
+                      {completed ? "Stage cleared" : "End checkpoint"}
+                    </div>
+                    <div className="pixel-font mt-1 text-2xl uppercase leading-none text-[#ffd45e]">
+                      {completed ? "Field note secured" : "Claim your lesson drop"}
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                    <button
+                      onClick={() => markLesson(courseId, lesson.id, !completed)}
+                      className={completed ? "arcade-button arcade-button-secondary w-full px-3 sm:w-auto" : "arcade-button w-full px-3 sm:w-auto"}
+                    >
+                      <Icon name={completed ? "RotateCcw" : "CheckCheck"} size={16} />
+                      {completed ? "Replay stage" : "Stage clear"}
+                    </button>
+                    {next ? (
+                      <Link to={`/c/${courseId}/learn/${next.id}`} className="arcade-button arcade-button-secondary w-full px-3 sm:w-auto">
+                        Next stage <Icon name="ArrowRight" size={16} />
+                      </Link>
+                    ) : (
+                      <Link to={`/c/${courseId}/practice`} className="arcade-button arcade-button-secondary w-full px-3 sm:w-auto">
+                        Practice course <Icon name="ArrowRight" size={16} />
+                      </Link>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </article>
@@ -271,11 +296,11 @@ export function LessonPage() {
           {/* TOC */}
           {!focusMode && toc.length > 0 && (
             <aside className="hidden lg:block">
-              <div className="sticky top-24">
-                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-faint)]">
-                  On this page
+              <div className="mc-panel arcade-dark sticky top-24 p-3 text-white">
+                <div className="pixel-font mb-3 text-xl uppercase leading-none text-white/55">
+                  Stage map
                 </div>
-                <nav className="space-y-1 border-l border-[var(--color-line)]">
+                <nav className="space-y-1 border-l border-white/15">
                   {toc.map((t) => (
                     <button
                       key={t.id}
@@ -285,8 +310,8 @@ export function LessonPage() {
                       className={cn(
                         "block w-full border-l-2 py-1 pl-3 text-left text-sm transition",
                         activeToc === t.id
-                          ? "border-[var(--accent)] font-semibold text-[var(--color-ink)]"
-                          : "border-transparent text-[var(--color-muted)] hover:border-[var(--accent)] hover:text-[var(--color-ink)]"
+                          ? "border-[var(--accent)] font-semibold text-white"
+                          : "border-transparent text-white/45 hover:border-[var(--accent)] hover:text-white"
                       )}
                     >
                       {rtInline(t.text)}
@@ -314,16 +339,15 @@ function FunFactCard({ fact }: { fact: FunFact }) {
   const meta = FACT_META[fact.kind];
   return (
     <aside
-      className="my-6 rounded-2xl border-2 p-4"
-      style={{ borderColor: "var(--accent-line)", background: "var(--accent-soft)" }}
+      className="mc-panel arcade-dark relative my-6 overflow-hidden p-4 text-white"
     >
+      <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.04]" />
       <div
-        className="pixel-font mb-1.5 flex items-center gap-1.5 text-lg leading-none"
-        style={{ color: "var(--accent)" }}
+        className="pixel-font relative mb-1.5 flex items-center gap-1.5 text-xl uppercase leading-none text-[#ffd45e]"
       >
-        <Icon name={meta.icon} size={15} /> {meta.label}
+        <Icon name={meta.icon} size={15} /> Item drop · {meta.label}
       </div>
-      <div className="prose-lesson !text-[0.95rem]">{rt(fact.text)}</div>
+      <div className="prose-lesson relative !text-[0.95rem]">{rt(fact.text)}</div>
     </aside>
   );
 }

@@ -484,6 +484,18 @@ main {
   background: linear-gradient(90deg, transparent, #505050 12%, #505050 88%, transparent);
 }
 
+/* readable lesson parchment inside the arcade shell */
+.lesson-paper {
+  border: 2px solid color-mix(in oklab, var(--color-line) 86%, #000);
+  border-radius: 0.65rem;
+  background: var(--color-surface);
+  box-shadow:
+    inset 2px 2px 0 color-mix(in oklab, var(--color-surface) 72%, #fff),
+    inset -2px -2px 0 color-mix(in oklab, var(--color-surface) 82%, #000),
+    0 5px 0 color-mix(in oklab, var(--color-line) 72%, #000);
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
 /* arcade "PRESS START" blink — hard steps, no fade */
 @keyframes arcadeBlink {
   0%, 55% { opacity: 1; }

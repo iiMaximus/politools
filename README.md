@@ -104,8 +104,12 @@ account rank (Matricola → Rettore), daily quests, and a beer counter. Each foc
   and the next three highest-value actions.
 - **Weekly ranks** (`/leaderboard`) — a Monday-to-Sunday XP/activity/mastery race for the small
   trusted study group, with lifetime totals kept as secondary context.
+- **Workshop** (`/workshop`) — a lightweight inventory made from real lesson, mastery, mistake,
+  review and boss evidence; reusable recipes launch the right targeted study run without spending it.
 - **Search, source map and content QA** (`/search`, `/sources`, `/content-qa`) — find any concept or
   formula, inspect official-material coverage, and audit structural content quality.
+- **Retro lesson stages** — every lesson now has mission objectives, checkpoint battles, item-drop
+  moments, a compact stage map and a stage-clear exit while keeping dense maths on readable paper.
 - **Skill path** (`/c/<id>/path`) — a Duolingo-style road: lesson → checkpoint → … → boss.
 - **Boss fights** (`/c/<id>/boss`) — the exam as a procedural three.js boss (Lord Entropy, the
   Limit Wraith, Σ-Prime…). Correct answers deal damage (speed/combo bonuses, crits), misses cost

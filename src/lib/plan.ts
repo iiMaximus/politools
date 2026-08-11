@@ -14,6 +14,11 @@ import { GATE_MASTERY, courseSections, topicMastery, type PathSection } from "./
 const DAY = 86_400_000;
 /** last stretch is for mock exams + review, not new material */
 export const REVIEW_BUFFER_DAYS = 10;
+/** One deliberate season reset: the learner confirmed on Aug 11 that study
+ *  had not started yet. Old July anchors are rebased exactly once, including
+ *  when an older cloud snapshot reaches this device later. */
+export const PLAN_REVISION = 2;
+const CURRENT_SEASON_START = new Date(2026, 7, 11).getTime();
 
 export interface PlanItem {
   section: PathSection;
@@ -41,6 +46,7 @@ const KEY = (courseId: string) => `polito:plan:${courseId}`;
 interface PlanAnchor {
   start: number;
   examIso: string;
+  revision?: number;
 }
 
 function readAnchor(courseId: string): PlanAnchor | null {
@@ -93,10 +99,18 @@ export function coursePlan(
   const sections = courseSections(course).filter((s) => !/\(extra\)/.test(s.title));
   if (!sections.length) return null;
 
-  // anchor the plan once; re-anchor if the exam date changed
+  // Anchor the plan once; re-anchor if the exam date changed. Revision 2
+  // intentionally moves the current September battle plan to Aug 11, 2026.
   let anchor = readAnchor(course.meta.id);
-  if (!anchor || anchor.examIso !== examIso || anchor.start >= examAt) {
-    anchor = { start: now, examIso };
+  const needsSeasonReset =
+    Boolean(anchor) &&
+    anchor?.examIso === examIso &&
+    (anchor?.revision ?? 1) < PLAN_REVISION;
+  if (!anchor || anchor.examIso !== examIso || anchor.start >= examAt || needsSeasonReset) {
+    const start = needsSeasonReset
+      ? Math.min(now, CURRENT_SEASON_START, examAt - DAY)
+      : now;
+    anchor = { start, examIso, revision: PLAN_REVISION };
     writeAnchor(course.meta.id, anchor);
   }
 

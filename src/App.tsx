@@ -1,5 +1,5 @@
-import { Suspense, lazy } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Suspense, lazy, useLayoutEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { HubPage } from "./pages/HubPage";
 import { CoursePage } from "./pages/CoursePage";
 import { LessonPage } from "./pages/LessonPage";
@@ -21,13 +21,23 @@ import { SearchPage } from "./pages/SearchPage";
 import { SourceCoveragePage } from "./pages/SourceCoveragePage";
 import { ContentQaPage } from "./pages/ContentQaPage";
 import { MistakeLabPage } from "./pages/MistakeLabPage";
+import { WorkshopPage } from "./pages/WorkshopPage";
 
 // Boss fights pull in three.js — keep it out of the main bundle.
 const BossPage = lazy(() => import("./pages/BossPage"));
 
+function RouteScrollReset() {
+  const { pathname } = useLocation();
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 export function App() {
   return (
     <>
+      <RouteScrollReset />
       <GameToasts />
       <CloudProfileModal />
       <Routes>
@@ -41,6 +51,7 @@ export function App() {
         <Route path="/mistakes" element={<MistakeLabPage />} />
         <Route path="/mistakes/:courseId" element={<MistakeLabPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/workshop" element={<WorkshopPage />} />
         <Route path="/g/:groupId" element={<CourseGroupPage />} />
         <Route path="/c/:courseId" element={<CoursePage />} />
         <Route path="/c/:courseId/path" element={<PathPage />} />

@@ -224,10 +224,11 @@ export function HubPage() {
         </section>
 
         {/* ============ study intelligence ============ */}
-        <section className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6" aria-label="Study tools">
+        <section className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7" aria-label="Study tools">
+          <HubTool to="/workshop" icon="Blocks" label="Workshop" sub="inventory & recipes" />
           <HubTool to="/mistakes" icon="RotateCcw" label="Mistake lab" sub="repair errors" />
           <HubTool to="/readiness" icon="Target" label="Exam radar" sub="grade forecast" />
-          <HubTool to="/leaderboard" icon="Trophy" label="Weekly ranks" sub="4-player race" />
+          <HubTool to="/leaderboard" icon="Trophy" label="Weekly ranks" sub="crew challenge" />
           <HubTool to="/search" icon="Compass" label="Search" sub="find anything" />
           <HubTool to="/sources" icon="MapPinned" label="Source map" sub="coverage proof" />
           <HubTool to="/content-qa" icon="ShieldCheck" label="Content QA" sub="quality audit" />
@@ -780,7 +781,7 @@ function PlayerHud({
         </div>
 
         {/* hotbar */}
-        <div className="col-span-2 grid shrink-0 grid-cols-3 gap-2 sm:col-span-1 sm:flex sm:gap-1.5">
+        <div className="col-span-2 grid shrink-0 grid-cols-4 gap-2 sm:col-span-1 sm:flex sm:gap-1.5">
           <McStat
             icon="Flame"
             value={streak.current}
@@ -790,6 +791,16 @@ function PlayerHud({
           />
           <McStat icon="Snowflake" value={game.freezeTokens} label="freeze" color="#6aa6ff" />
           <McStat icon="Beer" value={beers} label="beers" color="#ffd45e" />
+          <Link
+            to="/workshop"
+            className="arcade-focus-ring flex flex-col items-center gap-1"
+            title="Open knowledge inventory"
+          >
+            <span className="mc-slot mc-panel-interactive grid h-14 w-14 place-items-center text-[#7fdc39]">
+              <Icon name="Blocks" size={22} />
+            </span>
+            <span className="pixel-font text-sm uppercase leading-none text-white/50">pack</span>
+          </Link>
         </div>
       </div>
     </section>

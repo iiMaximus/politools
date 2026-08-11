@@ -98,9 +98,21 @@ const remote = {
   },
 };
 
+local.stores["polito:plan:ma2"] = JSON.stringify({
+  start: new Date(2026, 7, 11).getTime(),
+  examIso: "2026-09-09",
+  revision: 2,
+});
+remote.stores["polito:plan:ma2"] = JSON.stringify({
+  start: new Date(2026, 6, 21).getTime(),
+  examIso: "2026-09-09",
+  revision: 1,
+});
+
 const merged = cloud.mergeSnapshots(local, remote);
 const mergedProgress = JSON.parse(merged.stores["polito:progress:ma2"]);
 const mergedScroll = JSON.parse(merged.stores["polito:scroll:ma2"]);
+const mergedPlan = JSON.parse(merged.stores["polito:plan:ma2"]);
 check("merge keeps local card", Boolean(mergedProgress.cards.q1));
 check("merge keeps remote card", Boolean(mergedProgress.cards.q2));
 check("merge keeps completed lesson", mergedProgress.lessons.l1.completed === true);
@@ -108,6 +120,13 @@ check("merge avoids double-counting XP", mergedProgress.xp === 120);
 check("scroll keeps story position", mergedScroll.sessions.story.index === 4);
 check("scroll keeps drill position", mergedScroll.sessions.drill.index === 6);
 check("scroll last mode follows newest session", mergedScroll.lastMode === "drill");
+check("new battle-plan revision beats an older cloud anchor", mergedPlan.revision === 2);
+check(
+  "battle plan now starts on Aug 11",
+  new Date(mergedPlan.start).getFullYear() === 2026 &&
+    new Date(mergedPlan.start).getMonth() === 7 &&
+    new Date(mergedPlan.start).getDate() === 11
+);
 
 const stats = cloud.calculateLeaderboardStats(merged);
 check("leaderboard adds bonus XP", stats.total_xp === 150);
