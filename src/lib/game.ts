@@ -78,6 +78,8 @@ export interface GameSettings {
   passedCourses: string[];
   examDates: Record<string, string>;
   sound: boolean;
+  /** opt-in stopwatch shown on lesson pages */
+  lessonStopwatch: boolean;
   /** per-course topic focus (empty/absent = whole course) — Phase 6 */
   focusTopics?: Record<string, string[]>;
 }
@@ -154,6 +156,7 @@ const defaultState = (): GameState => ({
     passedCourses: [],
     examDates: {},
     sound: true,
+    lessonStopwatch: false,
   },
 });
 

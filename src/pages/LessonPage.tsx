@@ -2,11 +2,13 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCourse } from "../courses/registry";
 import { CourseTheme } from "../components/CourseTheme";
+import { LessonStopwatch } from "../components/LessonStopwatch";
 import { TopBar, Page, PageLoader } from "../components/Layout";
 import { Icon } from "../components/Icon";
 import { Block } from "../components/LessonBlocks";
 import { rt, rtInline } from "../components/RichText";
 import { markLesson, useCourseProgress } from "../lib/progress";
+import { useGame } from "../lib/game";
 import { pickFacts, type FunFact } from "../lib/funfacts";
 import { cn } from "../lib/cn";
 import { NotFound } from "./NotFound";
@@ -50,6 +52,7 @@ export function LessonPage() {
   const { courseId = "", lessonId = "" } = useParams();
   const { course, loading } = useCourse(courseId);
   const progress = useCourseProgress(courseId);
+  const game = useGame();
   const scroll = useScrollProgress();
   const [focusMode, setFocusMode] = useState(false);
   const [activeTocId, setActiveTocId] = useState<string | null>(null);
@@ -194,6 +197,7 @@ export function LessonPage() {
       <Page className={focusMode ? "!max-w-5xl py-8 sm:py-10" : "!max-w-[84rem]"}>
         <div className={cn("grid gap-6 xl:gap-8", !focusMode && "lg:grid-cols-[minmax(0,1fr)_244px]")}>
           <article className="min-w-0 w-full">
+            {game.settings.lessonStopwatch && <LessonStopwatch focusMode={focusMode} />}
             {!focusMode && (
               <section className="mc-panel arcade-dark relative overflow-hidden p-5 text-white sm:p-6">
                 <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.045]" />

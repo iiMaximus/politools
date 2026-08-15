@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Icon } from "../Icon";
 import { updateSettings, type GameSettings as Settings } from "../../lib/game";
+import { pauseLessonStopwatch } from "../../lib/lesson-stopwatch";
 import type { Course } from "../../types";
 
 /* ================================================================== *
@@ -20,6 +21,7 @@ export function GameSettingsModal({
   const [local, setLocal] = useState<Settings>(settings);
 
   function save() {
+    if (settings.lessonStopwatch && !local.lessonStopwatch) pauseLessonStopwatch();
     updateSettings(local);
     onClose();
   }
@@ -136,6 +138,24 @@ export function GameSettingsModal({
             checked={local.sound}
             onChange={(e) => setLocal((s) => ({ ...s, sound: e.target.checked }))}
             className="h-4 w-4 accent-[var(--accent)]"
+          />
+        </label>
+
+        <label className="mc-slot mb-5 flex items-center justify-between gap-3 px-3 py-2.5">
+          <span className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+            <Icon name="Timer" size={16} className="shrink-0" />
+            <span>
+              Lesson stopwatch
+              <span className="mt-0.5 block text-[10px] font-normal text-[var(--color-muted)]">
+                Show a persistent start, stop and reset clock while learning.
+              </span>
+            </span>
+          </span>
+          <input
+            type="checkbox"
+            checked={local.lessonStopwatch}
+            onChange={(e) => setLocal((s) => ({ ...s, lessonStopwatch: e.target.checked }))}
+            className="h-4 w-4 shrink-0 accent-[var(--accent)]"
           />
         </label>
 
