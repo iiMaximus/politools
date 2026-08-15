@@ -26,6 +26,26 @@ function useScrollProgress() {
   return p;
 }
 
+function placeFactDrops(blocks: { kind: string }[], count: number): number[] {
+  if (!count || blocks.length < 2) return [];
+  const eligible = blocks
+    .map((block, index) => (block.kind === "heading" || index === blocks.length - 1 ? -1 : index))
+    .filter((index) => index >= 0);
+  const picked: number[] = [];
+
+  for (let slot = 0; slot < count; slot++) {
+    // Keep the extra drops spread through the actual teaching material rather
+    // than stacking them beside headings or at the very end of a lesson.
+    const target = Math.round(((slot + 1) / (count + 1)) * (blocks.length - 1));
+    const nearest = eligible
+      .filter((index) => !picked.includes(index))
+      .sort((a, b) => Math.abs(a - target) - Math.abs(b - target))[0];
+    if (nearest !== undefined) picked.push(nearest);
+  }
+
+  return picked.sort((a, b) => a - b);
+}
+
 export function LessonPage() {
   const { courseId = "", lessonId = "" } = useParams();
   const { course, loading } = useCourse(courseId);
@@ -127,9 +147,10 @@ export function LessonPage() {
   const next = course.lessons[idx + 1];
   const completed = progress.lessons[lesson.id]?.completed;
   const activeToc = activeTocId ?? toc[0]?.id;
-  // memory hooks: one fact up top, one dropped mid-lesson
+  // Memory hooks: one early reward, then topic-specific drops at evenly
+  // spaced, meaningful points in the lesson.
   const facts = pickFacts(courseId, lesson);
-  const midIdx = Math.floor(lesson.blocks.length / 2);
+  const factDropIndices = placeFactDrops(lesson.blocks, Math.max(0, facts.length - 1));
 
   return (
     <CourseTheme accent={course.meta.accent} accent2={course.meta.accent2}>
@@ -170,9 +191,9 @@ export function LessonPage() {
         </TopBar>
       )}
 
-      <Page className={focusMode ? "!max-w-4xl py-8 sm:py-10" : undefined}>
-        <div className={cn("grid gap-8", !focusMode && "lg:grid-cols-[1fr_220px]")}>
-          <article className="min-w-0 max-w-[70ch]">
+      <Page className={focusMode ? "!max-w-5xl py-8 sm:py-10" : "!max-w-[84rem]"}>
+        <div className={cn("grid gap-6 xl:gap-8", !focusMode && "lg:grid-cols-[minmax(0,1fr)_244px]")}>
+          <article className="min-w-0 w-full">
             {!focusMode && (
               <section className="mc-panel arcade-dark relative overflow-hidden p-5 text-white sm:p-6">
                 <div className="crt-lines pointer-events-none absolute inset-0 opacity-[0.045]" />
@@ -252,7 +273,9 @@ export function LessonPage() {
                     block={b.kind === "heading" ? { ...b, id: b.id ?? `h-${i}` } : b}
                     courseId={courseId}
                   />
-                  {i === midIdx && facts[1] && <FunFactCard fact={facts[1]} />}
+                  {factDropIndices.includes(i) && (
+                    <FunFactCard fact={facts[factDropIndices.indexOf(i) + 1]} />
+                  )}
                 </Fragment>
               ))}
             </div>

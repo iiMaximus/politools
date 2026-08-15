@@ -496,6 +496,15 @@ main {
   padding: clamp(1rem, 3vw, 2rem);
 }
 
+/* The lesson shell is intentionally wide, while uninterrupted paragraphs
+   remain centered at a readable measure. Structured examples, equations,
+   checkpoints and simulations can use the full stage width. */
+.lesson-paper > .prose-lesson {
+  width: 100%;
+  max-width: 82ch;
+  margin-inline: auto;
+}
+
 /* arcade "PRESS START" blink — hard steps, no fade */
 @keyframes arcadeBlink {
   0%, 55% { opacity: 1; }
